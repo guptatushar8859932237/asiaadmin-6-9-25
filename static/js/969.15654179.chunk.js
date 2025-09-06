@@ -1,0 +1,2 @@
+"use strict";(self.webpackChunkasia_direct=self.webpackChunkasia_direct||[]).push([[969],{9969:(s,a,e)=>{e.r(a),e.d(a,{default:()=>i});var c=e(579);const i=()=>(0,c.jsx)("div",{className:"title",children:" Analytics"})}}]);
+//# sourceMappingURL=969.15654179.chunk.js.map

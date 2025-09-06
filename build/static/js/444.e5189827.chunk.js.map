@@ -1,0 +1,1 @@
+{"version":3,"file":"static/js/444.e5189827.chunk.js","mappings":"oJAAA,MAIA,EAJcA,KACLC,EAAAA,EAAAA,KAAA,OAAKC,UAAU,QAAOC,SAAC,U","sources":["pages/Saved.jsx"],"sourcesContent":["const Saved = () => {\n  return <div className=\"title\"> Saved</div>;\n};\n\nexport default Saved;\n"],"names":["Saved","_jsx","className","children"],"sourceRoot":""}

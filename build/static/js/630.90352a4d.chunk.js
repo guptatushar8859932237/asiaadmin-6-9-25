@@ -1,0 +1,2 @@
+"use strict";(self.webpackChunkasia_direct=self.webpackChunkasia_direct||[]).push([[630],{9630:(e,a,s)=>{s.r(a),s.d(a,{default:()=>c});var i=s(579);const c=()=>(0,i.jsx)("div",{className:"title",children:" File Manager"})}}]);
+//# sourceMappingURL=630.90352a4d.chunk.js.map

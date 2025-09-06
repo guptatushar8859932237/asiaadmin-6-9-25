@@ -1,0 +1,2 @@
+"use strict";(self.webpackChunkasia_direct=self.webpackChunkasia_direct||[]).push([[697],{2697:(s,e,a)=>{a.r(e),a.d(e,{default:()=>i});var c=a(579);const i=()=>(0,c.jsx)("div",{className:"title",children:" Users"})}}]);
+//# sourceMappingURL=697.10cf531c.chunk.js.map

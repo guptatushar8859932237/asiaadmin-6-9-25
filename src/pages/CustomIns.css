@@ -1,0 +1,45 @@
+.customInsPdf table {
+    width: 100%;
+}
+ h6,p{
+    margin: 0px;
+    color: #000000cc;
+ }
+ .Bordered-table h6{
+    text-align: center;
+   font-size: 15px;
+    font-weight: 600;
+    color: #000000cc;
+ }
+ .Bordered-table th{
+    padding: 7px !important;
+    font-size: 11px !important;
+    font-weight: 500;
+    white-space: break-spaces;
+
+ }
+ .Bordered-table td{
+    padding: 7px !important;
+    font-size: 11px !important;
+ }
+.exWidth {
+   width: 65px;
+}
+.lclWidth {
+   width: 70px;
+}
+table.bottomTable td {
+   border: 1px solid #000;
+  
+}
+table.bottomTable th {
+   border: 1px solid #000;
+   border-top:unset !important ;
+  }
+  table.bottomTable th:nth-child(1),table.bottomTable td:nth-child(1){
+   border-left: unset !important;
+  }
+  table.bottomTable th:nth-child(6),table.bottomTable td:nth-child(6){
+   border-right: unset !important;
+  }
+ 

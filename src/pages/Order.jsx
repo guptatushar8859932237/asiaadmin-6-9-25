@@ -2,7 +2,7 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
-import { Box, Button, Modal } from "@mui/material";
+import { Box, Button, InputLabel, MenuItem, Modal, Select } from "@mui/material";
 import ReplayIcon from "@mui/icons-material/Replay";
 import PictureAsPdfIcon from "@mui/icons-material/PictureAsPdf";
 import RemoveRedEyeIcon from "@mui/icons-material/RemoveRedEye";
@@ -85,6 +85,56 @@ export default function Order() {
     cargo_pickup: "",
     sales_representative: "",
   });
+
+   const [show1, setShow1] = useState(false);
+      const [selectedDocs, setSelectedDocs] = useState([]);
+    
+     const docOptions = [
+      { id: "Customs Documents", label: "Customs docs" },
+      { id: "Supporting Documents", label: "Supporting docs" },
+      { id: "Invoice, Packing List", label: "Invoice / Packing " },
+      { id: "Product Literature", label: "Product Literature" },
+      { id: "Letters of authority", label: "Letters of authority" },
+      { id: "Waybills", label: "Freight Docs" },
+      { id: "Waybills", label: "Shipping instruction" },
+      { id: "AD_Quotations", label: "Attach Quote" },
+      { id: "Supplier Invoices", label: "Supplier Invoices" }
+    ];
+      const handleShow = () => setShow1(true);
+      const handleClose = () => setShow1(false);
+    
+      // Handle dropdown change
+      const handleSelect = (e) => {
+        const selected = e.target.value;
+        if (selected && !selectedDocs.find((doc) => doc.name === selected)) {
+          setSelectedDocs([...selectedDocs, { name: selected, files: [] }]);
+        }
+      };
+    
+      // Handle file upload for each document type
+      const handleFileChangefil = (e, docName) => {
+        const files = Array.from(e.target.files);
+        setSelectedDocs((prev) =>
+          prev.map((doc) =>
+            doc.name === docName ? { ...doc, files } : doc
+          )
+        );
+      };
+    
+      // For saving data (you can send to API)
+    const handleSave = () => {
+      console.log("Uploaded Documents:", selectedDocs);
+    
+      // To see filenames instead of [object Object]
+      selectedDocs.forEach(doc => {
+        console.log("Doc Type:", doc);
+        doc.files.forEach(file => {
+          console.log("File:", file.name, "| Size:", file.size, "bytes");
+        });
+      });
+    
+      handleClose();
+    };
 
   let today = new Date();
   let year = today.getFullYear();
@@ -763,11 +813,14 @@ export default function Order() {
     formdata.append("sales_representative", inputdata.sales_representative);
     formdata.append("documentName", inputdata.documentName);
 
-    if (formData2) {
-      for (let i = 0; i < formData2.licenses.length; i++) {
-        formdata.append("document", formData2.licenses[i]);
-      }
-    }
+       selectedDocs.forEach(doc => {
+  console.log("Doc Type:", doc.name);
+
+  doc.files.forEach(file => {
+    formdata.append(doc.name, file); // 👈 each file append
+    console.log("File:", file.name, "| Size:", file.size, "bytes");
+  });
+});
 
     console.log(formdata);
     axios
@@ -1713,6 +1766,84 @@ export default function Order() {
                         </div>
                       </div>
                     </div>
+
+  <div className="row mb-3 mt-4">
+                                <div className="col-9 mt-3">
+                                  <h4 className="freight_hd">Document Section</h4>
+                                  <span class="line"></span>
+                                </div>
+                                <div className="col-3">
+              <Button className="btn  btn-primary" onClick={handleShow}>
+                        Upload Documents
+                      </Button>
+                                     
+                                     {
+                                      show1 ? <Modal
+                      open={show1}
+                      onClose={handleClose}
+                      slotProps={{
+                        backdrop: {
+                          sx: { backgroundColor: "rgba(0,0,0,0.2)" }, // lighter background
+                        },
+                      }}
+                    >
+                      <Box
+                        sx={{
+                          p: 3,
+                          bgcolor: "background.paper",
+                          borderRadius: 2,
+                          width: 500,
+                          mx: "auto",
+                          mt: 10,
+                        }}
+                      >
+                        <h2>Upload Documents</h2>
+              
+                        {/* Dropdown */}
+                        <FormControl fullWidth sx={{ mt: 2 }}>
+                          <InputLabel id="doc-select-label">Select Document Type</InputLabel>
+                          <Select
+                            labelId="doc-select-label"
+                            // value={selected}
+                            onChange={handleSelect}
+                          >
+                            {docOptions.map((option) => (
+                              <MenuItem key={option.id} value={option.id}>
+                                {option.label}
+                              </MenuItem>
+                            ))}
+                          </Select>
+                        </FormControl>
+              
+                        {/* Dynamic file inputs */}
+                        <div className="mt-3">
+                          {selectedDocs.map((doc, index) => (
+                            <div key={index} className="mb-3">
+                              <label className="fw-bold">{doc.name}</label>
+                              <input
+                                type="file"
+                                className="form-control"
+                                multiple
+                                accept="image/*,application/pdf"
+                                onChange={(e) => handleFileChangefil(e, doc.name)}
+                              />
+                            </div>
+                          ))}
+                        </div>
+              
+                        {/* Footer buttons */}
+                        <Box sx={{ display: "flex", justifyContent: "flex-end", gap: 2, mt: 3 }}>
+                          <Button onClick={handleClose}>Cancel</Button>
+                          <Button variant="contained" color="success" onClick={handleSave}>
+                            Save Documents
+                          </Button>
+                        </Box>
+                      </Box>
+                    </Modal> : ""
+                                     }   
+                                </div>
+                              </div>
+
                     <div className="mt-4">
                       <h4>Product Description</h4>
                     </div>
@@ -1838,7 +1969,7 @@ export default function Order() {
                         </div>
 
                         <div className="row">
-  <div className="col-12 mt-3">
+  {/* <div className="col-12 mt-3">
                                                       <h5>licenses</h5>
                                                       <input
                                                         type="file"
@@ -1849,9 +1980,9 @@ export default function Order() {
                                                         }
                                                         multiple
                                                       />
-                                                    </div>
+                                                    </div> */}
                         </div>
-                        <div className=" col-lg-6  mb-3">
+                        {/* <div className=" col-lg-6  mb-3">
                           <label>
                             {" "}
                             Document Name
@@ -1868,7 +1999,7 @@ export default function Order() {
                             <option value="Supplier Invoices">Freight Invoices </option>
                             <option value="AD_Quotations">Attach Quote</option>
                           </select>
-                        </div>
+                        </div> */}
                         {inputdata.hazardous ===
                           "yes" ? (
                           <div className=" col-lg-6  mb-3">

@@ -131,11 +131,11 @@ const routes = [
         name: "Clearance Order",
         icon: <ShoppingCartOutlinedIcon />,
       },
-      // {
-      //   path: "/Admin/google_drive",
-      //   name: "Google drive",
-      //   icon: <ShoppingCartOutlinedIcon />,
-      // },
+      {
+        path: "/Admin/google_drive",
+        name: "Google drive",
+        icon: <ShoppingCartOutlinedIcon />,
+      },
     ],
   },
   {

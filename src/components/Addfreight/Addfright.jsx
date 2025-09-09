@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import Select from "react-select";
+import { Modal, Button, Form } from "react-bootstrap";
 const Addfright = () => {
   const [lcientlist, setLcientlist] = useState([]);
   const [staffdata, setStaffdata] = useState([]);
@@ -263,7 +264,14 @@ const Addfright = () => {
     formdata.append("insurance", data.insurance);
     formdata.append("shipment_ref", data.shipment_ref);
     formdata.append("fcl_lcl", data.fcl_lcl);
-    formdata.append("documentName", data.documentName);
+   selectedDocs.forEach(doc => {
+  console.log("Doc Type:", doc.name);
+
+  doc.files.forEach(file => {
+    formdata.append(doc.name, file); // 👈 each file append
+    console.log("File:", file.name, "| Size:", file.size, "bytes");
+  });
+});
     formdata.append(
       "client_ref_name",
       refane == "[object Object]" ? selectedOption.clientemail : refane
@@ -271,7 +279,7 @@ const Addfright = () => {
     const keybane = data.documentName
    Object.values(formFiles).forEach((files) => {
   files.forEach((file) => {
-    formdata.append("document", file); // static key
+    formdata.append("document", file); 
   });
 });
     console.log(formdata);
@@ -400,6 +408,55 @@ const Addfright = () => {
       console.log(error.response.data.data);
     }
   };
+  const [show, setShow] = useState(false);
+  const [selectedDocs, setSelectedDocs] = useState([]);
+
+ const docOptions = [
+  { id: "Customs Documents", label: "Customs docs" },
+  { id: "Supporting Documents", label: "Supporting docs" },
+  { id: "Invoice, Packing List", label: "Invoice / Packing " },
+  { id: "Product Literature", label: "Product Literature" },
+  { id: "Letters of authority", label: "Letters of authority" },
+  { id: "Waybills", label: "Freight Docs" },
+  { id: "Waybills", label: "Shipping instruction" },
+  { id: "AD_Quotations", label: "Attach Quote" },
+  { id: "Supplier Invoices", label: "Supplier Invoices" }
+];
+  const handleShow = () => setShow(true);
+  const handleClose = () => setShow(false);
+
+  // Handle dropdown change
+  const handleSelect = (e) => {
+    const selected = e.target.value;
+    if (selected && !selectedDocs.find((doc) => doc.name === selected)) {
+      setSelectedDocs([...selectedDocs, { name: selected, files: [] }]);
+    }
+  };
+
+  // Handle file upload for each document type
+  const handleFileChangefil = (e, docName) => {
+    const files = Array.from(e.target.files);
+    setSelectedDocs((prev) =>
+      prev.map((doc) =>
+        doc.name === docName ? { ...doc, files } : doc
+      )
+    );
+  };
+
+  // For saving data (you can send to API)
+const handleSave = () => {
+  console.log("Uploaded Documents:", selectedDocs);
+
+  // To see filenames instead of [object Object]
+  selectedDocs.forEach(doc => {
+    console.log("Doc Type:", doc);
+    doc.files.forEach(file => {
+      console.log("File:", file.name, "| Size:", file.size, "bytes");
+    });
+  });
+
+  handleClose();
+};
   return (
     <>
       {loader ? (
@@ -535,24 +592,6 @@ const Addfright = () => {
                       </div>
                       <div className="row">
                         <div className="col-6">
-                          {/* <label>Sales Representative</label>
-                          <select
-                            name="sales_representative"
-                            onChange={handlechange}
-                          >
-                            <option value="">Select...</option>
-                            {staffdata &&
-                              staffdata.length > 0 &&
-                              staffdata.map((item, index) => {
-                                return (
-                                  <>
-                                    <option value={item.id} key={index}>
-                                      {item.full_name}
-                                    </option>
-                                  </>
-                                );
-                              })}
-                          </select> */}
                           <label>You are</label>
                           <div className="shipRefer1">
                             <input
@@ -924,16 +963,6 @@ const Addfright = () => {
                         </div>
                       </div>
                       <div className="row">
-                        {/* <div className="col-6">
-                        <label>Type</label>
-                        <select name="fcl_lcl" onChange={handlechange}>
-                          <option value="">Select...</option>
-                          <option value="FCL">FCL</option>
-                          <option value="LCL">LCL</option>
-                        </select>
-                        <p className="text-danger mb-0">{error.fcl_lcl}</p>
-                      </div> */}
-
                         <div className="col-6">
                           <label>Client Reference</label>
                           <input
@@ -1323,7 +1352,7 @@ const Addfright = () => {
                           />
                         </div>
                       </div>
-  <div className="row">
+  {/* <div className="row">
                         <div className="col-6 mt-3">
                           <label>Select Document </label>
                           <select name="documentName" onChange={handlechange}>
@@ -1339,7 +1368,8 @@ const Addfright = () => {
                             <option value="AD_Quotations">Attach Quote</option>
                           </select>
                         </div>
-                        <div className="col-6 mt-3">
+                        </div> */}
+                        {/* <div className="col-6 mt-3">
                           <label>Upload Document</label>
                           <input
                             type="file"
@@ -1351,7 +1381,7 @@ const Addfright = () => {
                           />
                         </div>
                       </div> 
-
+ */}
 
 
 
@@ -1427,6 +1457,59 @@ const Addfright = () => {
                           />
                         </div>
                       </div> */}
+                       <div className="row mb-3 mt-4">
+                  <div className="col-9 mt-3">
+                    <h4 className="freight_hd">Document Section</h4>
+                    <span class="line"></span>
+                  </div>
+                  <div className="col-3">
+<Button variant="primary" onClick={handleShow}>
+          Upload Documents
+        </Button>
+                  </div>
+                </div>
+                 <Modal show={show} onHide={handleClose} size="lg" centered>
+        <Modal.Header closeButton>
+          <Modal.Title>Upload Documents</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          {/* Dropdown for selecting document type */}
+          <Form.Select onChange={handleSelect} defaultValue="">
+            <option value="" disabled>
+              Select Document Type
+            </option>
+           {docOptions.map((option) => (
+  <option key={option.id} value={option.id}>
+    {option.label}
+  </option>
+))}
+          </Form.Select>
+
+          {/* Render file inputs dynamically */}
+          <div className="mt-3">
+            {selectedDocs.map((doc, index) => (
+              <div key={index} className="mb-3">
+                <label className="fw-bold">{doc.name}</label>
+                <input
+                  type="file"
+                  className="form-control"
+                  multiple
+                  accept="image/*,application/pdf"
+                  onChange={(e) => handleFileChangefil(e, doc.name)}
+                />
+              </div>
+            ))}
+          </div>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleClose}>
+            Cancel
+          </Button>
+          <Button variant="success" onClick={handleSave}>
+            Save Documents
+          </Button>
+        </Modal.Footer>
+      </Modal>
                       <div className="row">
                         <div className="col-12">
                           <label>Comment</label>

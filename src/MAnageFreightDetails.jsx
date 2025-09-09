@@ -13,7 +13,26 @@ export default function MAnageFreightDetails() {
   const [documents, setDocuments] = useState({});
   const [packing, setPacking] = useState([]);
   const [licenses, setLicenses] = useState([]);
+  const [data, setData] = useState({
+    documentName: "",
+    licenses: "",
+    other_documents: "",
+    packing_list: "",
+    supplier_invoice: "",
+  });
+   const [formFiles, setFormFiles] = useState({
+      supplier_invoice: [],
+      other_documents: [],
+      licenses: [],
+      packing_list: [],
+    });
+
+     const handlechange = (e) => {
+    const { name, value } = e.target;
+    setData({ ...data, [name]: value });
+  };
   const info = infolocation?.state?.data[0];
+  const [open, setOpen] = useState(false);
   console.log(infolocation?.state?.data[0]);
   const data1 = new Date(info?.date).toLocaleDateString("en-GB");
   const handleclick = () => {
@@ -52,12 +71,26 @@ export default function MAnageFreightDetails() {
         console.log(error.response.data);
       });
   };
+    const handleFileChange = (e, fieldName) => {
+    const files = Array.from(e.target.files);
+    setFormFiles((prev) => ({
+      ...prev,
+      [fieldName]: files,
+    }));
+  };
+
+//      Object.values(formFiles).forEach((files) => {
+//   files.forEach((file) => {
+//     formdata.append("document", file); // static key
+//   });
+// });
   return (
     <div className="wpWrapper">
       <div className="container-fluid">
         <div className="formDetails">
           <div className="row">
             <div className="col-lg-12 px-0">
+              <div className="d-flex justify-content-between mb-3">
               <div className="d-flex">
                 <div style={{ cursor: "pointer" }}>
                   <ArrowBackIcon onClick={handleclick} />
@@ -66,8 +99,45 @@ export default function MAnageFreightDetails() {
                   <h4 className="det_hd ms-3">Admin Freight Details</h4>
                 </div>
               </div>
+              <div className="btnAddFre">
+                        <button  className="blueBtn" onClick={() => setOpen(true)}>Submit</button>
+                      </div>
+              </div>
             </div>
           </div>
+        {open && (
+  <div className="popup-overlay">
+    <div className="popup">
+      <h3>Popup Content</h3>
+                  <div className="col-6 mt-3">
+                          <label>Select Document </label>
+                          <select name="documentName" onChange={handlechange}>
+                            <option value="">Select...</option>
+                            <option value="Customs Documents">Customs docs</option>
+                            <option value="Supporting Documents">Supporting docs</option>
+                            <option value="Invoice, Packing List">Invoice / Packing L</option>
+                            <option value="Product Literature">Product Literature</option>
+                            <option value="Letters of authority">LOA</option>
+                            <option value="Waybills">Freight Docs</option>
+                            <option value="Waybills">Shipping instruction</option>
+                            <option value="Supplier Invoices">Freight Invoices </option>
+                            <option value="AD_Quotations">Attach Quote</option>
+                          </select>
+                        </div> 
+
+                          <div className="col-6 mt-3">
+                          <label>licenses</label>
+                          <input
+                            type="file"
+                            multiple
+                            className="w-100 mb-3 rounded"
+                            onChange={(e) => handleFileChange(e, "licenses")}
+                          />
+                        </div>
+      <button onClick={() => setOpen(false)}>Close</button>
+    </div>
+  </div>
+)}
           <div className="row mt-4">
             <div className="col-md-4 pe-4">
               <div className="card desti_card">

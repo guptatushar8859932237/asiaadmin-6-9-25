@@ -1375,9 +1375,14 @@ import {
   IconButton,
   Grid,
   TextField,
+  InputLabel,
+  FormControl,
+  Select,
+  MenuItem,
 } from "@mui/material";
 import PictureAsPdfIcon from "@mui/icons-material/PictureAsPdf";
 import CloseIcon from "@mui/icons-material/Close";
+
 const pageSize = 10;
 const style1 = {
   position: "absolute",
@@ -1421,6 +1426,52 @@ export default function WarehouseOrder() {
     freightType: "",
     freightSpeed: "",
   });
+
+   const [show1, setShow1] = useState(false);
+        const [selectedDocs, setSelectedDocs] = useState([]);
+      
+       const docOptions = [
+        { id: "Warehouse Entry Docs", label: "Shipper Docs" },
+        { id: "Warehouse Entry Docs", label: "Warehouse Docs" },
+        { id: "Invoice, Packing List", label: "Invoice / Pkl" },
+        { id: "Product Literature", label: "Product literature" },
+        { id: "Letters of Authority", label: "LOA" },
+      ];
+        const handleShow = () => setShow1(true);
+        const handleClose = () => setShow1(false);
+      
+        // Handle dropdown change
+        const handleSelect = (e) => {
+          const selected = e.target.value;
+          if (selected && !selectedDocs.find((doc) => doc.name === selected)) {
+            setSelectedDocs([...selectedDocs, { name: selected, files: [] }]);
+          }
+        };
+      
+        // Handle file upload for each document type
+        const handleFileChangefil = (e, docName) => {
+          const files = Array.from(e.target.files);
+          setSelectedDocs((prev) =>
+            prev.map((doc) =>
+              doc.name === docName ? { ...doc, files } : doc
+            )
+          );
+        };
+      
+        // For saving data (you can send to API)
+      const handleSave = () => {
+        console.log("Uploaded Documents:", selectedDocs);
+      
+        // To see filenames instead of [object Object]
+        selectedDocs.forEach(doc => {
+          console.log("Doc Type:", doc);
+          doc.files.forEach(file => {
+            console.log("File:", file.name, "| Size:", file.size, "bytes");
+          });
+        });
+      
+        handleClose();
+      };
   const [selectedData, setSelectedData] = useState(null);
   const navigate = useNavigate();
   const handleOpenModal = () => setIsModalOpen(true);
@@ -1667,11 +1718,15 @@ const handleSubmit = () => {
   formdata1.append("packages", JSON.stringify(selectedData.packages));
 
   // Append files (with static key "document")
-  Object.values(formFiles).forEach((files) => {
-    files.forEach((file) => {
-      formdata1.append("document", file);
-    });
+    selectedDocs.forEach(doc => {
+  console.log("Doc Type:", doc.name);
+
+  doc.files.forEach(file => {
+    formdata1.append(doc.name, file); // 👈 each file append
+    console.log("File:", file.name, "| Size:", file.size, "bytes");
   });
+});
+
 
   // Optional: Debug log of FormData contents
   for (let [key, value] of formdata1.entries()) {
@@ -1682,6 +1737,7 @@ const handleSubmit = () => {
   axios
     .post(`${process.env.REACT_APP_BASE_URL}editWarehouseDetails`, formdata1)
     .then((response) => {
+      setSelectedDocs([])
       toast.success("Warehouse order updated successfully");
       getData();
       handleCloseModal();
@@ -1813,11 +1869,14 @@ const handpechangepro = () => {
   formdata.append("documentName", prodata.documentName);
 
   // Append files with static key "document"
-  Object.values(formFiles).forEach((files) => {
-    files.forEach((file) => {
-      formdata.append("document", file);
-    });
+    selectedDocs.forEach(doc => {
+  console.log("Doc Type:", doc.name);
+
+  doc.files.forEach(file => {
+    formdata.append(doc.name, file); // 👈 each file append
+    console.log("File:", file.name, "| Size:", file.size, "bytes");
   });
+});
   // Optional: log the formdata
   for (let [key, value] of formdata.entries()) {
     console.log(`${key}:`, value);
@@ -2565,18 +2624,94 @@ const handpechangepro = () => {
                                       onChange={handleInputChange}
                                     />
                                   </Grid>
-                                  <Grid item xs={12} sm={6}>
+                                  {/* <Grid item xs={12} sm={6}>
                           {/* <label>Select Document </label> */}
-                          <select name="documentName" className="w-100 py-3"  onChange={handleInputChange}>
+                          {/* <select name="documentName" className="w-100 py-3"  onChange={handleInputChange}>
                             <option value="">Select Document</option>
                             <option value="Warehouse Entry Docs">  Shipper Docs</option>
                             <option value="Warehouse Entry Docs">Warehouse Docs</option>
                             <option value="Invoice, Packing List">Invoice / Packing </option>
                             <option value="Product Literature">Product Literature</option>
                             <option value="Letters of Authority">LOA</option>
-                          </select>
-                                  </Grid>
-                                  <Grid item xs={12} sm={12}>
+                          </select> */}
+                            <div className="row mb-3 mt-4">
+                                                          <div className="col-9 mt-3">
+                                                            <h4 className="freight_hd">Document Section</h4>
+                                                            <span class="line"></span>
+                                                          </div>
+                                                          <div className="col-3">
+                                        <Button className="btn  btn-primary" onClick={handleShow}>
+                                                  Upload Documents
+                                                </Button>
+                                                               
+                                                               {
+                                                                show1 ? <Modal
+                                                open={show1}
+                                                onClose={handleClose}
+                                                slotProps={{
+                                                  backdrop: {
+                                                    sx: { backgroundColor: "rgba(0,0,0,0.2)" }, // lighter background
+                                                  },
+                                                }}
+                                              >
+                                                <Box
+                                                  sx={{
+                                                    p: 3,
+                                                    bgcolor: "background.paper",
+                                                    borderRadius: 2,
+                                                    width: 500,
+                                                    mx: "auto",
+                                                    mt: 10,
+                                                  }}
+                                                >
+                                                  <h2>Upload Documents</h2>
+                                        
+                                                  {/* Dropdown */}
+                                                  <FormControl fullWidth sx={{ mt: 2 }}>
+                                                    <InputLabel id="doc-select-label">Select Document Type</InputLabel>
+                                                    <Select
+                                                      labelId="doc-select-label"
+                                                      // value={selected}
+                                                      onChange={handleSelect}
+                                                    >
+                                                      {docOptions.map((option) => (
+                                                        <MenuItem key={option.id} value={option.id}>
+                                                          {option.label}
+                                                        </MenuItem>
+                                                      ))}
+                                                    </Select>
+                                                  </FormControl>
+                                        
+                                                  {/* Dynamic file inputs */}
+                                                  <div className="mt-3">
+                                                    {selectedDocs.map((doc, index) => (
+                                                      <div key={index} className="mb-3">
+                                                        <label className="fw-bold">{doc.name}</label>
+                                                        <input
+                                                          type="file"
+                                                          className="form-control"
+                                                          multiple
+                                                          accept="image/*,application/pdf"
+                                                          onChange={(e) => handleFileChangefil(e, doc.name)}
+                                                        />
+                                                      </div>
+                                                    ))}
+                                                  </div>
+                                        
+                                                  {/* Footer buttons */}
+                                                  <Box sx={{ display: "flex", justifyContent: "flex-end", gap: 2, mt: 3 }}>
+                                                    <Button onClick={handleClose}>Cancel</Button>
+                                                    <Button variant="contained" color="success" onClick={handleSave}>
+                                                      Save Documents
+                                                    </Button>
+                                                  </Box>
+                                                </Box>
+                                              </Modal> : ""
+                                                               }   
+                                                          </div>
+                                                        </div>
+                                  {/* </Grid> */}
+                                  {/* <Grid item xs={12} sm={12}>
                                     
                           <label>Upload Document</label>
                           <input
@@ -2587,7 +2722,7 @@ const handpechangepro = () => {
                               handleFileChange123(e, "other_documents")
                             }
                           />
-                        </Grid>
+                        </Grid> */} 
                                 </Grid>
                                 <Box
                                   mt={3}
@@ -2854,7 +2989,83 @@ const handpechangepro = () => {
                                 />
                               </div>
                             </div>
-                            <div className="row mb-3">
+                              <div className="row mb-3 mt-4">
+                                                            <div className="col-9 mt-3">
+                                                              <h4 className="freight_hd">Document Section</h4>
+                                                              <span class="line"></span>
+                                                            </div>
+                                                            <div className="col-3">
+                                          <Button className="btn  btn-primary" onClick={handleShow}>
+                                                    Upload Documents
+                                                  </Button>
+                                                                 
+                                                                 {
+                                                                  show1 ? <Modal
+                                                  open={show1}
+                                                  onClose={handleClose}
+                                                  slotProps={{
+                                                    backdrop: {
+                                                      sx: { backgroundColor: "rgba(0,0,0,0.2)" }, // lighter background
+                                                    },
+                                                  }}
+                                                >
+                                                  <Box
+                                                    sx={{
+                                                      p: 3,
+                                                      bgcolor: "background.paper",
+                                                      borderRadius: 2,
+                                                      width: 500,
+                                                      mx: "auto",
+                                                      mt: 10,
+                                                    }}
+                                                  >
+                                                    <h2>Upload Documents</h2>
+                                          
+                                                    {/* Dropdown */}
+                                                    <FormControl fullWidth sx={{ mt: 2 }}>
+                                                      <InputLabel id="doc-select-label">Select Document Type</InputLabel>
+                                                      <Select
+                                                        labelId="doc-select-label"
+                                                        // value={selected}
+                                                        onChange={handleSelect}
+                                                      >
+                                                        {docOptions.map((option) => (
+                                                          <MenuItem key={option.id} value={option.id}>
+                                                            {option.label}
+                                                          </MenuItem>
+                                                        ))}
+                                                      </Select>
+                                                    </FormControl>
+                                          
+                                                    {/* Dynamic file inputs */}
+                                                    <div className="mt-3">
+                                                      {selectedDocs.map((doc, index) => (
+                                                        <div key={index} className="mb-3">
+                                                          <label className="fw-bold">{doc.name}</label>
+                                                          <input
+                                                            type="file"
+                                                            className="form-control"
+                                                            multiple
+                                                            accept="image/*,application/pdf"
+                                                            onChange={(e) => handleFileChangefil(e, doc.name)}
+                                                          />
+                                                        </div>
+                                                      ))}
+                                                    </div>
+                                          
+                                                    {/* Footer buttons */}
+                                                    <Box sx={{ display: "flex", justifyContent: "flex-end", gap: 2, mt: 3 }}>
+                                                      <Button onClick={handleClose}>Cancel</Button>
+                                                      <Button variant="contained" color="success" onClick={handleSave}>
+                                                        Save Documents
+                                                      </Button>
+                                                    </Box>
+                                                  </Box>
+                                                </Modal> : ""
+                                                                 }   
+                                                            </div>
+                                                          </div>
+                            {/* <div className="row mb-3">
                               <div className="col-6 mt-3">
                           <select name="documentName" className="w-100 py-3"  onChange={handlechangepro}>
                             <option value="">Select Document</option>
@@ -2876,7 +3087,7 @@ const handpechangepro = () => {
                             }
                           />
                         </div>
-                            </div>
+                            </div> */}
                             <div className="row mb-3"></div>
 
                             <div class="modal-footer"></div>

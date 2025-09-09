@@ -8,7 +8,7 @@ import VisibilityIcon from "@mui/icons-material/Visibility";
 import { AiFillDelete } from "react-icons/ai";
 import { MdDriveFileMoveOutline } from "react-icons/md";
 import CloseIcon from "@mui/icons-material/Close";
-import { Modal, Box, Button } from "@mui/material";
+import { Modal, Box, Button, FormControl, InputLabel, Select, MenuItem } from "@mui/material";
 import { Calculate, CopyAll, Download } from "@mui/icons-material";
 const pageSize = 10;
 const CustomClearaceOrder = () => {
@@ -34,7 +34,6 @@ const CustomClearaceOrder = () => {
   const [staffdata, setStaffdata] = useState([]);
   const [country, setCountry] = useState([]);
   const [client, setClient] = useState([]);
-  const [updatedata, setUpdatedata] = useState([]);
   const [lcientlist, setLcientlist] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [showModal, setShowModal] = useState(false);
@@ -47,6 +46,56 @@ const CustomClearaceOrder = () => {
   const [loader, setLoader] = useState(true);
   const [selectedImage, setSelectedImage] = useState(null);
   const [filedata1, setFiledata1] = useState(null);
+    const [show1, setShow1] = useState(false);
+    const [selectedDocs, setSelectedDocs] = useState([]);
+  
+   const docOptions = [
+    { id: "Customs Documents", label: "Customs docs" },
+    { id: "Supporting Documents", label: "Supporting docs" },
+    { id: "Invoice, Packing List", label: "Invoice / Packing " },
+    { id: "Product Literature", label: "Product Literature" },
+    { id: "Letters of authority", label: "Letters of authority" },
+    { id: "Waybills", label: "Freight Docs" },
+    { id: "Waybills", label: "Shipping instruction" },
+    { id: "AD_Quotations", label: "Attach Quote" },
+    { id: "Supplier Invoices", label: "Supplier Invoices" }
+  ];
+    const handleShow = () => setShow1(true);
+    const handleClose = () => setShow1(false);
+  
+    // Handle dropdown change
+    const handleSelect = (e) => {
+      const selected = e.target.value;
+      if (selected && !selectedDocs.find((doc) => doc.name === selected)) {
+        setSelectedDocs([...selectedDocs, { name: selected, files: [] }]);
+      }
+    };
+  
+    // Handle file upload for each document type
+    const handleFileChangefil = (e, docName) => {
+      const files = Array.from(e.target.files);
+      setSelectedDocs((prev) =>
+        prev.map((doc) =>
+          doc.name === docName ? { ...doc, files } : doc
+        )
+      );
+    };
+  
+    // For saving data (you can send to API)
+  const handleSave = () => {
+    console.log("Uploaded Documents:", selectedDocs);
+  
+    // To see filenames instead of [object Object]
+    selectedDocs.forEach(doc => {
+      console.log("Doc Type:", doc);
+      doc.files.forEach(file => {
+        console.log("File:", file.name, "| Size:", file.size, "bytes");
+      });
+    });
+  
+    handleClose();
+  };
+  
   const navigate = useNavigate();
   const handlechange = (e) => {
     const { name, value } = e.target;
@@ -86,11 +135,14 @@ const CustomClearaceOrder = () => {
     formdata.append("documentName", data?.documentName);
     formdata.append("sales_representative", data?.sales_representative);
     console.log(formdata);
-    Object.entries(formFiles).forEach(([key, files]) => {
-      files.forEach((file) => {
-        formdata.append("document", file); // backend should use multer.array(fieldName)
-      });
-    });
+     selectedDocs.forEach(doc => {
+  console.log("Doc Type:", doc.name);
+
+  doc.files.forEach(file => {
+    formdata.append(doc.name, file); // 👈 each file append
+    console.log("File:", file.name, "| Size:", file.size, "bytes");
+  });
+});
     for (let [key, value] of formdata.entries()) {
       console.log(`${key}: ${value}`);
     }
@@ -142,11 +194,14 @@ const CustomClearaceOrder = () => {
         formdata.append("customer_ref", inputdata.customer_ref);
         formdata.append("sales_representative", inputdata.sales_representative);
         formdata.append("documentName", inputdata.documentName);
-        Object.entries(formFiles).forEach(([key, files]) => {
-          files.forEach((file) => {
-            formdata.append("document", file); // backend should use multer.array(fieldName)
-          });
-        });
+          selectedDocs.forEach(doc => {
+  console.log("Doc Type:", doc.name);
+
+  doc.files.forEach(file => {
+    formdata.append(doc.name, file); // 👈 each file append
+    console.log("File:", file.name, "| Size:", file.size, "bytes");
+  });
+});
         axios
           .post(`${process.env.REACT_APP_BASE_URL}update-clearing`, formdata)
           .then((response) => {
@@ -196,7 +251,6 @@ const CustomClearaceOrder = () => {
       customer_ref: selectuser?.customer_ref,
       destination: selectuser?.destination,
       comment_on_docs: selectuser?.comment_on_docs,
-      // document_name: selectuser?.document_name,
     });
     setIsUpdating(true);
     setShowModal(true);
@@ -221,8 +275,7 @@ const CustomClearaceOrder = () => {
   };
   const getdata = async () => {
     try {
-      setLoader(true); // Start loader before API call
-
+      setLoader(true);
       const permission = await axios.post(
         `${process.env.REACT_APP_BASE_URL}CheckPermission`,
         {
@@ -231,7 +284,6 @@ const CustomClearaceOrder = () => {
           user_type: usertype,
         }
       );
-
       if (permission.data.success) {
         try {
           const response = await axios.post(
@@ -240,7 +292,6 @@ const CustomClearaceOrder = () => {
               added_by: "1",
             }
           );
-
           setConstgetdata(response?.data?.data || []);
         } catch (error) {
           toast.error(error.response?.data?.message || "Something went wrong");
@@ -251,10 +302,9 @@ const CustomClearaceOrder = () => {
     } catch (error) {
       toast.error("Something went wrong");
     } finally {
-      setLoader(false); // Ensure loader stops in all cases
+      setLoader(false); 
     }
   };
-
   const handelmdal = () => {
     setOpenmodal(false);
   };
@@ -1011,7 +1061,7 @@ const CustomClearaceOrder = () => {
                   )}
                 </div>
               </div>
-              <div className=" ">
+              <div className="row ">
                 <div className="col-md-6">
                   <div>
                     <label>Are You</label>
@@ -1272,7 +1322,83 @@ const CustomClearaceOrder = () => {
                     ></input>
                   </div>
                 </div>
-              </div>
+              </div> 
+               <div className="row mb-3 mt-4">
+                                <div className="col-9 mt-3">
+                                  <h4 className="freight_hd">Document Section</h4>
+                                  <span class="line"></span>
+                                </div>
+                                <div className="col-3">
+              <Button className="btn  btn-primary" onClick={handleShow}>
+                        Upload Documents
+                      </Button>
+                                     
+                                     {
+                                      show1 ? <Modal
+                      open={show1}
+                      onClose={handleClose}
+                      slotProps={{
+                        backdrop: {
+                          sx: { backgroundColor: "rgba(0,0,0,0.2)" }, // lighter background
+                        },
+                      }}
+                    >
+                      <Box
+                        sx={{
+                          p: 3,
+                          bgcolor: "background.paper",
+                          borderRadius: 2,
+                          width: 500,
+                          mx: "auto",
+                          mt: 10,
+                        }}
+                      >
+                        <h2>Upload Documents</h2>
+              
+                        {/* Dropdown */}
+                        <FormControl fullWidth sx={{ mt: 2 }}>
+                          <InputLabel id="doc-select-label">Select Document Type</InputLabel>
+                          <Select
+                            labelId="doc-select-label"
+                            // value={selected}
+                            onChange={handleSelect}
+                          >
+                            {docOptions.map((option) => (
+                              <MenuItem key={option.id} value={option.id}>
+                                {option.label}
+                              </MenuItem>
+                            ))}
+                          </Select>
+                        </FormControl>
+              
+                        {/* Dynamic file inputs */}
+                        <div className="mt-3">
+                          {selectedDocs.map((doc, index) => (
+                            <div key={index} className="mb-3">
+                              <label className="fw-bold">{doc.name}</label>
+                              <input
+                                type="file"
+                                className="form-control"
+                                multiple
+                                accept="image/*,application/pdf"
+                                onChange={(e) => handleFileChangefil(e, doc.name)}
+                              />
+                            </div>
+                          ))}
+                        </div>
+              
+                        {/* Footer buttons */}
+                        <Box sx={{ display: "flex", justifyContent: "flex-end", gap: 2, mt: 3 }}>
+                          <Button onClick={handleClose}>Cancel</Button>
+                          <Button variant="contained" color="success" onClick={handleSave}>
+                            Save Documents
+                          </Button>
+                        </Box>
+                      </Box>
+                    </Modal> : ""
+                                     }   
+                                </div>
+                              </div>
               <div className="row">
                 <div className="col-md-12">
                   <h6 className="md_heading text-start">Cargo Details</h6>
@@ -1413,21 +1539,30 @@ const CustomClearaceOrder = () => {
                     ></input>
                   </div>
                 </div>
-                <div className="col-6 mt-3">
-                          <label>Select Document </label>
-                          <select name="documentName"  onChange={isUpdating ? handleInputChange : handlechange}>
-                            <option value="">Select...</option>
-                            <option value="Customs Documents">Customs docs</option>
-                            <option value="Supporting Documents">Supporting docs</option>
-                            <option value="Invoice, Packing List">Invoice / Packing L</option>
-                            <option value="Product Literature">Product Literature</option>
-                            <option value="Letters of authority">LOA</option>
-                            <option value="Waybills">Freight Docs</option>
-                            <option value="Waybills">Shipping instruction</option>
-                            <option value="Supplier Invoices">Freight Invoices </option>
-                            <option value="AD_Quotations">Attach Quote</option>
-                          </select>
-                        </div>
+                {/* <div className="col-6">
+                  <label>Select Document </label>
+                  <select
+                    name="documentName"
+                    onChange={isUpdating ? handleInputChange : handlechange}
+                  >
+                    <option value="">Select...</option>
+                    <option value="Customs Documents">Customs docs</option>
+                    <option value="Supporting Documents">
+                      Supporting docs
+                    </option>
+                    <option value="Invoice, Packing List">
+                      Invoice / Packing L
+                    </option>
+                    <option value="Product Literature">
+                      Product Literature
+                    </option>
+                    <option value="Letters of authority">LOA</option>
+                    <option value="Waybills">Freight Docs</option>
+                    <option value="Waybills">Shipping instruction</option>
+                    <option value="Supplier Invoices">Freight Invoices </option>
+                    <option value="AD_Quotations">Attach Quote</option>
+                  </select>
+                </div> */}
                 {/* <div className="col-md-6">
                   <div className="mb-3">
                     <label htmlFor="clearing_agent" className="form-label">
@@ -1454,9 +1589,9 @@ const CustomClearaceOrder = () => {
                   </div>
                 </div> */}
               </div>
-         
-              <div className="row">
-                <div className="col-12 mt-3">
+
+              {/* <div className="row">
+                <div className="col-12">
                   <label>licenses</label>
                   <input
                     type="file"
@@ -1465,7 +1600,7 @@ const CustomClearaceOrder = () => {
                     onChange={(e) => handleFileChange(e, "licenses")}
                   />
                 </div>
-              </div>
+              </div> */}
             </div>
             <div className="modal-footer">
               <button

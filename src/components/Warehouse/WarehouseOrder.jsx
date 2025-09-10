@@ -1439,16 +1439,12 @@ export default function WarehouseOrder() {
       ];
         const handleShow = () => setShow1(true);
         const handleClose = () => setShow1(false);
-      
-        // Handle dropdown change
         const handleSelect = (e) => {
           const selected = e.target.value;
           if (selected && !selectedDocs.find((doc) => doc.name === selected)) {
             setSelectedDocs([...selectedDocs, { name: selected, files: [] }]);
           }
         };
-      
-        // Handle file upload for each document type
         const handleFileChangefil = (e, docName) => {
           const files = Array.from(e.target.files);
           setSelectedDocs((prev) =>
@@ -1457,19 +1453,14 @@ export default function WarehouseOrder() {
             )
           );
         };
-      
-        // For saving data (you can send to API)
       const handleSave = () => {
         console.log("Uploaded Documents:", selectedDocs);
-      
-        // To see filenames instead of [object Object]
         selectedDocs.forEach(doc => {
           console.log("Doc Type:", doc);
           doc.files.forEach(file => {
             console.log("File:", file.name, "| Size:", file.size, "bytes");
           });
         });
-      
         handleClose();
       };
   const [selectedData, setSelectedData] = useState(null);

@@ -16,7 +16,7 @@ import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import CalculateIcon from "@mui/icons-material/Calculate";
 import ReceiptIcon from "@mui/icons-material/Receipt";
 import TollIcon from "@mui/icons-material/Toll";
-import { Modal, Box, Button } from "@mui/material";
+import { Modal, Box, Button, FormControl, InputLabel, Select, MenuItem } from "@mui/material";
 import { FaEdit } from "react-icons/fa";
 import CloseIcon from "@mui/icons-material/Close";
 const pageSize = 10;
@@ -69,7 +69,55 @@ export default function CustomebyUserap() {
     setAge(event.target.value);
   };
   const navigate = useNavigate();
-
+ const [show1, setShow1] = useState(false);
+      const [selectedDocs, setSelectedDocs] = useState([]);
+    
+     const docOptions = [
+      { id: "Customs Documents", label: "Customs docs" },
+      { id: "Supporting Documents", label: "Supporting docs" },
+      { id: "Invoice, Packing List", label: "Invoice / Packing " },
+      { id: "Product Literature", label: "Product Literature" },
+      { id: "Letters of authority", label: "Letters of authority" },
+      { id: "Waybills", label: "Freight Docs" },
+      { id: "Waybills", label: "Shipping instruction" },
+      { id: "AD_Quotations", label: "Attach Quote" },
+      { id: "Supplier Invoices", label: "Supplier Invoices" }
+    ];
+      const handleShow = () => setShow1(true);
+      const handleClose = () => setShow1(false);
+    
+      // Handle dropdown change
+      const handleSelect = (e) => {
+        const selected = e.target.value;
+        if (selected && !selectedDocs.find((doc) => doc.name === selected)) {
+          setSelectedDocs([...selectedDocs, { name: selected, files: [] }]);
+        }
+      };
+    
+      // Handle file upload for each document type
+      const handleFileChangefil = (e, docName) => {
+        const files = Array.from(e.target.files);
+        setSelectedDocs((prev) =>
+          prev.map((doc) =>
+            doc.name === docName ? { ...doc, files } : doc
+          )
+        );
+      };
+    
+      // For saving data (you can send to API)
+    const handleSave = () => {
+      console.log("Uploaded Documents:", selectedDocs);
+    
+      // To see filenames instead of [object Object]
+      selectedDocs.forEach(doc => {
+        console.log("Doc Type:", doc);
+        doc.files.forEach(file => {
+          console.log("File:", file.name, "| Size:", file.size, "bytes");
+        });
+      });
+    
+      handleClose();
+    };
   //////////////////////////////////////////post data//////////////////////////////////////////////
   const handlechange = (e) => {
     const { name, value } = e.target;
@@ -277,11 +325,14 @@ export default function CustomebyUserap() {
     formdata.append("comment_on_docs", inputdata.comment_on_docs);
     formdata.append("documentName", inputdata.documentName);
 
-     if (formData2) {
-      for (let i = 0; i < formData2.licenses.length; i++) {
-        formdata.append("document", formData2.licenses[i]);
-      }
-    }
+        selectedDocs.forEach(doc => {
+  console.log("Doc Type:", doc.name);
+
+  doc.files.forEach(file => {
+    formdata.append(doc.name, file); // 👈 each file append
+    console.log("File:", file.name, "| Size:", file.size, "bytes");
+  });
+});
     console.log(formdata);
     axios
       .post(`${process.env.REACT_APP_BASE_URL}update-clearing`, formdata)
@@ -757,6 +808,84 @@ export default function CustomebyUserap() {
             </div>
             <div className="row">
               <div className="col-md-12">
+
+
+                                                               <div className="row mb-3 mt-4">
+                                                                                              <div className="col-9 mt-3">
+                                                                                                <h4 className="freight_hd">Document Section</h4>
+                                                                                                <span class="line"></span>
+                                                                                              </div>
+                                                                                              <div className="col-3">
+                                                                            <Button className="btn  btn-primary" onClick={handleShow}>
+                                                                                      Upload Documents
+                                                                                    </Button>
+                                                                                                   
+                                                                                                   {
+                                                                                                    show1 ? <Modal
+                                                                                    open={show1}
+                                                                                    onClose={handleClose}
+                                                                                    slotProps={{
+                                                                                      backdrop: {
+                                                                                        sx: { backgroundColor: "rgba(0,0,0,0.2)" }, // lighter background
+                                                                                      },
+                                                                                    }}
+                                                                                  >
+                                                                                    <Box
+                                                                                      sx={{
+                                                                                        p: 3,
+                                                                                        bgcolor: "background.paper",
+                                                                                        borderRadius: 2,
+                                                                                        width: 500,
+                                                                                        mx: "auto",
+                                                                                        mt: 10,
+                                                                                      }}
+                                                                                    >
+                                                                                      <h2>Upload Documents</h2>
+                                                                            
+                                                                                      {/* Dropdown */}
+                                                                                      <FormControl fullWidth sx={{ mt: 2 }}>
+                                                                                        <InputLabel id="doc-select-label">Select Document Type</InputLabel>
+                                                                                        <Select
+                                                                                          labelId="doc-select-label"
+                                                                                          // value={selected}
+                                                                                          onChange={handleSelect}
+                                                                                        >
+                                                                                          {docOptions.map((option) => (
+                                                                                            <MenuItem key={option.id} value={option.id}>
+                                                                                              {option.label}
+                                                                                            </MenuItem>
+                                                                                          ))}
+                                                                                        </Select>
+                                                                                      </FormControl>
+                                                                            
+                                                                                      {/* Dynamic file inputs */}
+                                                                                      <div className="mt-3">
+                                                                                        {selectedDocs.map((doc, index) => (
+                                                                                          <div key={index} className="mb-3">
+                                                                                            <label className="fw-bold">{doc.name}</label>
+                                                                                            <input
+                                                                                              type="file"
+                                                                                              className="form-control"
+                                                                                              multiple
+                                                                                              accept="image/*,application/pdf"
+                                                                                              onChange={(e) => handleFileChangefil(e, doc.name)}
+                                                                                            />
+                                                                                          </div>
+                                                                                        ))}
+                                                                                      </div>
+                                                                            
+                                                                                      {/* Footer buttons */}
+                                                                                      <Box sx={{ display: "flex", justifyContent: "flex-end", gap: 2, mt: 3 }}>
+                                                                                        <Button onClick={handleClose}>Cancel</Button>
+                                                                                        <Button variant="contained" color="success" onClick={handleSave}>
+                                                                                          Save Documents
+                                                                                        </Button>
+                                                                                      </Box>
+                                                                                    </Box>
+                                                                                  </Modal> : ""
+                                                                                                   }   
+                                                                                              </div>
+                                                                                            </div>
                 <h6 className="md_heading text-start">Cargo Details</h6>
               </div>
             </div>
@@ -874,7 +1003,7 @@ export default function CustomebyUserap() {
                   ></input>
                 </div>
               </div>
-              <div className="col-md-6">
+              {/* <div className="col-md-6">
                 <div className="mb-3">
                   <label htmlFor="clearing_agent" className="form-label">
                    Select Document
@@ -892,10 +1021,10 @@ export default function CustomebyUserap() {
                             <option value="AD_Quotations">Attach Quote</option>
                           </select>
                 </div>
-              </div>
+              </div> */}
             </div>
            
-            <div className="row">             
+            {/* <div className="row">             
                 <div className="col-12 mt-3">
                   <h5>licenses</h5>
                   <input
@@ -906,7 +1035,7 @@ export default function CustomebyUserap() {
                     multiple
                   />
               </div>
-            </div>
+            </div> */}
             <Button variant="contained" onClick={updatedata}>
               Update
             </Button>

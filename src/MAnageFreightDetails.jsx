@@ -99,9 +99,9 @@ export default function MAnageFreightDetails() {
                   <h4 className="det_hd ms-3">Admin Freight Details</h4>
                 </div>
               </div>
-              <div className="btnAddFre">
+              {/* <div className="btnAddFre">
                         <button  className="blueBtn" onClick={() => setOpen(true)}>Submit</button>
-                      </div>
+                      </div> */}
               </div>
             </div>
           </div>

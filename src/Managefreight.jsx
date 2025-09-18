@@ -340,6 +340,8 @@ const handleSave = () => {
       product_desc: getUSer.product_desc,
       client_ref_name: getUSer.client_ref_name,
       document: getUSer.add_attachment_file,
+      shipper_name: getUSer.shipper_name,
+      supplier_address: getUSer.supplier_address,
       sales_representative: getUSer.sales_id,
     });
   };
@@ -399,6 +401,8 @@ const handleSave = () => {
     formdata.append("shipment_origin", inputdata.shipment_origin);
     formdata.append("shipment_des", inputdata.shipment_des);
     formdata.append("product_desc", inputdata.product_desc);
+    formdata.append("shipper_name", inputdata.shipper_name);
+    formdata.append("supplier_address", inputdata.supplier_address);
     formdata.append("client_ref_name", inputdata.client_ref_name);
     formdata.append("cargo_pickup", inputdata.cargo_pickup);
     formdata.append("sales_representative", inputdata.sales_representative);
@@ -1612,6 +1616,32 @@ const handleSave = () => {
                                                         FOB{" "}
                                                       </option>
                                                     </select>
+                                                  </div>
+                                                  <div className="col-lg-6 mb-3">
+                                                    <label>
+                                                     Shipper Name
+                                                    </label>
+                                                    <input
+                                                      type="text"
+                                                      name="shipper_name"
+                                                      onChange={handleupdateapi}
+                                                      value={
+                                                        inputdata.shipper_name
+                                                      }
+                                                      placeholder="Shipper Name"
+                                                    />
+                                                  </div>
+                                                  <div className="col-lg-6">
+                                                    <label>  Supplier Address</label>
+                                                  <input
+                                                      type="text"
+                                                      name="supplier_address"
+                                                      onChange={handleupdateapi}
+                                                      value={
+                                                        inputdata.supplier_address
+                                                      }
+                                                      placeholder="Shipper Name"
+                                                    />
                                                   </div>
                                                   <div className="col-lg-6 mb-3">
                                                     <label>

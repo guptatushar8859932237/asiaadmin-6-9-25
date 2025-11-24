@@ -210,11 +210,11 @@ const userControlRoutes = {
       name: "Warehouse",
       icon: <OtherHousesOutlinedIcon />,
     },
-    // {
-    //   path: "/Admin/manage-supplier",
-    //   name: "Manage Suppliers",
-    //   icon: <LocalShippingOutlinedIcon />,
-    // },
+    {
+      path: "/Admin/manage-supplier",
+      name: "Manage Suppliers",
+      icon: <LocalShippingOutlinedIcon />,
+    },
    
     // {
     //   path: "/Admin/Notificaionstorage",

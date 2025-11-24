@@ -13,7 +13,6 @@ import { MdDriveFileMoveOutline } from "react-icons/md";
 import { Modal, Box, Button,  InputLabel, Select, MenuItem } from "@mui/material";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import DoNotDisturbIcon from "@mui/icons-material/DoNotDisturb";
-// import {  Form } from "react-bootstrap";
 import Swal from "sweetalert2";
 import SupportAgentSharpIcon from "@mui/icons-material/SupportAgentSharp";
 import CloseIcon from "@mui/icons-material/Close";
@@ -144,8 +143,6 @@ const handleSave = () => {
 
   handleClose();
 };
-
-
   useEffect(() => {
     getStaff();
     getstaff();
@@ -190,7 +187,7 @@ const handleSave = () => {
         staff_id: userid,
         route_url: "/freight-list",
         user_type: usertype,
-       
+        
       };
       const permission = await axios.post(
         `${process.env.REACT_APP_BASE_URL}CheckPermission`,

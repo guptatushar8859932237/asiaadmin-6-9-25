@@ -6,6 +6,7 @@ import { MdDownloadForOffline } from "react-icons/md";
 import { usePDF } from "react-to-pdf";
 import logo from "../../Assests/logo.png";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import CloseIcon from "@mui/icons-material/Close";
 export default function ShippingEstimate() {
   const [error, setError] = useState({});
   const [update, setUpdate] = useState([0]);
@@ -17,6 +18,10 @@ export default function ShippingEstimate() {
   const [client, setClient] = useState([]);
   const [suppluierquot, setSuppluierquot] = useState([]);
   const [supplierdata, setSupplierdata] = useState([]);
+  const [dat, setDat] = useState([]);
+  const [openmodal, setOpenmodal] = useState(false);
+   const [selected, setSelected] = useState([]); // selected IDs
+  const [open, setOpen] = useState(false);
   const { toPDF, targetRef } = usePDF({ filename: "page.pdf" });
   const navigate = useNavigate();
   const getdata = location?.state?.data[0];
@@ -25,6 +30,10 @@ export default function ShippingEstimate() {
     const { name, value } = e.target;
     setUpdate({ ...update, [name]: value });
   };
+
+  const andlemodaloen =()=>{
+setOpenmodal(true)
+  }
   const handlechangecalc = (e) => {
     const { name, value } = e.target;
 
@@ -404,8 +413,132 @@ export default function ShippingEstimate() {
   const handleclicknav = () => {
     navigate("/Admin/managefreight");
   };
+  const closemodal  =()=>{
+    setOpenmodal(false)
+  }
+
+    const getdata1 = () => {
+      axios
+        .get(`${process.env.REACT_APP_BASE_URL}supplier-list`)
+        .then((response) => {
+          setDat(response.data.data);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    };
+    useEffect(() => {
+      getdata1();
+    }, []);
+
+    const handleSelect = (id) => {
+    if (selected.includes(id)) {
+      setSelected(selected.filter((item) => item !== id));
+    } else {
+      setSelected([...selected, id]);
+    }
+  };
+
+  const handleAddSupplier =async()=>{
+    if (selected.length === 0) {
+      toast.error("Please select at least one supplier.");
+      return;
+    }
+    const response = await axios.post(`${process.env.REACT_APP_BASE_URL}/freight/assign-Suppliers`,{freight_id:getdata.freight_id,supplier_ids:selected})
+    if(response.data.success){
+      toast.success(response.data.message);
+      setOpenmodal(false);
+    }
+      console.log("something went wrong")
+  }
+
   return (
     <>
+      {openmodal && (
+                <div className="custom-modal">
+                  <div className="custom-modal-content">
+                    <div className="custom-modal-header">
+                      <h5>Select Supplier</h5>
+                      <button className="btn-close" onClick={() => closemodal()}>
+                        <CloseIcon />
+                      </button>
+                    </div>
+                    <div className="custom-modal-body">
+                      <div style={{  margin: "20px" }}>
+      {/* Selected Box */}
+      <div
+        onClick={() => setOpen(!open)}
+        style={{
+          padding: "10px",
+          border: "1px solid black",
+          borderRadius: "5px",
+          cursor: "pointer",
+          background: "#fff",
+        }}
+      >
+        {selected.length > 0
+          ? `${selected.length} selected`
+          : "Select Users"}
+      </div>
+
+      {/* Dropdown */}
+      {open && (
+        <div
+          style={{
+            border: "1px solid #ccc",
+            borderRadius: "5px",
+            marginTop: "5px",
+            padding: "10px",
+            maxHeight: "200px",
+            overflowY: "auto",
+            background: "white",
+          }}
+        >
+          {dat.map((item) => (
+            <label
+              key={item.id}
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: "10px",
+                marginBottom: "8px",
+                cursor: "pointer",
+              }}
+            >
+              <input
+                type="checkbox"
+                checked={selected.includes(item.id)}
+                onChange={() => handleSelect(item.id)}
+              />
+              <div>
+                <strong>{item.name}</strong>
+                <div style={{ fontSize: "12px", color: "gray" }}>
+                  {item.email}
+                </div>
+              </div>
+            </label>
+          ))}
+        </div>
+      )}
+
+      <br />
+
+      {/* Selected IDs (for testing) */}
+      {/* <div>
+        <strong>Selected IDs:</strong> {JSON.stringify(selected)}
+      </div> */}
+    </div>
+                    </div>
+                    <div className="custom-modal-footer">
+                      <button className="btn btn-primary"
+                       onClick={handleAddSupplier}
+                       >
+                        Add Supplier
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              )}
       <div className="wpWrapper ">
         <div className="container-fluid">
           <div className=" ">
@@ -424,6 +557,7 @@ export default function ShippingEstimate() {
                         <h4 className="freight_hd mt-0 ms-3">Supplier Form</h4>
                       </div>
                     </div>
+                    <button onClick={andlemodaloen} className="btn btn-success">Assign Supplier</button>
                     <MdDownloadForOffline
                       onClick={() => toPDF()}
                       className="fs-2"
@@ -6468,7 +6602,6 @@ export default function ShippingEstimate() {
                                 }}
                               ></p>
                             </div>
-
                             <div
                               style={{
                                 border: "1px solid black",
@@ -6492,7 +6625,6 @@ export default function ShippingEstimate() {
                                   textAlign: "center",
                                   width: "100%",
                                   border: "0px",
-
                                   verticalAlign: "middle",
                                 }}
                                 value={overallCharge.toFixed(2)}

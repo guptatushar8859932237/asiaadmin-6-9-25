@@ -8,33 +8,36 @@ import { data } from "jquery";
 import axios from "axios";
 const BookingInstruction = () => {
   const navigate = useNavigate();
-  const [data,setData]=useState({})
+  const [data, setData] = useState({});
   const openInsForm = () => {
-    navigate("/Admin/booking_instruction_form",{state:{data:info}});
+    navigate("/Admin/booking_instruction_form", { state: { data: info } });
   };
   const loaction = useLocation();
   console.log(loaction?.state?.data);
   const info = loaction?.state?.data;
   const { toPDF, targetRef } = usePDF({ filename: "Booking Instruction.pdf" });
 
-  const getdata =async ()=>{
-try {
-  const orde = {
-    order_id:info.order_id
-  }
-  const response =await axios.post(`${process.env.REACT_APP_BASE_URL}GetBookingInstructionById`,orde)
-  console.log(response.data.data)
-if(response.data.success===true){
-  console.log(response.data.data)
-  setData(response.data.data)
-}
-} catch (error) {
-  console.log(error)
-}
-  }
-  useEffect(()=>{
-    getdata()
-  },[])
+  const getdata = async () => {
+    try {
+      const orde = {
+        order_id: info.order_id,
+      };
+      const response = await axios.post(
+        `${process.env.REACT_APP_BASE_URL}GetBookingInstructionById`,
+        orde
+      );
+      console.log(response.data.data);
+      if (response.data.success === true) {
+        console.log(response.data.data);
+        setData(response.data.data);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  useEffect(() => {
+    getdata();
+  }, []);
   return (
     <div className="wpWrapper">
       <div className="container-fluid">
@@ -97,10 +100,9 @@ if(response.data.success===true){
                                   {/* {info?.shipment_ref === "shipper"
                                     ? "Asia Direct"
                                     : info?.client_name} */}
-                                   {info.shipment_ref === "consignee"
-                              ? info.shipper_name
-                              : info.client_name}
-
+                                  {info.shipment_ref === "consignee"
+                                    ? info.shipper_name
+                                    : info.client_name}
                                 </td>
                               </tr>
                               <tr>
@@ -115,14 +117,20 @@ if(response.data.success===true){
                                 </th>
                                 <td style={{ borderBottom: "1px solid #000" }}>
                                   {info.shipment_ref === "consignee"
-                              ? info.supplier_address
-                              :  info?.address_1 +" " + info.address_2 + " "+ <br /> +info.province+ " " +<br />+ info.delivery_to_name}
+                                    ? info.supplier_address
+                                    : info?.address_1 +
+                                      " " +
+                                      info.address_2 +
+                                      " " +
+                                      <br /> +
+                                      info.province +
+                                      " " +
+                                      <br /> +
+                                      info.delivery_to_name}
                                 </td>
                               </tr>
                               <tr>
-                                <td style={{ borderBottom: "1px solid #000" }}>
-                                  {" "}
-                                </td>
+                                <td> </td>
                               </tr>
                               <tr>
                                 <td
@@ -146,9 +154,9 @@ if(response.data.success===true){
                                     borderLeft: "1px solid #000",
                                   }}
                                 >
-                                   {info.shipment_ref === "consignee"
-                              ? info.telephone
-                              :info.cellphone}
+                                  {info.shipment_ref === "consignee"
+                                    ? info.telephone
+                                    : info.cellphone}
                                 </td>
                               </tr>
                               <tr>
@@ -169,8 +177,8 @@ if(response.data.success===true){
                                   }}
                                 >
                                   {info.shipment_ref === "consignee"
-                              ? info.telephone
-                              :info.cellphone}
+                                    ? info.telephone
+                                    : info.cellphone}
                                 </td>
                               </tr>
                               <tr>
@@ -189,7 +197,9 @@ if(response.data.success===true){
                                     borderBottom: "1px solid #000",
                                     borderLeft: "1px solid #000",
                                   }}
-                                >{data.bk_ship_poNo}</td>
+                                >
+                                  {data.bk_ship_poNo}
+                                </td>
                               </tr>
                               <tr>
                                 <th
@@ -207,7 +217,9 @@ if(response.data.success===true){
                                     borderBottom: "1px solid #000",
                                     borderLeft: "1px solid #000",
                                   }}
-                                >{data.bk_ship_custCode}</td>
+                                >
+                                  {data.bk_ship_custCode}
+                                </td>
                               </tr>
                               <tr>
                                 <th
@@ -226,7 +238,9 @@ if(response.data.success===true){
                                     borderBottom: "1px solid #000",
                                     borderLeft: "1px solid #000",
                                   }}
-                                >{data.bk_ship_regNum}</td>
+                                >
+                                  {data.bk_ship_regNum}
+                                </td>
                               </tr>
                             </table>
                             <table>
@@ -266,7 +280,9 @@ if(response.data.success===true){
 
                                     borderLeft: "1px solid #000",
                                   }}
-                                >{data.bk_ship_refNo}</td>
+                                >
+                                  {data.bk_ship_refNo}
+                                </td>
                               </tr>
                             </table>
                             <table>
@@ -300,7 +316,9 @@ if(response.data.success===true){
                                     border: "1px solid #000",
                                     textAlign: "center",
                                   }}
-                                >{data.bk_xdoc_provider}</td>
+                                >
+                                  {data.bk_xdoc_provider}
+                                </td>
                                 <td
                                   style={{
                                     width: "65px",
@@ -326,7 +344,9 @@ if(response.data.success===true){
                                     border: "1px solid #000",
                                     textAlign: "center",
                                   }}
-                                >{data.bk_comm_Invoice}</td>
+                                >
+                                  {data.bk_comm_Invoice}
+                                </td>
                                 <td
                                   style={{
                                     width: "65px",
@@ -354,7 +374,9 @@ if(response.data.success===true){
                                     borderLeft: "1px solid #000",
                                     textAlign: "center",
                                   }}
-                                >{data.bk_count_CommInv}</td>
+                                >
+                                  {data.bk_count_CommInv}
+                                </td>
                               </tr>
                             </table>
                             <table>
@@ -375,7 +397,9 @@ if(response.data.success===true){
                                     border: "1px solid #000",
                                     textAlign: "center",
                                   }}
-                                >{data.bk_packing_list}</td>
+                                >
+                                  {data.bk_packing_list}
+                                </td>
                                 <td
                                   style={{
                                     width: "65px",
@@ -401,7 +425,9 @@ if(response.data.success===true){
                                     border: "1px solid #000",
                                     textAlign: "center",
                                   }}
-                                >{data.bk_trasprt_doc}</td>
+                                >
+                                  {data.bk_trasprt_doc}
+                                </td>
                                 <td
                                   style={{
                                     width: "65px",
@@ -429,7 +455,9 @@ if(response.data.success===true){
                                     border: "1px solid #000",
                                     textAlign: "center",
                                   }}
-                                >{data.bk_MSDS}</td>
+                                >
+                                  {data.bk_MSDS}
+                                </td>
                                 <td
                                   style={{
                                     width: "65px",
@@ -482,7 +510,9 @@ if(response.data.success===true){
                                     border: "1px solid #000",
                                     textAlign: "center",
                                   }}
-                                >{data.bk_CuntyTrd_SADC}</td>
+                                >
+                                  {data.bk_CuntyTrd_SADC}
+                                </td>
                                 <td
                                   style={{
                                     width: "65px",
@@ -508,7 +538,9 @@ if(response.data.success===true){
                                     border: "1px solid #000",
                                     textAlign: "center",
                                   }}
-                                >{data.bk_letter_credit}</td>
+                                >
+                                  {data.bk_letter_credit}
+                                </td>
                                 <td
                                   style={{
                                     width: "65px",
@@ -553,7 +585,9 @@ if(response.data.success===true){
                                     border: "1px solid #000",
                                     textAlign: "center",
                                   }}
-                                >{data.bk_Insur_cover}</td>
+                                >
+                                  {data.bk_Insur_cover}
+                                </td>
                                 <td
                                   style={{
                                     width: "65px",
@@ -600,7 +634,9 @@ if(response.data.success===true){
                                     textAlign: "center",
                                     borderTop: "none",
                                   }}
-                                >{data.bk_estim_supp}</td>
+                                >
+                                  {data.bk_estim_supp}
+                                </td>
                                 <td
                                   style={{
                                     width: "65px",
@@ -659,7 +695,8 @@ if(response.data.success===true){
                                 >
                                   <strong>
                                     {" "}
-                                    Asia Direct - Africa Logistics BILLING REQUIREMENTS{" "}
+                                    Asia Direct - Africa Logistics BILLING
+                                    REQUIREMENTS{" "}
                                   </strong>
                                 </td>
                               </tr>
@@ -714,7 +751,9 @@ if(response.data.success===true){
                                     border: "1px solid #000",
                                     textAlign: "center",
                                   }}
-                                >{data.bk_org_exptCharge}</td>
+                                >
+                                  {data.bk_org_exptCharge}
+                                </td>
                                 <td
                                   style={{
                                     width: "65px",
@@ -746,7 +785,9 @@ if(response.data.success===true){
                                     border: "1px solid #000",
                                     textAlign: "center",
                                   }}
-                                >{data.bk_intenFreig_charge}</td>
+                                >
+                                  {data.bk_intenFreig_charge}
+                                </td>
                                 <td
                                   style={{
                                     width: "65px",
@@ -773,7 +814,9 @@ if(response.data.success===true){
                                     border: "1px solid #000",
                                     textAlign: "center",
                                   }}
-                                >{data.bk_charges_destination}</td>
+                                >
+                                  {data.bk_charges_destination}
+                                </td>
                                 <td
                                   style={{
                                     width: "65px",
@@ -799,7 +842,9 @@ if(response.data.success===true){
                                     textAlign: "center",
                                     borderBottom: "none",
                                   }}
-                                >{data.bk_duties_taxes}</td>
+                                >
+                                  {data.bk_duties_taxes}
+                                </td>
                                 <td
                                   style={{
                                     width: "65px",
@@ -858,9 +903,9 @@ if(response.data.success===true){
                                   }}
                                 >
                                   {" "}
-                                {info.shipment_ref === "consignee"
-                              ? info.client_name
-                              : info.shipper_name}
+                                  {info.shipment_ref === "consignee"
+                                    ? info.client_name
+                                    : info.shipper_name}
                                 </td>
                               </tr>
                               <tr>
@@ -873,11 +918,15 @@ if(response.data.success===true){
                                 >
                                   ADDRESS
                                 </th>
-                                <td style={{ borderBottom: "1px solid #000" }}>
+                                <td>
                                   {/* address_1 */}
                                   {info.shipment_ref === "consignee"
-                              ? info?.address_1 +" " + info.address_2 + " " +info.province
-                              : info.supplier_address}
+                                    ? info?.address_1 +
+                                      " " +
+                                      info.address_2 +
+                                      " " +
+                                      info.province
+                                    : info.supplier_address}
                                 </td>
                               </tr>
                               <tr>
@@ -924,9 +973,9 @@ if(response.data.success===true){
                                     borderLeft: "1px solid #000",
                                   }}
                                 >
-                                   {info.shipment_ref === "consignee"
-                              ? info.client_email
-                              : ""}
+                                  {info.shipment_ref === "consignee"
+                                    ? info.client_email
+                                    : ""}
                                 </td>
                                 <td
                                   style={{
@@ -944,9 +993,9 @@ if(response.data.success===true){
                                     borderBottom: "1px solid #000",
                                   }}
                                 >
-          {info?.shipment_ref === "shipper"
+                                  {info?.shipment_ref === "shipper"
                                     ? ""
-                                    : info?.cellphone}                         
+                                    : info?.cellphone}
                                 </td>
                               </tr>
                             </table>
@@ -1005,7 +1054,9 @@ if(response.data.success===true){
 
                                     borderLeft: "1px solid #000",
                                   }}
-                                >{data.bk_track_contPersn}</td>
+                                >
+                                  {data.bk_track_contPersn}
+                                </td>
                               </tr>
                               <tr>
                                 <th
@@ -1026,7 +1077,9 @@ if(response.data.success===true){
 
                                     borderLeft: "1px solid #000",
                                   }}
-                                >{data.bk_podDoc_contPersn}</td>
+                                >
+                                  {data.bk_podDoc_contPersn}
+                                </td>
                               </tr>
                             </table>
                             <table>
@@ -1059,9 +1112,14 @@ if(response.data.success===true){
                                   style={{
                                     border: "1px solid #000",
                                     textAlign: "center",
+                                    backgroundColor:
+                                      data.bk_exprt_modTransport ===
+                                      "RoadConsole"
+                                        ? "lightgreen"
+                                        : "white",
                                   }}
                                 >
-                                  {data.bk_exprt_modTransport}
+                                  Road Consol
                                   <br />
                                   {/* {info.fcl_lcl} */}
                                 </td>
@@ -1071,54 +1129,93 @@ if(response.data.success===true){
                                     border: "1px solid #000",
                                     borderRight: "none",
                                     textAlign: "center",
+                                    backgroundColor:
+                                      data.bk_exprt_modTransport ===
+                                      "RoadDedicated"
+                                        ? "lightgreen"
+                                        : "white",
                                   }}
-                                ></td>
+                                >
+                                  Road Dedicated
+                                </td>
                                 <td
                                   className="exWidth"
                                   style={{
                                     border: "1px solid #000",
                                     borderRight: "none",
                                     textAlign: "center",
+                                    backgroundColor:
+                                      data.bk_exprt_modTransport === "SeaFCL"
+                                        ? "lightgreen"
+                                        : "white",
                                   }}
-                                ></td>
+                                >
+                                  {" "}
+                                  Sea FCL
+                                </td>
                                 <td
                                   className="lclWidth"
                                   style={{
                                     border: "1px solid #000",
                                     borderRight: "none",
                                     textAlign: "center",
+                                    backgroundColor:
+                                      data.bk_exprt_modTransport === "SeaLCL"
+                                        ? "lightgreen"
+                                        : "white",
                                   }}
-                                ></td>
+                                >
+                                  Sea LCL
+                                </td>
+                                <td
+                                  className="lclWidth"
+                                  style={{
+                                    border: "1px solid #000",
+                                    borderRight: "none",
+                                    backgroundColor:
+                                      data.bk_exprt_modTransport === "SeaB/Bulk"
+                                        ? "lightgreen"
+                                        : "white",
+                                    textAlign: "center",
+                                  }}
+                                >
+                                  Sea B/Bulk
+                                </td>
                                 <td
                                   className="lclWidth"
                                   style={{
                                     border: "1px solid #000",
                                     borderRight: "none",
                                     textAlign: "center",
+                                    backgroundColor:
+                                      data.bk_exprt_modTransport === "AirConsol"
+                                        ? "lightgreen"
+                                        : "white",
                                   }}
-                                ></td>
+                                >
+                                  Air Consol
+                                </td>
                                 <td
                                   className="lclWidth"
                                   style={{
                                     border: "1px solid #000",
                                     borderRight: "none",
+                                    backgroundColor:
+                                      data.bk_exprt_modTransport ===
+                                      "AirExpress"
+                                        ? "lightgreen"
+                                        : "white",
                                     textAlign: "center",
                                   }}
-                                ></td>
-                                <td
-                                  className="lclWidth"
-                                  style={{
-                                    border: "1px solid #000",
-                                    borderRight: "none",
-                                    textAlign: "center",
-                                  }}
-                                ></td>
+                                >
+                                  Air Express
+                                </td>
                               </tr>
                               <tr>
                                 <th
                                   className="exWidth"
                                   style={{
-                                    borderTop: "1px solid #000",
+                                    // borderTop: "1px solid #000",
                                     borderBottom: "1px solid #000",
                                     borderRight: "1px solid #000",
                                   }}
@@ -1188,30 +1285,246 @@ if(response.data.success===true){
                               </tr>
                             </table>
                             {/* namePlace */}
-                           <table className="selectRight">
-  <tr>
-    <th style={{border: "1px solid #000", width:"95px", borderLeft: "none",}}>NAMED PLACE</th>
-    <td style={{border: "1px solid #000", textAlign: "center"}}>{data.bk_comTerm_sales}</td>
-    <td style={{border: "1px solid #000", borderRight: "none", textAlign: "center"}}></td>
-    <td style={{border: "1px solid #000", borderRight: "none", textAlign: "center"}}></td>
-    <td style={{border: "1px solid #000", borderRight: "none", textAlign: "center", width:"70px"}}></td>
-    <td style={{border: "1px solid #000", borderRight: "none", textAlign: "center", width:"70px"}}></td>
-    <td style={{border: "1px solid #000", borderRight: "none", textAlign: "center", width:"70px"}}></td>
-    <td style={{border: "1px solid #000", borderRight: "none", textAlign: "center", width:"70px"}}></td>
-  </tr>
-   <tr>
-    <th style={{border: "1px solid #000", width:"95px", borderLeft: "none",}}></th>
-    <td style={{border: "1px solid #000", textAlign: "center"}}></td>
-    <td style={{border: "1px solid #000", borderRight: "none", textAlign: "center"}}></td>
-    <td style={{border: "1px solid #000", borderRight: "none", textAlign: "center"}}></td>
-    <td style={{border: "1px solid #000", borderRight: "none", textAlign: "center", width:"140px"}} colSpan={2}></td>
-    <td style={{border: "1px solid #000", borderRight: "none", textAlign: "center", width:"140px"}} colSpan={2}></td>
-  </tr>
-</table>
+                            <table className="selectRight">
+                              <tr>
+                                <th
+                                  style={{
+                                    border: "1px solid #000",
+                                    width: "95px",
+                                    borderLeft: "none",
+                                  }}
+                                >
+                                  NAMED PLACE
+                                </th>
+                                <td
+                                  style={{
+                                    border: "1px solid #000",
+                                    textAlign: "center",
+                                    backgroundColor:
+                                      data.bk_comTerm_sales === "EXW"
+                                        ? "lightgreen"
+                                        : "white",
+                                  }}
+                                >
+                                  {" "}
+                                  EXW
+                                </td>
+                                <td
+                                  style={{
+                                    border: "1px solid #000",
+                                    borderRight: "none",
+                                    textAlign: "center",
+                                    backgroundColor:
+                                      data.bk_comTerm_sales === "FCA"
+                                        ? "lightgreen"
+                                        : "white",
+                                  }}
+                                >
+                                  FCA
+                                </td>
+                                <td
+                                  style={{
+                                    border: "1px solid #000",
+                                    borderRight: "none",
+                                    backgroundColor:
+                                      data.bk_comTerm_sales === "FOB"
+                                        ? "lightgreen"
+                                        : "white",
+                                    textAlign: "center",
+                                  }}
+                                >
+                                  FOB
+                                </td>
+                                <td
+                                  style={{
+                                    border: "1px solid #000",
+                                    borderRight: "none",
+                                    backgroundColor:
+                                      data.bk_comTerm_sales === "FAS"
+                                        ? "lightgreen"
+                                        : "white",
+                                    textAlign: "center",
+                                    width: "70px",
+                                  }}
+                                >
+                                  FAS
+                                </td>
+                                <td
+                                  style={{
+                                    border: "1px solid #000",
+                                    borderRight: "none",
+                                    textAlign: "center",
+                                    backgroundColor:
+                                      data.bk_comTerm_sales === "CFR"
+                                        ? "lightgreen"
+                                        : "white",
+                                    width: "70px",
+                                  }}
+                                >
+                                  CFR
+                                </td>
+                                <td
+                                  style={{
+                                    border: "1px solid #000",
+                                    borderRight: "none",
+                                    textAlign: "center",
+                                    backgroundColor:
+                                      data.bk_comTerm_sales === "CIF"
+                                        ? "lightgreen"
+                                        : "white",
+                                    width: "70px",
+                                  }}
+                                >
+                                  CIF
+                                </td>
+                                <td
+                                  style={{
+                                    border: "1px solid #000",
+                                    borderRight: "none",
+                                    textAlign: "center",
+                                    backgroundColor:
+                                      data.bk_comTerm_sales === "CIP"
+                                        ? "lightgreen"
+                                        : "white",
+                                    width: "70px",
+                                  }}
+                                >
+                                  CIP
+                                </td>
+                              </tr>
+                              <tr>
+                                <th
+                                  style={{
+                                    border: "1px solid #000",
+                                    width: "95px",
+                                    borderLeft: "none",
+                                  }}
+                                ></th>
+                                <td
+                                  style={{
+                                    border: "1px solid #000",
+                                    textAlign: "center",
+                                  }}
+                                >
+                                  CPT
+                                </td>
+                                <td
+                                  style={{
+                                    border: "1px solid #000",
+                                    borderRight: "none",
+                                    textAlign: "center",
+                                    backgroundColor:
+                                      data.bk_comTerm_sales === "DPU"
+                                        ? "lightgreen"
+                                        : "white",
+                                  }}
+                                >
+                                  DPU
+                                </td>
+                                <td
+                                  style={{
+                                    border: "1px solid #000",
+                                    borderRight: "none",
+                                    textAlign: "center",
+                                    backgroundColor:
+                                      data.bk_comTerm_sales === "DAP"
+                                        ? "lightgreen"
+                                        : "white",
+                                  }}
+                                >
+                                  DAP
+                                </td>
+                                <td
+                                  style={{
+                                    border: "1px solid #000",
+                                    borderRight: "none",
+                                    textAlign: "center",
+                                    width: "140px",
+                                    backgroundColor:
+                                      data.bk_comTerm_sales === "DDP (incl VAT)"
+                                        ? "lightgreen"
+                                        : "white",
+                                  }}
+                                  colSpan={2}
+                                >
+                                  DDP (incl VAT)
+                                </td>
+                                <td
+                                  style={{
+                                    border: "1px solid #000",
+                                    borderRight: "none",
+                                    textAlign: "center",
+                                    width: "140px",
+                                    backgroundColor:
+                                      data.bk_comTerm_sales === "DDP (excl VAT)"
+                                        ? "lightgreen"
+                                        : "white",
+                                  }}
+                                  colSpan={2}
+                                >
+                                  DDP (excl VAT)
+                                </td>
+                              </tr>
+                            </table>
 
                             {/* namePlace */}
                             <table className="selectRight">
-                             <tr> <th style={{ borderTop: "1px solid #000", borderRight: "1px solid #000", width: "95px", borderTop: "none", borderBottom: "1px solid #000", }} > EXPORTERS BANK NAME </th> <td rowSpan={2} style={{ width: "195px", border: "1px solid #000", textAlign: "center", borderTop: "none", borderBottom: "1px solid #000", }} ></td> <td style={{ width: "140px", border: "1px solid #000", borderRight: "none", textAlign: "center", borderTop: "none", }} > DO YOU WANT Asia Direct - Africa Logistics TO ALLOCATE UCR REFERENCE </td> <td className="lclWidth" style={{ border: "1px solid #000", borderRight: "none", textAlign: "center", borderTop: "none", }} ></td> <td className="lclWidth" style={{ border: "1px solid #000", borderRight: "none", textAlign: "center", borderTop: "none", }} ></td> </tr>
+                              <tr>
+                                {" "}
+                                <th
+                                  style={{
+                                    borderTop: "1px solid #000",
+                                    borderRight: "1px solid #000",
+                                    width: "95px",
+                                    borderTop: "none",
+                                    borderBottom: "1px solid #000",
+                                  }}
+                                >
+                                  {" "}
+                                  EXPORTERS BANK NAME{" "}
+                                </th>{" "}
+                                <td
+                                  rowSpan={2}
+                                  style={{
+                                    width: "195px",
+                                    border: "1px solid #000",
+                                    textAlign: "center",
+                                    borderTop: "none",
+                                    borderBottom: "1px solid #000",
+                                  }}
+                                ></td>{" "}
+                                <td
+                                  style={{
+                                    width: "140px",
+                                    border: "1px solid #000",
+                                    borderRight: "none",
+                                    textAlign: "center",
+                                    borderTop: "none",
+                                  }}
+                                >
+                                  {" "}
+                                  DO YOU WANT Asia Direct - Africa Logistics TO
+                                  ALLOCATE UCR REFERENCE{" "}
+                                </td>{" "}
+                                <td
+                                  className="lclWidth"
+                                  style={{
+                                    border: "1px solid #000",
+                                    borderRight: "none",
+                                    textAlign: "center",
+                                    borderTop: "none",
+                                  }}
+                                ></td>{" "}
+                                <td
+                                  className="lclWidth"
+                                  style={{
+                                    border: "1px solid #000",
+                                    borderRight: "none",
+                                    textAlign: "center",
+                                    borderTop: "none",
+                                  }}
+                                ></td>{" "}
+                              </tr>
                             </table>
                             <table className="">
                               <tr>
@@ -1317,7 +1630,9 @@ if(response.data.success===true){
                                     textAlign: "center",
                                     borderTop: "none",
                                   }}
-                                >{data.bk_cargo_packed}</td>
+                                >
+                                  {data.bk_cargo_packed}
+                                </td>
                                 <td
                                   style={{
                                     width: "65px",
@@ -1385,7 +1700,9 @@ if(response.data.success===true){
                                     textAlign: "center",
                                     borderTop: "none",
                                   }}
-                                >{data.bk_battery_MSDS}</td>
+                                >
+                                  {data.bk_battery_MSDS}
+                                </td>
                                 <td
                                   style={{
                                     width: "65px",
@@ -1646,7 +1963,9 @@ if(response.data.success===true){
                                     textAlign: "center",
                                     borderTop: "none",
                                   }}
-                                >{data.bk_export_Import}</td>
+                                >
+                                  {data.bk_export_Import}
+                                </td>
                                 <td
                                   style={{
                                     width: "65px",
@@ -1694,7 +2013,8 @@ if(response.data.success===true){
                                 >
                                   <strong>
                                     {" "}
-                                    Asia Direct - Africa Logistics BILLING REQUIREMENTS{" "}
+                                    Asia Direct - Africa Logistics BILLING
+                                    REQUIREMENTS{" "}
                                   </strong>
                                 </td>
                               </tr>
@@ -1777,7 +2097,7 @@ if(response.data.success===true){
                                     borderBottom: "none",
                                   }}
                                 >
-                                  Adress line one
+                                  Address line one
                                 </td>
                               </tr>
                             </table>
@@ -1806,7 +2126,9 @@ if(response.data.success===true){
                                     borderBottom: "1px solid #000",
                                     borderLeft: "1px solid #000",
                                   }}
-                                >{data.bk_coll_dddress}</td>
+                                >
+                                  {data.bk_coll_dddress}
+                                </td>
                               </tr>
                               <tr>
                                 <th
@@ -1869,11 +2191,13 @@ if(response.data.success===true){
                               </tr>
                               <tr>
                                 <td style={{ borderBottom: "1px solid #000" }}>
-                               . </td>
+                                  .{" "}
+                                </td>
                               </tr>
                               <tr>
                                 <td style={{ borderBottom: "1px solid #000" }}>
-                                .</td>
+                                  .
+                                </td>
                               </tr>
                             </table>
                           </div>
@@ -1908,7 +2232,7 @@ if(response.data.success===true){
                                 <td> </td>
                                 <td> </td>
                                 <td>123</td>*/}
-                            </tr>
+                              </tr>
                               <tr>
                                 <td>.</td>
                                 {/* <td> </td>

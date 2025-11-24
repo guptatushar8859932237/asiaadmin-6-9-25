@@ -682,6 +682,7 @@ const ManageCustomer = () => {
                       </th>
                       <th scope="col">Cellphone</th>
                       <th scope="col">Telephone</th>
+                      <th scope="col">Date of Reg</th>
                       <th scope="col">Status</th>
                       <th scope="col">View</th>
                       <th scope="col">Action</th>

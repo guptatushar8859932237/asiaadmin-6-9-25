@@ -155,58 +155,129 @@ export default function Addshipment() {
       aggregatedArray.filter((currentItem) => currentItem !== item)
     );
   };
-  const addShipment = async () => {
-    const payload = {
-      ...data,
-      details: aggregatedArray,
-      waybill: data.waybill,
-    };
-    const formdata = new FormData();
-    formdata.append("ATD", data.ATD);
-    formdata.append("ETD", data.ETD);
-    formdata.append("carrier", data.carrier);
-    formdata.append("container", data.container);
-    formdata.append("des_country_id", data.des_country_id);
-    formdata.append("destination_agent", data.destination_agent);
-    formdata.append("freight", data.freight);
-    formdata.append("load", data.load);
-    formdata.append("origin_agent", data.origin_agent);
-    formdata.append("origin_country_id", data.origin_country_id);
-    formdata.append("port_of_discharge", data.port_of_discharge);
-    formdata.append("port_of_loading", data.port_of_loading);
-    formdata.append("release_type", data.release_type);
-    formdata.append("seal", data.seal);
-    formdata.append("status", data.status);
-    formdata.append("vessel", data.vessel);
-    formdata.append("waybill", data.waybill);
-    formdata.append("details", JSON.stringify(aggregatedArray));
-    // formdata.append("document", filedata);
-    formdata.append("date_of_dispatch", data.date_of_dispatch);
-    formdata.append("documentName", data.documentName);
-    console.log(formdata);
+//   const addShipment = async () => {
+//     const payload = {
+//       ...data,
+//       details: aggregatedArray,
+//       waybill: data.waybill,
+//     };
+//     const formdata = new FormData();
+//     formdata.append("ATD", data.ATD);
+//     formdata.append("ETD", data.ETD);
+//     formdata.append("carrier", data.carrier);
+//     formdata.append("container", data.container);
+//     formdata.append("des_country_id", data.des_country_id);
+//     formdata.append("destination_agent", data.destination_agent);
+//     formdata.append("freight", data.freight);
+//     formdata.append("load", data.load);
+//     formdata.append("origin_agent", data.origin_agent);
+//     formdata.append("origin_country_id", data.origin_country_id);
+//     formdata.append("port_of_discharge", data.port_of_discharge);
+//     formdata.append("port_of_loading", data.port_of_loading);
+//     formdata.append("release_type", data.release_type);
+//     formdata.append("seal", data.seal);
+//     formdata.append("status", data.status);
+//     formdata.append("vessel", data.vessel);
+//     formdata.append("waybill", data.waybill);
+//     formdata.append("details", JSON.stringify(aggregatedArray));
+//     // formdata.append("document", filedata);
+//     formdata.append("date_of_dispatch", data.date_of_dispatch);
+//     formdata.append("documentName", data.documentName);
+//     console.log(formdata);
 
-          selectedDocs.forEach(doc => {
-  console.log("Doc Type:", doc.name);
+//           selectedDocs.forEach(doc => {
+//   console.log("Doc Type:", doc.name);
 
-  doc.files.forEach(file => {
-    formdata.append(doc.name, file); // 👈 each file append
-    console.log("File:", file.name, "| Size:", file.size, "bytes");
-  });
-});
-    try {
-      const response = await axios.post(
-        `${process.env.REACT_APP_BASE_URL}AddShipment`,
-        formdata
-      );
-      if (response.data.success) {
-        toast.success(response.data.message);
-        navigate("/Admin/manage-shipment");
-      }
-    } catch (error) {
-      toast.error("Error adding shipment");
-    }
+//   doc.files.forEach(file => {
+//     formdata.append(doc.name, file); // 👈 each file append
+//     console.log("File:", file.name, "| Size:", file.size, "bytes");
+//   });
+// });
+//     try {
+//       const response = await axios.post(
+//         `${process.env.REACT_APP_BASE_URL}AddShipment`,
+//         formdata
+//       );
+//       if (response.data.success) {
+//         toast.success(response.data.message);
+//         navigate("/Admin/manage-shipment");
+//       }
+//     } catch (error) {
+//       toast.error("Error adding shipment");
+//     }
+//   };
+const addShipment = async () => {
+  // REQUIRED FIELDS DECLARATION
+  const requiredFields = {
+    load: "Load",
+    carrier: "Carrier",
+    freight: "Freight",
+    ATD: "ATD",
+    ETD: "ETD",
+    port_of_loading: "Port of Loading",
+    port_of_discharge: "Port of Discharge",
   };
-  const handleclickprintdate = async () => {
+
+  // CHECK FOR MISSING VALUES
+  const missingFields = Object.entries(requiredFields)
+    .filter(([key]) => !data[key] || data[key].toString().trim() === "")
+    .map(([_, label]) => label);
+
+  if (missingFields.length > 0) {
+    toast.error(`Please fill required fields: ${missingFields.join(", ")}`);
+    return;
+  }
+
+  // CREATE FORMDATA
+  const formdata = new FormData();
+  formdata.append("ATD", data.ATD);
+  formdata.append("ETD", data.ETD);
+  formdata.append("carrier", data.carrier);
+  formdata.append("container", data.container);
+  formdata.append("des_country_id", data.des_country_id);
+  formdata.append("destination_agent", data.destination_agent);
+  formdata.append("freight", data.freight);
+  formdata.append("load", data.load);
+  formdata.append("origin_agent", data.origin_agent);
+  formdata.append("origin_country_id", data.origin_country_id);
+  formdata.append("port_of_discharge", data.port_of_discharge);
+  formdata.append("port_of_loading", data.port_of_loading);
+  formdata.append("release_type", data.release_type);
+  formdata.append("seal", data.seal);
+  formdata.append("status", data.status);
+  formdata.append("vessel", data.vessel);
+  formdata.append("waybill", data.waybill);
+  formdata.append("details", JSON.stringify(aggregatedArray));
+  formdata.append("date_of_dispatch", data.date_of_dispatch);
+  formdata.append("documentName", data.documentName);
+
+  // FILES
+  selectedDocs.forEach((doc) => {
+    doc.files.forEach((file) => {
+      formdata.append(doc.name, file);
+    });
+  });
+
+  // API CALL
+  try {
+    const response = await axios.post(
+      `${process.env.REACT_APP_BASE_URL}AddShipment`,
+      formdata
+    );
+
+    if (response.data.success) {
+      toast.success(response.data.message);
+      navigate("/Admin/manage-shipment");
+    }
+  } catch (error) {
+    toast.error("Error adding shipment");
+  }
+};
+
+
+
+
+const handleclickprintdate = async () => {
     if (!selectedOption) {
       toast.error("Please select an option before adding.");
       return;

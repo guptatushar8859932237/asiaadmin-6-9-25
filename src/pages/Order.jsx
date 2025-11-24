@@ -29,6 +29,7 @@ export default function Order() {
   const [inputvalue, setInputvalue] = useState([]);
   const [loader, setLoader] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
+  const [selectedItem, setSelectedItem] = useState(null);
   const [apidata, setApidata] = useState([]);
   const [isOpen, setIsOpen] = useState(false);
   const [formData2, setFormData2] = useState(null);
@@ -37,7 +38,7 @@ export default function Order() {
   const [file1, setFile1] = useState(null);
   const [isModalOpen1, setIsModalOpen1] = useState(false);
   const [lcientlist, setLcientlist] = useState([]);
-
+  const [openModalorder,setOpenModalorder]=useState(false)
   const [pagenation, setPagenation] = useState(1);
   const [warehousedata, setWarehousedata] = useState([]);
   const [updatedata, setUpdatedata] = useState([]);
@@ -389,43 +390,7 @@ export default function Order() {
     });
     navigate("/Admin/OrderDetail", { state: { data: alldaatat } });
   };
-  const track123 = async (item) => {
-    try {
-      const permission = await axios.post(
-        `${process.env.REACT_APP_BASE_URL}CheckPermission`,
-        {
-          staff_id: userid,
-          route_url: "/add_freight_to_warehouse",
-          user_type: usertype,
-        }
-      );
-      if (permission.data.success) {
-        console.log(item);
-        const data12213 = {
-          freight_id: item.freight_id,
-          order_id: item.order_id,
-        };
-        axios
-          .post(
-            `${process.env.REACT_APP_BASE_URL}add_freight_to_warehouse`,
-            data12213
-          )
-          .then((response) => {
-            toast.success(response.data.message);
-            getorder();
-          })
-          .catch((error) => {
-            toast.error(error.response.data.message);
-          });
-      } else {
-        toast.error("Permission Denied: You don’t have access to this page");
-      }
-    } catch (error) {
-      if (error.response.status === 400) {
-        toast.error("Permission Denied: You don’t have access to this page");
-      }
-    }
-  };
+ 
 
   const userid = JSON.parse(localStorage.getItem("data123"))?.id;
   const usertype = JSON.parse(localStorage.getItem("data123"))?.user_type;
@@ -843,10 +808,162 @@ export default function Order() {
         toast.error(error.response?.data || "An error occurred");
       });
   };
+// const [openModalorder, setOpenModalorder] = useState(false);
+
+  const track123 = (item) => {
+  setSelectedItem(item);  // save item data
+  setOpenModalorder(true);
+};
+
+ 
+ const [warehouseType, setWarehouseType] = useState(""); // radio state
+  const [selectedSupplier, setSelectedSupplier] = useState("");
 
 
+  const supplierOptions = [
+    { id: 1, name: "Supplier A" },
+    { id: 2, name: "Supplier B" },
+    { id: 3, name: "Supplier C" },
+  ];  
+
+ const handleWarehouseChange = async (e) => {
+    const type = e.target.value;
+    setWarehouseType(type);
+    if (type === "asia") {
+      try {
+        const body = {
+          freight_id: selectedItem?.freight_id,
+          order_id: selectedItem?.order_id,
+        };
+
+        const res = await axios.post(
+          `${process.env.REACT_APP_BASE_URL}add_freight_to_warehouse`,
+          body
+        );
+        toast.success(res.data.message);
+        getorder();
+        closeModal();
+         setOpenModalorder(false);
+      } catch (error) {
+        toast.error(error.response?.data?.message || "Something went wrong");
+      }
+    }
+  };
+
+ const handleUpdateForSupplier = async () => {
+    if (!selectedSupplier) {
+      toast.error("Please select supplier!");
+      return;
+    }
+    try {
+      const body = {
+        freight_id: selectedItem?.freight_id,
+        order_id: selectedItem?.order_id,
+        supplier_name: selectedSupplier,
+      };
+      const res = await axios.post(
+        `${process.env.REACT_APP_BASE_URL}add_freight_to_supplier`,
+        body
+      );
+      toast.success(res.data.message);
+      getorder();
+      closeModal();
+    } catch (error) {
+      toast.error(error.response?.data?.message || "Something went wrong");
+    }
+  };
+const  closewarehouse=()=>{
+      setOpenModalorder(false);
+  }
   return (
     <>
+   <Modal
+      open={openModalorder}
+      onClose={closewarehouse}
+      className="newModal"
+    >
+      <Box
+        sx={{
+          position: "absolute",
+          top: "50%",
+          left: "50%",
+          transform: "translate(-50%, -50%)",
+          bgcolor: "background.paper",
+          boxShadow: 24,
+        }}
+      >
+        <div className="modal-content modal-dialog modal-dialog-centered">
+          <div className="modal-header" style={{ width: "100%" }}>
+            <h5 className="modal-title">Assign Order</h5>
+            <button type="button" className="btn-close" onClick={closewarehouse}>
+              <CloseIcon />
+            </button>
+          </div>
+          <div className="modalManageFreight frightFormSec md_update p-2">
+            <div className="modal-body">
+              <div className="row">
+                <div className="col-lg-12 mb-3">
+                  <h5>Select Warehouse</h5>
+                  <div>
+                    <input
+                      type="radio"
+                      id="asiaDirect"
+                      name="warehouse"
+                      value="asia"
+                      checked={warehouseType === "asia"}
+                      onChange={handleWarehouseChange}
+                    />
+                    <label htmlFor="asiaDirect" className="ms-2">
+                      Asia Direct Warehouse
+                    </label>
+                  </div>
+                  <div className="mt-2">
+                    <input
+                      type="radio"
+                      id="supplierWare"
+                      name="warehouse"
+                      value="supplier"
+                      checked={warehouseType === "supplier"}
+                      onChange={handleWarehouseChange}
+                    />
+                    <label htmlFor="supplierWare" className="ms-2">
+                      Supplier Warehouse
+                    </label>
+                  </div>
+                </div>
+                {warehouseType === "supplier" && (
+                  <div className="col-lg-12 mt-3">
+                    <label>Select Supplier</label>
+                    <select
+                      className="form-control"
+                      value={selectedSupplier}
+                      onChange={(e) => setSelectedSupplier(e.target.value)}
+                    >
+                      <option value="">Select Supplier</option>
+                      {supplierOptions.map((sup) => (
+                        <option key={sup.id} value={sup.name}>
+                          {sup.name}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+          <div className="modal-footer">
+            {warehouseType === "supplier" && (
+              <button type="button" onClick={handleUpdateForSupplier}>
+                Update
+              </button>
+            )}
+            <button type="button" className="btn cross_btn" onClick={closewarehouse}>
+              Close
+            </button>
+          </div>
+        </div>
+      </Box>
+    </Modal>
       {loader ? (
         <div class="loader-container">
           <div class="loader"></div>

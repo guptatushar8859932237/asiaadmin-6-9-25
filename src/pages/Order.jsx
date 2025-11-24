@@ -202,24 +202,7 @@ export default function Order() {
       hazardous: event.target.value,
     }));
   };
-  const handlechangeassignestimate = (event) => {
-    setInputdata((prevData) => ({
-      ...prevData,
-      assign_for_estimate: event.target.value,
-    }));
-  };
-  const Quoterecieved = (event) => {
-    setInputdata((prevData) => ({
-      ...prevData,
-      quote_received: event.target.value,
-    }));
-  };
-  const onchnageclientquote = (event) => {
-    setInputdata((prevData) => ({
-      ...prevData,
-      client_quoted: event.target.value,
-    }));
-  };
+
   const send_to_warehouse = (event) => {
     setInputdata((prevData) => ({
       ...prevData,
@@ -660,6 +643,8 @@ export default function Order() {
       .then((response) => {
         console.log(response.data);
         if (response.data.success === true) {
+          console.log(response.data.data);
+          setData(response.data.data);
           setPagenation(response.data);
           setSearchQuery("");
         }
@@ -733,8 +718,8 @@ export default function Order() {
     const formdata = new FormData();
     formdata.append("date", formattedDate);
     formdata.append("id", inputdata.freight_id);
-    formdata.append("client_ref", inputdata.client_ref);
-    formdata.append("type", inputdata.type);
+    formdata.append("client_ref", inputdata?.client_ref);
+    formdata.append("type", inputdata?.type);
     formdata.append("freight", inputdata.freight);
     formdata.append("incoterm", inputdata.incoterm);
     formdata.append("dimension", inputdata.dimension);
@@ -1341,9 +1326,6 @@ const  closewarehouse=()=>{
                                     </div>
                                   </div>
                                 </div>
-
-
-
                               </td>
                             </tr>
                           );
@@ -1433,7 +1415,7 @@ const  closewarehouse=()=>{
                           <label>Client</label>
                           <select
                             value={
-                              inputdata.client_ref
+                              inputdata?.client_id
                             }
                             onChange={handleupdateapi}
                             placeholder="client refrence"
@@ -1465,7 +1447,7 @@ const  closewarehouse=()=>{
                           <label>Freight</label>
                           <select
                             name="type"
-                            value={inputdata.type}
+                            value={inputdata?.type}
                             onChange={handleupdateapi}
                           >
                             <option value="">
@@ -1483,7 +1465,7 @@ const  closewarehouse=()=>{
                           <label>Freight Type</label>
                           <select
                             name="freight"
-                            value={inputdata.freight}
+                            value={inputdata?.freight}
                             onChange={handleupdateapi}
                           >
                             <option value="">
@@ -1507,7 +1489,7 @@ const  closewarehouse=()=>{
                           <input
                             name="client_ref_name"
                             value={
-                              inputdata.client_ref_name
+                              inputdata?.client_ref_name
                             }
                             onChange={handleupdateapi}
                           ></input>
@@ -1519,7 +1501,7 @@ const  closewarehouse=()=>{
                           <input
                             name="product_desc"
                             value={
-                              inputdata.product_desc
+                              inputdata?.product_desc
                             }
                             onChange={handleupdateapi}
                           ></input>
@@ -1533,7 +1515,7 @@ const  closewarehouse=()=>{
                             onKeyPress={handlekey}
                             placeholder="Transit Time"
                             value={
-                              inputdata.transit_time
+                              inputdata?.transit_time
                             }
                             onChange={handleupdateapi}
                             name="transit_time"
@@ -1547,7 +1529,7 @@ const  closewarehouse=()=>{
                             <RadioGroup
                               aria-labelledby="demo-row-radio-buttons-group-label"
                               value={
-                                inputdata.priority
+                                inputdata?.priority
                               }
                               name="priority"
                               onChange={
@@ -1582,7 +1564,7 @@ const  closewarehouse=()=>{
                             <RadioGroup
                               aria-labelledby="demo-row-radio-buttons-group-label"
                               value={
-                                inputdata.shipment_ref
+                                inputdata?.shipment_ref
                               } // Ensure this is correctly bound to the state
                               name="shipment_ref"
                               onChange={
@@ -1617,7 +1599,7 @@ const  closewarehouse=()=>{
                             name="country_of_origin"
                             onChange={handleupdateapi}
                             value={
-                              inputdata.country_of_origin
+                              inputdata?.country_of_origin
                             }
                           >
                             <option value="">
@@ -1646,7 +1628,7 @@ const  closewarehouse=()=>{
                             name="destination_country"
                             onChange={handleupdateapi}
                             value={
-                              inputdata.destination_country
+                              inputdata?.destination_country
                             }
                           >
                             <option>
@@ -1681,7 +1663,7 @@ const  closewarehouse=()=>{
                             type="text"
                             name="port_of_loading"
                             value={
-                              inputdata.port_of_loading
+                              inputdata?.port_of_loading
                             }
                             onChange={handleupdateapi}
                             placeholder="Port of Loading"
@@ -1697,7 +1679,7 @@ const  closewarehouse=()=>{
                             name="post_of_discharge"
                             onChange={handleupdateapi}
                             value={
-                              inputdata.post_of_discharge
+                              inputdata?.post_of_discharge
                             }
                             placeholder="Port of Discharge"
                           />
@@ -1711,7 +1693,7 @@ const  closewarehouse=()=>{
                             name="place_of_delivery"
                             onChange={handleupdateapi}
                             value={
-                              inputdata.place_of_delivery
+                              inputdata?.place_of_delivery
                             }
                             placeholder="Place of Delivery"
                           />
@@ -1721,7 +1703,7 @@ const  closewarehouse=()=>{
                           <select
                             name="incoterm"
                             onChange={handleupdateapi}
-                            value={inputdata.incoterm}
+                            value={inputdata?.incoterm}
                           >
                             <option value="">
                               Select...
@@ -1762,7 +1744,7 @@ const  closewarehouse=()=>{
                             name="supplier_address"
                             onChange={handleupdateapi}
                             value={
-                              inputdata.supplier_address
+                              inputdata?.supplier_address
                             }
                             placeholder="Supplier Address"
                           />
@@ -1773,7 +1755,7 @@ const  closewarehouse=()=>{
                           <select
                             name="fcl_lcl"
                             onChange={handleupdateapi}
-                            value={inputdata.fcl_lcl}
+                            value={inputdata?.fcl_lcl}
                           >
                             <option>Select...</option>
                             <option value={"FCL"}>
@@ -1797,7 +1779,7 @@ const  closewarehouse=()=>{
                                 <RadioGroup
                                   aria-labelledby="demo-row-radio-buttons-group-label"
                                   value={
-                                    inputdata.shipment_origin
+                                    inputdata?.shipment_origin
                                   }
                                   name="shipment_origin"
                                   onChange={
@@ -1843,7 +1825,7 @@ const  closewarehouse=()=>{
                                 <RadioGroup
                                   aria-labelledby="demo-row-radio-buttons-group-label"
                                   value={
-                                    inputdata.shipment_des
+                                    inputdata?.shipment_des
                                   }
                                   name="shipment_des"
                                   onChange={
@@ -1974,7 +1956,7 @@ const  closewarehouse=()=>{
                           <select
                             name="package_type"
                             value={
-                              inputdata.package_type
+                              inputdata?.package_type
                             }
                             onChange={handleupdateapi}
                             className="form-control"
@@ -2007,7 +1989,7 @@ const  closewarehouse=()=>{
                             name="no_of_packages"
                             onChange={handleupdateapi}
                             value={
-                              inputdata.no_of_packages
+                              inputdata?.no_of_packages
                             }
                             placeholder="Num.. of Package"
                           />
@@ -2018,7 +2000,7 @@ const  closewarehouse=()=>{
                             name="commodity"
                             onChange={handleupdateapi}
                             value={
-                              inputdata.commodity
+                              inputdata?.commodity
                             }
                             placeholder="Comment"
                           >
@@ -2049,7 +2031,7 @@ const  closewarehouse=()=>{
                             type="text"
                             onChange={handleupdateapi}
                             value={
-                              inputdata.dimension
+                              inputdata?.dimension
                             }
                             onKeyPress={handlekey}
                             name="dimension"
@@ -2062,7 +2044,7 @@ const  closewarehouse=()=>{
                             type="text"
                             onKeyPress={handlekey}
                             onChange={handleupdateapi}
-                            value={inputdata.weight}
+                            value={inputdata?.weight}
                             name="weight"
                             placeholder="Weight"
                           />
@@ -2078,10 +2060,10 @@ const  closewarehouse=()=>{
                             onKeyPress={handlekey}
                             name="volumetric_weight"
                             value={
-                              inputdata.dimension
+                              inputdata?.dimension
                                 ? 167 *
-                                inputdata.dimension
-                                : inputdata.volumetric_weight
+                                inputdata?.dimension
+                                : inputdata?.volumetric_weight
                             }
                             placeholder="Volumetric Weight"
                           />
@@ -2132,7 +2114,7 @@ const  closewarehouse=()=>{
                                 handleupdateapi
                               }
                               value={
-                                inputdata.nature_of_hazard
+                                inputdata?.nature_of_hazard
                               }
                             >
                               <option value="">
@@ -2227,7 +2209,7 @@ const  closewarehouse=()=>{
                             name="comment"
                             id=""
                             onChange={handleupdateapi}
-                            value={inputdata.comment}
+                            value={inputdata?.comment}
                             placeholder="write your comment here.."
                           ></textarea>
                         </div>
@@ -2245,7 +2227,7 @@ const  closewarehouse=()=>{
                             <RadioGroup
                               aria-labelledby="demo-row-radio-buttons-group-label"
                               value={
-                                inputdata.insurance
+                                inputdata?.insurance
                               }
                               name="insurance"
                               onChange={
@@ -2275,7 +2257,7 @@ const  closewarehouse=()=>{
                             <RadioGroup
                               aria-labelledby="demo-row-radio-buttons-group-label"
                               value={
-                                inputdata.ready_for_collection
+                                inputdata?.ready_for_collection
                               }
                               name="ready_for_collection"
                               onChange={
@@ -2303,7 +2285,7 @@ const  closewarehouse=()=>{
                             <RadioGroup
                               aria-labelledby="demo-row-radio-buttons-group-label"
                               value={
-                                inputdata.hazardous
+                                inputdata?.hazardous
                               }
                               name="hazardous"
                               onChange={
@@ -2335,7 +2317,7 @@ const  closewarehouse=()=>{
                             name="assign_to_transporter"
                             onChange={handleupdateapi}
                             value={
-                              inputdata.assign_to_transporter
+                              inputdata?.assign_to_transporter
                             }
                           >
                             <option value="">
@@ -2364,7 +2346,7 @@ const  closewarehouse=()=>{
                             <RadioGroup
                               aria-labelledby="demo-row-radio-buttons-group-label"
                               value={
-                                inputdata.send_to_warehouse
+                                inputdata?.send_to_warehouse
                               }
                               name="send_to_warehouse"
                               onChange={
@@ -2394,7 +2376,7 @@ const  closewarehouse=()=>{
                             name="assign_warehouse"
                             onChange={handleupdateapi}
                             value={
-                              inputdata.assign_warehouse
+                              inputdata?.assign_warehouse
                             }
                           >
                             <option value="">
@@ -2427,7 +2409,7 @@ const  closewarehouse=()=>{
                             <RadioGroup
                               aria-labelledby="demo-row-radio-buttons-group-label"
                               value={
-                                inputdata.assign_to_clearing
+                                inputdata?.assign_to_clearing
                               }
                               name="assign_to_clearing"
                               onChange={

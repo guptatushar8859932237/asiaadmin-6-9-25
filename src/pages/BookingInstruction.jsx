@@ -344,8 +344,8 @@ const BookingInstruction = () => {
                                     border: "1px solid #000",
                                     textAlign: "center",
                                   }}
+                                 className= {data.bk_comm_Invoice==="Yes"?"fa fa-check":""}    
                                 >
-                                  {data.bk_comm_Invoice}
                                 </td>
                                 <td
                                   style={{
@@ -353,8 +353,9 @@ const BookingInstruction = () => {
                                     border: "1px solid #000",
                                     borderRight: "none",
                                     textAlign: "center",
+
                                   }}
-                                ></td>
+                                  className= {data.bk_comm_Invoice==="No"?"fa fa-check":""}                                ></td>
                               </tr>
                             </table>
                             <table>
@@ -388,6 +389,7 @@ const BookingInstruction = () => {
                                     borderBottom: "1px solid #000",
                                     borderRight: "1px solid #000",
                                   }}
+                                 
                                 >
                                   PACKING LIST
                                 </th>
@@ -397,8 +399,9 @@ const BookingInstruction = () => {
                                     border: "1px solid #000",
                                     textAlign: "center",
                                   }}
+                                    className= {data.bk_packing_list==="Yes"?"fa fa-check":""} 
                                 >
-                                  {data.bk_packing_list}
+                                
                                 </td>
                                 <td
                                   style={{
@@ -407,6 +410,7 @@ const BookingInstruction = () => {
                                     borderRight: "none",
                                     textAlign: "center",
                                   }}
+                                    className= {data.bk_packing_list==="No"?"fa fa-check":""} 
                                 ></td>
                               </tr>
                               <tr>
@@ -425,8 +429,8 @@ const BookingInstruction = () => {
                                     border: "1px solid #000",
                                     textAlign: "center",
                                   }}
-                                >
-                                  {data.bk_trasprt_doc}
+                                    // className= {data.bk_trasprt_doc==="Yes"?"fa fa-check":""} 
+                                > <i  className= {data.bk_trasprt_doc==="No"?"fa fa-check":""} ></i>
                                 </td>
                                 <td
                                   style={{
@@ -435,7 +439,10 @@ const BookingInstruction = () => {
                                     borderRight: "none",
                                     textAlign: "center",
                                   }}
-                                ></td>
+                                    // className= {data.bk_trasprt_doc==="No"?"fa fa-check":""} 
+                                >
+                                  <i  className= {data.bk_trasprt_doc==="No"?"fa fa-check":""} ></i>
+                                </td>
                               </tr>
                               <tr>
                                 <th
@@ -1215,18 +1222,26 @@ const BookingInstruction = () => {
                                 <th
                                   className="exWidth"
                                   style={{
-                                    // borderTop: "1px solid #000",
                                     borderBottom: "1px solid #000",
                                     borderRight: "1px solid #000",
+                                    
                                   }}
-                                ></th>
+                                >
+                                  <i
+  className={data.bk_exprt_modTransport === "RoadConsole" ? "fa fa-check" : ""}
+></i>
+                                </th>
                                 <td
                                   className="exWidth"
                                   style={{
                                     border: "1px solid #000",
                                     textAlign: "center",
                                   }}
-                                ></td>
+                                >
+                                   <i
+  className={data.bk_exprt_modTransport === "RoadDedicated" ? "fa fa-check  " : ""}
+></i>
+                                </td>
                                 <td
                                   className="exWidth"
                                   style={{
@@ -1234,7 +1249,9 @@ const BookingInstruction = () => {
                                     borderRight: "none",
                                     textAlign: "center",
                                   }}
-                                ></td>
+                                ><i
+  className={data.bk_exprt_modTransport === "SeaFCL" ? "fa fa-check" : ""}
+></i></td>
                                 <td
                                   className="lclWidth"
                                   style={{
@@ -1242,7 +1259,12 @@ const BookingInstruction = () => {
                                     borderRight: "none",
                                     textAlign: "center",
                                   }}
-                                ></td>
+                                >
+                                  <i
+  className={data.bk_exprt_modTransport === "SeaLCL" ? "fa fa-check" : ""}
+>
+  </i>
+  </td>
                                 <td
                                   className="lclWidth"
                                   style={{
@@ -1250,7 +1272,9 @@ const BookingInstruction = () => {
                                     borderRight: "none",
                                     textAlign: "center",
                                   }}
-                                ></td>
+                                ><i
+  className={data.bk_exprt_modTransport === "SeaB/Bulk" ? "fa fa-check" : ""}
+></i></td>
                                 <td
                                   className="lclWidth"
                                   style={{
@@ -1258,7 +1282,9 @@ const BookingInstruction = () => {
                                     borderRight: "none",
                                     textAlign: "center",
                                   }}
-                                ></td>
+                                > <i
+  className={data.bk_exprt_modTransport === "AirConsol" ? "fa fa-check" : ""}
+></i></td>
                                 <td
                                   className="lclWidth"
                                   style={{
@@ -1266,7 +1292,11 @@ const BookingInstruction = () => {
                                     borderRight: "none",
                                     textAlign: "center",
                                   }}
-                                ></td>
+                                >
+                                  <i
+  className={data.bk_exprt_modTransport === "AirExpress" ? "fa fa-check" : ""}
+></i>
+                                </td>
                               </tr>
                             </table>
 
@@ -1468,7 +1498,7 @@ const BookingInstruction = () => {
                             </table>
 
                             {/* namePlace */}
-                            <table className="selectRight">
+                            {/* <table className="selectRight">
                               <tr>
                                 {" "}
                                 <th
@@ -1525,7 +1555,7 @@ const BookingInstruction = () => {
                                   }}
                                 ></td>{" "}
                               </tr>
-                            </table>
+                            </table> */}
                             <table className="">
                               <tr>
                                 <td

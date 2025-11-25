@@ -633,7 +633,6 @@ export default function Order() {
         console.log(error.response.data);
       });
   };
-
   const handlesearchapi = () => {
     const searchData = {
       search: searchQuery,
@@ -653,15 +652,12 @@ export default function Order() {
         console.log(error.response.data);
       });
   };
-
-
   // edit order code////////////////////////////////////////////////////////////
   const handleupdateapi = (e) => {
     const { name, value } = e.target;
     setInputdata({ ...inputdata, [name]: value });
   };
   const openModalopen = () => setIsOpen(true);
-
   // function to close modal
   const closeModalclose = () => setIsOpen(false);
   const handleupdate = (freight_id) => {
@@ -712,8 +708,8 @@ export default function Order() {
       sales_representative: getUSer.sales_id,
     });
   };
-
   const handleupdateapipost = (freight_id) => {
+    
     console.log(inputdata.client_ref);
     const formdata = new FormData();
     formdata.append("date", formattedDate);
@@ -727,7 +723,7 @@ export default function Order() {
     formdata.append("quote_received", inputdata.quote_received);
     formdata.append("client_quoted", inputdata.client_quoted);
     formdata.append("is_active", inputdata.is_active);
-    formdata.append("destination_country", inputdata.destination_country);
+    formdata.append("destination_country", inputdata.delivery_to);
     formdata.append("comment", inputdata.comment);
     formdata.append("no_of_packages", inputdata.no_of_packages);
     formdata.append("fcl_lcl", inputdata.fcl_lcl);
@@ -735,7 +731,7 @@ export default function Order() {
     formdata.append("insurance", inputdata.insurance);
     formdata.append("commodity", inputdata.commodity);
     formdata.append("hazardous", inputdata.hazardous);
-    formdata.append("country_of_origin", inputdata.country_of_origin);
+    formdata.append("country_of_origin", inputdata.collection_from);
     formdata.append("supplier_address", inputdata.supplier_address);
     formdata.append("port_of_loading", inputdata.port_of_loading);
     formdata.append("post_of_discharge", inputdata.post_of_discharge);
@@ -1596,10 +1592,10 @@ const  closewarehouse=()=>{
                             Country of Origin
                           </label>
                           <select
-                            name="country_of_origin"
+                            name="collection_from"
                             onChange={handleupdateapi}
                             value={
-                              inputdata?.country_of_origin
+                              inputdata?.collection_from
                             }
                           >
                             <option value="">
@@ -1625,10 +1621,10 @@ const  closewarehouse=()=>{
                             Destination Country
                           </label>
                           <select
-                            name="destination_country"
+                            name="delivery_to"
                             onChange={handleupdateapi}
                             value={
-                              inputdata?.destination_country
+                              inputdata?.delivery_to
                             }
                           >
                             <option>

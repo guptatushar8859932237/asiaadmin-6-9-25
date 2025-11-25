@@ -344,8 +344,9 @@ const BookingInstruction = () => {
                                     border: "1px solid #000",
                                     textAlign: "center",
                                   }}
-                                 className= {data.bk_comm_Invoice==="Yes"?"fa fa-check":""}    
+                                //  className= {data.bk_comm_Invoice==="Yes"?"fa fa-check":""}    
                                 >
+                                   <i  className= {data.bk_comm_Invoice==="Yes"?"fa fa-check":""} ></i>
                                 </td>
                                 <td
                                   style={{
@@ -355,7 +356,9 @@ const BookingInstruction = () => {
                                     textAlign: "center",
 
                                   }}
-                                  className= {data.bk_comm_Invoice==="No"?"fa fa-check":""}                                ></td>
+                                  // className= {data.bk_comm_Invoice==="No"?"fa fa-check":""}                                >
+                                       > <i  className= {data.bk_comm_Invoice==="No"?"fa fa-check":""} ></i>
+                                  </td>
                               </tr>
                             </table>
                             <table>
@@ -399,9 +402,9 @@ const BookingInstruction = () => {
                                     border: "1px solid #000",
                                     textAlign: "center",
                                   }}
-                                    className= {data.bk_packing_list==="Yes"?"fa fa-check":""} 
+                                    // className= {data.bk_packing_list==="Yes"?"fa fa-check":""} 
                                 >
-                                
+                                 <i  className= {data.bk_packing_list==="Yes"?"fa fa-check":""} ></i>
                                 </td>
                                 <td
                                   style={{
@@ -410,8 +413,10 @@ const BookingInstruction = () => {
                                     borderRight: "none",
                                     textAlign: "center",
                                   }}
-                                    className= {data.bk_packing_list==="No"?"fa fa-check":""} 
-                                ></td>
+                                    // className= {data.bk_packing_list==="No"?"fa fa-check":""} 
+                                >
+                                  <i  className= {data.bk_packing_list==="No"?"fa fa-check":""} ></i>
+                                </td>
                               </tr>
                               <tr>
                                 <th
@@ -430,7 +435,7 @@ const BookingInstruction = () => {
                                     textAlign: "center",
                                   }}
                                     // className= {data.bk_trasprt_doc==="Yes"?"fa fa-check":""} 
-                                > <i  className= {data.bk_trasprt_doc==="No"?"fa fa-check":""} ></i>
+                                > <i  className= {data.bk_trasprt_doc==="Yes"?"fa fa-check":""} ></i>
                                 </td>
                                 <td
                                   style={{
@@ -463,7 +468,8 @@ const BookingInstruction = () => {
                                     textAlign: "center",
                                   }}
                                 >
-                                  {data.bk_MSDS}
+                                  {/* {data.bk_MSDS} */}
+                                   <i  className= {data.bk_MSDS==="Yes"?"fa fa-check":""} ></i>
                                 </td>
                                 <td
                                   style={{
@@ -472,7 +478,9 @@ const BookingInstruction = () => {
                                     borderRight: "none",
                                     textAlign: "center",
                                   }}
-                                ></td>
+                                >
+                                    <i  className= {data.bk_MSDS==="No"?"fa fa-check":""} ></i>
+                                </td>
                               </tr>
                               <tr>
                                 <th
@@ -518,7 +526,8 @@ const BookingInstruction = () => {
                                     textAlign: "center",
                                   }}
                                 >
-                                  {data.bk_CuntyTrd_SADC}
+                                  {/* {data.bk_CuntyTrd_SADC} */}
+                                   <i  className= {data.bk_CuntyTrd_SADC==="Yes"?"fa fa-check":""} ></i>
                                 </td>
                                 <td
                                   style={{
@@ -527,7 +536,9 @@ const BookingInstruction = () => {
                                     borderRight: "none",
                                     textAlign: "center",
                                   }}
-                                ></td>
+                                >
+                                   <i  className= {data.bk_CuntyTrd_SADC==="No"?"fa fa-check":""} ></i>
+                                </td>
                               </tr>
                               <tr>
                                 <th
@@ -546,7 +557,7 @@ const BookingInstruction = () => {
                                     textAlign: "center",
                                   }}
                                 >
-                                  {data.bk_letter_credit}
+                                   <i  className= {data.bk_letter_credit==="Yes"?"fa fa-check":""} ></i>
                                 </td>
                                 <td
                                   style={{
@@ -555,7 +566,9 @@ const BookingInstruction = () => {
                                     borderRight: "none",
                                     textAlign: "center",
                                   }}
-                                ></td>
+                                >
+                                         <i  className= {data.bk_letter_credit==="No"?"fa fa-check":""} ></i>
+                                </td>
                               </tr>
                             </table>
                             <table>
@@ -594,6 +607,7 @@ const BookingInstruction = () => {
                                   }}
                                 >
                                   {data.bk_Insur_cover}
+                                   {/* <i  className= {data.bk_Insur_cover==="Yes"?"fa fa-check":""} ></i> */}
                                 </td>
                                 <td
                                   style={{
@@ -602,7 +616,9 @@ const BookingInstruction = () => {
                                     borderRight: "none",
                                     textAlign: "center",
                                   }}
-                                ></td>
+                                >
+                                  
+                                </td>
                               </tr>
                               <tr>
                                 <td
@@ -611,7 +627,9 @@ const BookingInstruction = () => {
                                     border: "1px solid #000",
                                     textAlign: "center",
                                   }}
-                                ></td>
+                                >
+                                  <i  className= {data.bk_Insur_cover==="Yes"?"fa fa-check":""} ></i>
+                                  </td>
                                 <td
                                   style={{
                                     width: "65px",
@@ -619,7 +637,7 @@ const BookingInstruction = () => {
                                     borderRight: "none",
                                     textAlign: "center",
                                   }}
-                                ></td>
+                                >   <i  className= {data.bk_Insur_cover==="No"?"fa fa-check":""} ></i></td>
                               </tr>
                             </table>
                             <table>

@@ -41,28 +41,59 @@ export default function Warehouse() {
   const closeModal1 = () => {
     setIsModalOpen1(false);
   };
+
   const postData1 = () => {
-    const data = {
-      warehouse_address: inputdata.warehouse_address,
-      warehouse_name: inputdata.warehouse_name,
-      town: inputdata.town,
-      country: inputdata.country,
-      contact_person: inputdata.contact_person,
-      email: inputdata.email,
-      mobile_number: inputdata.mobile_number,
-    };
-    axios
-      .post(`${process.env.REACT_APP_BASE_URL}addWarehouse`, data)
-      .then((response) => {
-        console.log(response);
-        getwarehouse();
-        toast.success(response.data.message);
-        closeModal1();
-      })
-      .catch((error) => {
-        console.log(error.response.data);
-      });
+  if (!validateAddWarehouse()) {
+    toast.error("Please fix the errors before submitting.");
+    return;
+  }
+
+  const data = {
+    warehouse_address: inputdata.warehouse_address,
+    warehouse_name: inputdata.warehouse_name,
+    town: inputdata.town,
+    country: inputdata.country,
+    contact_person: inputdata.contact_person,
+    email: inputdata.email,
+    mobile_number: inputdata.mobile_number,
   };
+
+  axios
+    .post(`${process.env.REACT_APP_BASE_URL}addWarehouse`, data)
+    .then((response) => {
+      getwarehouse();
+      toast.success(response.data.message);
+      closeModal1();
+      setInputdata({});
+      setValidationErrors({});
+    })
+    .catch((error) => {
+      console.log(error.response.data);
+    });
+};
+
+  // const postData1 = () => {
+  //   const data = {
+  //     warehouse_address: inputdata.warehouse_address,
+  //     warehouse_name: inputdata.warehouse_name,
+  //     town: inputdata.town,
+  //     country: inputdata.country,
+  //     contact_person: inputdata.contact_person,
+  //     email: inputdata.email,
+  //     mobile_number: inputdata.mobile_number,
+  //   };
+  //   axios
+  //     .post(`${process.env.REACT_APP_BASE_URL}addWarehouse`, data)
+  //     .then((response) => {
+  //       console.log(response);
+  //       getwarehouse();
+  //       toast.success(response.data.message);
+  //       closeModal1();
+  //     })
+  //     .catch((error) => {
+  //       console.log(error.response.data);
+  //     });
+  // };
   useEffect(() => {
     getcountry();
   }, []);
@@ -187,6 +218,50 @@ export default function Warehouse() {
         console.log(error.response.data);
       });
   };
+
+  const validateAddWarehouse = () => {
+  let errors = {};
+
+  if (!inputdata.warehouse_name || inputdata.warehouse_name.trim() === "") {
+    errors.warehouse_name = "Warehouse Name is required";
+  }
+
+  if (
+    !inputdata.warehouse_address ||
+    inputdata.warehouse_address.trim() === ""
+  ) {
+    errors.warehouse_address = "Warehouse Address is required";
+  }
+
+  if (!inputdata.country || inputdata.country === "Select Country....") {
+    errors.country = "Country is required";
+  }
+
+  if (!inputdata.town || inputdata.town.trim() === "") {
+    errors.town = "Town is required";
+  }
+
+  if (!inputdata.mobile_number || inputdata.mobile_number.trim() === "") {
+    errors.mobile_number = "Mobile Number is required";
+  } else if (!/^\d{10}$/.test(inputdata.mobile_number)) {
+    errors.mobile_number = "Mobile Number must be 10 digits";
+  }
+
+  if (!inputdata.contact_person || inputdata.contact_person.trim() === "") {
+    errors.contact_person = "Contact person is required";
+  }
+
+  if (!inputdata.email || inputdata.email.trim() === "") {
+    errors.email = "Email is required";
+  } else if (!/^\S+@\S+\.\S+$/.test(inputdata.email)) {
+    errors.email = "Email is invalid";
+  }
+
+  setValidationErrors(errors);
+
+  return Object.keys(errors).length === 0;
+};
+
   return (
     <>
       {loader ? (
@@ -458,8 +533,7 @@ export default function Warehouse() {
                     open={isModalOpen1}
                     onClose={closeModal1}
                     aria-labelledby="modal-modal-title"
-                    aria-describedby="modal-modal-description"
-                  >
+                    aria-describedby="modal-modal-description">
                     <Box
                       className="warehouse_modal"
                       sx={{
@@ -478,12 +552,10 @@ export default function Warehouse() {
                       )}
                       <div className="modal-header">
                         <h2 id="modal-modal-title">Add Warehouse</h2>
-
                         <button className="btn btn-close" onClick={closeModal1}>
                           <CloseIcon />
                         </button>
                       </div>
-
                       <div className="newModalGap noFormaControl">
                         <div className="row">
                           <div className="col-6">

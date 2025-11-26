@@ -155,7 +155,6 @@ const ManageCustomer = () => {
   //       setLoader(false);
   //     });
   // };
-
   const getsearchValu = () => {
     const postdata = {
       search: searinpdata.search,
@@ -179,7 +178,6 @@ const ManageCustomer = () => {
       page: page,
       limit: 10,
     };
-
     await axios
       .post(`${process.env.REACT_APP_BASE_URL}client-list`, postdata)
       .then((response) => {
@@ -193,7 +191,6 @@ const ManageCustomer = () => {
         setLoader(false);
       });
   };
-
   const handledelete = async (id) => {
     Swal.fire({
       title: "Are you sure?",
@@ -256,7 +253,6 @@ const ManageCustomer = () => {
         toast.error(error.response.data.message);
       });
   };
-
   const [isChecked, setIsChecked] = useState(true);
   const handleToggle = (id) => {
     const updatedData = supplierdata.map((item) =>
@@ -294,7 +290,6 @@ const ManageCustomer = () => {
     getclientlistr(page);
   };
   const filteredData = supplierdata.filter((item) => {
-    // console.log(item);
     return (
       item.cellphone.toLowerCase().includes(searchQuery1.toLowerCase()) ||
       item.email.toLowerCase().includes(searchQuery1.toLowerCase()) ||
@@ -454,7 +449,6 @@ const ManageCustomer = () => {
                           ></input>
                           <p className="text-danger mb-0">{error.email}</p>
                         </div>
-
                         <div className="mb-3 col-md-6">
                           <label>Address 1</label>
                           <br />
@@ -675,7 +669,7 @@ const ManageCustomer = () => {
                 <table className="table mt-4 table-striped tableICon">
                   <thead>
                     <tr>
-                      <th scope="col">Sr.No.</th>
+                      <th scope="col">Costumer Id</th>
                       <th scope="col">Client Name</th>
                       <th className="col-2" scope="col-2">
                         Client Email
@@ -692,15 +686,15 @@ const ManageCustomer = () => {
                     {pagenation.data &&
                       pagenation.data.length > 0 &&
                       pagenation.data.map((item, index) => {
-                        // console.log(item);
                         return (
                           <>
                             <tr className="border-bottom" key={index}>
-                              <th>{startIndex + index + 1}</th>
+                              <td>{item.client_number}</td>
                               <td>{item.full_name}</td>
                               <td className="col-2">{item.email} </td>
                               <td>{item.cellphone}</td>
                               <td>{item.telephone}</td>
+                              <td>{new Date(item.created_at).toLocaleDateString("en-GB")}</td>
                               <td>
                                 {item.status == 1 ? (
                                   <label
@@ -802,6 +796,29 @@ const ManageCustomer = () => {
                                           </div>
                                           <div className="modal-body">
                                             <div className="row">
+                                                <div className="col-md-6 mb-3">
+                                                <label>Client Name</label>
+                                                <input
+                                                  type="text"
+                                                  name="client_name"
+                                                  onChange={submitInputdata}
+                                                  value={inputData.client_name}
+                                                  className="form-control"
+                                                ></input>
+                                              </div>
+                                              <div className="col-md-6 mb-3">
+                                                <label>Contact Person</label>
+                                                <input
+                                                  type="text"
+                                                  name="contact_person"
+                                                  onChange={submitInputdata}
+                                                  value={
+                                                    inputData.contact_person
+                                                  }
+                                                  onKeyPress={handlepress}
+                                                  className="form-control"
+                                                ></input>
+                                              </div>
                                               <div className="col-md-6 mb-3">
                                                 <label>Email</label>
                                                 <input
@@ -812,24 +829,43 @@ const ManageCustomer = () => {
                                                   className="form-control"
                                                 ></input>
                                               </div>
+                                               <div className="col-md-6 mb-3">
+                                                <label>Client Ref</label>
+                                                <input
+                                                  type="text"
+                                                  name="client_ref"
+                                                  onChange={submitInputdata}
+                                                  value={inputData.client_ref}
+                                                  className="form-control"
+                                                ></input>
+                                              </div>
+                                               <div className="col-md-6 mb-3">
+                                                <label>Cellphone</label>
+                                                <input
+                                                  type="text"
+                                                  name="cellphone"
+                                                  onChange={submitInputdata}
+                                                  value={inputData.cellphone}
+                                                  onKeyPress={handlepress}
+                                                  className="form-control"
+                                                ></input>
+                                              </div>
                                               <div className="col-md-6 mb-3">
+                                                <label>Telephone</label>
+                                                <input
+                                                  type="text"
+                                                  name="telephone"
+                                                  onChange={submitInputdata}
+                                                  value={inputData.telephone}
+                                                  className="form-control"
+                                                ></input>
+                                              </div>
+                                               <div className="col-md-6 mb-3">
                                                 <label>Address 1</label>
                                                 <input
                                                   type="text"
                                                   name="address_1"
                                                   value={inputData.address_1}
-                                                  onChange={submitInputdata}
-                                                  className="form-control"
-                                                ></input>
-                                              </div>
-                                              <div className="col-md-6 mb-3">
-                                                <label>Importer Refrence</label>
-                                                <input
-                                                  type="text"
-                                                  name="importers_ref"
-                                                  value={
-                                                    inputData.importers_ref
-                                                  }
                                                   onChange={submitInputdata}
                                                   className="form-control"
                                                 ></input>
@@ -891,62 +927,8 @@ const ManageCustomer = () => {
                                                     )}
                                                 </select>
                                               </div>
-                                              <div className="col-md-6 mb-3">
-                                                <label>Client Ref</label>
-                                                <input
-                                                  type="text"
-                                                  name="client_ref"
-                                                  onChange={submitInputdata}
-                                                  value={inputData.client_ref}
-                                                  className="form-control"
-                                                ></input>
-                                              </div>
-                                              <div className="col-md-6 mb-3">
-                                                <label>Client Name</label>
-                                                <input
-                                                  type="text"
-                                                  name="client_name"
-                                                  onChange={submitInputdata}
-                                                  value={inputData.client_name}
-                                                  className="form-control"
-                                                ></input>
-                                              </div>
-                                              <div className="col-md-6 mb-3">
-                                                <label>Contact Person</label>
-                                                <input
-                                                  type="text"
-                                                  name="contact_person"
-                                                  onChange={submitInputdata}
-                                                  value={
-                                                    inputData.contact_person
-                                                  }
-                                                  onKeyPress={handlepress}
-                                                  className="form-control"
-                                                ></input>
-                                              </div>
-                                              <div className="col-md-6 mb-3">
-                                                <label>Cellphone</label>
-                                                <input
-                                                  type="text"
-                                                  name="cellphone"
-                                                  onChange={submitInputdata}
-                                                  value={inputData.cellphone}
-                                                  onKeyPress={handlepress}
-                                                  className="form-control"
-                                                ></input>
-                                              </div>
-                                              <div className="col-md-6 mb-3">
-                                                <label>Telephone</label>
-                                                <input
-                                                  type="text"
-                                                  name="telephone"
-                                                  onChange={submitInputdata}
-                                                  value={inputData.telephone}
-                                                  className="form-control"
-                                                ></input>
-                                              </div>
-                                              <div className="col-md-6 mb-3">
-                                                <label>Code</label>
+                                                    <div className="col-md-6 mb-3">
+                                                <label>Postal Code</label>
                                                 <input
                                                   type="text"
                                                   name="code"
@@ -956,7 +938,7 @@ const ManageCustomer = () => {
                                                   className="form-control"
                                                 ></input>
                                               </div>
-                                              <div className="col-md-6 mb-3">
+                                                 <div className="col-md-6 mb-3">
                                                 <label>
                                                   Company Reg / ID #
                                                 </label>
@@ -965,6 +947,18 @@ const ManageCustomer = () => {
                                                   name="company_id"
                                                   onChange={submitInputdata}
                                                   value={inputData.company_id}
+                                                  className="form-control"
+                                                ></input>
+                                              </div>
+                                             <div className="col-md-6 mb-3">
+                                                <label>Importer Refrence</label>
+                                                <input
+                                                  type="text"
+                                                  name="importers_ref"
+                                                  value={
+                                                    inputData.importers_ref
+                                                  }
+                                                  onChange={submitInputdata}
                                                   className="form-control"
                                                 ></input>
                                               </div>
@@ -1057,7 +1051,6 @@ const ManageCustomer = () => {
                   }}
                 >
                   <div className="modal-content">
-                    {/* Header */}
                     <div className="modal-header">
                       <h2 id="modal-modal-title">Add Customer</h2>
                       <button
@@ -1068,11 +1061,47 @@ const ManageCustomer = () => {
                         <CloseIcon />
                       </button>
                     </div>
-
-                    {/* Form Body */}
                     <div className="newModalGap noFormaControl">
-                      <div className="row my-3">
-                        {/* Email */}
+                       <div className="row my-3">
+                        <div className="col-md-6">
+                          <label>Client Name</label>
+                          <input
+                            type="text"
+                            name="client_name"
+                            onChange={handlechange}
+                            value={data.client_name}
+                            placeholder="Client Name"
+                            className="w-100 border p-2 rounded"
+                          />
+                          <p className="text-danger mb-0">
+                            {error.client_name}
+                          </p>
+                        </div>
+                        <div className="col-md-6">
+                          <label>Contact Person</label>
+                          <input
+                            type="text"
+                            name="contact_person"
+                            onChange={handlechange}
+                            value={data.contact_person}
+                            placeholder="Contact Person"
+                            className="w-100 border p-2 rounded"
+                          />
+                        </div>
+                      </div>
+                       <div className="row my-3">
+                        <div className="col-md-6">
+                          <label>Client Ref</label>
+                          <input
+                            type="text"
+                            name="client_ref"
+                            onChange={handlechange}
+                            value={data.client_ref}
+                            placeholder="Client Reference"
+                            className="w-100 border p-2 rounded"
+                          />
+                          <p className="text-danger mb-0">{error.client_ref}</p>
+                        </div>
                         <div className="col-md-6">
                           <label>Email</label>
                           <input
@@ -1084,8 +1113,35 @@ const ManageCustomer = () => {
                           />
                           <p className="text-danger mb-0">{error.email}</p>
                         </div>
-                        {/* Address 1 */}
+                      </div>
+                        <div className="row my-3">
                         <div className="col-md-6">
+                          <label>Cellphone</label>
+                          <input
+                            type="text"
+                            name="cellphone"
+                            onChange={handlechange}
+                            value={data.cellphone}
+                            placeholder="Cellphone"
+                            className="w-100 border p-2 rounded"
+                          />
+                          <p className="text-danger mb-0">{error.cellphone}</p>
+                        </div>
+                        <div className="col-md-6">
+                          <label>Telephone</label>
+                          <input
+                            type="text"
+                            name="telephone"
+                            onChange={handlechange}
+                            value={data.telephone}
+                            placeholder="Telephone"
+                            className="w-100 border p-2 rounded"
+                          />
+                          <p className="text-danger mb-0">{error.telephone}</p>
+                        </div>
+                      </div>
+                         <div className="row my-3">
+                         <div className="col-md-6">
                           <label>Address 1</label>
                           <input
                             type="text"
@@ -1097,23 +1153,7 @@ const ManageCustomer = () => {
                           />
                           <p className="text-danger mb-0">{error.address_1}</p>
                         </div>
-                      </div>
-
-                      <div className="row my-3">
-                        {/* Importer Reference */}
-                        <div className="col-md-6">
-                          <label>Importer Reference</label>
-                          <input
-                            type="text"
-                            name="importers_ref"
-                            onChange={handlechange}
-                            value={data.importers_ref}
-                            placeholder="Importer Reference"
-                            className="w-100 border p-2 rounded"
-                          />
-                        </div>
-                        {/* Address 2 */}
-                        <div className="col-md-6">
+                         <div className="col-md-6">
                           <label>Address 2</label>
                           <input
                             type="text"
@@ -1125,10 +1165,8 @@ const ManageCustomer = () => {
                           />
                         </div>
                       </div>
-
-                      <div className="row my-3">
-                        {/* City */}
-                        <div className="col-md-6">
+                       <div className="row ">
+                         <div className="col-md-6">
                           <label>City</label>
                           <input
                             type="text"
@@ -1139,8 +1177,7 @@ const ManageCustomer = () => {
                             className="w-100 border p-2 rounded"
                           />
                         </div>
-                        {/* Province */}
-                        <div className="col-md-6">
+                          <div className="col-md-6">
                           <label>Province</label>
                           <input
                             type="text"
@@ -1152,10 +1189,8 @@ const ManageCustomer = () => {
                           />
                         </div>
                       </div>
-
                       <div className="row my-3">
-                        {/* Country */}
-                        <div className="col-md-6">
+                                <div className="col-md-6">
                           <label>Country</label>
                           <select
                             name="country"
@@ -1173,94 +1208,21 @@ const ManageCustomer = () => {
                               ))}
                           </select>
                         </div>
-                        {/* Client Reference */}
-                        <div className="col-md-6">
-                          <label>Client Ref</label>
-                          <input
-                            type="text"
-                            name="client_ref"
-                            onChange={handlechange}
-                            value={data.client_ref}
-                            placeholder="Client Reference"
-                            className="w-100 border p-2 rounded"
-                          />
-                          <p className="text-danger mb-0">{error.client_ref}</p>
-                        </div>
-                      </div>
-
-                      <div className="row my-3">
-                        {/* Client Name */}
-                        <div className="col-md-6">
-                          <label>Client Name</label>
-                          <input
-                            type="text"
-                            name="client_name"
-                            onChange={handlechange}
-                            value={data.client_name}
-                            placeholder="Client Name"
-                            className="w-100 border p-2 rounded"
-                          />
-                          <p className="text-danger mb-0">
-                            {error.client_name}
-                          </p>
-                        </div>
-                        {/* Contact Person */}
-                        <div className="col-md-6">
-                          <label>Contact Person</label>
-                          <input
-                            type="text"
-                            name="contact_person"
-                            onChange={handlechange}
-                            value={data.contact_person}
-                            placeholder="Contact Person"
-                            className="w-100 border p-2 rounded"
-                          />
-                        </div>
-                      </div>
-
-                      <div className="row my-3">
-                        {/* Cellphone */}
-                        <div className="col-md-6">
-                          <label>Cellphone</label>
-                          <input
-                            type="text"
-                            name="cellphone"
-                            onChange={handlechange}
-                            value={data.cellphone}
-                            placeholder="Cellphone"
-                            className="w-100 border p-2 rounded"
-                          />
-                          <p className="text-danger mb-0">{error.cellphone}</p>
-                        </div>
-                        {/* Telephone */}
-                        <div className="col-md-6">
-                          <label>Telephone</label>
-                          <input
-                            type="text"
-                            name="telephone"
-                            onChange={handlechange}
-                            value={data.telephone}
-                            placeholder="Telephone"
-                            className="w-100 border p-2 rounded"
-                          />
-                          <p className="text-danger mb-0">{error.telephone}</p>
-                        </div>
-                      </div>
-                      <div className="row my-3">
-                        <div className="col-md-6">
-                          <label>Code</label>
+                            <div className="col-md-6">
+                          <label>Postal Code</label>
                           <input
                             type="text"
                             name="code"
                             onChange={handlechange}
                             value={data.code}
-                            placeholder="Code"
+                            placeholder="Postal Code"
                             className="w-100 border p-2 rounded"
                           />
                           <p className="text-danger mb-0">{error.code}</p>
                         </div>
-                        {/* Company ID */}
-                        <div className="col-md-6">
+                      </div>
+                      <div className="row my-3">
+                         <div className="col-md-6">
                           <label>Company Reg/ID#</label>
                           <input
                             type="text"
@@ -1271,9 +1233,19 @@ const ManageCustomer = () => {
                             className="w-100 border p-2 rounded"
                           />
                         </div>
+                         <div className="col-md-6">
+                          <label>Importer Reference</label>
+                          <input
+                            type="text"
+                            name="importers_ref"
+                            onChange={handlechange}
+                            value={data.importers_ref}
+                            placeholder="Importer Reference"
+                            className="w-100 border p-2 rounded"
+                          />
+                        </div>
                       </div>
                       <div className="row my-3">
-                        {/* Vat/Tax Ref */}
                         <div className="col-md-6">
                           <label>Vat/Tax Ref</label>
                           <input
@@ -1285,7 +1257,6 @@ const ManageCustomer = () => {
                             className="w-100 border p-2 rounded"
                           />
                         </div>
-                        {/* Password */}
                         <div className="col-md-6">
                           <label>Password</label>
                           <input
@@ -1298,8 +1269,6 @@ const ManageCustomer = () => {
                           />
                         </div>
                       </div>
-
-                      {/* Apply Button */}
                       <div className="modal-footer unsetLt">
                         <Button
                           variant="contained"

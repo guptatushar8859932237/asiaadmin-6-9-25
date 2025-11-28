@@ -4698,7 +4698,7 @@ input.form-control {
 table, tr, td {
   page-break-inside: avoid !important;
 }
- select.select_supplier {
+.select_supplier {
     font-weight: 500 !important;
     font-size: 13px !important;
 }

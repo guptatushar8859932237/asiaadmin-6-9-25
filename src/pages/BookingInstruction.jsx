@@ -115,7 +115,9 @@ const BookingInstruction = () => {
                                 >
                                   ADDRESS
                                 </th>
-                                <td style={{ borderBottom: "1px solid #000" }}>
+                                <td 
+                                // style={{ borderBottom: "1px solid #000" }}
+                                >
                                   {info.shipment_ref === "consignee"
                                     ? info.supplier_address
                                     : info?.address_1 +
@@ -720,7 +722,7 @@ const BookingInstruction = () => {
                                 >
                                   <strong>
                                     {" "}
-                                    Asia Direct - Africa Logistics BILLING
+                                    Asia Direct - Africa  BILLING
                                     REQUIREMENTS{" "}
                                   </strong>
                                 </td>
@@ -1915,7 +1917,7 @@ const BookingInstruction = () => {
                                     borderRight: "1px solid #000",
                                   }}
                                 >
-                                  IS Asia Direct - Africa Logistics TO ARRANGE
+                                  IS Asia Direct - Africa  TO ARRANGE
                                   PRE-SHIPMENT INSPECTION?
                                 </th>
                                 <td
@@ -2097,7 +2099,7 @@ const BookingInstruction = () => {
                                 >
                                   <strong>
                                     {" "}
-                                    Asia Direct - Africa Logistics BILLING
+                                    Asia Direct - Africa  BILLING
                                     REQUIREMENTS{" "}
                                   </strong>
                                 </td>
@@ -2269,18 +2271,18 @@ const BookingInstruction = () => {
                                 </th>
                               </tr>
                               <tr>
-                                <td style={{ borderBottom: "1px solid #000" }}>
+                                <td >
                                   {data.bk_desc_goods}
                                 </td>
                               </tr>
                               <tr>
-                                <td style={{ borderBottom: "1px solid #000" }}>
-                                  .{" "}
+                                <td>
+                                 
                                 </td>
                               </tr>
                               <tr>
-                                <td style={{ borderBottom: "1px solid #000" }}>
-                                  .
+                                <td >
+                                
                                 </td>
                               </tr>
                             </table>
@@ -2292,38 +2294,12 @@ const BookingInstruction = () => {
                               marginLeft: "10px",
                             }}
                           >
-                            <table className="bottomTable">
+                            <table className="">
                               <tr>
-                                <th>HANDLING REQUIREMENTS </th>
-                                {/* <th>WEIGHT (KG'S)</th>
-                                <th>NUMBER OF PIECES </th>
-                                <th>LENGTH (METER)</th>
-                                <th>WIDTH (METER)</th>
-                                <th>HEIGHT (METER)</th> */}
+                                <th style={{borderBottom:"1px solid #000"}}>HANDLING REQUIREMENTS </th>
                               </tr>
                               <tr>
                                 <td>{data.bk_handling_req}</td>
-                                {/* <td> </td>
-                                <td> </td>
-                                <td> </td>
-                                <td> </td>
-                                <td>123</td> */}
-                              </tr>
-                              <tr>
-                                <td>.</td>
-                                {/* <td> </td>
-                                <td> </td>
-                                <td> </td>
-                                <td> </td>
-                                <td>123</td>*/}
-                              </tr>
-                              <tr>
-                                <td>.</td>
-                                {/* <td> </td>
-                                <td> </td>
-                                <td> </td>
-                                <td> </td>
-                                <td>123</td> */}
                               </tr>
                             </table>
                           </div>
@@ -2408,8 +2384,9 @@ const BookingInstruction = () => {
                                 }}
                               >
                                 <p style={{ fontSize: "10px" }}>
-                                  This document is the property of Africa Global
-                                  Logistics; Distribution and reproduction
+                                  This document is the property of Asia Direct -
+                                  Africa
+                                  ; Distribution and reproduction
                                   prohibited without authorisation of the QHSE
                                   Manager
                                 </p>

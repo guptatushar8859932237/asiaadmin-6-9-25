@@ -779,6 +779,7 @@ export default function Order() {
         if (response.data.success === true) {
           setLoader(false);
           closeModalclose()
+          getorder()
           // frightData();
           toast.success(response.data.message);
         }

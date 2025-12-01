@@ -8,9 +8,7 @@ import logo from "../../Assests/logo.png";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import CloseIcon from "@mui/icons-material/Close";
 import html2pdf from "html2pdf.js";
-
 import { useRef } from "react";
-
 export default function ShippingEstimate() {
   const [error, setError] = useState({});
   const [update, setUpdate] = useState([0]);
@@ -34,13 +32,11 @@ export default function ShippingEstimate() {
     const { name, value } = e.target;
     setUpdate({ ...update, [name]: value });
   };
-
   const andlemodaloen = () => {
     setOpenmodal(true);
   };
   const handlechangecalc = (e) => {
     const { name, value } = e.target;
-
     setFreight((prevInputData) => ({
       ...prevInputData,
       [name]: value,
@@ -257,7 +253,6 @@ export default function ShippingEstimate() {
         ? 0
         : parseFloat(finalori * freight.exchange_rate).toFixed(2)
     );
-
     formdata.append(
       "origin_cust_final_amt",
       isNaN(finalori2 * freight.exchange_rate)
@@ -300,7 +295,6 @@ export default function ShippingEstimate() {
         ? 0
         : parseFloat(finaldestation6 * freight.exchange_rate).toFixed(2)
     );
-
     formdata.append(
       "des_doc_final_amt",
       isNaN(finaldestation4 * freight.exchange_rate)
@@ -356,11 +350,9 @@ export default function ShippingEstimate() {
         toast.error(error.response.data);
       });
   };
-
   useEffect(() => {
     supplier();
   }, []);
-
   const handlepresss = (e) => {
     if (e.charCode < 42 || e.charCode > 57) {
       e.preventDefault();
@@ -374,14 +366,12 @@ export default function ShippingEstimate() {
     const day = String(today.getDate()).padStart(2, "0");
     return `${year}-${month}-${day}`;
   };
-
   useEffect(() => {
     getsupplier();
   }, []);
   useEffect(() => {
     getdataapi();
   }, []);
-
   const getsupplier = () => {
     axios
       .get(`${process.env.REACT_APP_BASE_URL}supplier-list`)
@@ -420,7 +410,6 @@ export default function ShippingEstimate() {
   const closemodal = () => {
     setOpenmodal(false);
   };
-
   const getdata1 = () => {
     axios
       .get(`${process.env.REACT_APP_BASE_URL}supplier-list`)
@@ -877,7 +866,7 @@ const options = {
                                           marginTop: 10,
                                         }}
                                       >
-                                        0.00
+                                      {getdata?.volumetric_weight}
                                       </p>
                                     </div>
                                     <div
@@ -927,7 +916,7 @@ const options = {
                                           marginTop: 10,
                                         }}
                                       >
-                                        0.00
+                                   {getdata?.commodity}
                                       </p>
                                     </div>
                                     <div
@@ -952,7 +941,7 @@ const options = {
                                           marginTop: 10,
                                         }}
                                       >
-                                        0.00
+                                        {getdata?.hazardous}
                                       </p>
                                     </div>
                                     <div

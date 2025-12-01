@@ -7,6 +7,10 @@ import { usePDF } from "react-to-pdf";
 import logo from "../../Assests/logo.png";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import CloseIcon from "@mui/icons-material/Close";
+import html2pdf from "html2pdf.js";
+
+import { useRef } from "react";
+
 export default function ShippingEstimate() {
   const [error, setError] = useState({});
   const [update, setUpdate] = useState([0]);
@@ -20,7 +24,7 @@ export default function ShippingEstimate() {
   const [supplierdata, setSupplierdata] = useState([]);
   const [dat, setDat] = useState([]);
   const [openmodal, setOpenmodal] = useState(false);
-   const [selected, setSelected] = useState([]); // selected IDs
+  const [selected, setSelected] = useState([]); // selected IDs
   const [open, setOpen] = useState(false);
   const { toPDF, targetRef } = usePDF({ filename: "page.pdf" });
   const navigate = useNavigate();
@@ -31,9 +35,9 @@ export default function ShippingEstimate() {
     setUpdate({ ...update, [name]: value });
   };
 
-  const andlemodaloen =()=>{
-setOpenmodal(true)
-  }
+  const andlemodaloen = () => {
+    setOpenmodal(true);
+  };
   const handlechangecalc = (e) => {
     const { name, value } = e.target;
 
@@ -413,25 +417,25 @@ setOpenmodal(true)
   const handleclicknav = () => {
     navigate("/Admin/managefreight");
   };
-  const closemodal  =()=>{
-    setOpenmodal(false)
-  }
+  const closemodal = () => {
+    setOpenmodal(false);
+  };
 
-    const getdata1 = () => {
-      axios
-        .get(`${process.env.REACT_APP_BASE_URL}supplier-list`)
-        .then((response) => {
-          setDat(response.data.data);
-        })
-        .catch((error) => {
-          console.log(error);
-        });
-    };
-    useEffect(() => {
-      getdata1();
-    }, []);
+  const getdata1 = () => {
+    axios
+      .get(`${process.env.REACT_APP_BASE_URL}supplier-list`)
+      .then((response) => {
+        setDat(response.data.data);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+  useEffect(() => {
+    getdata1();
+  }, []);
 
-    const handleSelect = (id) => {
+  const handleSelect = (id) => {
     if (selected.includes(id)) {
       setSelected(selected.filter((item) => item !== id));
     } else {
@@ -439,106 +443,130 @@ setOpenmodal(true)
     }
   };
 
-  const handleAddSupplier =async()=>{
+  const handleAddSupplier = async () => {
     if (selected.length === 0) {
       toast.error("Please select at least one supplier.");
       return;
     }
-    const response = await axios.post(`${process.env.REACT_APP_BASE_URL}/freight/assign-Suppliers`,{freight_id:getdata.freight_id,supplier_ids:selected})
-    if(response.data.success){
+    const response = await axios.post(
+      `${process.env.REACT_APP_BASE_URL}/freight/assign-Suppliers`,
+      { freight_id: getdata.freight_id, supplier_ids: selected }
+    );
+    if (response.data.success) {
       toast.success(response.data.message);
       setOpenmodal(false);
     }
-      console.log("something went wrong")
-  }
+    console.log("something went wrong");
+  };
+  const pdfRef = useRef();
+  const downloadPDF = () => {
+    const element = pdfRef.current;
+    const contentWidth = element.scrollWidth;
+    const contentHeight = element.scrollHeight;
+ 
+const rect = element.getBoundingClientRect();
+
+const options = {
+  margin: 0,
+  filename: "page.pdf",
+  image: { type: "jpeg", quality: 1 },
+  html2canvas: { scale: 1.5, useCORS: true },
+  jsPDF: {
+    unit: "px",
+    format: [rect.width, rect.height],
+    orientation: "portrait",
+  },
+  pagebreak: false,
+};
+
+    html2pdf().from(element).set(options).save();
+  };
 
   return (
     <>
       {openmodal && (
-                <div className="custom-modal">
-                  <div className="custom-modal-content">
-                    <div className="custom-modal-header">
-                      <h5>Select Supplier</h5>
-                      <button className="btn-close" onClick={() => closemodal()}>
-                        <CloseIcon />
-                      </button>
-                    </div>
-                    <div className="custom-modal-body">
-                      <div style={{  margin: "20px" }}>
-      {/* Selected Box */}
-      <div
-        onClick={() => setOpen(!open)}
-        style={{
-          padding: "10px",
-          border: "1px solid black",
-          borderRadius: "5px",
-          cursor: "pointer",
-          background: "#fff",
-        }}
-      >
-        {selected.length > 0
-          ? `${selected.length} selected`
-          : "Select Users"}
-      </div>
-
-      {/* Dropdown */}
-      {open && (
-        <div
-          style={{
-            border: "1px solid #ccc",
-            borderRadius: "5px",
-            marginTop: "5px",
-            padding: "10px",
-            maxHeight: "200px",
-            overflowY: "auto",
-            background: "white",
-          }}
-        >
-          {dat.map((item) => (
-            <label
-              key={item.id}
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: "10px",
-                marginBottom: "8px",
-                cursor: "pointer",
-              }}
-            >
-              <input
-                type="checkbox"
-                checked={selected.includes(item.id)}
-                onChange={() => handleSelect(item.id)}
-              />
-              <div>
-                <strong>{item.name}</strong>
-                <div style={{ fontSize: "12px", color: "gray" }}>
-                  {item.email}
+        <div className="custom-modal">
+          <div className="custom-modal-content">
+            <div className="custom-modal-header">
+              <h5>Select Supplier</h5>
+              <button className="btn-close" onClick={() => closemodal()}>
+                <CloseIcon />
+              </button>
+            </div>
+            <div className="custom-modal-body">
+              <div style={{ margin: "20px" }}>
+                {/* Selected Box */}
+                <div
+                  onClick={() => setOpen(!open)}
+                  style={{
+                    padding: "10px",
+                    border: "1px solid black",
+                    borderRadius: "5px",
+                    cursor: "pointer",
+                    background: "#fff",
+                  }}
+                >
+                  {selected.length > 0
+                    ? `${selected.length} selected`
+                    : "Select Users"}
                 </div>
-              </div>
-            </label>
-          ))}
-        </div>
-      )}
 
-      <br />
+                {/* Dropdown */}
+                {open && (
+                  <div
+                    style={{
+                      border: "1px solid #ccc",
+                      borderRadius: "5px",
+                      marginTop: "5px",
+                      padding: "10px",
+                      maxHeight: "200px",
+                      overflowY: "auto",
+                      background: "white",
+                    }}
+                  >
+                    {dat.map((item) => (
+                      <label
+                        key={item.id}
+                        style={{
+                          display: "flex",
+                          alignItems: "center",
+                          gap: "10px",
+                          marginBottom: "8px",
+                          cursor: "pointer",
+                        }}
+                      >
+                        <input
+                          type="checkbox"
+                          checked={selected.includes(item.id)}
+                          onChange={() => handleSelect(item.id)}
+                        />
+                        <div>
+                          <strong>{item.name}</strong>
+                          <div style={{ fontSize: "12px", color: "gray" }}>
+                            {item.email}
+                          </div>
+                        </div>
+                      </label>
+                    ))}
+                  </div>
+                )}
 
-      {/* Selected IDs (for testing) */}
-      {/* <div>
+                <br />
+
+                {/* Selected IDs (for testing) */}
+                {/* <div>
         <strong>Selected IDs:</strong> {JSON.stringify(selected)}
       </div> */}
-    </div>
-                    </div>
-                    <div className="custom-modal-footer">
-                      <button className="btn btn-primary"
-                       onClick={handleAddSupplier}
-                       >
-                        Add Supplier
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              )}
+              </div>
+            </div>
+            <div className="custom-modal-footer">
+              <button className="btn btn-primary" onClick={handleAddSupplier}>
+                Add Supplier
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
       <div className="wpWrapper ">
         <div className="container-fluid">
           <div className=" ">
@@ -557,23 +585,26 @@ setOpenmodal(true)
                         <h4 className="freight_hd mt-0 ms-3">Supplier Form</h4>
                       </div>
                     </div>
-                    <button onClick={andlemodaloen} className="btn btn-success">Assign Supplier</button>
+                    <button onClick={andlemodaloen} className="btn btn-success">
+                      Assign Supplier
+                    </button>
                     <MdDownloadForOffline
-                      onClick={() => toPDF()}
+                      onClick={downloadPDF}
                       className="fs-2"
                       style={{ color: "#1b2245", cursor: "pointer" }}
                     />
                   </div>
                 </div>
               </div>
-              <section style={{ marginTop: "10px" }} ref={targetRef}>
+              <section ref={pdfRef} style={{ margin: 0, padding: 0 }}>
                 <div
                   style={{
-                    height: "auto",
                     width: "100%",
-                    padding: 20,
+                    padding: "20px",
                     outline: "auto",
+                    height: "auto",
                   }}
+                  className="pdf-page"
                 >
                   <p>
                     <table style={{ margin: "20px" }}>
@@ -762,7 +793,7 @@ setOpenmodal(true)
                                           marginTop: 10,
                                         }}
                                       >
-                                        <strong>incoterm</strong>
+                                        <strong>Package Type</strong>
                                       </p>
                                       <p
                                         style={{
@@ -771,32 +802,7 @@ setOpenmodal(true)
                                           marginTop: 10,
                                         }}
                                       >
-                                        {getdata?.incoterm}
-                                      </p>
-                                    </div>
-                                    <div
-                                      style={{
-                                        display: "flex",
-                                        justifyContent: "space-between",
-                                      }}
-                                    >
-                                      <p
-                                        style={{
-                                          fontSize: 14,
-                                          marginBottom: "unset",
-                                          marginTop: 10,
-                                        }}
-                                      >
-                                        <strong>dimension</strong>
-                                      </p>
-                                      <p
-                                        style={{
-                                          fontSize: 14,
-                                          marginBottom: "unset",
-                                          marginTop: 10,
-                                        }}
-                                      >
-                                        {getdata?.dimension}
+                                        Sea
                                       </p>
                                     </div>
                                     <div
@@ -812,7 +818,7 @@ setOpenmodal(true)
                                           marginTop: 10,
                                         }}
                                       >
-                                        <strong>weight</strong>
+                                        <strong>Weight</strong>
                                       </p>
                                       <p
                                         style={{
@@ -837,7 +843,7 @@ setOpenmodal(true)
                                           marginTop: 10,
                                         }}
                                       >
-                                        <strong> No. of Packages</strong>
+                                        <strong>M3</strong>
                                       </p>
                                       <p
                                         style={{
@@ -846,7 +852,183 @@ setOpenmodal(true)
                                           marginTop: 10,
                                         }}
                                       >
-                                        {getdata?.no_of_packages}
+                                        0.00
+                                      </p>
+                                    </div>
+                                    <div
+                                      style={{
+                                        display: "flex",
+                                        justifyContent: "space-between",
+                                      }}
+                                    >
+                                      <p
+                                        style={{
+                                          fontSize: 14,
+                                          marginBottom: "unset",
+                                          marginTop: 10,
+                                        }}
+                                      >
+                                        <strong>Volumetric (kgs)</strong>
+                                      </p>
+                                      <p
+                                        style={{
+                                          fontSize: 14,
+                                          marginBottom: "unset",
+                                          marginTop: 10,
+                                        }}
+                                      >
+                                        0.00
+                                      </p>
+                                    </div>
+                                    <div
+                                      style={{
+                                        display: "flex",
+                                        justifyContent: "space-between",
+                                      }}
+                                    >
+                                      <p
+                                        style={{
+                                          fontSize: 14,
+                                          marginBottom: "unset",
+                                          marginTop: 10,
+                                        }}
+                                      >
+                                        <strong>Chargeable</strong>
+                                      </p>
+                                      <p
+                                        style={{
+                                          fontSize: 14,
+                                          marginBottom: "unset",
+                                          marginTop: 10,
+                                        }}
+                                      >
+                                        0.00
+                                      </p>
+                                    </div>
+                                    <div
+                                      style={{
+                                        display: "flex",
+                                        justifyContent: "space-between",
+                                      }}
+                                    >
+                                      <p
+                                        style={{
+                                          fontSize: 14,
+                                          marginBottom: "unset",
+                                          marginTop: 10,
+                                        }}
+                                      >
+                                        <strong>Commodity</strong>
+                                      </p>
+                                      <p
+                                        style={{
+                                          fontSize: 14,
+                                          marginBottom: "unset",
+                                          marginTop: 10,
+                                        }}
+                                      >
+                                        0.00
+                                      </p>
+                                    </div>
+                                    <div
+                                      style={{
+                                        display: "flex",
+                                        justifyContent: "space-between",
+                                      }}
+                                    >
+                                      <p
+                                        style={{
+                                          fontSize: 14,
+                                          marginBottom: "unset",
+                                          marginTop: 10,
+                                        }}
+                                      >
+                                        <strong>Hazardous</strong>
+                                      </p>
+                                      <p
+                                        style={{
+                                          fontSize: 14,
+                                          marginBottom: "unset",
+                                          marginTop: 10,
+                                        }}
+                                      >
+                                        0.00
+                                      </p>
+                                    </div>
+                                    <div
+                                      style={{
+                                        display: "flex",
+                                        justifyContent: "space-between",
+                                      }}
+                                    >
+                                      <p
+                                        style={{
+                                          fontSize: 14,
+                                          marginBottom: "unset",
+                                          marginTop: 10,
+                                        }}
+                                      >
+                                        <strong>Incoterm</strong>
+                                      </p>
+                                      <p
+                                        style={{
+                                          fontSize: 14,
+                                          marginBottom: "unset",
+                                          marginTop: 10,
+                                        }}
+                                      >
+                                        {getdata?.incoterm}
+                                      </p>
+                                    </div>
+                                    {/* <div
+                                      style={{
+                                        display: "flex",
+                                        justifyContent: "space-between",
+                                      }}
+                                    >
+                                      <p
+                                        style={{
+                                          fontSize: 14,
+                                          marginBottom: "unset",
+                                          marginTop: 10,
+                                        }}
+                                      >
+                                        <strong>dimension</strong>
+                                      </p>
+                                      <p
+                                        style={{
+                                          fontSize: 14,
+                                          marginBottom: "unset",
+                                          marginTop: 10,
+                                        }}
+                                      >
+                                        {getdata?.dimension}
+                                      </p>
+                                    </div> */}
+
+                                    <div
+                                      style={{
+                                        display: "flex",
+                                        justifyContent: "space-between",
+                                      }}
+                                    >
+                                      <p
+                                        style={{
+                                          fontSize: 14,
+                                          marginBottom: "unset",
+                                          marginTop: 10,
+                                        }}
+                                      >
+                                        <strong> Freight</strong>
+                                      </p>
+                                      <p
+                                        style={{
+                                          fontSize: 14,
+                                          marginBottom: "unset",
+                                          marginTop: 10,
+                                        }}
+                                      >
+                                        Sea
                                       </p>
                                     </div>
                                   </td>
@@ -1030,7 +1212,7 @@ setOpenmodal(true)
                                         {getdata.collection_from_name}
                                       </p>
                                     </div>
-                                    {/* <div
+                                    <div
                                       style={{
                                         display: "flex",
                                         justifyContent: "space-between",
@@ -1054,7 +1236,7 @@ setOpenmodal(true)
                                       >
                                         78
                                       </p>
-                                    </div> */}
+                                    </div>
                                     <div
                                       style={{
                                         display: "flex",
@@ -1159,6 +1341,31 @@ setOpenmodal(true)
                                         {getdata?.quote_received}
                                       </p>
                                     </div>
+                                    <div
+                                      style={{
+                                        display: "flex",
+                                        justifyContent: "space-between",
+                                      }}
+                                    >
+                                      <p
+                                        style={{
+                                          fontSize: 14,
+                                          marginBottom: "unset",
+                                          marginTop: 10,
+                                        }}
+                                      >
+                                        <strong> Date</strong>
+                                      </p>
+                                      <p
+                                        style={{
+                                          fontSize: 14,
+                                          marginBottom: "unset",
+                                          marginTop: 10,
+                                        }}
+                                      >
+                                        12/23/2045
+                                      </p>
+                                    </div>
                                     {/* <div
                                       style={{
                                         display: "flex",
@@ -1187,7 +1394,8 @@ setOpenmodal(true)
                                         {getdata?.quote_received}
                                       </p>
                                     </div> */}
-                                    <div
+
+                                    {/* <div
                                       style={{
                                         display: "flex",
                                         justifyContent: "space-between",
@@ -1211,7 +1419,7 @@ setOpenmodal(true)
                                       >
                                         {getdata?.transit_time}
                                       </p>
-                                    </div>
+                                    </div> */}
                                   </td>
                                 </tr>
                               </tbody>
@@ -1221,19 +1429,20 @@ setOpenmodal(true)
                       </tbody>
                     </table>
                   </p>
-
-                  <table style={{ width: "100%", marginBottom: 20 }}>
+                  {/* new table */}
+                  <table style={{ width: "100%" }}>
                     <tbody>
                       <tr>
-                        <td style={{ padding: 0 }}>
+                        <td
+                          style={{ padding: 0, borderRight: "1px solid black" }}
+                        >
                           <div
                             style={{
                               border: "1px solid black",
                               width: "31%",
                               borderBottom: "0px solid transparent",
                               height: 22,
-                              borderTop:"unset",
-                        
+                              borderTop: "unset",
                             }}
                           >
                             <p
@@ -1250,5410 +1459,3804 @@ setOpenmodal(true)
                           </div>
                         </td>
                       </tr>
-                      <tr>
-                        <td style={{ padding: 0 }}>
-                          <div
-                            style={{
-                              width: "100%",
-                              display: "flex",
-                              alignItems: "center",
-                            }}
-                          >
-                            <div
-                              style={{
-                                width: "20%",
-                                height: 22,
-                                border: "1px solid black",
-                                borderRight: "0px solid transparent",
-                                borderBottom: "0px solid transparent",
-                              }}
-                            >
-                              <p
-                                style={{
-                                  margin: 0,
-                                  fontSize: 13,
-                                  fontWeight: 700,
-                                  paddingLeft: 5,
-                                }}
-                              >
-                                Items
-                              </p>
-                            </div>
-                            <div
-                              style={{
-                                border: "1px solid black",
-                                width: "31%",
-                                height: 22,
-                                borderRight: "0px solid transparent",
-                                borderBottom: "0px solid transparent",
-                              }}
-                            >
-                              <p
-                                style={{
-                                  margin: 0,
-                                  fontSize: 13,
-                                  fontWeight: 700,
-                                  paddingLeft: 5,
-                                }}
-                              >
-                                Description
-                              </p>
-                            </div>
-                            <div
-                              style={{
-                                border: "1px solid black",
-                                width: "10%",
-                                height: 22,
-                                borderRight: "0px solid transparent",
-                                borderBottom: "0px solid transparent",
-                              }}
-                            >
-                              <select
-                                className="select_supplier"
-                                style={{
-                                  margin: 0,
-                                  fontSize: 13,
-                                  fontWeight: 700,
-                                  paddingLeft: 5,
-                                  width: "100%",
-                                  border: 0,
-                                }}
-                                onChange={handlechangecalc}
-                                name="freight_currency"
-                                value={freight?.freight_currency}
-                              >
-                                <option>Select</option>
-                                <option value="RAND">RAND</option>
-                                <option value="USD">USD</option>
-                                <option value="INR">INR</option>
-                                <option value="EURO">EURO</option>
-                              </select>
-                            </div>
-                            <div
-                              style={{
-                                border: "1px solid black",
-                                width: "10%",
-                                height: 22,
-                                borderRight: "0px solid transparent",
-                                borderBottom: "0px solid transparent",
-                              }}
-                            >
-                              <p
-                                style={{
-                                  margin: 0,
-                                  fontSize: 13,
-                                  fontWeight: 700,
-                                  paddingLeft: 5,
-                                }}
-                              >
-                                Cost
-                              </p>
-                            </div>
-                            <div
-                              style={{
-                                border: "1px solid black",
-                                width: "10%",
-                                height: 22,
-                                borderRight: "0px solid transparent",
-                                borderBottom: "0px solid transparent",
-                              }}
-                            >
-                              <p
-                                style={{
-                                  margin: 0,
-                                  fontSize: 13,
-                                  fontWeight: 700,
-                                  paddingLeft: 5,
-                                }}
-                              >
-                                GP
-                              </p>
-                            </div>
-                            <div
-                              style={{
-                                border: "1px solid black",
-                                width: "10%",
-                                height: 22,
-                                borderRight: "0px solid transparent",
-                                borderBottom: "0px solid transparent",
-                              }}
-                            >
-                              <p
-                                style={{
-                                  margin: 0,
-                                  fontSize: 13,
-                                  fontWeight: 700,
-                                  paddingLeft: 5,
-                                }}
-                              >
-                                ROE
-                              </p>
-                            </div>
-                            <div
-                              style={{
-                                border: "1px solid black",
-                                width: "20%",
-                                height: 22,
-                                borderBottom: "0px solid transparent",
-                                display: "flex",
-                                justifyContent: "space-around",
-                                alignItems: "center",
-                              }}
-                            >
-                              <p
-                                style={{
-                                  margin: 0,
-                                  fontSize: 13,
-                                  fontWeight: 700,
-                                  paddingLeft: 5,
-                                }}
-                              >
-                                Amt
-                              </p>
-                              <p
-                                style={{
-                                  margin: 0,
-                                  fontSize: 13,
-                                  fontWeight: 700,
-                                  paddingLeft: 5,
-                                }}
-                              >
-                                Final Amount
-                              </p>
-                            </div>
-                          </div>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td style={{ padding: 0 }}>
-                          <div
-                            style={{
-                              width: "100%",
-                              display: "flex",
-                              alignItems: "center",
-                            }}
-                          >
-                            <div
-                              style={{
-                                width: "20%",
-                                height: 22,
-                                border: "1px solid black",
-                                borderRight: "0px solid transparent",
-                              }}
-                            >
-                              <p
-                                style={{
-                                  marginBottom: 0,
-                                  fontSize: 13,
-                                  color: "black",
-                                  fontWeight: 400,
-                                  fontFamily: "monospace",
-                                  paddingLeft: 5,
-                                }}
-                              >
-                                Freight
-                              </p>
-                            </div>
-                            <div
-                              style={{
-                                border: "1px solid black",
-                                borderRight: "0px solid transparent",
-                                width: "31%",
-                                height: 22,
-                              }}
-                            >
-                              <p
-                                style={{
-                                  marginBottom: 0,
-                                  fontSize: 13,
-                                  color: "black",
-                                  fontWeight: 400,
-                                  fontFamily: "monospace",
-                                  paddingLeft: 5,
-                                }}
-                              >
-                                {getdata.freight} Freight
-                              </p>
-                            </div>
-                            <div
-                              style={{
-                                border: "1px solid black",
-                                borderRight: "0px solid transparent",
-                                width: "10%",
-                                height: 22,
-                              }}
-                            >
-                              {/* {freight.freight_currency} */}
-
-                              <input
-                                style={{
-                                  marginBottom: 0,
-                                  fontSize: 13,
-                                  color: "black",
-                                  fontWeight: 400,
-                                  fontFamily: "monospace",
-                                  paddingLeft: 5,
-                                  textAlign: "center",
-                                  width: "100%",
-                                  border: "0px",
-
-                                  verticalAlign: "middle",
-                                }}
-                                value={freight.freight_currency}
-                                placeholder="USD"
-                                className="supplier_form"
-                              />
-                            </div>
-                            <div
-                              style={{
-                                border: "1px solid black",
-                                borderRight: "0px solid transparent",
-                                width: "10%",
-                                height: 22,
-                              }}
-                            >
-                              <input
-                                style={{
-                                  marginBottom: 0,
-                                  fontSize: 13,
-                                  color: "black",
-                                  fontWeight: 400,
-                                  fontFamily: "monospace",
-                                  paddingLeft: 5,
-                                  textAlign: "center",
-                                  width: "100%",
-                                  border: "0px",
-
-                                  verticalAlign: "middle",
-                                }}
-                                type="text"
-                                onKeyPress={handlepresss}
-                                class=" supplier_form"
-                                name="freight_amount"
-                                value={freight?.freight_amount}
-                                onChange={handlechangecalc}
-                                id="floatingInput"
-                                placeholder="0.00"
-                              />
-                            </div>
-
-                            <div
-                              style={{
-                                border: "1px solid black",
-                                borderRight: "0px solid transparent",
-                                width: "10%",
-                                height: 22,
-                              }}
-                            >
-                              <input
-                                style={{
-                                  marginBottom: 0,
-                                  fontSize: 13,
-                                  color: "black",
-                                  fontWeight: 400,
-                                  fontFamily: "monospace",
-                                  paddingLeft: 5,
-                                  textAlign: "center",
-                                  width: "100%",
-                                  border: "0px",
-
-                                  verticalAlign: "middle",
-                                }}
-                                type="text"
-                                onKeyPress={handlepresss}
-                                name="freight_gp"
-                                onChange={handlechangecalc}
-                                value={freight?.freight_gp}
-                                id="floatingInput"
-                                placeholder="0.00%"
-                                className="supplier_form"
-                              />
-                            </div>
-                            <div
-                              style={{
-                                border: "1px solid black",
-                                borderBottom: "none",
-                                borderRight: "0px solid transparent",
-                                width: "10%",
-                                height: 22,
-                              }}
-                            >
-                              <input
-                                style={{
-                                  marginBottom: 0,
-                                  fontSize: 13,
-                                  color: "black",
-                                  fontWeight: 400,
-                                  fontFamily: "monospace",
-                                  paddingLeft: 5,
-                                  textAlign: "center",
-                                  width: "100%",
-                                  border: "0px",
-
-                                  verticalAlign: "middle",
-                                }}
-                                name="Roefreight"
-                                onChange={handlechangecalc}
-                                value={freight.Roefreight}
-                                onKeyPress={handlepresss}
-                                placeholder="0.00"
-                                className="supplier_form"
-                              />
-                            </div>
-                            <div
-                              style={{
-                                border: "1px solid black",
-                                width: "20%",
-                                height: 22,
-                                display: "flex",
-                                justifyContent: "space-around",
-                                alignItems: "center",
-                              }}
-                            >
-                              <input
-                                style={{
-                                  marginBottom: 0,
-                                  fontSize: 13,
-                                  color: "black",
-                                  fontWeight: 400,
-                                  fontFamily: "monospace",
-                                  paddingLeft: 5,
-                                  textAlign: "center",
-                                  width: "100%",
-                                  border: "0px",
-
-                                  verticalAlign: "middle",
-                                }}
-                                value={finalvalflo}
-                                className="supplier_form"
-                              />
-                              <input
-                                style={{
-                                  marginBottom: 0,
-                                  fontSize: 13,
-                                  color: "black",
-                                  fontWeight: 400,
-                                  fontFamily: "monospace",
-                                  paddingLeft: 5,
-                                  textAlign: "center",
-                                  width: "100%",
-                                  border: "0px",
-                                  verticalAlign: "middle",
-                                }}
-                                value={
-                                  isNaN(finalvalflo * freight.Roefreight)
-                                    ? 0
-                                    : parseFloat(
-                                        (
-                                          finalvalflo * freight.Roefreight
-                                        ).toFixed(2)
-                                      )
-                                }
-                                className="supplier_form"
-                              />
-                            </div>
-                          </div>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td style={{ padding: 0 }}>
-                          <div
-                            style={{
-                              width: "100%",
-                              display: "flex",
-                              alignItems: "center",
-                            }}
-                          >
-                            <div
-                              style={{
-                                width: "20%",
-                                height: 22,
-                                border: "1px solid black",
-                                borderRight: "0px solid transparent",
-                                borderTop: "0px solid transparent",
-                              }}
-                            >
-                              <p
-                                style={{
-                                  marginBottom: 0,
-                                  fontSize: 13,
-                                  color: "black",
-                                  fontWeight: 400,
-                                  fontFamily: "monospace",
-                                  paddingLeft: 5,
-                                }}
-                              ></p>
-                            </div>
-                            <div
-                              style={{
-                                border: "1px solid black",
-                                borderRight: "0px solid transparent",
-                                width: "31%",
-                                height: 22,
-                                borderBottom: "0px solid transparent",
-                              }}
-                            >
-                              <p
-                                style={{
-                                  marginBottom: 0,
-                                  fontSize: 13,
-                                  color: "black",
-                                  fontWeight: 400,
-                                  fontFamily: "monospace",
-                                  paddingLeft: 5,
-                                }}
-                              >
-                                Total for Freight
-                              </p>
-                            </div>
-                            <div
-                              style={{
-                                border: "1px solid black",
-                                borderRight: "0px solid transparent",
-                                width: "10%",
-                                height: 22,
-                                borderBottom: "0px solid transparent",
-                              }}
-                            >
-                              <input
-                                style={{
-                                  marginBottom: 0,
-                                  fontSize: 13,
-                                  color: "black",
-                                  fontWeight: 400,
-                                  fontFamily: "monospace",
-                                  paddingLeft: 5,
-                                  textAlign: "center",
-                                  width: "100%",
-                                  border: "0px",
-
-                                  verticalAlign: "middle",
-                                }}
-                                placeholder=""
-                                className="supplier_form"
-                              />
-                            </div>
-                            <div
-                              style={{
-                                border: "1px solid black",
-                                borderRight: "0px solid transparent",
-                                width: "10%",
-                                height: 22,
-                                borderBottom: "0px solid transparent",
-                              }}
-                            >
-                              <input
-                                style={{
-                                  marginBottom: 0,
-                                  fontSize: 13,
-                                  color: "black",
-                                  fontWeight: 400,
-                                  fontFamily: "monospace",
-                                  paddingLeft: 5,
-                                  textAlign: "center",
-                                  width: "100%",
-                                  border: "0px",
-
-                                  verticalAlign: "middle",
-                                }}
-                                placeholder=""
-                                className="supplier_form"
-                              />
-                            </div>
-                            <div
-                              style={{
-                                border: "1px solid black",
-                                borderRight: "0px solid transparent",
-                                width: "10%",
-                                height: 22,
-                                borderBottom: "0px solid transparent",
-                              }}
-                            >
-                              <input
-                                style={{
-                                  marginBottom: 0,
-                                  fontSize: 13,
-                                  color: "black",
-                                  fontWeight: 400,
-                                  fontFamily: "monospace",
-                                  paddingLeft: 5,
-                                  textAlign: "center",
-                                  width: "100%",
-                                  border: "0px",
-
-                                  verticalAlign: "middle",
-                                }}
-                                placeholder=""
-                                className="supplier_form"
-                              />
-                            </div>
-                            <div
-                              style={{
-                                border: "1px solid black",
-                                borderBottom: "none",
-                                borderRight: "0px solid transparent",
-                                width: "10%",
-                                height: 22,
-                              }}
-                            >
-                              <input
-                                style={{
-                                  marginBottom: 0,
-                                  fontSize: 13,
-                                  color: "black",
-                                  fontWeight: 400,
-                                  fontFamily: "monospace",
-                                  paddingLeft: 5,
-                                  textAlign: "center",
-                                  width: "100%",
-                                  border: "0px",
-
-                                  verticalAlign: "middle",
-                                }}
-                                value=""
-                                className="supplier_form"
-                              />
-                            </div>
-                            <div
-                              style={{
-                                border: "1px solid black",
-                                width: "20%",
-                                height: 22,
-                                display: "flex",
-                                justifyContent: "space-around",
-                                borderBottom: "0px solid transparent",
-                                alignItems: "center",
-                              }}
-                            >
-                              <input
-                                style={{
-                                  marginBottom: 0,
-                                  fontSize: 13,
-                                  color: "black",
-                                  fontWeight: 400,
-                                  fontFamily: "monospace",
-                                  paddingLeft: 5,
-                                  textAlign: "center",
-                                  width: "100%",
-                                  border: "0px",
-
-                                  verticalAlign: "middle",
-                                }}
-                                value={finalvalflo}
-                                className="supplier_form"
-                              />
-                              <input
-                                style={{
-                                  marginBottom: 0,
-                                  fontSize: 13,
-                                  color: "black",
-                                  fontWeight: 400,
-                                  fontFamily: "monospace",
-                                  paddingLeft: 5,
-                                  textAlign: "center",
-                                  width: "100%",
-                                  border: "0px",
-
-                                  verticalAlign: "middle",
-                                }}
-                                value={
-                                  isNaN(finalvalflo * freight.Roefreight)
-                                    ? 0
-                                    : parseFloat(
-                                        (
-                                          finalvalflo * freight.Roefreight
-                                        ).toFixed(2)
-                                      )
-                                }
-                                placeholder="0.00"
-                                className="supplier_form"
-                              />
-                            </div>
-                          </div>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td style={{ padding: 0 }}>
-                          <div
-                            style={{
-                              width: "100%",
-                              display: "flex",
-                              alignItems: "center",
-                            }}
-                          >
-                            <div
-                              style={{
-                                width: "20%",
-                                height: 22,
-                                border: "1px solid black",
-                                borderRight: "0px solid transparent",
-                                borderTop: "0px solid transparent",
-                              }}
-                            >
-                              <p
-                                style={{
-                                  marginBottom: 0,
-                                  fontSize: 13,
-                                  color: "black",
-                                  fontWeight: 400,
-                                  fontFamily: "monospace",
-                                  paddingLeft: 5,
-                                }}
-                              ></p>
-                            </div>
-                            <div
-                              style={{
-                                border: "1px solid black",
-                                borderRight: "0px solid transparent",
-                                width: "31%",
-                                height: 22,
-                                borderBottom: "0px solid transparent",
-                              }}
-                            >
-                              <p
-                                style={{
-                                  marginBottom: 0,
-                                  fontSize: 13,
-                                  color: "black",
-                                  fontWeight: 400,
-                                  fontFamily: "monospace",
-                                  paddingLeft: 5,
-                                }}
-                              ></p>
-                            </div>
-                            <div
-                              style={{
-                                border: "1px solid black",
-                                borderRight: "0px solid transparent",
-                                width: "10%",
-                                height: 22,
-                                borderBottom: "0px solid transparent",
-                              }}
-                            ></div>
-                            <div
-                              style={{
-                                border: "1px solid black",
-                                borderRight: "0px solid transparent",
-                                width: "10%",
-                                height: 22,
-                                borderBottom: "0px solid transparent",
-                              }}
-                            >
-                              <p
-                                style={{
-                                  marginBottom: 0,
-                                  fontSize: 13,
-                                  color: "black",
-                                  fontWeight: 400,
-                                  fontFamily: "monospace",
-                                  paddingLeft: 5,
-                                  textAlign: "center",
-                                }}
-                              ></p>
-                            </div>
-                            <div
-                              style={{
-                                border: "1px solid black",
-                                borderRight: "0px solid transparent",
-                                width: "10%",
-                                height: 22,
-                                borderBottom: "0px solid transparent",
-                              }}
-                            >
-                              <p
-                                style={{
-                                  marginBottom: 0,
-                                  fontSize: 13,
-                                  color: "black",
-                                  fontWeight: 400,
-                                  fontFamily: "monospace",
-                                  paddingLeft: 5,
-                                  textAlign: "center",
-                                }}
-                              ></p>
-                            </div>
-                            <div
-                              style={{
-                                border: "1px solid black",
-                                borderBottom: "none",
-                                borderRight: "0px solid transparent",
-                                width: "10%",
-                                height: 22,
-                              }}
-                            >
-                              <input
-                                style={{
-                                  marginBottom: 0,
-                                  fontSize: 13,
-                                  color: "black",
-                                  fontWeight: 400,
-                                  fontFamily: "monospace",
-                                  paddingLeft: 5,
-                                  textAlign: "center",
-                                  width: "100%",
-                                  border: "0px",
-
-                                  verticalAlign: "middle",
-                                }}
-                                className="supplier_form"
-                              />
-                            </div>
-                            <div
-                              style={{
-                                border: "1px solid black",
-                                width: "20%",
-                                height: 22,
-                                display: "flex",
-                                justifyContent: "space-around",
-                                borderBottom: "0px solid transparent",
-                                alignItems: "center",
-                              }}
-                            >
-                              <p
-                                style={{
-                                  margin: 0,
-                                  fontSize: 13,
-                                  fontWeight: 700,
-                                  paddingLeft: 5,
-                                  textAlign: "center",
-                                }}
-                              ></p>
-                              <p
-                                style={{
-                                  margin: 0,
-                                  fontSize: 13,
-                                  fontWeight: 700,
-                                  paddingRight: 5,
-                                  textAlign: "center",
-                                }}
-                              ></p>
-                            </div>
-                          </div>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td style={{ padding: 0 }}>
-                          <div
-                            style={{
-                              width: "100%",
-                              display: "flex",
-                              alignItems: "center",
-                            }}
-                          >
-                            <div
-                              style={{
-                                width: "20%",
-                                height: 22,
-                                border: "1px solid black",
-                                borderRight: "0px solid transparent",
-                                borderTop: "0px solid transparent",
-                              }}
-                            >
-                              <p
-                                style={{
-                                  marginBottom: 0,
-                                  fontSize: 13,
-                                  color: "black",
-                                  fontWeight: 400,
-                                  fontFamily: "monospace",
-                                  paddingLeft: 5,
-                                }}
-                              ></p>
-                            </div>
-                            <div
-                              style={{
-                                border: "1px solid black",
-                                borderRight: "0px solid transparent",
-                                width: "31%",
-                                height: 22,
-                                borderBottom: "0px solid transparent",
-                              }}
-                            >
-                              <p
-                                style={{
-                                  marginBottom: 0,
-                                  fontSize: 13,
-                                  color: "black",
-                                  fontWeight: 400,
-                                  fontFamily: "monospace",
-                                  paddingLeft: 5,
-                                }}
-                              ></p>
-                            </div>
-                            <div
-                              style={{
-                                border: "1px solid black",
-                                borderRight: "0px solid transparent",
-                                width: "10%",
-                                height: 22,
-                                borderBottom: "0px solid transparent",
-                              }}
-                            >
-                              <select
-                                className="select_supplier"
-                                style={{
-                                  margin: 0,
-                                  fontSize: 13,
-                                  fontWeight: 700,
-                                  paddingLeft: 5,
-                                  width: "100%",
-                                  border: 0,
-                                }}
-                                value={freight?.origin_currency}
-                                onChange={handlechangecalc}
-                                name="origin_currency"
-                              >
-                                <option>Select</option>
-                                <option>RAND</option>
-                                <option>USD</option>
-                                <option>INR</option>
-                                <option>EURO</option>
-                              </select>
-                            </div>
-                            <div
-                              style={{
-                                border: "1px solid black",
-                                borderRight: "0px solid transparent",
-                                width: "10%",
-                                height: 22,
-                                borderBottom: "0px solid transparent",
-                              }}
-                            >
-                              <p
-                                style={{
-                                  marginBottom: 0,
-                                  fontSize: 13,
-                                  color: "black",
-                                  fontWeight: 400,
-                                  fontFamily: "monospace",
-                                  paddingLeft: 5,
-                                  textAlign: "center",
-                                }}
-                              ></p>
-                            </div>
-                            <div
-                              style={{
-                                border: "1px solid black",
-                                borderRight: "0px solid transparent",
-                                width: "10%",
-                                height: 22,
-                                borderBottom: "0px solid transparent",
-                              }}
-                            >
-                              <p
-                                style={{
-                                  marginBottom: 0,
-                                  fontSize: 13,
-                                  color: "black",
-                                  fontWeight: 400,
-                                  fontFamily: "monospace",
-                                  paddingLeft: 5,
-                                  textAlign: "center",
-                                }}
-                              ></p>
-                            </div>
-                            <div
-                              style={{
-                                border: "1px solid black",
-                                borderBottom: "none",
-                                borderRight: "0px solid transparent",
-                                width: "10%",
-                                height: 22,
-                              }}
-                            >
-                              <input
-                                style={{
-                                  marginBottom: 0,
-                                  fontSize: 13,
-                                  color: "black",
-                                  fontWeight: 400,
-                                  fontFamily: "monospace",
-                                  paddingLeft: 5,
-                                  textAlign: "center",
-                                  width: "100%",
-                                  border: "0px",
-
-                                  verticalAlign: "middle",
-                                }}
-                                onKeyPress={handlepresss}
-                                onChange={handlechangecalc}
-                                value={freight.roe_origin_currency}
-                                name="roe_origin_currency"
-                                placeholder="0.00"
-                                className="supplier_form"
-                              />
-                            </div>
-                            <div
-                              style={{
-                                border: "1px solid black",
-                                width: "20%",
-                                height: 22,
-                                display: "flex",
-                                justifyContent: "space-around",
-                                borderBottom: "0px solid transparent",
-                                alignItems: "center",
-                              }}
-                            >
-                              <p
-                                style={{
-                                  margin: 0,
-                                  fontSize: 13,
-                                  fontWeight: 700,
-                                  paddingLeft: 5,
-                                  textAlign: "center",
-                                }}
-                              ></p>
-                              <p
-                                style={{
-                                  margin: 0,
-                                  fontSize: 13,
-                                  fontWeight: 700,
-                                  paddingRight: 5,
-                                  textAlign: "center",
-                                }}
-                              ></p>
-                            </div>
-                          </div>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td style={{ padding: 0 }}>
-                          <div
-                            style={{
-                              width: "100%",
-                              display: "flex",
-                              alignItems: "center",
-                            }}
-                          >
-                            <div
-                              style={{
-                                width: "20%",
-                                height: 22,
-                                border: "1px solid black",
-                                borderRight: "0px solid transparent",
-                                borderTop: "0px solid transparent",
-                              }}
-                            >
-                              <p
-                                style={{
-                                  marginBottom: 0,
-                                  fontSize: 13,
-                                  color: "black",
-                                  fontWeight: 400,
-                                  fontFamily: "monospace",
-                                  paddingLeft: 5,
-                                }}
-                              >
-                                Origin Charges
-                              </p>
-                            </div>
-                            <div
-                              style={{
-                                border: "1px solid black",
-                                borderRight: "0px solid transparent",
-                                width: "31%",
-                                height: 22,
-                                borderBottom: "0px solid transparent",
-                              }}
-                            >
-                              <p
-                                style={{
-                                  marginBottom: 0,
-                                  fontSize: 13,
-                                  color: "black",
-                                  fontWeight: 400,
-                                  fontFamily: "monospace",
-                                  paddingLeft: 5,
-                                }}
-                              >
-                                Origin_Pick-up
-                              </p>
-                            </div>
-                            <div
-                              style={{
-                                border: "1px solid black",
-                                borderRight: "0px solid transparent",
-                                width: "10%",
-                                height: 22,
-                                borderBottom: "0px solid transparent",
-                              }}
-                            >
-                              <input
-                                style={{
-                                  marginBottom: 0,
-                                  fontSize: 13,
-                                  color: "black",
-                                  fontWeight: 400,
-                                  fontFamily: "monospace",
-                                  paddingLeft: 5,
-                                  textAlign: "center",
-                                  width: "100%",
-                                  border: "0px",
-
-                                  verticalAlign: "middle",
-                                }}
-                                value={freight.origin_currency}
-                                className="supplier_form"
-                              />
-                            </div>
-                            <div
-                              style={{
-                                border: "1px solid black",
-                                borderRight: "0px solid transparent",
-                                width: "10%",
-                                height: 22,
-                                borderBottom: "0px solid transparent",
-                              }}
-                            >
-                              <input
-                                style={{
-                                  marginBottom: 0,
-                                  fontSize: 13,
-                                  color: "black",
-                                  fontWeight: 400,
-                                  fontFamily: "monospace",
-                                  paddingLeft: 5,
-                                  textAlign: "center",
-                                  width: "100%",
-                                  border: "0px",
-
-                                  verticalAlign: "middle",
-                                }}
-                                type="text"
-                                onKeyPress={handlepresss}
-                                className="supplier_form"
-                                onChange={handlechangecalc}
-                                value={freight?.origin_pick_up}
-                                name="origin_pick_up"
-                                id="floatingInput"
-                                placeholder="0.00"
-                              />
-                            </div>
-                            <div
-                              style={{
-                                border: "1px solid black",
-                                borderRight: "0px solid transparent",
-                                width: "10%",
-                                height: 22,
-                                borderBottom: "0px solid transparent",
-                              }}
-                            >
-                              <input
-                                style={{
-                                  marginBottom: 0,
-                                  fontSize: 13,
-                                  color: "black",
-                                  fontWeight: 400,
-                                  fontFamily: "monospace",
-                                  paddingLeft: 5,
-                                  textAlign: "center",
-                                  width: "100%",
-                                  border: "0px",
-
-                                  verticalAlign: "middle",
-                                }}
-                                type="text"
-                                onKeyPress={handlepresss}
-                                className="supplier_form"
-                                onChange={handlechangecalc}
-                                value={freight?.origin_pickup_gp}
-                                name="origin_pickup_gp"
-                                id="floatingInput"
-                                placeholder="0.00%"
-                              />
-                            </div>
-                            <div
-                              style={{
-                                border: "1px solid black",
-                                borderBottom: "none",
-                                borderRight: "0px solid transparent",
-                                width: "10%",
-                                height: 22,
-                              }}
-                            >
-                              <input
-                                style={{
-                                  marginBottom: 0,
-                                  fontSize: 13,
-                                  color: "black",
-                                  fontWeight: 400,
-                                  fontFamily: "monospace",
-                                  paddingLeft: 5,
-                                  textAlign: "center",
-                                  width: "100%",
-                                  border: "0px",
-
-                                  verticalAlign: "middle",
-                                }}
-                                value={freight.roe_origin_currency}
-                                className="supplier_form"
-                              />
-                            </div>
-                            <div
-                              style={{
-                                border: "1px solid black",
-                                width: "20%",
-                                height: 22,
-                                display: "flex",
-                                justifyContent: "space-around",
-                                borderBottom: "0px solid transparent",
-                                alignItems: "center",
-                              }}
-                            >
-                              <input
-                                style={{
-                                  marginBottom: 0,
-                                  fontSize: 13,
-                                  color: "black",
-                                  fontWeight: 400,
-                                  fontFamily: "monospace",
-                                  paddingLeft: 5,
-                                  textAlign: "center",
-                                  width: "100%",
-                                  border: "0px",
-
-                                  verticalAlign: "middle",
-                                }}
-                                value={finalori}
-                                className="supplier_form"
-                              />
-                              <input
-                                style={{
-                                  marginBottom: 0,
-                                  fontSize: 13,
-                                  color: "black",
-                                  fontWeight: 400,
-                                  fontFamily: "monospace",
-                                  paddingLeft: 5,
-                                  textAlign: "center",
-                                  width: "100%",
-                                  border: "0px",
-
-                                  verticalAlign: "middle",
-                                }}
-                                value={parseFloat(
-                                  finalori * freight.roe_origin_currency
-                                ).toFixed(2)}
-                                placeholder="0.00"
-                                className="supplier_form"
-                              />
-                            </div>
-                          </div>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td style={{ padding: 0 }}>
-                          <div
-                            style={{
-                              width: "100%",
-                              display: "flex",
-                              alignItems: "center",
-                            }}
-                          >
-                            <div
-                              style={{
-                                width: "20%",
-                                height: 22,
-                                border: "1px solid black",
-                                borderRight: "0px solid transparent",
-                                borderTop: "0px solid transparent",
-                              }}
-                            >
-                              <p
-                                style={{
-                                  marginBottom: 0,
-                                  fontSize: 13,
-                                  color: "black",
-                                  fontWeight: 400,
-                                  fontFamily: "monospace",
-                                  paddingLeft: 5,
-                                }}
-                              ></p>
-                            </div>
-                            <div
-                              style={{
-                                border: "1px solid black",
-                                borderRight: "0px solid transparent",
-                                width: "31%",
-                                height: 22,
-                                borderBottom: "0px solid transparent",
-                              }}
-                            >
-                              <p
-                                style={{
-                                  marginBottom: 0,
-                                  fontSize: 13,
-                                  color: "black",
-                                  fontWeight: 400,
-                                  fontFamily: "monospace",
-                                  paddingLeft: 5,
-                                }}
-                              >
-                                Origin_Customs
-                              </p>
-                            </div>
-                            <div
-                              style={{
-                                border: "1px solid black",
-                                borderRight: "0px solid transparent",
-                                width: "10%",
-                                height: 22,
-                                borderBottom: "0px solid transparent",
-                              }}
-                            >
-                              <input
-                                style={{
-                                  marginBottom: 0,
-                                  fontSize: 13,
-                                  color: "black",
-                                  fontWeight: 400,
-                                  fontFamily: "monospace",
-                                  paddingLeft: 5,
-                                  textAlign: "center",
-                                  width: "100%",
-                                  border: "0px",
-
-                                  verticalAlign: "middle",
-                                }}
-                                value={freight.origin_currency}
-                                className="supplier_form"
-                              />
-                            </div>
-                            <div
-                              style={{
-                                border: "1px solid black",
-                                borderRight: "0px solid transparent",
-                                width: "10%",
-                                height: 22,
-                                borderBottom: "0px solid transparent",
-                              }}
-                            >
-                              <input
-                                style={{
-                                  marginBottom: 0,
-                                  fontSize: 13,
-                                  color: "black",
-                                  fontWeight: 400,
-                                  fontFamily: "monospace",
-                                  paddingLeft: 5,
-                                  textAlign: "center",
-                                  width: "100%",
-                                  border: "0px",
-
-                                  verticalAlign: "middle",
-                                }}
-                                type="text"
-                                onKeyPress={handlepresss}
-                                className="supplier_form"
-                                onChange={handlechangecalc}
-                                name="origin_customs"
-                                value={freight?.origin_customs}
-                                id="floatingInput"
-                                placeholder="0.00"
-                              />
-                            </div>
-                            <div
-                              style={{
-                                border: "1px solid black",
-                                borderRight: "0px solid transparent",
-                                width: "10%",
-                                height: 22,
-                                borderBottom: "0px solid transparent",
-                              }}
-                            >
-                              <input
-                                style={{
-                                  marginBottom: 0,
-                                  fontSize: 13,
-                                  color: "black",
-                                  fontWeight: 400,
-                                  fontFamily: "monospace",
-                                  paddingLeft: 5,
-                                  textAlign: "center",
-                                  width: "100%",
-                                  border: "0px",
-
-                                  verticalAlign: "middle",
-                                }}
-                                type="text"
-                                onKeyPress={handlepresss}
-                                className="supplier_form"
-                                onChange={handlechangecalc}
-                                value={freight?.origin_customs_gp}
-                                name="origin_customs_gp"
-                                id="floatingInput"
-                                placeholder="0.00%"
-                              />
-                            </div>
-                            <div
-                              style={{
-                                border: "1px solid black",
-                                borderBottom: "none",
-                                borderRight: "0px solid transparent",
-                                width: "10%",
-                                height: 22,
-                              }}
-                            >
-                              <input
-                                style={{
-                                  marginBottom: 0,
-                                  fontSize: 13,
-                                  color: "black",
-                                  fontWeight: 400,
-                                  fontFamily: "monospace",
-                                  paddingLeft: 5,
-                                  textAlign: "center",
-                                  width: "100%",
-                                  border: "0px",
-
-                                  verticalAlign: "middle",
-                                }}
-                                value={freight.roe_origin_currency}
-                                className="supplier_form"
-                              />
-                            </div>
-                            <div
-                              style={{
-                                border: "1px solid black",
-                                width: "20%",
-                                height: 22,
-                                display: "flex",
-                                justifyContent: "space-around",
-                                borderBottom: "0px solid transparent",
-                                alignItems: "center",
-                              }}
-                            >
-                              <input
-                                style={{
-                                  marginBottom: 0,
-                                  fontSize: 13,
-                                  color: "black",
-                                  fontWeight: 400,
-                                  fontFamily: "monospace",
-                                  paddingLeft: 5,
-                                  textAlign: "center",
-                                  width: "100%",
-                                  border: "0px",
-
-                                  verticalAlign: "middle",
-                                }}
-                                value={finalori2}
-                              />
-                              <input
-                                style={{
-                                  marginBottom: 0,
-                                  fontSize: 13,
-                                  color: "black",
-                                  fontWeight: 400,
-                                  fontFamily: "monospace",
-                                  paddingLeft: 5,
-                                  textAlign: "center",
-                                  width: "100%",
-                                  border: "0px",
-
-                                  verticalAlign: "middle",
-                                }}
-                                placeholder="0.00"
-                                value={
-                                  isNaN(finalori2 * freight.roe_origin_currency)
-                                    ? 0
-                                    : parseFloat(
-                                        finalori2 * freight.roe_origin_currency
-                                      ).toFixed(2)
-                                }
-                                className="supplier_form"
-                              />
-                            </div>
-                          </div>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td style={{ padding: 0 }}>
-                          <div
-                            style={{
-                              width: "100%",
-                              display: "flex",
-                              alignItems: "center",
-                            }}
-                          >
-                            <div
-                              style={{
-                                width: "20%",
-                                height: 22,
-                                border: "1px solid black",
-                                borderRight: "0px solid transparent",
-                                borderTop: "0px solid transparent",
-                              }}
-                            >
-                              <p
-                                style={{
-                                  marginBottom: 0,
-                                  fontSize: 13,
-                                  color: "black",
-                                  fontWeight: 400,
-                                  fontFamily: "monospace",
-                                  paddingLeft: 5,
-                                }}
-                              ></p>
-                            </div>
-                            <div
-                              style={{
-                                border: "1px solid black",
-                                borderRight: "0px solid transparent",
-                                width: "31%",
-                                height: 22,
-                                borderBottom: "0px solid transparent",
-                              }}
-                            >
-                              <p
-                                style={{
-                                  marginBottom: 0,
-                                  fontSize: 13,
-                                  color: "black",
-                                  fontWeight: 400,
-                                  fontFamily: "monospace",
-                                  paddingLeft: 5,
-                                }}
-                              >
-                                Origin_Document
-                              </p>
-                            </div>
-                            <div
-                              style={{
-                                border: "1px solid black",
-                                borderRight: "0px solid transparent",
-                                width: "10%",
-                                height: 22,
-                                borderBottom: "0px solid transparent",
-                              }}
-                            >
-                              <input
-                                style={{
-                                  marginBottom: 0,
-                                  fontSize: 13,
-                                  color: "black",
-                                  fontWeight: 400,
-                                  fontFamily: "monospace",
-                                  paddingLeft: 5,
-                                  textAlign: "center",
-                                  width: "100%",
-                                  border: "0px",
-
-                                  verticalAlign: "middle",
-                                }}
-                                value={freight.origin_currency}
-                                className="supplier_form"
-                              />
-                            </div>
-                            <div
-                              style={{
-                                border: "1px solid black",
-                                borderRight: "0px solid transparent",
-                                width: "10%",
-                                height: 22,
-                                borderBottom: "0px solid transparent",
-                              }}
-                            >
-                              <input
-                                style={{
-                                  marginBottom: 0,
-                                  fontSize: 13,
-                                  color: "black",
-                                  fontWeight: 400,
-                                  fontFamily: "monospace",
-                                  paddingLeft: 5,
-                                  textAlign: "center",
-                                  width: "100%",
-                                  border: "0px",
-
-                                  verticalAlign: "middle",
-                                }}
-                                type="text"
-                                onKeyPress={handlepresss}
-                                className="supplier_form"
-                                onChange={handlechangecalc}
-                                value={freight?.origin_document}
-                                name="origin_document"
-                                id="floatingInput"
-                                placeholder="0.00"
-                              />
-                            </div>
-                            <div
-                              style={{
-                                border: "1px solid black",
-                                borderRight: "0px solid transparent",
-                                width: "10%",
-                                height: 22,
-                                borderBottom: "0px solid transparent",
-                              }}
-                            >
-                              <input
-                                style={{
-                                  marginBottom: 0,
-                                  fontSize: 13,
-                                  color: "black",
-                                  fontWeight: 400,
-                                  fontFamily: "monospace",
-                                  paddingLeft: 5,
-                                  textAlign: "center",
-                                  width: "100%",
-                                  border: "0px",
-
-                                  verticalAlign: "middle",
-                                }}
-                                type="text"
-                                onKeyPress={handlepresss}
-                                className="supplier_form"
-                                onChange={handlechangecalc}
-                                value={freight?.origin_document_gp}
-                                name="origin_document_gp"
-                                id="floatingInput"
-                                placeholder="0.00%"
-                              />
-                            </div>
-                            <div
-                              style={{
-                                border: "1px solid black",
-                                borderBottom: "none",
-                                borderRight: "0px solid transparent",
-                                width: "10%",
-                                height: 22,
-                              }}
-                            >
-                              <input
-                                style={{
-                                  marginBottom: 0,
-                                  fontSize: 13,
-                                  color: "black",
-                                  fontWeight: 400,
-                                  fontFamily: "monospace",
-                                  paddingLeft: 5,
-                                  textAlign: "center",
-                                  width: "100%",
-                                  border: "0px",
-
-                                  verticalAlign: "middle",
-                                }}
-                                value={freight.roe_origin_currency}
-                                className="supplier_form"
-                              />
-                            </div>
-                            <div
-                              style={{
-                                border: "1px solid black",
-                                width: "20%",
-                                height: 22,
-                                display: "flex",
-                                justifyContent: "space-around",
-                                borderBottom: "0px solid transparent",
-                                alignItems: "center",
-                              }}
-                            >
-                              <input
-                                style={{
-                                  marginBottom: 0,
-                                  fontSize: 13,
-                                  color: "black",
-                                  fontWeight: 400,
-                                  fontFamily: "monospace",
-                                  paddingLeft: 5,
-                                  textAlign: "center",
-                                  width: "100%",
-                                  border: "0px",
-
-                                  verticalAlign: "middle",
-                                }}
-                                placeholder="0.00"
-                                value={finalori3}
-                                className="supplier_form"
-                              />
-                              <input
-                                style={{
-                                  marginBottom: 0,
-                                  fontSize: 13,
-                                  color: "black",
-                                  fontWeight: 400,
-                                  fontFamily: "monospace",
-                                  paddingLeft: 5,
-                                  textAlign: "center",
-                                  width: "100%",
-                                  border: "0px",
-
-                                  verticalAlign: "middle",
-                                }}
-                                placeholder="0.00"
-                                value={
-                                  isNaN(finalori3 * freight.roe_origin_currency)
-                                    ? 0
-                                    : parseFloat(
-                                        finalori3 * freight.roe_origin_currency
-                                      ).toFixed(2)
-                                }
-                                className="supplier_form"
-                              />
-                            </div>
-                          </div>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td style={{ padding: 0 }}>
-                          <div
-                            style={{
-                              width: "100%",
-                              display: "flex",
-                              alignItems: "center",
-                            }}
-                          >
-                            <div
-                              style={{
-                                width: "20%",
-                                height: 22,
-                                border: "1px solid black",
-                                borderRight: "0px solid transparent",
-                                borderTop: "0px solid transparent",
-                              }}
-                            >
-                              <p
-                                style={{
-                                  marginBottom: 0,
-                                  fontSize: 13,
-                                  color: "black",
-                                  fontWeight: 400,
-                                  fontFamily: "monospace",
-                                  paddingLeft: 5,
-                                }}
-                              ></p>
-                            </div>
-                            <div
-                              style={{
-                                border: "1px solid black",
-                                borderRight: "0px solid transparent",
-                                width: "31%",
-                                height: 22,
-                                borderBottom: "0px solid transparent",
-                              }}
-                            >
-                              <p
-                                style={{
-                                  marginBottom: 0,
-                                  fontSize: 13,
-                                  color: "black",
-                                  fontWeight: 400,
-                                  fontFamily: "monospace",
-                                  paddingLeft: 5,
-                                }}
-                              >
-                                Origin_Warehouse
-                              </p>
-                            </div>
-                            <div
-                              style={{
-                                border: "1px solid black",
-                                borderRight: "0px solid transparent",
-                                width: "10%",
-                                height: 22,
-                                borderBottom: "0px solid transparent",
-                              }}
-                            >
-                              <input
-                                style={{
-                                  marginBottom: 0,
-                                  fontSize: 13,
-                                  color: "black",
-                                  fontWeight: 400,
-                                  fontFamily: "monospace",
-                                  paddingLeft: 5,
-                                  textAlign: "center",
-                                  width: "100%",
-                                  border: "0px",
-
-                                  verticalAlign: "middle",
-                                }}
-                                value={freight.origin_currency}
-                                className="supplier_form"
-                              />
-                            </div>
-                            <div
-                              style={{
-                                border: "1px solid black",
-                                borderRight: "0px solid transparent",
-                                width: "10%",
-                                height: 22,
-                                borderBottom: "0px solid transparent",
-                              }}
-                            >
-                              <input
-                                style={{
-                                  marginBottom: 0,
-                                  fontSize: 13,
-                                  color: "black",
-                                  fontWeight: 400,
-                                  fontFamily: "monospace",
-                                  paddingLeft: 5,
-                                  textAlign: "center",
-                                  width: "100%",
-                                  border: "0px",
-
-                                  verticalAlign: "middle",
-                                }}
-                                type="text"
-                                onKeyPress={handlepresss}
-                                value={freight?.origin_warehouse}
-                                onChange={handlechangecalc}
-                                name="origin_warehouse"
-                                className="supplier_form"
-                                id="floatingInput"
-                                placeholder="0.00"
-                              />
-                            </div>
-                            <div
-                              style={{
-                                border: "1px solid black",
-                                borderRight: "0px solid transparent",
-                                width: "10%",
-                                height: 22,
-                                borderBottom: "0px solid transparent",
-                              }}
-                            >
-                              <input
-                                style={{
-                                  marginBottom: 0,
-                                  fontSize: 13,
-                                  color: "black",
-                                  fontWeight: 400,
-                                  fontFamily: "monospace",
-                                  paddingLeft: 5,
-                                  textAlign: "center",
-                                  width: "100%",
-                                  border: "0px",
-
-                                  verticalAlign: "middle",
-                                }}
-                                type="text"
-                                onKeyPress={handlepresss}
-                                className="supplier_form"
-                                onChange={handlechangecalc}
-                                value={freight?.origin_warehouse_gp}
-                                name="origin_warehouse_gp"
-                                id="floatingInput"
-                                placeholder="0.00%"
-                              />
-                            </div>
-                            <div
-                              style={{
-                                border: "1px solid black",
-                                borderBottom: "none",
-                                borderRight: "0px solid transparent",
-                                width: "10%",
-                                height: 22,
-                              }}
-                            >
-                              <input
-                                style={{
-                                  marginBottom: 0,
-                                  fontSize: 13,
-                                  color: "black",
-                                  fontWeight: 400,
-                                  fontFamily: "monospace",
-                                  paddingLeft: 5,
-                                  textAlign: "center",
-                                  width: "100%",
-                                  border: "0px",
-
-                                  verticalAlign: "middle",
-                                }}
-                                value={freight.roe_origin_currency}
-                                className="supplier_form"
-                              />
-                            </div>
-                            <div
-                              style={{
-                                border: "1px solid black",
-                                width: "20%",
-                                height: 22,
-                                display: "flex",
-                                justifyContent: "space-around",
-                                borderBottom: "0px solid transparent",
-                                alignItems: "center",
-                              }}
-                            >
-                              <input
-                                style={{
-                                  marginBottom: 0,
-                                  fontSize: 13,
-                                  color: "black",
-                                  fontWeight: 400,
-                                  fontFamily: "monospace",
-                                  paddingLeft: 5,
-                                  textAlign: "center",
-                                  width: "100%",
-                                  border: "0px",
-
-                                  verticalAlign: "middle",
-                                }}
-                                value={final21}
-                                placeholder="0.00"
-                                className="supplier_form"
-                              />
-                              <input
-                                style={{
-                                  marginBottom: 0,
-                                  fontSize: 13,
-                                  color: "black",
-                                  fontWeight: 400,
-                                  fontFamily: "monospace",
-                                  paddingLeft: 5,
-                                  textAlign: "center",
-                                  width: "100%",
-                                  border: "0px",
-
-                                  verticalAlign: "middle",
-                                }}
-                                value={
-                                  isNaN(final21 * freight.roe_origin_currency)
-                                    ? 0
-                                    : parseFloat(
-                                        final21 * freight.roe_origin_currency
-                                      ).toFixed(2)
-                                }
-                                placeholder="0.00"
-                                className="supplier_form"
-                              />
-                            </div>
-                          </div>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td style={{ padding: 0 }}>
-                          <div
-                            style={{
-                              width: "100%",
-                              display: "flex",
-                              alignItems: "center",
-                            }}
-                          >
-                            <div
-                              style={{
-                                width: "20%",
-                                height: 22,
-                                border: "1px solid black",
-                                borderRight: "0px solid transparent",
-                                borderTop: "0px solid transparent",
-                              }}
-                            >
-                              <p
-                                style={{
-                                  marginBottom: 0,
-                                  fontSize: 13,
-                                  color: "black",
-                                  fontWeight: 400,
-                                  fontFamily: "monospace",
-                                  paddingLeft: 5,
-                                }}
-                              ></p>
-                            </div>
-                            <div
-                              style={{
-                                border: "1px solid black",
-                                borderRight: "0px solid transparent",
-                                width: "31%",
-                                height: 22,
-                                borderBottom: "0px solid transparent",
-                              }}
-                            >
-                              <p
-                                style={{
-                                  marginBottom: 0,
-                                  fontSize: 13,
-                                  color: "black",
-                                  fontWeight: 400,
-                                  fontFamily: "monospace",
-                                  paddingLeft: 5,
-                                }}
-                              >
-                                Origin_Port Fees{" "}
-                              </p>
-                            </div>
-                            <div
-                              style={{
-                                border: "1px solid black",
-                                borderRight: "0px solid transparent",
-                                width: "10%",
-                                height: 22,
-                                borderBottom: "0px solid transparent",
-                              }}
-                            >
-                              <input
-                                style={{
-                                  marginBottom: 0,
-                                  fontSize: 13,
-                                  color: "black",
-                                  fontWeight: 400,
-                                  fontFamily: "monospace",
-                                  paddingLeft: 5,
-                                  textAlign: "center",
-                                  width: "100%",
-                                  border: "0px",
-
-                                  verticalAlign: "middle",
-                                }}
-                                value={freight.origin_currency}
-                                className="supplier_form"
-                              />
-                            </div>
-                            <div
-                              style={{
-                                border: "1px solid black",
-                                borderRight: "0px solid transparent",
-                                width: "10%",
-                                height: 22,
-                                borderBottom: "0px solid transparent",
-                              }}
-                            >
-                              <input
-                                style={{
-                                  marginBottom: 0,
-                                  fontSize: 13,
-                                  color: "black",
-                                  fontWeight: 400,
-                                  fontFamily: "monospace",
-                                  paddingLeft: 5,
-                                  textAlign: "center",
-                                  width: "100%",
-                                  border: "0px",
-
-                                  verticalAlign: "middle",
-                                }}
-                                type="text"
-                                onKeyPress={handlepresss}
-                                onChange={handlechangecalc}
-                                value={freight?.origin_port_fees}
-                                name="origin_port_fees"
-                                className="supplier_form"
-                                id="floatingInput"
-                                placeholder="0.00"
-                              />
-                            </div>
-                            <div
-                              style={{
-                                border: "1px solid black",
-                                borderRight: "0px solid transparent",
-                                width: "10%",
-                                height: 22,
-                                borderBottom: "0px solid transparent",
-                              }}
-                            >
-                              <input
-                                style={{
-                                  marginBottom: 0,
-                                  fontSize: 13,
-                                  color: "black",
-                                  fontWeight: 400,
-                                  fontFamily: "monospace",
-                                  paddingLeft: 5,
-                                  textAlign: "center",
-                                  width: "100%",
-                                  border: "0px",
-
-                                  verticalAlign: "middle",
-                                }}
-                                type="text"
-                                onKeyPress={handlepresss}
-                                className="supplier_form"
-                                onChange={handlechangecalc}
-                                value={freight?.origin_port_fees_gp}
-                                name="origin_port_fees_gp"
-                                id="floatingInput"
-                                placeholder="0.00%"
-                              />
-                            </div>
-                            <div
-                              style={{
-                                border: "1px solid black",
-                                borderBottom: "none",
-                                borderRight: "0px solid transparent",
-                                width: "10%",
-                                height: 22,
-                              }}
-                            >
-                              <input
-                                style={{
-                                  marginBottom: 0,
-                                  fontSize: 13,
-                                  color: "black",
-                                  fontWeight: 400,
-                                  fontFamily: "monospace",
-                                  paddingLeft: 5,
-                                  textAlign: "center",
-                                  width: "100%",
-                                  border: "0px",
-
-                                  verticalAlign: "middle",
-                                }}
-                                value={freight.roe_origin_currency}
-                                className="supplier_form"
-                              />
-                            </div>
-                            <div
-                              style={{
-                                border: "1px solid black",
-                                width: "20%",
-                                height: 22,
-                                display: "flex",
-                                justifyContent: "space-around",
-                                borderBottom: "0px solid transparent",
-                                alignItems: "center",
-                              }}
-                            >
-                              <input
-                                style={{
-                                  marginBottom: 0,
-                                  fontSize: 13,
-                                  color: "black",
-                                  fontWeight: 400,
-                                  fontFamily: "monospace",
-                                  paddingLeft: 5,
-                                  textAlign: "center",
-                                  width: "100%",
-                                  border: "0px",
-
-                                  verticalAlign: "middle",
-                                }}
-                                placeholder="0.00"
-                                value={finalori34}
-                                className="supplier_form"
-                              />
-                              <input
-                                style={{
-                                  marginBottom: 0,
-                                  fontSize: 13,
-                                  color: "black",
-                                  fontWeight: 400,
-                                  fontFamily: "monospace",
-                                  paddingLeft: 5,
-                                  textAlign: "center",
-                                  width: "100%",
-                                  border: "0px",
-
-                                  verticalAlign: "middle",
-                                }}
-                                placeholder="0.00"
-                                value={
-                                  isNaN(
-                                    finalori34 * freight.roe_origin_currency
-                                  )
-                                    ? 0
-                                    : parseFloat(
-                                        finalori34 * freight.roe_origin_currency
-                                      ).toFixed(2)
-                                }
-                                className="supplier_form"
-                              />
-                            </div>
-                          </div>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td style={{ padding: 0 }}>
-                          <div
-                            style={{
-                              width: "100%",
-                              display: "flex",
-                              alignItems: "center",
-                            }}
-                          >
-                            <div
-                              style={{
-                                width: "20%",
-                                height: 22,
-                                border: "1px solid black",
-                                borderRight: "0px solid transparent",
-                                borderTop: "0px solid transparent",
-                              }}
-                            >
-                              <p
-                                style={{
-                                  marginBottom: 0,
-                                  fontSize: 13,
-                                  color: "black",
-                                  fontWeight: 400,
-                                  fontFamily: "monospace",
-                                  paddingLeft: 5,
-                                }}
-                              ></p>
-                            </div>
-                            <div
-                              style={{
-                                border: "1px solid black",
-                                borderRight: "0px solid transparent",
-                                width: "31%",
-                                height: 22,
-                              }}
-                            >
-                              <p
-                                style={{
-                                  marginBottom: 0,
-                                  fontSize: 13,
-                                  color: "black",
-                                  fontWeight: 400,
-                                  fontFamily: "monospace",
-                                  paddingLeft: 5,
-                                }}
-                              >
-                                Origin_Other
-                              </p>
-                            </div>
-                            <div
-                              style={{
-                                border: "1px solid black",
-                                borderRight: "0px solid transparent",
-                                width: "10%",
-                                height: 22,
-                              }}
-                            >
-                              <input
-                                style={{
-                                  marginBottom: 0,
-                                  fontSize: 13,
-                                  color: "black",
-                                  fontWeight: 400,
-                                  fontFamily: "monospace",
-                                  paddingLeft: 5,
-                                  textAlign: "center",
-                                  width: "100%",
-                                  border: "0px",
-
-                                  verticalAlign: "middle",
-                                }}
-                                value={freight.origin_currency}
-                                className="supplier_form"
-                              />
-                            </div>
-                            <div
-                              style={{
-                                border: "1px solid black",
-                                borderRight: "0px solid transparent",
-                                width: "10%",
-                                height: 22,
-                              }}
-                            >
-                              <input
-                                style={{
-                                  marginBottom: 0,
-                                  fontSize: 13,
-                                  color: "black",
-                                  fontWeight: 400,
-                                  fontFamily: "monospace",
-                                  paddingLeft: 5,
-                                  textAlign: "center",
-                                  width: "100%",
-                                  border: "0px",
-
-                                  verticalAlign: "middle",
-                                }}
-                                type="text"
-                                onKeyPress={handlepresss}
-                                onChange={handlechangecalc}
-                                value={freight.origin_other}
-                                name="origin_other"
-                                className="supplier_form"
-                                id="floatingInput"
-                                placeholder="0.00"
-                              />
-                            </div>
-                            <div
-                              style={{
-                                border: "1px solid black",
-                                borderRight: "0px solid transparent",
-                                width: "10%",
-                                height: 22,
-                              }}
-                            >
-                              <input
-                                style={{
-                                  marginBottom: 0,
-                                  fontSize: 13,
-                                  color: "black",
-                                  fontWeight: 400,
-                                  fontFamily: "monospace",
-                                  paddingLeft: 5,
-                                  textAlign: "center",
-                                  width: "100%",
-                                  border: "0px",
-
-                                  verticalAlign: "middle",
-                                }}
-                                type="text"
-                                onKeyPress={handlepresss}
-                                className="supplier_form"
-                                value={freight.origin_other_gp}
-                                onChange={handlechangecalc}
-                                name="origin_other_gp"
-                                id="floatingInput"
-                                placeholder="0.00%"
-                              />
-                            </div>
-                            <div
-                              style={{
-                                border: "1px solid black",
-                                borderBottom: "none",
-                                borderRight: "0px solid transparent",
-                                width: "10%",
-                                height: 22,
-                              }}
-                            >
-                              <input
-                                style={{
-                                  marginBottom: 0,
-                                  fontSize: 13,
-                                  color: "black",
-                                  fontWeight: 400,
-                                  fontFamily: "monospace",
-                                  paddingLeft: 5,
-                                  textAlign: "center",
-                                  width: "100%",
-                                  border: "0px",
-
-                                  verticalAlign: "middle",
-                                }}
-                                value={freight.roe_origin_currency}
-                                className="supplier_form"
-                              />
-                            </div>
-                            <div
-                              style={{
-                                border: "1px solid black",
-                                width: "20%",
-                                height: 22,
-                                display: "flex",
-                                justifyContent: "space-around",
-                                alignItems: "center",
-                              }}
-                            >
-                              <input
-                                style={{
-                                  marginBottom: 0,
-                                  fontSize: 13,
-                                  color: "black",
-                                  fontWeight: 400,
-                                  fontFamily: "monospace",
-                                  paddingLeft: 5,
-                                  textAlign: "center",
-                                  width: "100%",
-                                  border: "0px",
-
-                                  verticalAlign: "middle",
-                                }}
-                                placeholder="0.00"
-                                value={finalori35}
-                                className="supplier_form"
-                              />
-                              <input
-                                style={{
-                                  marginBottom: 0,
-                                  fontSize: 13,
-                                  color: "black",
-                                  fontWeight: 400,
-                                  fontFamily: "monospace",
-                                  paddingLeft: 5,
-                                  textAlign: "center",
-                                  width: "100%",
-                                  border: "0px",
-
-                                  verticalAlign: "middle",
-                                }}
-                                placeholder="0.00"
-                                value={
-                                  isNaN(
-                                    finalori35 * freight.roe_origin_currency
-                                  )
-                                    ? 0
-                                    : parseFloat(
-                                        finalori35 * freight.roe_origin_currency
-                                      ).toFixed(2)
-                                }
-                                className="supplier_form"
-                              />
-                            </div>
-                          </div>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td style={{ padding: 0 }}>
-                          <div
-                            style={{
-                              width: "100%",
-                              display: "flex",
-                              alignItems: "center",
-                            }}
-                          >
-                            <div
-                              style={{
-                                width: "20%",
-                                height: 22,
-                                border: "1px solid black",
-                                borderRight: "0px solid transparent",
-                                borderTop: "0px solid transparent",
-                              }}
-                            >
-                              <p
-                                style={{
-                                  marginBottom: 0,
-                                  fontSize: 13,
-                                  color: "black",
-                                  fontWeight: 400,
-                                  fontFamily: "monospace",
-                                  paddingLeft: 5,
-                                }}
-                              ></p>
-                            </div>
-                            <div
-                              style={{
-                                border: "1px solid black",
-                                borderRight: "0px solid transparent",
-                                width: "31%",
-                                height: 22,
-                                borderBottom: "0px solid transparent",
-                              }}
-                            >
-                              <p
-                                style={{
-                                  marginBottom: 0,
-                                  fontSize: 13,
-                                  color: "black",
-                                  fontWeight: 400,
-                                  fontFamily: "monospace",
-                                  paddingLeft: 5,
-                                }}
-                              >
-                                Total for Origin Charges{" "}
-                              </p>
-                            </div>
-                            <div
-                              style={{
-                                border: "1px solid black",
-                                borderRight: "0px solid transparent",
-                                width: "10%",
-                                height: 22,
-                                borderBottom: "0px solid transparent",
-                              }}
-                            >
-                              <input
-                                style={{
-                                  marginBottom: 0,
-                                  fontSize: 13,
-                                  color: "black",
-                                  fontWeight: 400,
-                                  fontFamily: "monospace",
-                                  paddingLeft: 5,
-                                  textAlign: "center",
-                                  width: "100%",
-                                  border: "0px",
-
-                                  verticalAlign: "middle",
-                                }}
-                                placeholder=""
-                                className="supplier_form"
-                              />
-                            </div>
-                            <div
-                              style={{
-                                border: "1px solid black",
-                                borderRight: "0px solid transparent",
-                                width: "10%",
-                                height: 22,
-                                borderBottom: "0px solid transparent",
-                              }}
-                            >
-                              <input
-                                style={{
-                                  marginBottom: 0,
-                                  fontSize: 13,
-                                  color: "black",
-                                  fontWeight: 400,
-                                  fontFamily: "monospace",
-                                  paddingLeft: 5,
-                                  textAlign: "center",
-                                  width: "100%",
-                                  border: "0px",
-
-                                  verticalAlign: "middle",
-                                }}
-                                placeholder=""
-                                className="supplier_form"
-                              />
-                            </div>
-                            <div
-                              style={{
-                                border: "1px solid black",
-                                borderRight: "0px solid transparent",
-                                width: "10%",
-                                height: 22,
-                                borderBottom: "0px solid transparent",
-                              }}
-                            >
-                              <input
-                                style={{
-                                  marginBottom: 0,
-                                  fontSize: 13,
-                                  color: "black",
-                                  fontWeight: 400,
-                                  fontFamily: "monospace",
-                                  paddingLeft: 5,
-                                  textAlign: "center",
-                                  width: "100%",
-                                  border: "0px",
-
-                                  verticalAlign: "middle",
-                                }}
-                                placeholder=""
-                                className="supplier_form"
-                              />
-                            </div>
-                            <div
-                              style={{
-                                border: "1px solid black",
-                                borderBottom: "none",
-                                borderRight: "0px solid transparent",
-                                width: "10%",
-                                height: 22,
-                              }}
-                            >
-                              <input
-                                style={{
-                                  marginBottom: 0,
-                                  fontSize: 13,
-                                  color: "black",
-                                  fontWeight: 400,
-                                  fontFamily: "monospace",
-                                  paddingLeft: 5,
-                                  textAlign: "center",
-                                  width: "100%",
-                                  border: "0px",
-
-                                  verticalAlign: "middle",
-                                }}
-                                className="supplier_form"
-                              />
-                            </div>
-                            <div
-                              style={{
-                                border: "1px solid black",
-                                width: "20%",
-                                height: 22,
-                                display: "flex",
-                                justifyContent: "space-around",
-                                borderBottom: "0px solid transparent",
-                                alignItems: "center",
-                              }}
-                            >
-                              <input
-                                style={{
-                                  marginBottom: 0,
-                                  fontSize: 13,
-                                  color: "black",
-                                  fontWeight: 400,
-                                  fontFamily: "monospace",
-                                  paddingLeft: 5,
-                                  textAlign: "center",
-                                  width: "100%",
-                                  border: "0px",
-
-                                  verticalAlign: "middle",
-                                }}
-                                value={origintotal.toFixed(2)}
-                                placeholder="41.18"
-                                className="supplier_form"
-                              />
-                              <input
-                                style={{
-                                  marginBottom: 0,
-                                  fontSize: 13,
-                                  color: "black",
-                                  fontWeight: 400,
-                                  fontFamily: "monospace",
-                                  paddingLeft: 5,
-                                  textAlign: "center",
-                                  width: "100%",
-                                  border: "0px",
-                                  verticalAlign: "middle",
-                                }}
-                                value={
-                                  isNaN(
-                                    origintotal * freight.roe_origin_currency
-                                  )
-                                    ? 0
-                                    : parseFloat(
-                                        origintotal *
-                                          freight.roe_origin_currency
-                                      ).toFixed(2)
-                                }
-                                placeholder="0.00"
-                                className="supplier_form"
-                              />
-                            </div>
-                          </div>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td style={{ padding: 0 }}>
-                          <div
-                            style={{
-                              width: "100%",
-                              display: "flex",
-                              alignItems: "center",
-                            }}
-                          >
-                            <div
-                              style={{
-                                width: "20%",
-                                height: 22,
-                                border: "1px solid black",
-                                borderRight: "0px solid transparent",
-                                borderTop: "0px solid transparent",
-                              }}
-                            >
-                              <p
-                                style={{
-                                  marginBottom: 0,
-                                  fontSize: 13,
-                                  color: "black",
-                                  fontWeight: 400,
-                                  fontFamily: "monospace",
-                                  paddingLeft: 5,
-                                }}
-                              ></p>
-                            </div>
-                            <div
-                              style={{
-                                border: "1px solid black",
-                                borderRight: "0px solid transparent",
-                                width: "31%",
-                                height: 22,
-                                borderBottom: "0px solid transparent",
-                              }}
-                            >
-                              <p
-                                style={{
-                                  marginBottom: 0,
-                                  fontSize: 13,
-                                  color: "black",
-                                  fontWeight: 400,
-                                  fontFamily: "monospace",
-                                  paddingLeft: 5,
-                                }}
-                              ></p>
-                            </div>
-                            <div
-                              style={{
-                                border: "1px solid black",
-                                borderRight: "0px solid transparent",
-                                width: "10%",
-                                height: 22,
-                                borderBottom: "0px solid transparent",
-                              }}
-                            >
-                              {/* <select
-                                                                className="select_supplier"
-                                                                style={{
-                                                                    margin: 0,
-                                                                    fontSize: 13,
-                                                                    fontWeight: 700,
-                                                                    paddingLeft: 5,
-                                                                    width: "100%",
-                                                                    border: 0,
-                                                                }}
-                                                                onChange={handlechangecalc}
-                                                                name="des_currency"
-                                                            >
-                                                                <option>Select</option>
-                                                                <option>RAND</option>
-                                                                <option>USD</option>
-                                                                <option>INR</option>
-                                                                <option>EURO</option>
-                                                            </select> */}
-                            </div>
-                            <div
-                              style={{
-                                border: "1px solid black",
-                                borderRight: "0px solid transparent",
-                                width: "10%",
-                                height: 22,
-                                borderBottom: "0px solid transparent",
-                              }}
-                            >
-                              <p
-                                style={{
-                                  marginBottom: 0,
-                                  fontSize: 13,
-                                  color: "black",
-                                  fontWeight: 400,
-                                  fontFamily: "monospace",
-                                  paddingLeft: 5,
-                                  textAlign: "center",
-                                }}
-                              ></p>
-                            </div>
-                            <div
-                              style={{
-                                border: "1px solid black",
-                                borderRight: "0px solid transparent",
-                                width: "10%",
-                                height: 22,
-                                borderBottom: "0px solid transparent",
-                              }}
-                            >
-                              <p
-                                style={{
-                                  marginBottom: 0,
-                                  fontSize: 13,
-                                  color: "black",
-                                  fontWeight: 400,
-                                  fontFamily: "monospace",
-                                  paddingLeft: 5,
-                                  textAlign: "center",
-                                }}
-                              ></p>
-                            </div>
-                            <div
-                              style={{
-                                border: "1px solid black",
-                                borderBottom: "none",
-                                borderRight: "0px solid transparent",
-                                width: "10%",
-                                height: 22,
-                              }}
-                            >
-                              <input
-                                style={{
-                                  marginBottom: 0,
-                                  fontSize: 13,
-                                  color: "black",
-                                  fontWeight: 400,
-                                  fontFamily: "monospace",
-                                  paddingLeft: 5,
-                                  textAlign: "center",
-                                  width: "100%",
-                                  border: "0px",
-
-                                  verticalAlign: "middle",
-                                }}
-                                className="supplier_form"
-                              />
-                            </div>
-                            <div
-                              style={{
-                                border: "1px solid black",
-                                width: "20%",
-                                height: 22,
-                                display: "flex",
-                                justifyContent: "space-around",
-                                borderBottom: "0px solid transparent",
-                                alignItems: "center",
-                              }}
-                            >
-                              <p
-                                style={{
-                                  margin: 0,
-                                  fontSize: 13,
-                                  fontWeight: 700,
-                                  paddingLeft: 5,
-                                  textAlign: "center",
-                                }}
-                              ></p>
-                              <p
-                                style={{
-                                  margin: 0,
-                                  fontSize: 13,
-                                  fontWeight: 700,
-                                  paddingRight: 5,
-                                  textAlign: "center",
-                                }}
-                              ></p>
-                            </div>
-                          </div>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td style={{ padding: 0 }}>
-                          <div
-                            style={{
-                              width: "100%",
-                              display: "flex",
-                              alignItems: "center",
-                            }}
-                          >
-                            <div
-                              style={{
-                                width: "20%",
-                                height: 22,
-                                border: "1px solid black",
-                                borderRight: "0px solid transparent",
-                                borderTop: "0px solid transparent",
-                              }}
-                            >
-                              <p
-                                style={{
-                                  marginBottom: 0,
-                                  fontSize: 13,
-                                  color: "black",
-                                  fontWeight: 400,
-                                  fontFamily: "monospace",
-                                  paddingLeft: 5,
-                                }}
-                              ></p>
-                            </div>
-                            <div
-                              style={{
-                                border: "1px solid black",
-                                borderRight: "0px solid transparent",
-                                width: "31%",
-                                height: 22,
-                                borderBottom: "0px solid transparent",
-                              }}
-                            >
-                              <p
-                                style={{
-                                  marginBottom: 0,
-                                  fontSize: 13,
-                                  color: "black",
-                                  fontWeight: 400,
-                                  fontFamily: "monospace",
-                                  paddingLeft: 5,
-                                }}
-                              ></p>
-                            </div>
-                            <div
-                              style={{
-                                border: "1px solid black",
-                                borderRight: "0px solid transparent",
-                                width: "10%",
-                                height: 22,
-                                borderBottom: "0px solid transparent",
-                              }}
-                            >
-                              <select
-                                className="select_supplier"
-                                style={{
-                                  margin: 0,
-                                  fontSize: 13,
-                                  fontWeight: 700,
-                                  paddingLeft: 5,
-                                  width: "100%",
-                                  border: 0,
-                                }}
-                                onChange={handlechangecalc}
-                                value={freight.des_currency}
-                                name="des_currency"
-                              >
-                                <option>Select</option>
-                                <option value="RAND">RAND</option>
-                                <option value="USD">USD</option>
-                                <option value="INR">INR</option>
-                                <option value="EURO">EURO</option>
-                              </select>
-                            </div>
-                            <div
-                              style={{
-                                border: "1px solid black",
-                                borderRight: "0px solid transparent",
-                                width: "10%",
-                                height: 22,
-                                borderBottom: "0px solid transparent",
-                              }}
-                            >
-                              <p
-                                style={{
-                                  marginBottom: 0,
-                                  fontSize: 13,
-                                  color: "black",
-                                  fontWeight: 400,
-                                  fontFamily: "monospace",
-                                  paddingLeft: 5,
-                                  textAlign: "center",
-                                }}
-                              ></p>
-                            </div>
-                            <div
-                              style={{
-                                border: "1px solid black",
-                                borderRight: "0px solid transparent",
-                                width: "10%",
-                                height: 22,
-                                borderBottom: "0px solid transparent",
-                              }}
-                            >
-                              <p
-                                style={{
-                                  marginBottom: 0,
-                                  fontSize: 13,
-                                  color: "black",
-                                  fontWeight: 400,
-                                  fontFamily: "monospace",
-                                  paddingLeft: 5,
-                                  textAlign: "center",
-                                }}
-                              ></p>
-                            </div>
-                            <div
-                              style={{
-                                border: "1px solid black",
-                                borderBottom: "none",
-                                borderRight: "0px solid transparent",
-                                width: "10%",
-                                height: 22,
-                              }}
-                            >
-                              <input
-                                style={{
-                                  marginBottom: 0,
-                                  fontSize: 13,
-                                  color: "black",
-                                  fontWeight: 400,
-                                  fontFamily: "monospace",
-                                  paddingLeft: 5,
-                                  textAlign: "center",
-                                  width: "100%",
-                                  border: "0px",
-
-                                  verticalAlign: "middle",
-                                }}
-                                placeholder="0.00"
-                                onKeyPress={handlepresss}
-                                value={freight.roe_des_currency}
-                                onChange={handlechangecalc}
-                                name="roe_des_currency"
-                                className="supplier_form"
-                              />
-                            </div>
-                            <div
-                              style={{
-                                border: "1px solid black",
-                                width: "20%",
-                                height: 22,
-                                display: "flex",
-                                justifyContent: "space-around",
-                                borderBottom: "0px solid transparent",
-                                alignItems: "center",
-                              }}
-                            >
-                              <p
-                                style={{
-                                  margin: 0,
-                                  fontSize: 13,
-                                  fontWeight: 700,
-                                  paddingLeft: 5,
-                                  textAlign: "center",
-                                }}
-                              ></p>
-                              <p
-                                style={{
-                                  margin: 0,
-                                  fontSize: 13,
-                                  fontWeight: 700,
-                                  paddingRight: 5,
-                                  textAlign: "center",
-                                }}
-                              ></p>
-                            </div>
-                          </div>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td style={{ padding: 0 }}>
-                          <div
-                            style={{
-                              width: "100%",
-                              display: "flex",
-                              alignItems: "center",
-                            }}
-                          >
-                            <div
-                              style={{
-                                width: "20%",
-                                height: 22,
-                                border: "1px solid black",
-                                borderRight: "0px solid transparent",
-                                borderTop: "0px solid transparent",
-                              }}
-                            >
-                              <p
-                                style={{
-                                  marginBottom: 0,
-                                  fontSize: 13,
-                                  color: "black",
-                                  fontWeight: 400,
-                                  fontFamily: "monospace",
-                                  paddingLeft: 5,
-                                }}
-                              >
-                                Destination Charges
-                              </p>
-                            </div>
-                            <div
-                              style={{
-                                border: "1px solid black",
-                                borderRight: "0px solid transparent",
-                                width: "31%",
-                                height: 22,
-                                borderBottom: "0px solid transparent",
-                              }}
-                            >
-                              <p
-                                style={{
-                                  marginBottom: 0,
-                                  fontSize: 13,
-                                  color: "black",
-                                  fontWeight: 400,
-                                  fontFamily: "monospace",
-                                  paddingLeft: 5,
-                                }}
-                              >
-                                Destination_Delivery{" "}
-                              </p>
-                            </div>
-                            <div
-                              style={{
-                                border: "1px solid black",
-                                borderRight: "0px solid transparent",
-                                width: "10%",
-                                height: 22,
-                                borderBottom: "0px solid transparent",
-                              }}
-                            >
-                              <input
-                                style={{
-                                  marginBottom: 0,
-                                  fontSize: 13,
-                                  color: "black",
-                                  fontWeight: 400,
-                                  fontFamily: "monospace",
-                                  paddingLeft: 5,
-                                  textAlign: "center",
-                                  width: "100%",
-                                  border: "0px",
-
-                                  verticalAlign: "middle",
-                                }}
-                                value={freight.des_currency}
-                                className="supplier_form"
-                              />
-                            </div>
-                            <div
-                              style={{
-                                border: "1px solid black",
-                                borderRight: "0px solid transparent",
-                                width: "10%",
-                                height: 22,
-                                borderBottom: "0px solid transparent",
-                              }}
-                            >
-                              <input
-                                style={{
-                                  marginBottom: 0,
-                                  fontSize: 13,
-                                  color: "black",
-                                  fontWeight: 400,
-                                  fontFamily: "monospace",
-                                  paddingLeft: 5,
-                                  textAlign: "center",
-                                  width: "100%",
-                                  border: "0px",
-
-                                  verticalAlign: "middle",
-                                }}
-                                type="text"
-                                onKeyPress={handlepresss}
-                                onChange={handlechangecalc}
-                                value={freight.des_delivery}
-                                name="des_delivery"
-                                className="supplier_form"
-                                id="floatingInput"
-                                placeholder="0.00"
-                              />
-                            </div>
-                            <div
-                              style={{
-                                border: "1px solid black",
-                                borderRight: "0px solid transparent",
-                                width: "10%",
-                                height: 22,
-                                borderBottom: "0px solid transparent",
-                              }}
-                            >
-                              <input
-                                style={{
-                                  marginBottom: 0,
-                                  fontSize: 13,
-                                  color: "black",
-                                  fontWeight: 400,
-                                  fontFamily: "monospace",
-                                  paddingLeft: 5,
-                                  textAlign: "center",
-                                  width: "100%",
-                                  border: "0px",
-
-                                  verticalAlign: "middle",
-                                }}
-                                type="text"
-                                onKeyPress={handlepresss}
-                                value={freight.des_delivery_gp}
-                                className="supplier_form"
-                                onChange={handlechangecalc}
-                                name="des_delivery_gp"
-                                id="floatingInput"
-                                placeholder="0.00%"
-                              />
-                            </div>
-                            <div
-                              style={{
-                                border: "1px solid black",
-                                borderBottom: "none",
-                                borderRight: "0px solid transparent",
-                                width: "10%",
-                                height: 22,
-                              }}
-                            >
-                              <input
-                                style={{
-                                  marginBottom: 0,
-                                  fontSize: 13,
-                                  color: "black",
-                                  fontWeight: 400,
-                                  fontFamily: "monospace",
-                                  paddingLeft: 5,
-                                  textAlign: "center",
-                                  width: "100%",
-                                  border: "0px",
-
-                                  verticalAlign: "middle",
-                                }}
-                                value={freight.roe_des_currency}
-                                className="supplier_form"
-                              />
-                            </div>
-                            <div
-                              style={{
-                                border: "1px solid black",
-                                width: "20%",
-                                height: 22,
-                                display: "flex",
-                                justifyContent: "space-around",
-                                borderBottom: "0px solid transparent",
-                                alignItems: "center",
-                              }}
-                            >
-                              <input
-                                style={{
-                                  marginBottom: 0,
-                                  fontSize: 13,
-                                  color: "black",
-                                  fontWeight: 400,
-                                  fontFamily: "monospace",
-                                  paddingLeft: 5,
-                                  textAlign: "center",
-                                  width: "100%",
-                                  border: "0px",
-
-                                  verticalAlign: "middle",
-                                }}
-                                value={finaldestation5}
-                                className="supplier_form"
-                              />
-                              <input
-                                style={{
-                                  marginBottom: 0,
-                                  fontSize: 13,
-                                  color: "black",
-                                  fontWeight: 400,
-                                  fontFamily: "monospace",
-                                  paddingLeft: 5,
-                                  textAlign: "center",
-                                  width: "100%",
-                                  border: "0px",
-
-                                  verticalAlign: "middle",
-                                }}
-                                placeholder="0.00"
-                                value={
-                                  isNaN(
-                                    finaldestation5 * freight.roe_des_currency
-                                  )
-                                    ? 0
-                                    : parseFloat(
-                                        finaldestation5 *
-                                          freight.roe_des_currency
-                                      ).toFixed(2)
-                                }
-                                className="supplier_form"
-                              />
-                            </div>
-                          </div>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td style={{ padding: 0 }}>
-                          <div
-                            style={{
-                              width: "100%",
-                              display: "flex",
-                              alignItems: "center",
-                            }}
-                          >
-                            <div
-                              style={{
-                                width: "20%",
-                                height: 22,
-                                border: "1px solid black",
-                                borderRight: "0px solid transparent",
-                                borderTop: "0px solid transparent",
-                              }}
-                            >
-                              <p
-                                style={{
-                                  marginBottom: 0,
-                                  fontSize: 13,
-                                  color: "black",
-                                  fontWeight: 400,
-                                  fontFamily: "monospace",
-                                  paddingLeft: 5,
-                                }}
-                              ></p>
-                            </div>
-                            <div
-                              style={{
-                                border: "1px solid black",
-                                borderRight: "0px solid transparent",
-                                width: "31%",
-                                height: 22,
-                                borderBottom: "0px solid transparent",
-                              }}
-                            >
-                              <p
-                                style={{
-                                  marginBottom: 0,
-                                  fontSize: 13,
-                                  color: "black",
-                                  fontWeight: 400,
-                                  fontFamily: "monospace",
-                                  paddingLeft: 5,
-                                }}
-                              >
-                                Destination_Customs
-                              </p>
-                            </div>
-                            <div
-                              style={{
-                                border: "1px solid black",
-                                borderRight: "0px solid transparent",
-                                width: "10%",
-                                height: 22,
-                                borderBottom: "0px solid transparent",
-                              }}
-                            >
-                              <input
-                                style={{
-                                  marginBottom: 0,
-                                  fontSize: 13,
-                                  color: "black",
-                                  fontWeight: 400,
-                                  fontFamily: "monospace",
-                                  paddingLeft: 5,
-                                  textAlign: "center",
-                                  width: "100%",
-                                  border: "0px",
-
-                                  verticalAlign: "middle",
-                                }}
-                                value={freight.des_currency}
-                                className="supplier_form"
-                              />
-                            </div>
-                            <div
-                              style={{
-                                border: "1px solid black",
-                                borderRight: "0px solid transparent",
-                                width: "10%",
-                                height: 22,
-                                borderBottom: "0px solid transparent",
-                              }}
-                            >
-                              <input
-                                style={{
-                                  marginBottom: 0,
-                                  fontSize: 13,
-                                  color: "black",
-                                  fontWeight: 400,
-                                  fontFamily: "monospace",
-                                  paddingLeft: 5,
-                                  textAlign: "center",
-                                  width: "100%",
-                                  border: "0px",
-
-                                  verticalAlign: "middle",
-                                }}
-                                type="text"
-                                onKeyPress={handlepresss}
-                                onChange={handlechangecalc}
-                                name="des_customs"
-                                value={freight.des_customs}
-                                className="supplier_form"
-                                id="floatingInput"
-                                placeholder="0.00"
-                              />
-                            </div>
-                            <div
-                              style={{
-                                border: "1px solid black",
-                                borderRight: "0px solid transparent",
-                                width: "10%",
-                                height: 22,
-                                borderBottom: "0px solid transparent",
-                              }}
-                            >
-                              <input
-                                style={{
-                                  marginBottom: 0,
-                                  fontSize: 13,
-                                  color: "black",
-                                  fontWeight: 400,
-                                  fontFamily: "monospace",
-                                  paddingLeft: 5,
-                                  textAlign: "center",
-                                  width: "100%",
-                                  border: "0px",
-
-                                  verticalAlign: "middle",
-                                }}
-                                type="text"
-                                onKeyPress={handlepresss}
-                                className="supplier_form "
-                                value={freight.des_customs_gp}
-                                onChange={handlechangecalc}
-                                name="des_customs_gp"
-                                id="floatingInput"
-                                placeholder="0.00%"
-                              />
-                            </div>
-                            <div
-                              style={{
-                                border: "1px solid black",
-                                borderBottom: "none",
-                                borderRight: "0px solid transparent",
-                                width: "10%",
-                                height: 22,
-                              }}
-                            >
-                              <input
-                                style={{
-                                  marginBottom: 0,
-                                  fontSize: 13,
-                                  color: "black",
-                                  fontWeight: 400,
-                                  fontFamily: "monospace",
-                                  paddingLeft: 5,
-                                  textAlign: "center",
-                                  width: "100%",
-                                  border: "0px",
-
-                                  verticalAlign: "middle",
-                                }}
-                                value={freight.roe_des_currency}
-                                className="supplier_form"
-                              />
-                            </div>
-                            <div
-                              style={{
-                                border: "1px solid black",
-                                width: "20%",
-                                height: 22,
-                                display: "flex",
-                                justifyContent: "space-around",
-                                borderBottom: "0px solid transparent",
-                                alignItems: "center",
-                              }}
-                            >
-                              <input
-                                style={{
-                                  marginBottom: 0,
-                                  fontSize: 13,
-                                  color: "black",
-                                  fontWeight: 400,
-                                  fontFamily: "monospace",
-                                  paddingLeft: 5,
-                                  textAlign: "center",
-                                  width: "100%",
-                                  border: "0px",
-
-                                  verticalAlign: "middle",
-                                }}
-                                placeholder="0.00"
-                                value={finaldestation6}
-                                className="supplier_form"
-                              />
-                              <input
-                                style={{
-                                  marginBottom: 0,
-                                  fontSize: 13,
-                                  color: "black",
-                                  fontWeight: 400,
-                                  fontFamily: "monospace",
-                                  paddingLeft: 5,
-                                  textAlign: "center",
-                                  width: "100%",
-                                  border: "0px",
-
-                                  verticalAlign: "middle",
-                                }}
-                                placeholder="0.00"
-                                value={
-                                  isNaN(
-                                    finaldestation6 * freight.roe_des_currency
-                                  )
-                                    ? 0
-                                    : parseFloat(
-                                        finaldestation6 *
-                                          freight.roe_des_currency
-                                      ).toFixed(2)
-                                }
-                                className="supplier_form"
-                              />
-                            </div>
-                          </div>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td style={{ padding: 0 }}>
-                          <div
-                            style={{
-                              width: "100%",
-                              display: "flex",
-                              alignItems: "center",
-                            }}
-                          >
-                            <div
-                              style={{
-                                width: "20%",
-                                height: 22,
-                                border: "1px solid black",
-                                borderRight: "0px solid transparent",
-                                borderTop: "0px solid transparent",
-                              }}
-                            >
-                              <p
-                                style={{
-                                  marginBottom: 0,
-                                  fontSize: 13,
-                                  color: "black",
-                                  fontWeight: 400,
-                                  fontFamily: "monospace",
-                                  paddingLeft: 5,
-                                }}
-                              ></p>
-                            </div>
-                            <div
-                              style={{
-                                border: "1px solid black",
-                                borderRight: "0px solid transparent",
-                                width: "31%",
-                                height: 22,
-                                borderBottom: "0px solid transparent",
-                              }}
-                            >
-                              <p
-                                style={{
-                                  marginBottom: 0,
-                                  fontSize: 13,
-                                  color: "black",
-                                  fontWeight: 400,
-                                  fontFamily: "monospace",
-                                  paddingLeft: 5,
-                                }}
-                              >
-                                Destination_Document
-                              </p>
-                            </div>
-                            <div
-                              style={{
-                                border: "1px solid black",
-                                borderRight: "0px solid transparent",
-                                width: "10%",
-                                height: 22,
-                                borderBottom: "0px solid transparent",
-                              }}
-                            >
-                              <input
-                                style={{
-                                  marginBottom: 0,
-                                  fontSize: 13,
-                                  color: "black",
-                                  fontWeight: 400,
-                                  fontFamily: "monospace",
-                                  paddingLeft: 5,
-                                  textAlign: "center",
-                                  width: "100%",
-                                  border: "0px",
-
-                                  verticalAlign: "middle",
-                                }}
-                                value={freight.des_currency}
-                                className="supplier_form"
-                              />
-                            </div>
-                            <div
-                              style={{
-                                border: "1px solid black",
-                                borderRight: "0px solid transparent",
-                                width: "10%",
-                                height: 22,
-                                borderBottom: "0px solid transparent",
-                              }}
-                            >
-                              <input
-                                style={{
-                                  marginBottom: 0,
-                                  fontSize: 13,
-                                  color: "black",
-                                  fontWeight: 400,
-                                  fontFamily: "monospace",
-                                  paddingLeft: 5,
-                                  textAlign: "center",
-                                  width: "100%",
-                                  border: "0px",
-
-                                  verticalAlign: "middle",
-                                }}
-                                type="text"
-                                onKeyPress={handlepresss}
-                                className="supplier_form"
-                                onChange={handlechangecalc}
-                                value={freight.des_document}
-                                name="des_document"
-                                id="floatingInput"
-                                placeholder="0.00"
-                              />
-                            </div>
-                            <div
-                              style={{
-                                border: "1px solid black",
-                                borderRight: "0px solid transparent",
-                                width: "10%",
-                                height: 22,
-                                borderBottom: "0px solid transparent",
-                              }}
-                            >
-                              <input
-                                style={{
-                                  marginBottom: 0,
-                                  fontSize: 13,
-                                  color: "black",
-                                  fontWeight: 400,
-                                  fontFamily: "monospace",
-                                  paddingLeft: 5,
-                                  textAlign: "center",
-                                  width: "100%",
-                                  border: "0px",
-
-                                  verticalAlign: "middle",
-                                }}
-                                type="text"
-                                onKeyPress={handlepresss}
-                                className="supplier_form"
-                                onChange={handlechangecalc}
-                                value={freight.des_document_gp}
-                                name="des_document_gp"
-                                id="floatingInput"
-                                placeholder="0.00%"
-                              />
-                            </div>
-                            <div
-                              style={{
-                                border: "1px solid black",
-                                borderBottom: "none",
-                                borderRight: "0px solid transparent",
-                                width: "10%",
-                                height: 22,
-                              }}
-                            >
-                              <input
-                                style={{
-                                  marginBottom: 0,
-                                  fontSize: 13,
-                                  color: "black",
-                                  fontWeight: 400,
-                                  fontFamily: "monospace",
-                                  paddingLeft: 5,
-                                  textAlign: "center",
-                                  width: "100%",
-                                  border: "0px",
-
-                                  verticalAlign: "middle",
-                                }}
-                                value={freight.roe_des_currency}
-                                className="supplier_form"
-                              />
-                            </div>
-                            <div
-                              style={{
-                                border: "1px solid black",
-                                width: "20%",
-                                height: 22,
-                                display: "flex",
-                                justifyContent: "space-around",
-                                borderBottom: "0px solid transparent",
-                                alignItems: "center",
-                              }}
-                            >
-                              <input
-                                style={{
-                                  marginBottom: 0,
-                                  fontSize: 13,
-                                  color: "black",
-                                  fontWeight: 400,
-                                  fontFamily: "monospace",
-                                  paddingLeft: 5,
-                                  textAlign: "center",
-                                  width: "100%",
-                                  border: "0px",
-
-                                  verticalAlign: "middle",
-                                }}
-                                placeholder="0.00"
-                                value={finaldestation4}
-                                className="supplier_form"
-                              />
-                              <input
-                                style={{
-                                  marginBottom: 0,
-                                  fontSize: 13,
-                                  color: "black",
-                                  fontWeight: 400,
-                                  fontFamily: "monospace",
-                                  paddingLeft: 5,
-                                  textAlign: "center",
-                                  width: "100%",
-                                  border: "0px",
-
-                                  verticalAlign: "middle",
-                                }}
-                                placeholder="0.00"
-                                value={
-                                  isNaN(
-                                    finaldestation4 * freight.roe_des_currency
-                                  )
-                                    ? 0
-                                    : parseFloat(
-                                        finaldestation4 *
-                                          freight.roe_des_currency
-                                      ).toFixed(2)
-                                }
-                                className="supplier_form"
-                              />
-                            </div>
-                          </div>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td style={{ padding: 0 }}>
-                          <div
-                            style={{
-                              width: "100%",
-                              display: "flex",
-                              alignItems: "center",
-                            }}
-                          >
-                            <div
-                              style={{
-                                width: "20%",
-                                height: 22,
-                                border: "1px solid black",
-                                borderRight: "0px solid transparent",
-                                borderTop: "0px solid transparent",
-                              }}
-                            >
-                              <p
-                                style={{
-                                  marginBottom: 0,
-                                  fontSize: 13,
-                                  color: "black",
-                                  fontWeight: 400,
-                                  fontFamily: "monospace",
-                                  paddingLeft: 5,
-                                }}
-                              ></p>
-                            </div>
-                            <div
-                              style={{
-                                border: "1px solid black",
-                                borderRight: "0px solid transparent",
-                                width: "31%",
-                                height: 22,
-                                borderBottom: "0px solid transparent",
-                              }}
-                            >
-                              <p
-                                style={{
-                                  marginBottom: 0,
-                                  fontSize: 13,
-                                  color: "black",
-                                  fontWeight: 400,
-                                  fontFamily: "monospace",
-                                  paddingLeft: 5,
-                                }}
-                              >
-                                Destination_Warehouse
-                              </p>
-                            </div>
-                            <div
-                              style={{
-                                border: "1px solid black",
-                                borderRight: "0px solid transparent",
-                                width: "10%",
-                                height: 22,
-                                borderBottom: "0px solid transparent",
-                              }}
-                            >
-                              <input
-                                style={{
-                                  marginBottom: 0,
-                                  fontSize: 13,
-                                  color: "black",
-                                  fontWeight: 400,
-                                  fontFamily: "monospace",
-                                  paddingLeft: 5,
-                                  textAlign: "center",
-                                  width: "100%",
-                                  border: "0px",
-
-                                  verticalAlign: "middle",
-                                }}
-                                value={freight.des_currency}
-                                className="supplier_form"
-                              />
-                            </div>
-                            <div
-                              style={{
-                                border: "1px solid black",
-                                borderRight: "0px solid transparent",
-                                width: "10%",
-                                height: 22,
-                                borderBottom: "0px solid transparent",
-                              }}
-                            >
-                              <input
-                                style={{
-                                  marginBottom: 0,
-                                  fontSize: 13,
-                                  color: "black",
-                                  fontWeight: 400,
-                                  fontFamily: "monospace",
-                                  paddingLeft: 5,
-                                  textAlign: "center",
-                                  width: "100%",
-                                  border: "0px",
-
-                                  verticalAlign: "middle",
-                                }}
-                                type="text"
-                                onKeyPress={handlepresss}
-                                className="supplier_form "
-                                value={freight.des_warehouse}
-                                onChange={handlechangecalc}
-                                name="des_warehouse"
-                                id="floatingInput"
-                                placeholder="0.00"
-                              />
-                            </div>
-                            <div
-                              style={{
-                                border: "1px solid black",
-                                borderRight: "0px solid transparent",
-                                width: "10%",
-                                height: 22,
-                                borderBottom: "0px solid transparent",
-                              }}
-                            >
-                              <input
-                                style={{
-                                  marginBottom: 0,
-                                  fontSize: 13,
-                                  color: "black",
-                                  fontWeight: 400,
-                                  fontFamily: "monospace",
-                                  paddingLeft: 5,
-                                  textAlign: "center",
-                                  width: "100%",
-                                  border: "0px",
-
-                                  verticalAlign: "middle",
-                                }}
-                                type="text"
-                                onKeyPress={handlepresss}
-                                className="supplier_form"
-                                onChange={handlechangecalc}
-                                value={freight.des_warehouse_gp}
-                                name="des_warehouse_gp"
-                                id="floatingInput"
-                                placeholder="0.00%"
-                              />
-                            </div>
-                            <div
-                              style={{
-                                border: "1px solid black",
-                                borderBottom: "none",
-                                borderRight: "0px solid transparent",
-                                width: "10%",
-                                height: 22,
-                              }}
-                            >
-                              <input
-                                style={{
-                                  marginBottom: 0,
-                                  fontSize: 13,
-                                  color: "black",
-                                  fontWeight: 400,
-                                  fontFamily: "monospace",
-                                  paddingLeft: 5,
-                                  textAlign: "center",
-                                  width: "100%",
-                                  border: "0px",
-
-                                  verticalAlign: "middle",
-                                }}
-                                value={freight.roe_des_currency}
-                                className="supplier_form"
-                              />
-                            </div>
-                            <div
-                              style={{
-                                border: "1px solid black",
-                                width: "20%",
-                                height: 22,
-                                display: "flex",
-                                justifyContent: "space-around",
-                                borderBottom: "0px solid transparent",
-                                alignItems: "center",
-                              }}
-                            >
-                              <input
-                                style={{
-                                  marginBottom: 0,
-                                  fontSize: 13,
-                                  color: "black",
-                                  fontWeight: 400,
-                                  fontFamily: "monospace",
-                                  paddingLeft: 5,
-                                  textAlign: "center",
-                                  width: "100%",
-                                  border: "0px",
-
-                                  verticalAlign: "middle",
-                                }}
-                                placeholder="0.00"
-                                value={finaldestation}
-                                className="supplier_form"
-                              />
-                              <input
-                                style={{
-                                  marginBottom: 0,
-                                  fontSize: 13,
-                                  color: "black",
-                                  fontWeight: 400,
-                                  fontFamily: "monospace",
-                                  paddingLeft: 5,
-                                  textAlign: "center",
-                                  width: "100%",
-                                  border: "0px",
-
-                                  verticalAlign: "middle",
-                                }}
-                                placeholder="0.00"
-                                value={
-                                  isNaN(
-                                    finaldestation * freight.roe_des_currency
-                                  )
-                                    ? 0
-                                    : parseFloat(
-                                        finaldestation *
-                                          freight.roe_des_currency
-                                      ).toFixed(2)
-                                }
-                                className="supplier_form"
-                              />
-                            </div>
-                          </div>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td style={{ padding: 0 }}>
-                          <div
-                            style={{
-                              width: "100%",
-                              display: "flex",
-                              alignItems: "center",
-                            }}
-                          >
-                            <div
-                              style={{
-                                width: "20%",
-                                height: 22,
-                                border: "1px solid black",
-                                borderRight: "0px solid transparent",
-                                borderTop: "0px solid transparent",
-                              }}
-                            >
-                              <p
-                                style={{
-                                  marginBottom: 0,
-                                  fontSize: 13,
-                                  color: "black",
-                                  fontWeight: 400,
-                                  fontFamily: "monospace",
-                                  paddingLeft: 5,
-                                }}
-                              ></p>
-                            </div>
-                            <div
-                              style={{
-                                border: "1px solid black",
-                                borderRight: "0px solid transparent",
-                                width: "31%",
-                                height: 22,
-                                borderBottom: "0px solid transparent",
-                              }}
-                            >
-                              <p
-                                style={{
-                                  marginBottom: 0,
-                                  fontSize: 13,
-                                  color: "black",
-                                  fontWeight: 400,
-                                  fontFamily: "monospace",
-                                  paddingLeft: 5,
-                                }}
-                              >
-                                Destination_Port Fees{" "}
-                              </p>
-                            </div>
-                            <div
-                              style={{
-                                border: "1px solid black",
-                                borderRight: "0px solid transparent",
-                                width: "10%",
-                                height: 22,
-                                borderBottom: "0px solid transparent",
-                              }}
-                            >
-                              <input
-                                style={{
-                                  marginBottom: 0,
-                                  fontSize: 13,
-                                  color: "black",
-                                  fontWeight: 400,
-                                  fontFamily: "monospace",
-                                  paddingLeft: 5,
-                                  textAlign: "center",
-                                  width: "100%",
-                                  border: "0px",
-
-                                  verticalAlign: "middle",
-                                }}
-                                value={freight.des_currency}
-                                className="supplier_form"
-                              />
-                            </div>
-                            <div
-                              style={{
-                                border: "1px solid black",
-                                borderRight: "0px solid transparent",
-                                width: "10%",
-                                height: 22,
-                                borderBottom: "0px solid transparent",
-                              }}
-                            >
-                              <input
-                                style={{
-                                  marginBottom: 0,
-                                  fontSize: 13,
-                                  color: "black",
-                                  fontWeight: 400,
-                                  fontFamily: "monospace",
-                                  paddingLeft: 5,
-                                  textAlign: "center",
-                                  width: "100%",
-                                  border: "0px",
-
-                                  verticalAlign: "middle",
-                                }}
-                                type="text"
-                                onKeyPress={handlepresss}
-                                className="supplier_form"
-                                value={freight.des_port_fees}
-                                onChange={handlechangecalc}
-                                name="des_port_fees"
-                                id="floatingInput"
-                                placeholder="0.00"
-                              />
-                            </div>
-                            <div
-                              style={{
-                                border: "1px solid black",
-                                borderRight: "0px solid transparent",
-                                width: "10%",
-                                height: 22,
-                                borderBottom: "0px solid transparent",
-                              }}
-                            >
-                              <input
-                                style={{
-                                  marginBottom: 0,
-                                  fontSize: 13,
-                                  color: "black",
-                                  fontWeight: 400,
-                                  fontFamily: "monospace",
-                                  paddingLeft: 5,
-                                  textAlign: "center",
-                                  width: "100%",
-                                  border: "0px",
-
-                                  verticalAlign: "middle",
-                                }}
-                                type="text"
-                                onKeyPress={handlepresss}
-                                className="supplier_form"
-                                value={freight.des_port_fees_gp}
-                                onChange={handlechangecalc}
-                                name="des_port_fees_gp"
-                                id="floatingInput"
-                                placeholder="0.00%"
-                              />
-                            </div>
-                            <div
-                              style={{
-                                border: "1px solid black",
-                                borderBottom: "none",
-                                borderRight: "0px solid transparent",
-                                width: "10%",
-                                height: 22,
-                              }}
-                            >
-                              <input
-                                style={{
-                                  marginBottom: 0,
-                                  fontSize: 13,
-                                  color: "black",
-                                  fontWeight: 400,
-                                  fontFamily: "monospace",
-                                  paddingLeft: 5,
-                                  textAlign: "center",
-                                  width: "100%",
-                                  border: "0px",
-
-                                  verticalAlign: "middle",
-                                }}
-                                value={freight.roe_des_currency}
-                                className="supplier_form"
-                              />
-                            </div>
-                            <div
-                              style={{
-                                border: "1px solid black",
-                                width: "20%",
-                                height: 22,
-                                display: "flex",
-                                justifyContent: "space-around",
-                                borderBottom: "0px solid transparent",
-                                alignItems: "center",
-                              }}
-                            >
-                              <input
-                                style={{
-                                  marginBottom: 0,
-                                  fontSize: 13,
-                                  color: "black",
-                                  fontWeight: 400,
-                                  fontFamily: "monospace",
-                                  paddingLeft: 5,
-                                  textAlign: "center",
-                                  width: "100%",
-                                  border: "0px",
-
-                                  verticalAlign: "middle",
-                                }}
-                                value={finaldestation2}
-                              />
-                              <input
-                                style={{
-                                  marginBottom: 0,
-                                  fontSize: 13,
-                                  color: "black",
-                                  fontWeight: 400,
-                                  fontFamily: "monospace",
-                                  paddingLeft: 5,
-                                  textAlign: "center",
-                                  width: "100%",
-                                  border: "0px",
-
-                                  verticalAlign: "middle",
-                                }}
-                                placeholder="0.00"
-                                value={
-                                  isNaN(
-                                    finaldestation2 * freight.roe_des_currency
-                                  )
-                                    ? 0
-                                    : parseFloat(
-                                        finaldestation2 *
-                                          freight.roe_des_currency
-                                      ).toFixed(2)
-                                }
-                                className="supplier_form"
-                              />
-                            </div>
-                          </div>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td style={{ padding: 0 }}>
-                          <div
-                            style={{
-                              width: "100%",
-                              display: "flex",
-                              alignItems: "center",
-                            }}
-                          >
-                            <div
-                              style={{
-                                width: "20%",
-                                height: 22,
-                                border: "1px solid black",
-                                borderRight: "0px solid transparent",
-                                borderTop: "0px solid transparent",
-                              }}
-                            >
-                              <p
-                                style={{
-                                  marginBottom: 0,
-                                  fontSize: 13,
-                                  color: "black",
-                                  fontWeight: 400,
-                                  fontFamily: "monospace",
-                                  paddingLeft: 5,
-                                }}
-                              ></p>
-                            </div>
-                            <div
-                              style={{
-                                border: "1px solid black",
-                                borderRight: "0px solid transparent",
-                                width: "31%",
-                                height: 22,
-                                borderBottom: "0px solid transparent",
-                              }}
-                            >
-                              <p
-                                style={{
-                                  marginBottom: 0,
-                                  fontSize: 13,
-                                  color: "black",
-                                  fontWeight: 400,
-                                  fontFamily: "monospace",
-                                  paddingLeft: 5,
-                                }}
-                              >
-                                Destination_Unpack
-                              </p>
-                            </div>
-                            <div
-                              style={{
-                                border: "1px solid black",
-                                borderRight: "0px solid transparent",
-                                width: "10%",
-                                height: 22,
-                                borderBottom: "0px solid transparent",
-                              }}
-                            >
-                              <input
-                                style={{
-                                  marginBottom: 0,
-                                  fontSize: 13,
-                                  color: "black",
-                                  fontWeight: 400,
-                                  fontFamily: "monospace",
-                                  paddingLeft: 5,
-                                  textAlign: "center",
-                                  width: "100%",
-                                  border: "0px",
-
-                                  verticalAlign: "middle",
-                                }}
-                                value={freight.des_currency}
-                                className="supplier_form"
-                              />
-                            </div>
-                            <div
-                              style={{
-                                border: "1px solid black",
-                                borderRight: "0px solid transparent",
-                                width: "10%",
-                                height: 22,
-                                borderBottom: "0px solid transparent",
-                              }}
-                            >
-                              <input
-                                style={{
-                                  marginBottom: 0,
-                                  fontSize: 13,
-                                  color: "black",
-                                  fontWeight: 400,
-                                  fontFamily: "monospace",
-                                  paddingLeft: 5,
-                                  textAlign: "center",
-                                  width: "100%",
-                                  border: "0px",
-
-                                  verticalAlign: "middle",
-                                }}
-                                type="text"
-                                onKeyPress={handlepresss}
-                                className="supplier_form "
-                                value={freight.des_unpack}
-                                onChange={handlechangecalc}
-                                name="des_unpack"
-                                id="floatingInput"
-                                placeholder="0.00"
-                              />
-                            </div>
-                            <div
-                              style={{
-                                border: "1px solid black",
-                                borderRight: "0px solid transparent",
-                                width: "10%",
-                                height: 22,
-                                borderBottom: "0px solid transparent",
-                              }}
-                            >
-                              <input
-                                style={{
-                                  marginBottom: 0,
-                                  fontSize: 13,
-                                  color: "black",
-                                  fontWeight: 400,
-                                  fontFamily: "monospace",
-                                  paddingLeft: 5,
-                                  textAlign: "center",
-                                  width: "100%",
-                                  border: "0px",
-
-                                  verticalAlign: "middle",
-                                }}
-                                type="text"
-                                onKeyPress={handlepresss}
-                                className="supplier_form"
-                                onChange={handlechangecalc}
-                                name="des_unpack_gp"
-                                value={freight.des_unpack_gp}
-                                id="floatingInput"
-                                placeholder="0.00%"
-                              />
-                            </div>
-                            <div
-                              style={{
-                                border: "1px solid black",
-                                borderBottom: "none",
-                                borderRight: "0px solid transparent",
-                                width: "10%",
-                                height: 22,
-                              }}
-                            >
-                              <input
-                                style={{
-                                  marginBottom: 0,
-                                  fontSize: 13,
-                                  color: "black",
-                                  fontWeight: 400,
-                                  fontFamily: "monospace",
-                                  paddingLeft: 5,
-                                  textAlign: "center",
-                                  width: "100%",
-                                  border: "0px",
-
-                                  verticalAlign: "middle",
-                                }}
-                                value={freight.roe_des_currency}
-                                className="supplier_form"
-                              />
-                            </div>
-                            <div
-                              style={{
-                                border: "1px solid black",
-                                width: "20%",
-                                height: 22,
-                                display: "flex",
-                                justifyContent: "space-around",
-                                borderBottom: "0px solid transparent",
-                                alignItems: "center",
-                              }}
-                            >
-                              <input
-                                style={{
-                                  marginBottom: 0,
-                                  fontSize: 13,
-                                  color: "black",
-                                  fontWeight: 400,
-                                  fontFamily: "monospace",
-                                  paddingLeft: 5,
-                                  textAlign: "center",
-                                  width: "100%",
-                                  border: "0px",
-
-                                  verticalAlign: "middle",
-                                }}
-                                placeholder="0.00"
-                                value={finaldestation1}
-                                className="supplier_form"
-                              />
-                              <input
-                                style={{
-                                  marginBottom: 0,
-                                  fontSize: 13,
-                                  color: "black",
-                                  fontWeight: 400,
-                                  fontFamily: "monospace",
-                                  paddingLeft: 5,
-                                  textAlign: "center",
-                                  width: "100%",
-                                  border: "0px",
-
-                                  verticalAlign: "middle",
-                                }}
-                                placeholder="0.00"
-                                value={
-                                  isNaN(
-                                    finaldestation1 * freight.roe_des_currency
-                                  )
-                                    ? 0
-                                    : parseFloat(
-                                        finaldestation1 *
-                                          freight.roe_des_currency
-                                      ).toFixed(2)
-                                }
-                                className="supplier_form"
-                              />
-                            </div>
-                          </div>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td style={{ padding: 0 }}>
-                          <div
-                            style={{
-                              width: "100%",
-                              display: "flex",
-                              alignItems: "center",
-                            }}
-                          >
-                            <div
-                              style={{
-                                width: "20%",
-                                height: 22,
-                                border: "1px solid black",
-                                borderRight: "0px solid transparent",
-                                borderTop: "0px solid transparent",
-                              }}
-                            >
-                              <p
-                                style={{
-                                  marginBottom: 0,
-                                  fontSize: 13,
-                                  color: "black",
-                                  fontWeight: 400,
-                                  fontFamily: "monospace",
-                                  paddingLeft: 5,
-                                }}
-                              ></p>
-                            </div>
-                            <div
-                              style={{
-                                border: "1px solid black",
-                                borderRight: "0px solid transparent",
-                                width: "31%",
-                                height: 22,
-                                borderBottom: "1px solid black",
-                              }}
-                            >
-                              <p
-                                style={{
-                                  marginBottom: 0,
-                                  fontSize: 13,
-                                  color: "black",
-                                  fontWeight: 400,
-                                  fontFamily: "monospace",
-                                  paddingLeft: 5,
-                                }}
-                              >
-                                Destination_Other
-                              </p>
-                            </div>
-                            <div
-                              style={{
-                                border: "1px solid black",
-                                borderRight: "0px solid transparent",
-                                width: "10%",
-                                height: 22,
-                                borderBottom: "1px solid black",
-                              }}
-                            >
-                              <input
-                                style={{
-                                  marginBottom: 0,
-                                  fontSize: 13,
-                                  color: "black",
-                                  fontWeight: 400,
-                                  fontFamily: "monospace",
-                                  paddingLeft: 5,
-                                  textAlign: "center",
-                                  width: "100%",
-                                  border: "0px",
-
-                                  verticalAlign: "middle",
-                                }}
-                                value={freight.des_currency}
-                                className="supplier_form"
-                              />
-                            </div>
-                            <div
-                              style={{
-                                border: "1px solid black",
-                                borderRight: "0px solid transparent",
-                                width: "10%",
-                                height: 22,
-                                borderBottom: "1px solid black",
-                              }}
-                            >
-                              <input
-                                style={{
-                                  marginBottom: 0,
-                                  fontSize: 13,
-                                  color: "black",
-                                  fontWeight: 400,
-                                  fontFamily: "monospace",
-                                  paddingLeft: 5,
-                                  textAlign: "center",
-                                  width: "100%",
-                                  border: "0px",
-
-                                  verticalAlign: "middle",
-                                }}
-                                type="text"
-                                onKeyPress={handlepresss}
-                                className="supplier_form"
-                                onChange={handlechangecalc}
-                                value={freight.des_other}
-                                name="des_other"
-                                id="floatingInput"
-                                placeholder="0.00"
-                              />
-                            </div>
-                            <div
-                              style={{
-                                border: "1px solid black",
-                                borderRight: "0px solid transparent",
-                                width: "10%",
-                                height: 22,
-                                borderBottom: "1px solid black",
-                              }}
-                            >
-                              <input
-                                style={{
-                                  marginBottom: 0,
-                                  fontSize: 13,
-                                  color: "black",
-                                  fontWeight: 400,
-                                  fontFamily: "monospace",
-                                  paddingLeft: 5,
-                                  textAlign: "center",
-                                  width: "100%",
-                                  border: "0px",
-
-                                  verticalAlign: "middle",
-                                }}
-                                type="text"
-                                onKeyPress={handlepresss}
-                                className="supplier_form "
-                                onChange={handlechangecalc}
-                                value={freight.des_other_gp}
-                                name="des_other_gp"
-                                id="floatingInput"
-                                placeholder="0.00%"
-                              />
-                            </div>
-                            <div
-                              style={{
-                                border: "1px solid black",
-                                borderBottom: "none",
-                                borderRight: "0px solid transparent",
-                                width: "10%",
-                                height: 22,
-                              }}
-                            >
-                              <input
-                                style={{
-                                  marginBottom: 0,
-                                  fontSize: 13,
-                                  color: "black",
-                                  fontWeight: 400,
-                                  fontFamily: "monospace",
-                                  paddingLeft: 5,
-                                  textAlign: "center",
-                                  width: "100%",
-                                  border: "0px",
-
-                                  verticalAlign: "middle",
-                                }}
-                                value={freight.roe_des_currency}
-                                className="supplier_form"
-                              />
-                            </div>
-                            <div
-                              style={{
-                                border: "1px solid black",
-                                width: "20%",
-                                height: 22,
-                                display: "flex",
-                                justifyContent: "space-around",
-                                borderBottom: "1px solid black",
-                                alignItems: "center",
-                              }}
-                            >
-                              <input
-                                style={{
-                                  marginBottom: 0,
-                                  fontSize: 13,
-                                  color: "black",
-                                  fontWeight: 400,
-                                  fontFamily: "monospace",
-                                  paddingLeft: 5,
-                                  textAlign: "center",
-                                  width: "100%",
-                                  border: "0px",
-
-                                  verticalAlign: "middle",
-                                }}
-                                placeholder="0.00"
-                                value={finaldestation3}
-                                className="supplier_form"
-                              />
-                              <input
-                                style={{
-                                  marginBottom: 0,
-                                  fontSize: 13,
-                                  color: "black",
-                                  fontWeight: 400,
-                                  fontFamily: "monospace",
-                                  paddingLeft: 5,
-                                  textAlign: "center",
-                                  width: "100%",
-                                  border: "0px",
-
-                                  verticalAlign: "middle",
-                                }}
-                                placeholder="0.00"
-                                value={
-                                  isNaN(
-                                    finaldestation3 * freight.roe_des_currency
-                                  )
-                                    ? 0
-                                    : parseFloat(
-                                        finaldestation3 *
-                                          freight.roe_des_currency
-                                      ).toFixed(2)
-                                }
-                                className="supplier_form"
-                              />
-                            </div>
-                          </div>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td style={{ padding: 0 }}>
-                          <div
-                            style={{
-                              width: "100%",
-                              display: "flex",
-                              alignItems: "center",
-                            }}
-                          >
-                            <div
-                              style={{
-                                width: "20%",
-                                height: 22,
-                                border: "1px solid black",
-                                borderRight: "0px solid transparent",
-                                borderTop: "0px solid transparent",
-                              }}
-                            >
-                              <p
-                                style={{
-                                  marginBottom: 0,
-                                  fontSize: 13,
-                                  color: "black",
-                                  fontWeight: 400,
-                                  fontFamily: "monospace",
-                                  paddingLeft: 5,
-                                }}
-                              ></p>
-                            </div>
-                            <div
-                              style={{
-                                border: "1px solid black",
-                                borderRight: "0px solid transparent",
-                                width: "31%",
-                                height: 22,
-                                borderBottom: "0px solid transparent",
-                              }}
-                            >
-                              <p
-                                style={{
-                                  marginBottom: 0,
-                                  fontSize: 13,
-                                  color: "black",
-                                  fontWeight: 400,
-                                  fontFamily: "monospace",
-                                  paddingLeft: 5,
-                                }}
-                              >
-                                Total for Destination Charges
-                              </p>
-                            </div>
-                            <div
-                              style={{
-                                border: "1px solid black",
-                                borderRight: "0px solid transparent",
-                                width: "10%",
-                                height: 22,
-                                borderBottom: "0px solid transparent",
-                              }}
-                            >
-                              <input
-                                style={{
-                                  marginBottom: 0,
-                                  fontSize: 13,
-                                  color: "black",
-                                  fontWeight: 400,
-                                  fontFamily: "monospace",
-                                  paddingLeft: 5,
-                                  textAlign: "center",
-                                  width: "100%",
-                                  border: "0px",
-
-                                  verticalAlign: "middle",
-                                }}
-                                placeholder=""
-                                className="supplier_form"
-                              />
-                            </div>
-                            <div
-                              style={{
-                                border: "1px solid black",
-                                borderRight: "0px solid transparent",
-                                width: "10%",
-                                height: 22,
-                                borderBottom: "0px solid transparent",
-                              }}
-                            >
-                              <input
-                                style={{
-                                  marginBottom: 0,
-                                  fontSize: 13,
-                                  color: "black",
-                                  fontWeight: 400,
-                                  fontFamily: "monospace",
-                                  paddingLeft: 5,
-                                  textAlign: "center",
-                                  width: "100%",
-                                  border: "0px",
-
-                                  verticalAlign: "middle",
-                                }}
-                                placeholder=""
-                                className="supplier_form"
-                              />
-                            </div>
-                            <div
-                              style={{
-                                border: "1px solid black",
-                                borderRight: "0px solid transparent",
-                                width: "10%",
-                                height: 22,
-                                borderBottom: "0px solid transparent",
-                              }}
-                            >
-                              <input
-                                style={{
-                                  marginBottom: 0,
-                                  fontSize: 13,
-                                  color: "black",
-                                  fontWeight: 400,
-                                  fontFamily: "monospace",
-                                  paddingLeft: 5,
-                                  textAlign: "center",
-                                  width: "100%",
-                                  border: "0px",
-
-                                  verticalAlign: "middle",
-                                }}
-                                placeholder=""
-                                className="supplier_form"
-                              />
-                            </div>
-                            <div
-                              style={{
-                                border: "1px solid black",
-                                borderBottom: "none",
-                                borderRight: "0px solid transparent",
-                                width: "10%",
-                                height: 22,
-                              }}
-                            >
-                              <input
-                                style={{
-                                  marginBottom: 0,
-                                  fontSize: 13,
-                                  color: "black",
-                                  fontWeight: 400,
-                                  fontFamily: "monospace",
-                                  paddingLeft: 5,
-                                  textAlign: "center",
-                                  width: "100%",
-                                  border: "0px",
-
-                                  verticalAlign: "middle",
-                                }}
-                                className="supplier_form"
-                              />
-                            </div>
-                            <div
-                              style={{
-                                border: "1px solid black",
-                                width: "20%",
-                                height: 22,
-                                display: "flex",
-                                justifyContent: "space-around",
-                                borderBottom: "0px solid transparent",
-                                alignItems: "center",
-                              }}
-                            >
-                              <input
-                                style={{
-                                  marginBottom: 0,
-                                  fontSize: 13,
-                                  color: "black",
-                                  fontWeight: 400,
-                                  fontFamily: "monospace",
-                                  paddingLeft: 5,
-                                  textAlign: "center",
-                                  width: "100%",
-                                  border: "0px",
-
-                                  verticalAlign: "middle",
-                                }}
-                                value={destationTotal.toFixed(2)}
-                                className="supplier_form"
-                              />
-                              <input
-                                style={{
-                                  marginBottom: 0,
-                                  fontSize: 13,
-                                  color: "black",
-                                  fontWeight: 400,
-                                  fontFamily: "monospace",
-                                  paddingLeft: 5,
-                                  textAlign: "center",
-                                  width: "100%",
-                                  border: "0px",
-
-                                  verticalAlign: "middle",
-                                }}
-                                value={
-                                  isNaN(
-                                    destationTotal * freight.roe_des_currency
-                                  )
-                                    ? 0
-                                    : parseFloat(
-                                        destationTotal *
-                                          freight.roe_des_currency
-                                      ).toFixed(2)
-                                }
-                                placeholder="0.00"
-                                className="supplier_form"
-                              />
-                            </div>
-                          </div>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td style={{ padding: 0 }}>
-                          <div
-                            style={{
-                              width: "100%",
-                              display: "flex",
-                              alignItems: "center",
-                            }}
-                          >
-                            <div
-                              style={{
-                                width: "20%",
-                                height: 22,
-                                border: "1px solid black",
-                                borderRight: "0px solid transparent",
-                                borderTop: "0px solid transparent",
-                              }}
-                            >
-                              <p
-                                style={{
-                                  marginBottom: 0,
-                                  fontSize: 13,
-                                  color: "black",
-                                  fontWeight: 400,
-                                  fontFamily: "monospace",
-                                  paddingLeft: 5,
-                                }}
-                              ></p>
-                            </div>
-                            <div
-                              style={{
-                                border: "1px solid black",
-                                borderRight: "0px solid transparent",
-                                width: "31%",
-                                height: 22,
-                                borderBottom: "0px solid transparent",
-                              }}
-                            >
-                              <p
-                                style={{
-                                  marginBottom: 0,
-                                  fontSize: 13,
-                                  color: "black",
-                                  fontWeight: 400,
-                                  fontFamily: "monospace",
-                                  paddingLeft: 5,
-                                }}
-                              ></p>
-                            </div>
-                            <div
-                              style={{
-                                border: "1px solid black",
-                                borderRight: "0px solid transparent",
-                                width: "10%",
-                                height: 22,
-                                borderBottom: "0px solid transparent",
-                              }}
-                            >
-                              <p
-                                style={{
-                                  marginBottom: 0,
-                                  fontSize: 13,
-                                  color: "black",
-                                  fontWeight: 400,
-                                  fontFamily: "monospace",
-                                  paddingLeft: 5,
-                                  textAlign: "center",
-                                }}
-                              ></p>
-                            </div>
-                            <div
-                              style={{
-                                border: "1px solid black",
-                                borderRight: "0px solid transparent",
-                                width: "10%",
-                                height: 22,
-                                borderBottom: "0px solid transparent",
-                              }}
-                            >
-                              <p
-                                style={{
-                                  marginBottom: 0,
-                                  fontSize: 13,
-                                  color: "black",
-                                  fontWeight: 400,
-                                  fontFamily: "monospace",
-                                  paddingLeft: 5,
-                                  textAlign: "center",
-                                }}
-                              ></p>
-                            </div>
-                            <div
-                              style={{
-                                border: "1px solid black",
-                                borderRight: "0px solid transparent",
-                                width: "10%",
-                                height: 22,
-                                borderBottom: "0px solid transparent",
-                              }}
-                            >
-                              <p
-                                style={{
-                                  marginBottom: 0,
-                                  fontSize: 13,
-                                  color: "black",
-                                  fontWeight: 400,
-                                  fontFamily: "monospace",
-                                  paddingLeft: 5,
-                                  textAlign: "center",
-                                }}
-                              ></p>
-                            </div>
-                            <div
-                              style={{
-                                border: "1px solid black",
-                                borderBottom: "none",
-                                borderRight: "0px solid transparent",
-                                width: "10%",
-                                height: 22,
-                              }}
-                            >
-                              <input
-                                style={{
-                                  marginBottom: 0,
-                                  fontSize: 13,
-                                  color: "black",
-                                  fontWeight: 400,
-                                  fontFamily: "monospace",
-                                  paddingLeft: 5,
-                                  textAlign: "center",
-                                  width: "100%",
-                                  border: "0px",
-
-                                  verticalAlign: "middle",
-                                }}
-                                className="supplier_form"
-                              />
-                            </div>
-                            <div
-                              style={{
-                                border: "1px solid black",
-                                width: "20%",
-                                height: 22,
-                                display: "flex",
-                                justifyContent: "space-around",
-                                borderBottom: "0px solid transparent",
-                                alignItems: "center",
-                              }}
-                            >
-                              <p
-                                style={{
-                                  margin: 0,
-                                  fontSize: 13,
-                                  fontWeight: 700,
-                                  paddingLeft: 5,
-                                  textAlign: "center",
-                                }}
-                              ></p>
-                              <p
-                                style={{
-                                  margin: 0,
-                                  fontSize: 13,
-                                  fontWeight: 700,
-                                  paddingRight: 5,
-                                  textAlign: "center",
-                                }}
-                              ></p>
-                            </div>
-                          </div>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td style={{ padding: 0 }}>
-                          <div
-                            style={{
-                              width: "100%",
-                              display: "flex",
-                              alignItems: "center",
-                            }}
-                          >
-                            <div
-                              style={{
-                                width: "20%",
-                                height: 22,
-                                border: "1px solid black",
-                                borderRight: "0px solid transparent",
-                                borderTop: "0px solid transparent",
-                              }}
-                            >
-                              <p
-                                style={{
-                                  marginBottom: 0,
-                                  fontSize: 13,
-                                  color: "black",
-                                  fontWeight: 400,
-                                  fontFamily: "monospace",
-                                  paddingLeft: 5,
-                                }}
-                              ></p>
-                            </div>
-                            <div
-                              style={{
-                                border: "1px solid black",
-                                borderRight: "0px solid transparent",
-                                width: "31%",
-                                height: 22,
-                                borderBottom: "0px solid transparent",
-                              }}
-                            >
-                              <p
-                                style={{
-                                  marginBottom: 0,
-                                  fontSize: 13,
-                                  color: "black",
-                                  fontWeight: 400,
-                                  fontFamily: "monospace",
-                                  paddingLeft: 5,
-                                }}
-                              ></p>
-                            </div>
-                            <div
-                              style={{
-                                border: "1px solid black",
-                                borderRight: "0px solid transparent",
-                                width: "10%",
-                                height: 22,
-                                borderBottom: "0px solid transparent",
-                              }}
-                            >
-                              <p
-                                style={{
-                                  marginBottom: 0,
-                                  fontSize: 13,
-                                  color: "black",
-                                  fontWeight: 400,
-                                  fontFamily: "monospace",
-                                  paddingLeft: 5,
-                                  textAlign: "center",
-                                }}
-                              ></p>
-                            </div>
-                            <div
-                              style={{
-                                border: "1px solid black",
-                                borderRight: "0px solid transparent",
-                                width: "10%",
-                                height: 22,
-                                borderBottom: "0px solid transparent",
-                              }}
-                            >
-                              <p
-                                style={{
-                                  marginBottom: 0,
-                                  fontSize: 13,
-                                  color: "black",
-                                  fontWeight: 400,
-                                  fontFamily: "monospace",
-                                  paddingLeft: 5,
-                                  textAlign: "center",
-                                }}
-                              ></p>
-                            </div>
-                            <div
-                              style={{
-                                border: "1px solid black",
-                                borderRight: "0px solid transparent",
-                                width: "10%",
-                                height: 22,
-                                borderBottom: "0px solid transparent",
-                              }}
-                            >
-                              <p
-                                style={{
-                                  marginBottom: 0,
-                                  fontSize: 13,
-                                  color: "black",
-                                  fontWeight: 400,
-                                  fontFamily: "monospace",
-                                  paddingLeft: 5,
-                                  textAlign: "center",
-                                }}
-                              ></p>
-                            </div>
-                            <div
-                              style={{
-                                border: "1px solid black",
-                                borderBottom: "none",
-                                borderRight: "0px solid transparent",
-                                width: "10%",
-                                height: 22,
-                              }}
-                            >
-                              <input
-                                style={{
-                                  marginBottom: 0,
-                                  fontSize: 13,
-                                  color: "black",
-                                  fontWeight: 400,
-                                  fontFamily: "monospace",
-                                  paddingLeft: 5,
-                                  textAlign: "center",
-                                  width: "100%",
-                                  border: "0px",
-
-                                  verticalAlign: "middle",
-                                }}
-                                className="supplier_form"
-                              />
-                            </div>
-                            <div
-                              style={{
-                                border: "1px solid black",
-                                width: "20%",
-                                height: 22,
-                                display: "flex",
-                                justifyContent: "space-around",
-                                borderBottom: "0px solid transparent",
-                                alignItems: "center",
-                              }}
-                            >
-                              <p
-                                style={{
-                                  margin: 0,
-                                  fontSize: 13,
-                                  fontWeight: 700,
-                                  paddingLeft: 5,
-                                  textAlign: "center",
-                                }}
-                              ></p>
-                              <p
-                                style={{
-                                  margin: 0,
-                                  fontSize: 13,
-                                  fontWeight: 700,
-                                  paddingRight: 5,
-                                  textAlign: "center",
-                                }}
-                              ></p>
-                            </div>
-                          </div>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td style={{ padding: 0 }}>
-                          <div
-                            style={{
-                              width: "100%",
-                              display: "flex",
-                              alignItems: "center",
-                            }}
-                          >
-                            <div
-                              style={{
-                                width: "20%",
-                                height: 22,
-                                border: "1px solid black",
-                                borderRight: "0px solid transparent",
-                                borderTop: "0px solid transparent",
-                              }}
-                            >
-                              <p
-                                style={{
-                                  marginBottom: 0,
-                                  fontSize: 13,
-                                  color: "black",
-                                  fontWeight: 400,
-                                  fontFamily: "monospace",
-                                  paddingLeft: 5,
-                                }}
-                              ></p>
-                            </div>
-                            <div
-                              style={{
-                                border: "1px solid black",
-                                borderRight: "0px solid transparent",
-                                width: "31%",
-                                height: 22,
-                                borderBottom: "1px solid black",
-                              }}
-                            >
-                              <p
-                                style={{
-                                  marginBottom: 0,
-                                  fontSize: 13,
-                                  color: "black",
-                                  fontWeight: 400,
-                                  fontFamily: "monospace",
-                                  paddingLeft: 5,
-                                }}
-                              ></p>
-                            </div>
-                            <div
-                              style={{
-                                border: "1px solid black",
-                                borderRight: "0px solid transparent",
-                                width: "10%",
-                                height: 22,
-                                borderBottom: "1px solid black",
-                              }}
-                            >
-                              <p
-                                style={{
-                                  marginBottom: 0,
-                                  fontSize: 13,
-                                  color: "black",
-                                  fontWeight: 400,
-                                  fontFamily: "monospace",
-                                  paddingLeft: 5,
-                                  textAlign: "center",
-                                }}
-                              ></p>
-                            </div>
-                            <div
-                              style={{
-                                border: "1px solid black",
-                                borderRight: "0px solid transparent",
-                                width: "10%",
-                                height: 22,
-                                borderBottom: "1px solid black",
-                              }}
-                            >
-                              <p
-                                style={{
-                                  marginBottom: 0,
-                                  fontSize: 13,
-                                  color: "black",
-                                  fontWeight: 400,
-                                  fontFamily: "monospace",
-                                  paddingLeft: 5,
-                                  textAlign: "center",
-                                }}
-                              ></p>
-                            </div>
-                            <div
-                              style={{
-                                border: "1px solid black",
-                                borderRight: "0px solid transparent",
-                                width: "10%",
-                                height: 22,
-                                borderBottom: "1px solid black",
-                              }}
-                            >
-                              <p
-                                style={{
-                                  marginBottom: 0,
-                                  fontSize: 13,
-                                  color: "black",
-                                  fontWeight: 400,
-                                  fontFamily: "monospace",
-                                  paddingLeft: 5,
-                                  textAlign: "center",
-                                }}
-                              ></p>
-                            </div>
-                            <div
-                              style={{
-                                border: "1px solid black",
-                                borderRight: "0px solid transparent",
-                                width: "10%",
-                                height: 22,
-                                borderBottom: "1px solid black",
-                              }}
-                            >
-                              <p
-                                style={{
-                                  marginBottom: 0,
-                                  fontSize: 13,
-                                  color: "black",
-                                  fontWeight: 400,
-                                  fontFamily: "monospace",
-                                  paddingLeft: 5,
-                                  textAlign: "center",
-                                }}
-                              ></p>
-                            </div>
-                            <div
-                              style={{
-                                border: "1px solid black",
-                                width: "20%",
-                                height: 22,
-                                display: "flex",
-                                justifyContent: "space-around",
-                                borderBottom: "1px solid black",
-                                alignItems: "center",
-                              }}
-                            >
-                              <p
-                                style={{
-                                  margin: 0,
-                                  fontSize: 13,
-                                  fontWeight: 700,
-                                  paddingLeft: 5,
-                                  textAlign: "center",
-                                }}
-                              ></p>
-                              <p
-                                style={{
-                                  margin: 0,
-                                  fontSize: 13,
-                                  fontWeight: 700,
-                                  paddingRight: 5,
-                                  textAlign: "center",
-                                }}
-                              ></p>
-                            </div>
-                          </div>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td style={{ padding: 0 }}>
-                          <div
-                            style={{
-                              width: "100%",
-                              display: "flex",
-                              alignItems: "center",
-                            }}
-                          >
-                            <div
-                              style={{
-                                width: "20%",
-                                height: 22,
-                                border: "1px solid transparent",
-                              }}
-                            >
-                              <p
-                                style={{
-                                  marginBottom: 0,
-                                  fontSize: 13,
-                                  color: "black",
-                                  fontWeight: 400,
-                                  fontFamily: "monospace",
-                                  paddingLeft: 5,
-                                }}
-                              ></p>
-                            </div>
-                            <div
-                              style={{
-                                border: "1px solid transparent",
-                                width: "31%",
-                                height: 22,
-                              }}
-                            >
-                              <p
-                                style={{
-                                  marginBottom: 0,
-                                  fontSize: 13,
-                                  color: "black",
-                                  fontWeight: 400,
-                                  fontFamily: "monospace",
-                                  paddingLeft: 5,
-                                }}
-                              ></p>
-                            </div>
-                            <div
-                              style={{
-                                border: "1px solid transparent",
-                                width: "10%",
-                                height: 22,
-                              }}
-                            >
-                              <p
-                                style={{
-                                  marginBottom: 0,
-                                  fontSize: 13,
-                                  color: "black",
-                                  fontWeight: 400,
-                                  fontFamily: "monospace",
-                                  paddingLeft: 5,
-                                  textAlign: "center",
-                                }}
-                              ></p>
-                            </div>
-                            <div
-                              style={{
-                                border: "1px solid transparent",
-                                width: "10%",
-                                height: 22,
-                              }}
-                            >
-                              <p
-                                style={{
-                                  marginBottom: 0,
-                                  fontSize: 13,
-                                  color: "black",
-                                  fontWeight: 400,
-                                  fontFamily: "monospace",
-                                  paddingLeft: 5,
-                                  textAlign: "center",
-                                }}
-                              ></p>
-                            </div>
-                            <div
-                              style={{
-                                border: "1px solid transparent",
-                                width: "10%",
-                                height: 22,
-                              }}
-                            >
-                              <p
-                                style={{
-                                  marginBottom: 0,
-                                  fontSize: 13,
-                                  color: "black",
-                                  fontWeight: 400,
-                                  fontFamily: "monospace",
-                                  paddingLeft: 5,
-                                  textAlign: "center",
-                                }}
-                              ></p>
-                            </div>
-                            <div
-                              style={{
-                                border: "1px solid black",
-                                width: "20%",
-                                height: 22,
-                                display: "flex",
-                                justifyContent: "space-around",
-                                borderBottom: "1px solid black",
-                                borderTop: "0px solid transparent",
-                                alignItems: "center",
-                              }}
-                            >
-                              <input
-                                style={{
-                                  marginBottom: 0,
-                                  fontSize: 13,
-                                  color: "black",
-                                  fontWeight: 400,
-                                  fontFamily: "monospace",
-                                  paddingLeft: 5,
-                                  textAlign: "center",
-                                  width: "100%",
-                                  border: "0px",
-                                  verticalAlign: "middle",
-                                }}
-                                value={overallCharge.toFixed(2)}
-                                className="supplier_form"
-                              />
-                              <input
-                                style={{
-                                  marginBottom: 0,
-                                  fontSize: 13,
-                                  color: "black",
-                                  fontWeight: 400,
-                                  fontFamily: "monospace",
-                                  paddingLeft: 5,
-                                  textAlign: "center",
-                                  width: "100%",
-                                  border: "0px",
-
-                                  verticalAlign: "middle",
-                                }}
-                                value={finalestimate}
-                                className="supplier_form"
-                              />
-                            </div>
-                          </div>
-                        </td>
-                      </tr>
                     </tbody>
                   </table>
-                  <div className="text-center">
+
+                  <table class="cost-table">
+                    <thead>
+                      <tr>
+                        <th>Items</th>
+                        <th>Description</th>
+                        <th>
+                          <div>Currency</div>
+                        </th>
+                        <th>Cost</th>
+                        <th>Unit type</th>
+                        <th>Unit</th>
+                        <th>T/ Cost</th>
+                        <th>GP</th>
+                        <th>Amt</th>
+                        <th>ROE</th>
+                        <th>Final Amount</th>
+                      </tr>
+                    </thead>
+
+                    <tbody>
+                      {/* origin charges */}
+                      <tr>
+                        <td>Origin Charges</td>
+                        <td>Pick-Up Fee</td>
+                        <td>
+                          <select
+                            className="select_supplier"
+                            style={{
+                              margin: 0,
+                              fontSize: 13,
+                              fontWeight: 700,
+                              paddingLeft: 5,
+                              border: 0,
+                            }}
+                            onChange={handlechangecalc}
+                            name="freight_currency"
+                            value={freight?.freight_currency}
+                          >
+                            <option>Select</option>
+                            <option value="RAND">RAND</option>
+                            <option value="USD">USD</option>
+                            <option value="INR">INR</option>
+                            <option value="EURO">EURO</option>
+                          </select>
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              fontWeight: 400,
+                              border: "0px",
+                              width: "100px",
+                              verticalAlign: "middle",
+                            }}
+                            type="text"
+                            onKeyPress={handlepresss}
+                            className="supplier_form"
+                            onChange={handlechangecalc}
+                            value={freight?.origin_pick_up}
+                            name="origin_pick_up"
+                            id="floatingInput"
+                            placeholder="0.00"
+                          />
+                        </td>
+                        <td>L/S</td>
+                        <td>23</td>
+                        <td>50</td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              fontWeight: 400,
+                              width: "50px",
+                              border: "0px",
+
+                              verticalAlign: "middle",
+                            }}
+                            type="text"
+                            onKeyPress={handlepresss}
+                            className="supplier_form"
+                            onChange={handlechangecalc}
+                            value={freight?.origin_pickup_gp}
+                            name="origin_pickup_gp"
+                            id="floatingInput"
+                            placeholder="0.00%"
+                          />
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              border: "0px",
+                              verticalAlign: "middle",
+                              width: "100px",
+                            }}
+                            value={finalori}
+                            className="supplier_form"
+                          />{" "}
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              width: "100px",
+                              border: "0px",
+                              verticalAlign: "middle",
+                            }}
+                            value={freight.roe_origin_currency}
+                            className="supplier_form"
+                          />
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              width: "100px",
+                              border: "0px",
+                              verticalAlign: "middle",
+                            }}
+                            value={parseFloat(
+                              finalori * freight.roe_origin_currency
+                            ).toFixed(2)}
+                            placeholder="0.00"
+                            className="supplier_form"
+                          />
+                        </td>
+                      </tr>
+                      <tr>
+                        <td></td>
+                        <td>Fuel Surcharge</td>
+                        <td>
+                          <select
+                            className="select_supplier"
+                            style={{
+                              margin: 0,
+                              fontSize: 13,
+                              fontWeight: 700,
+                              paddingLeft: 5,
+                              border: 0,
+                            }}
+                            onChange={handlechangecalc}
+                            name="freight_currency"
+                            value={freight?.freight_currency}
+                          >
+                            <option>Select</option>
+                            <option value="RAND">RAND</option>
+                            <option value="USD">USD</option>
+                            <option value="INR">INR</option>
+                            <option value="EURO">EURO</option>
+                          </select>
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              fontWeight: 400,
+                              border: "0px",
+                              width: "100px",
+                              verticalAlign: "middle",
+                            }}
+                            type="text"
+                            onKeyPress={handlepresss}
+                            className="supplier_form"
+                            onChange={handlechangecalc}
+                            value={freight?.origin_pick_up}
+                            name="origin_pick_up"
+                            id="floatingInput"
+                            placeholder="0.00"
+                          />
+                        </td>
+                        <td>L/S</td>
+                        <td>23</td>
+                        <td>50</td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              fontWeight: 400,
+                              width: "50px",
+                              border: "0px",
+
+                              verticalAlign: "middle",
+                            }}
+                            type="text"
+                            onKeyPress={handlepresss}
+                            className="supplier_form"
+                            onChange={handlechangecalc}
+                            value={freight?.origin_pickup_gp}
+                            name="origin_pickup_gp"
+                            id="floatingInput"
+                            placeholder="0.00%"
+                          />
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              border: "0px",
+                              verticalAlign: "middle",
+                              width: "100px",
+                            }}
+                            value={finalori}
+                            className="supplier_form"
+                          />{" "}
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              width: "100px",
+                              border: "0px",
+                              verticalAlign: "middle",
+                            }}
+                            value={freight.roe_origin_currency}
+                            className="supplier_form"
+                          />
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              width: "100px",
+                              border: "0px",
+                              verticalAlign: "middle",
+                            }}
+                            value={parseFloat(
+                              finalori * freight.roe_origin_currency
+                            ).toFixed(2)}
+                            placeholder="0.00"
+                            className="supplier_form"
+                          />
+                        </td>
+                      </tr>
+                      <tr>
+                        <td></td>
+                        <td>CFS Charge</td>
+                        <td>
+                          <select
+                            className="select_supplier"
+                            style={{
+                              margin: 0,
+                              fontSize: 13,
+                              fontWeight: 700,
+                              paddingLeft: 5,
+                              border: 0,
+                            }}
+                            onChange={handlechangecalc}
+                            name="freight_currency"
+                            value={freight?.freight_currency}
+                          >
+                            <option>Select</option>
+                            <option value="RAND">RAND</option>
+                            <option value="USD">USD</option>
+                            <option value="INR">INR</option>
+                            <option value="EURO">EURO</option>
+                          </select>
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              fontWeight: 400,
+                              border: "0px",
+                              width: "100px",
+                              verticalAlign: "middle",
+                            }}
+                            type="text"
+                            onKeyPress={handlepresss}
+                            className="supplier_form"
+                            onChange={handlechangecalc}
+                            value={freight?.origin_pick_up}
+                            name="origin_pick_up"
+                            id="floatingInput"
+                            placeholder="0.00"
+                          />
+                        </td>
+                        <td>L/S</td>
+                        <td>23</td>
+                        <td>50</td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              fontWeight: 400,
+                              width: "50px",
+                              border: "0px",
+
+                              verticalAlign: "middle",
+                            }}
+                            type="text"
+                            onKeyPress={handlepresss}
+                            className="supplier_form"
+                            onChange={handlechangecalc}
+                            value={freight?.origin_pickup_gp}
+                            name="origin_pickup_gp"
+                            id="floatingInput"
+                            placeholder="0.00%"
+                          />
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              border: "0px",
+                              verticalAlign: "middle",
+                              width: "100px",
+                            }}
+                            value={finalori}
+                            className="supplier_form"
+                          />{" "}
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              width: "100px",
+                              border: "0px",
+                              verticalAlign: "middle",
+                            }}
+                            value={freight.roe_origin_currency}
+                            className="supplier_form"
+                          />
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              width: "100px",
+                              border: "0px",
+                              verticalAlign: "middle",
+                            }}
+                            value={parseFloat(
+                              finalori * freight.roe_origin_currency
+                            ).toFixed(2)}
+                            placeholder="0.00"
+                            className="supplier_form"
+                          />
+                        </td>
+                      </tr>
+                      <tr>
+                        <td></td>
+                        <td>Documentation Fee</td>
+                        <td>
+                          <select
+                            className="select_supplier"
+                            style={{
+                              margin: 0,
+                              fontSize: 13,
+                              fontWeight: 700,
+                              paddingLeft: 5,
+                              border: 0,
+                            }}
+                            onChange={handlechangecalc}
+                            name="freight_currency"
+                            value={freight?.freight_currency}
+                          >
+                            <option>Select</option>
+                            <option value="RAND">RAND</option>
+                            <option value="USD">USD</option>
+                            <option value="INR">INR</option>
+                            <option value="EURO">EURO</option>
+                          </select>
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              fontWeight: 400,
+                              border: "0px",
+                              width: "100px",
+                              verticalAlign: "middle",
+                            }}
+                            type="text"
+                            onKeyPress={handlepresss}
+                            className="supplier_form"
+                            onChange={handlechangecalc}
+                            value={freight?.origin_pick_up}
+                            name="origin_pick_up"
+                            id="floatingInput"
+                            placeholder="0.00"
+                          />
+                        </td>
+                        <td>L/S</td>
+                        <td>23</td>
+                        <td>50</td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              fontWeight: 400,
+                              width: "50px",
+                              border: "0px",
+
+                              verticalAlign: "middle",
+                            }}
+                            type="text"
+                            onKeyPress={handlepresss}
+                            className="supplier_form"
+                            onChange={handlechangecalc}
+                            value={freight?.origin_pickup_gp}
+                            name="origin_pickup_gp"
+                            id="floatingInput"
+                            placeholder="0.00%"
+                          />
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              border: "0px",
+                              verticalAlign: "middle",
+                              width: "100px",
+                            }}
+                            value={finalori}
+                            className="supplier_form"
+                          />{" "}
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              width: "100px",
+                              border: "0px",
+                              verticalAlign: "middle",
+                            }}
+                            value={freight.roe_origin_currency}
+                            className="supplier_form"
+                          />
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              width: "100px",
+                              border: "0px",
+                              verticalAlign: "middle",
+                            }}
+                            value={parseFloat(
+                              finalori * freight.roe_origin_currency
+                            ).toFixed(2)}
+                            placeholder="0.00"
+                            className="supplier_form"
+                          />
+                        </td>
+                      </tr>
+                      <tr>
+                        <td></td>
+                        <td>Forwarding Fee</td>
+                        <td>
+                          <select
+                            className="select_supplier"
+                            style={{
+                              margin: 0,
+                              fontSize: 13,
+                              fontWeight: 700,
+                              paddingLeft: 5,
+                              border: 0,
+                            }}
+                            onChange={handlechangecalc}
+                            name="freight_currency"
+                            value={freight?.freight_currency}
+                          >
+                            <option>Select</option>
+                            <option value="RAND">RAND</option>
+                            <option value="USD">USD</option>
+                            <option value="INR">INR</option>
+                            <option value="EURO">EURO</option>
+                          </select>
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              fontWeight: 400,
+                              border: "0px",
+                              width: "100px",
+                              verticalAlign: "middle",
+                            }}
+                            type="text"
+                            onKeyPress={handlepresss}
+                            className="supplier_form"
+                            onChange={handlechangecalc}
+                            value={freight?.origin_pick_up}
+                            name="origin_pick_up"
+                            id="floatingInput"
+                            placeholder="0.00"
+                          />
+                        </td>
+                        <td>L/S</td>
+                        <td>23</td>
+                        <td>50</td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              fontWeight: 400,
+                              width: "50px",
+                              border: "0px",
+
+                              verticalAlign: "middle",
+                            }}
+                            type="text"
+                            onKeyPress={handlepresss}
+                            className="supplier_form"
+                            onChange={handlechangecalc}
+                            value={freight?.origin_pickup_gp}
+                            name="origin_pickup_gp"
+                            id="floatingInput"
+                            placeholder="0.00%"
+                          />
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              border: "0px",
+                              verticalAlign: "middle",
+                              width: "100px",
+                            }}
+                            value={finalori}
+                            className="supplier_form"
+                          />{" "}
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              width: "100px",
+                              border: "0px",
+                              verticalAlign: "middle",
+                            }}
+                            value={freight.roe_origin_currency}
+                            className="supplier_form"
+                          />
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              width: "100px",
+                              border: "0px",
+                              verticalAlign: "middle",
+                            }}
+                            value={parseFloat(
+                              finalori * freight.roe_origin_currency
+                            ).toFixed(2)}
+                            placeholder="0.00"
+                            className="supplier_form"
+                          />
+                        </td>
+                      </tr>
+                      <tr>
+                        <td></td>
+                        <td>Customs Clearance</td>
+                        <td>
+                          <select
+                            className="select_supplier"
+                            style={{
+                              margin: 0,
+                              fontSize: 13,
+                              fontWeight: 700,
+                              paddingLeft: 5,
+                              border: 0,
+                            }}
+                            onChange={handlechangecalc}
+                            name="freight_currency"
+                            value={freight?.freight_currency}
+                          >
+                            <option>Select</option>
+                            <option value="RAND">RAND</option>
+                            <option value="USD">USD</option>
+                            <option value="INR">INR</option>
+                            <option value="EURO">EURO</option>
+                          </select>
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              fontWeight: 400,
+                              border: "0px",
+                              width: "100px",
+                              verticalAlign: "middle",
+                            }}
+                            type="text"
+                            onKeyPress={handlepresss}
+                            className="supplier_form"
+                            onChange={handlechangecalc}
+                            value={freight?.origin_pick_up}
+                            name="origin_pick_up"
+                            id="floatingInput"
+                            placeholder="0.00"
+                          />
+                        </td>
+                        <td>L/S</td>
+                        <td>23</td>
+                        <td>50</td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              fontWeight: 400,
+                              width: "50px",
+                              border: "0px",
+
+                              verticalAlign: "middle",
+                            }}
+                            type="text"
+                            onKeyPress={handlepresss}
+                            className="supplier_form"
+                            onChange={handlechangecalc}
+                            value={freight?.origin_pickup_gp}
+                            name="origin_pickup_gp"
+                            id="floatingInput"
+                            placeholder="0.00%"
+                          />
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              border: "0px",
+                              verticalAlign: "middle",
+                              width: "100px",
+                            }}
+                            value={finalori}
+                            className="supplier_form"
+                          />{" "}
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              width: "100px",
+                              border: "0px",
+                              verticalAlign: "middle",
+                            }}
+                            value={freight.roe_origin_currency}
+                            className="supplier_form"
+                          />
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              width: "100px",
+                              border: "0px",
+                              verticalAlign: "middle",
+                            }}
+                            value={parseFloat(
+                              finalori * freight.roe_origin_currency
+                            ).toFixed(2)}
+                            placeholder="0.00"
+                            className="supplier_form"
+                          />
+                        </td>
+                      </tr>
+                      <tr>
+                        <td></td>
+                        <td>SOLAS VGM Admin Fee</td>
+                        <td>
+                          <select
+                            className="select_supplier"
+                            style={{
+                              margin: 0,
+                              fontSize: 13,
+                              fontWeight: 700,
+                              paddingLeft: 5,
+                              border: 0,
+                            }}
+                            onChange={handlechangecalc}
+                            name="freight_currency"
+                            value={freight?.freight_currency}
+                          >
+                            <option>Select</option>
+                            <option value="RAND">RAND</option>
+                            <option value="USD">USD</option>
+                            <option value="INR">INR</option>
+                            <option value="EURO">EURO</option>
+                          </select>
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              fontWeight: 400,
+                              border: "0px",
+                              width: "100px",
+                              verticalAlign: "middle",
+                            }}
+                            type="text"
+                            onKeyPress={handlepresss}
+                            className="supplier_form"
+                            onChange={handlechangecalc}
+                            value={freight?.origin_pick_up}
+                            name="origin_pick_up"
+                            id="floatingInput"
+                            placeholder="0.00"
+                          />
+                        </td>
+                        <td>L/S</td>
+                        <td>23</td>
+                        <td>50</td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              fontWeight: 400,
+                              width: "50px",
+                              border: "0px",
+
+                              verticalAlign: "middle",
+                            }}
+                            type="text"
+                            onKeyPress={handlepresss}
+                            className="supplier_form"
+                            onChange={handlechangecalc}
+                            value={freight?.origin_pickup_gp}
+                            name="origin_pickup_gp"
+                            id="floatingInput"
+                            placeholder="0.00%"
+                          />
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              border: "0px",
+                              verticalAlign: "middle",
+                              width: "100px",
+                            }}
+                            value={finalori}
+                            className="supplier_form"
+                          />{" "}
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              width: "100px",
+                              border: "0px",
+                              verticalAlign: "middle",
+                            }}
+                            value={freight.roe_origin_currency}
+                            className="supplier_form"
+                          />
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              width: "100px",
+                              border: "0px",
+                              verticalAlign: "middle",
+                            }}
+                            value={parseFloat(
+                              finalori * freight.roe_origin_currency
+                            ).toFixed(2)}
+                            placeholder="0.00"
+                            className="supplier_form"
+                          />
+                        </td>
+                      </tr>
+                      <tr>
+                        <td></td>
+                        <td colSpan={5}>
+                          <strong>Total - Origin Charges </strong>
+                        </td>
+                        <td colSpan={4}> 970.00 </td>
+                        <td> 17,634.00 </td>
+                      </tr>
+                      {/* freight charges */}
+                      <tr>
+                        <td>Freight Charges</td>
+                        <td>Ocean freight</td>
+                        <td>
+                          <select
+                            className="select_supplier"
+                            style={{
+                              margin: 0,
+                              fontSize: 13,
+                              fontWeight: 700,
+                              paddingLeft: 5,
+                              border: 0,
+                            }}
+                            onChange={handlechangecalc}
+                            name="freight_currency"
+                            value={freight?.freight_currency}
+                          >
+                            <option>Select</option>
+                            <option value="RAND">RAND</option>
+                            <option value="USD">USD</option>
+                            <option value="INR">INR</option>
+                            <option value="EURO">EURO</option>
+                          </select>
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              fontWeight: 400,
+                              border: "0px",
+                              width: "100px",
+                              verticalAlign: "middle",
+                            }}
+                            type="text"
+                            onKeyPress={handlepresss}
+                            className="supplier_form"
+                            onChange={handlechangecalc}
+                            value={freight?.origin_pick_up}
+                            name="origin_pick_up"
+                            id="floatingInput"
+                            placeholder="0.00"
+                          />
+                        </td>
+                        <td>L/S</td>
+                        <td>23</td>
+                        <td>50</td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              fontWeight: 400,
+                              width: "50px",
+                              border: "0px",
+
+                              verticalAlign: "middle",
+                            }}
+                            type="text"
+                            onKeyPress={handlepresss}
+                            className="supplier_form"
+                            onChange={handlechangecalc}
+                            value={freight?.origin_pickup_gp}
+                            name="origin_pickup_gp"
+                            id="floatingInput"
+                            placeholder="0.00%"
+                          />
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              border: "0px",
+                              verticalAlign: "middle",
+                              width: "100px",
+                            }}
+                            value={finalori}
+                            className="supplier_form"
+                          />{" "}
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              width: "100px",
+                              border: "0px",
+                              verticalAlign: "middle",
+                            }}
+                            value={freight.roe_origin_currency}
+                            className="supplier_form"
+                          />
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              width: "100px",
+                              border: "0px",
+                              verticalAlign: "middle",
+                            }}
+                            value={parseFloat(
+                              finalori * freight.roe_origin_currency
+                            ).toFixed(2)}
+                            placeholder="0.00"
+                            className="supplier_form"
+                          />
+                        </td>
+                      </tr>
+                      <tr>
+                        <td>Insurance</td>
+                        <td>Ocean freight</td>
+                        <td>
+                          <select
+                            className="select_supplier"
+                            style={{
+                              margin: 0,
+                              fontSize: 13,
+                              fontWeight: 700,
+                              paddingLeft: 5,
+                              border: 0,
+                            }}
+                            onChange={handlechangecalc}
+                            name="freight_currency"
+                            value={freight?.freight_currency}
+                          >
+                            <option>Select</option>
+                            <option value="RAND">RAND</option>
+                            <option value="USD">USD</option>
+                            <option value="INR">INR</option>
+                            <option value="EURO">EURO</option>
+                          </select>
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              fontWeight: 400,
+                              border: "0px",
+                              width: "100px",
+                              verticalAlign: "middle",
+                            }}
+                            type="text"
+                            onKeyPress={handlepresss}
+                            className="supplier_form"
+                            onChange={handlechangecalc}
+                            value={freight?.origin_pick_up}
+                            name="origin_pick_up"
+                            id="floatingInput"
+                            placeholder="0.00"
+                          />
+                        </td>
+                        <td>L/S</td>
+                        <td>23</td>
+                        <td>50</td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              fontWeight: 400,
+                              width: "50px",
+                              border: "0px",
+
+                              verticalAlign: "middle",
+                            }}
+                            type="text"
+                            onKeyPress={handlepresss}
+                            className="supplier_form"
+                            onChange={handlechangecalc}
+                            value={freight?.origin_pickup_gp}
+                            name="origin_pickup_gp"
+                            id="floatingInput"
+                            placeholder="0.00%"
+                          />
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              border: "0px",
+                              verticalAlign: "middle",
+                              width: "100px",
+                            }}
+                            value={finalori}
+                            className="supplier_form"
+                          />{" "}
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              width: "100px",
+                              border: "0px",
+                              verticalAlign: "middle",
+                            }}
+                            value={freight.roe_origin_currency}
+                            className="supplier_form"
+                          />
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              width: "100px",
+                              border: "0px",
+                              verticalAlign: "middle",
+                            }}
+                            value={parseFloat(
+                              finalori * freight.roe_origin_currency
+                            ).toFixed(2)}
+                            placeholder="0.00"
+                            className="supplier_form"
+                          />
+                        </td>
+                      </tr>
+                      <tr>
+                        <td></td>
+                        <td colSpan={5}>
+                          <strong> Total - Freight Charges</strong>
+                        </td>
+                        <td colSpan={4}> 970.00 </td>
+                        <td> 17,634.00 </td>
+                      </tr>
+
+                      {/* transit charges */}
+                      <tr>
+                        <td>Transit Charges</td>
+                        <td>Customs Clearing Fees</td>
+                        <td>
+                          <select
+                            className="select_supplier"
+                            style={{
+                              margin: 0,
+                              fontSize: 13,
+                              fontWeight: 700,
+                              paddingLeft: 5,
+                              border: 0,
+                            }}
+                            onChange={handlechangecalc}
+                            name="freight_currency"
+                            value={freight?.freight_currency}
+                          >
+                            <option>Select</option>
+                            <option value="RAND">RAND</option>
+                            <option value="USD">USD</option>
+                            <option value="INR">INR</option>
+                            <option value="EURO">EURO</option>
+                          </select>
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              fontWeight: 400,
+                              border: "0px",
+                              width: "100px",
+                              verticalAlign: "middle",
+                            }}
+                            type="text"
+                            onKeyPress={handlepresss}
+                            className="supplier_form"
+                            onChange={handlechangecalc}
+                            value={freight?.origin_pick_up}
+                            name="origin_pick_up"
+                            id="floatingInput"
+                            placeholder="0.00"
+                          />
+                        </td>
+                        <td>L/S</td>
+                        <td>23</td>
+                        <td>50</td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              fontWeight: 400,
+                              width: "50px",
+                              border: "0px",
+
+                              verticalAlign: "middle",
+                            }}
+                            type="text"
+                            onKeyPress={handlepresss}
+                            className="supplier_form"
+                            onChange={handlechangecalc}
+                            value={freight?.origin_pickup_gp}
+                            name="origin_pickup_gp"
+                            id="floatingInput"
+                            placeholder="0.00%"
+                          />
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              border: "0px",
+                              verticalAlign: "middle",
+                              width: "100px",
+                            }}
+                            value={finalori}
+                            className="supplier_form"
+                          />{" "}
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              width: "100px",
+                              border: "0px",
+                              verticalAlign: "middle",
+                            }}
+                            value={freight.roe_origin_currency}
+                            className="supplier_form"
+                          />
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              width: "100px",
+                              border: "0px",
+                              verticalAlign: "middle",
+                            }}
+                            value={parseFloat(
+                              finalori * freight.roe_origin_currency
+                            ).toFixed(2)}
+                            placeholder="0.00"
+                            className="supplier_form"
+                          />
+                        </td>
+                      </tr>
+                      <tr>
+                        <td> </td>
+                        <td>THC Levy</td>
+                        <td>
+                          <select
+                            className="select_supplier"
+                            style={{
+                              margin: 0,
+                              fontSize: 13,
+                              fontWeight: 700,
+                              paddingLeft: 5,
+                              border: 0,
+                            }}
+                            onChange={handlechangecalc}
+                            name="freight_currency"
+                            value={freight?.freight_currency}
+                          >
+                            <option>Select</option>
+                            <option value="RAND">RAND</option>
+                            <option value="USD">USD</option>
+                            <option value="INR">INR</option>
+                            <option value="EURO">EURO</option>
+                          </select>
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              fontWeight: 400,
+                              border: "0px",
+                              width: "100px",
+                              verticalAlign: "middle",
+                            }}
+                            type="text"
+                            onKeyPress={handlepresss}
+                            className="supplier_form"
+                            onChange={handlechangecalc}
+                            value={freight?.origin_pick_up}
+                            name="origin_pick_up"
+                            id="floatingInput"
+                            placeholder="0.00"
+                          />
+                        </td>
+                        <td>L/S</td>
+                        <td>23</td>
+                        <td>50</td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              fontWeight: 400,
+                              width: "50px",
+                              border: "0px",
+
+                              verticalAlign: "middle",
+                            }}
+                            type="text"
+                            onKeyPress={handlepresss}
+                            className="supplier_form"
+                            onChange={handlechangecalc}
+                            value={freight?.origin_pickup_gp}
+                            name="origin_pickup_gp"
+                            id="floatingInput"
+                            placeholder="0.00%"
+                          />
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              border: "0px",
+                              verticalAlign: "middle",
+                              width: "100px",
+                            }}
+                            value={finalori}
+                            className="supplier_form"
+                          />{" "}
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              width: "100px",
+                              border: "0px",
+                              verticalAlign: "middle",
+                            }}
+                            value={freight.roe_origin_currency}
+                            className="supplier_form"
+                          />
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              width: "100px",
+                              border: "0px",
+                              verticalAlign: "middle",
+                            }}
+                            value={parseFloat(
+                              finalori * freight.roe_origin_currency
+                            ).toFixed(2)}
+                            placeholder="0.00"
+                            className="supplier_form"
+                          />
+                        </td>
+                      </tr>
+                      <tr>
+                        <td> </td>
+                        <td>Unpack Charges</td>
+                        <td>
+                          <select
+                            className="select_supplier"
+                            style={{
+                              margin: 0,
+                              fontSize: 13,
+                              fontWeight: 700,
+                              paddingLeft: 5,
+                              border: 0,
+                            }}
+                            onChange={handlechangecalc}
+                            name="freight_currency"
+                            value={freight?.freight_currency}
+                          >
+                            <option>Select</option>
+                            <option value="RAND">RAND</option>
+                            <option value="USD">USD</option>
+                            <option value="INR">INR</option>
+                            <option value="EURO">EURO</option>
+                          </select>
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              fontWeight: 400,
+                              border: "0px",
+                              width: "100px",
+                              verticalAlign: "middle",
+                            }}
+                            type="text"
+                            onKeyPress={handlepresss}
+                            className="supplier_form"
+                            onChange={handlechangecalc}
+                            value={freight?.origin_pick_up}
+                            name="origin_pick_up"
+                            id="floatingInput"
+                            placeholder="0.00"
+                          />
+                        </td>
+                        <td>L/S</td>
+                        <td>23</td>
+                        <td>50</td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              fontWeight: 400,
+                              width: "50px",
+                              border: "0px",
+
+                              verticalAlign: "middle",
+                            }}
+                            type="text"
+                            onKeyPress={handlepresss}
+                            className="supplier_form"
+                            onChange={handlechangecalc}
+                            value={freight?.origin_pickup_gp}
+                            name="origin_pickup_gp"
+                            id="floatingInput"
+                            placeholder="0.00%"
+                          />
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              border: "0px",
+                              verticalAlign: "middle",
+                              width: "100px",
+                            }}
+                            value={finalori}
+                            className="supplier_form"
+                          />{" "}
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              width: "100px",
+                              border: "0px",
+                              verticalAlign: "middle",
+                            }}
+                            value={freight.roe_origin_currency}
+                            className="supplier_form"
+                          />
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              width: "100px",
+                              border: "0px",
+                              verticalAlign: "middle",
+                            }}
+                            value={parseFloat(
+                              finalori * freight.roe_origin_currency
+                            ).toFixed(2)}
+                            placeholder="0.00"
+                            className="supplier_form"
+                          />
+                        </td>
+                      </tr>
+                      <tr>
+                        <td> </td>
+                        <td>3rd Party CFS Charge: LCL Handling Out w/ms</td>
+                        <td>
+                          <select
+                            className="select_supplier"
+                            style={{
+                              margin: 0,
+                              fontSize: 13,
+                              fontWeight: 700,
+                              paddingLeft: 5,
+                              border: 0,
+                            }}
+                            onChange={handlechangecalc}
+                            name="freight_currency"
+                            value={freight?.freight_currency}
+                          >
+                            <option>Select</option>
+                            <option value="RAND">RAND</option>
+                            <option value="USD">USD</option>
+                            <option value="INR">INR</option>
+                            <option value="EURO">EURO</option>
+                          </select>
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              fontWeight: 400,
+                              border: "0px",
+                              width: "100px",
+                              verticalAlign: "middle",
+                            }}
+                            type="text"
+                            onKeyPress={handlepresss}
+                            className="supplier_form"
+                            onChange={handlechangecalc}
+                            value={freight?.origin_pick_up}
+                            name="origin_pick_up"
+                            id="floatingInput"
+                            placeholder="0.00"
+                          />
+                        </td>
+                        <td>L/S</td>
+                        <td>23</td>
+                        <td>50</td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              fontWeight: 400,
+                              width: "50px",
+                              border: "0px",
+
+                              verticalAlign: "middle",
+                            }}
+                            type="text"
+                            onKeyPress={handlepresss}
+                            className="supplier_form"
+                            onChange={handlechangecalc}
+                            value={freight?.origin_pickup_gp}
+                            name="origin_pickup_gp"
+                            id="floatingInput"
+                            placeholder="0.00%"
+                          />
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              border: "0px",
+                              verticalAlign: "middle",
+                              width: "100px",
+                            }}
+                            value={finalori}
+                            className="supplier_form"
+                          />{" "}
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              width: "100px",
+                              border: "0px",
+                              verticalAlign: "middle",
+                            }}
+                            value={freight.roe_origin_currency}
+                            className="supplier_form"
+                          />
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              width: "100px",
+                              border: "0px",
+                              verticalAlign: "middle",
+                            }}
+                            value={parseFloat(
+                              finalori * freight.roe_origin_currency
+                            ).toFixed(2)}
+                            placeholder="0.00"
+                            className="supplier_form"
+                          />
+                        </td>
+                      </tr>
+                      <tr>
+                        <td> </td>
+                        <td>Admin Charges</td>
+                        <td>
+                          <select
+                            className="select_supplier"
+                            style={{
+                              margin: 0,
+                              fontSize: 13,
+                              fontWeight: 700,
+                              paddingLeft: 5,
+                              border: 0,
+                            }}
+                            onChange={handlechangecalc}
+                            name="freight_currency"
+                            value={freight?.freight_currency}
+                          >
+                            <option>Select</option>
+                            <option value="RAND">RAND</option>
+                            <option value="USD">USD</option>
+                            <option value="INR">INR</option>
+                            <option value="EURO">EURO</option>
+                          </select>
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              fontWeight: 400,
+                              border: "0px",
+                              width: "100px",
+                              verticalAlign: "middle",
+                            }}
+                            type="text"
+                            onKeyPress={handlepresss}
+                            className="supplier_form"
+                            onChange={handlechangecalc}
+                            value={freight?.origin_pick_up}
+                            name="origin_pick_up"
+                            id="floatingInput"
+                            placeholder="0.00"
+                          />
+                        </td>
+                        <td>L/S</td>
+                        <td>23</td>
+                        <td>50</td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              fontWeight: 400,
+                              width: "50px",
+                              border: "0px",
+
+                              verticalAlign: "middle",
+                            }}
+                            type="text"
+                            onKeyPress={handlepresss}
+                            className="supplier_form"
+                            onChange={handlechangecalc}
+                            value={freight?.origin_pickup_gp}
+                            name="origin_pickup_gp"
+                            id="floatingInput"
+                            placeholder="0.00%"
+                          />
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              border: "0px",
+                              verticalAlign: "middle",
+                              width: "100px",
+                            }}
+                            value={finalori}
+                            className="supplier_form"
+                          />{" "}
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              width: "100px",
+                              border: "0px",
+                              verticalAlign: "middle",
+                            }}
+                            value={freight.roe_origin_currency}
+                            className="supplier_form"
+                          />
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              width: "100px",
+                              border: "0px",
+                              verticalAlign: "middle",
+                            }}
+                            value={parseFloat(
+                              finalori * freight.roe_origin_currency
+                            ).toFixed(2)}
+                            placeholder="0.00"
+                            className="supplier_form"
+                          />
+                        </td>
+                      </tr>
+                      <tr>
+                        <td> </td>
+                        <td>Port Cargo Dues</td>
+                        <td>
+                          <select
+                            className="select_supplier"
+                            style={{
+                              margin: 0,
+                              fontSize: 13,
+                              fontWeight: 700,
+                              paddingLeft: 5,
+                              border: 0,
+                            }}
+                            onChange={handlechangecalc}
+                            name="freight_currency"
+                            value={freight?.freight_currency}
+                          >
+                            <option>Select</option>
+                            <option value="RAND">RAND</option>
+                            <option value="USD">USD</option>
+                            <option value="INR">INR</option>
+                            <option value="EURO">EURO</option>
+                          </select>
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              fontWeight: 400,
+                              border: "0px",
+                              width: "100px",
+                              verticalAlign: "middle",
+                            }}
+                            type="text"
+                            onKeyPress={handlepresss}
+                            className="supplier_form"
+                            onChange={handlechangecalc}
+                            value={freight?.origin_pick_up}
+                            name="origin_pick_up"
+                            id="floatingInput"
+                            placeholder="0.00"
+                          />
+                        </td>
+                        <td>L/S</td>
+                        <td>23</td>
+                        <td>50</td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              fontWeight: 400,
+                              width: "50px",
+                              border: "0px",
+
+                              verticalAlign: "middle",
+                            }}
+                            type="text"
+                            onKeyPress={handlepresss}
+                            className="supplier_form"
+                            onChange={handlechangecalc}
+                            value={freight?.origin_pickup_gp}
+                            name="origin_pickup_gp"
+                            id="floatingInput"
+                            placeholder="0.00%"
+                          />
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              border: "0px",
+                              verticalAlign: "middle",
+                              width: "100px",
+                            }}
+                            value={finalori}
+                            className="supplier_form"
+                          />{" "}
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              width: "100px",
+                              border: "0px",
+                              verticalAlign: "middle",
+                            }}
+                            value={freight.roe_origin_currency}
+                            className="supplier_form"
+                          />
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              width: "100px",
+                              border: "0px",
+                              verticalAlign: "middle",
+                            }}
+                            value={parseFloat(
+                              finalori * freight.roe_origin_currency
+                            ).toFixed(2)}
+                            placeholder="0.00"
+                            className="supplier_form"
+                          />
+                        </td>
+                      </tr>
+                      <tr>
+                        <td> </td>
+                        <td>Advanced Load House Fee USD</td>
+                        <td>
+                          <select
+                            className="select_supplier"
+                            style={{
+                              margin: 0,
+                              fontSize: 13,
+                              fontWeight: 700,
+                              paddingLeft: 5,
+                              border: 0,
+                            }}
+                            onChange={handlechangecalc}
+                            name="freight_currency"
+                            value={freight?.freight_currency}
+                          >
+                            <option>Select</option>
+                            <option value="RAND">RAND</option>
+                            <option value="USD">USD</option>
+                            <option value="INR">INR</option>
+                            <option value="EURO">EURO</option>
+                          </select>
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              fontWeight: 400,
+                              border: "0px",
+                              width: "100px",
+                              verticalAlign: "middle",
+                            }}
+                            type="text"
+                            onKeyPress={handlepresss}
+                            className="supplier_form"
+                            onChange={handlechangecalc}
+                            value={freight?.origin_pick_up}
+                            name="origin_pick_up"
+                            id="floatingInput"
+                            placeholder="0.00"
+                          />
+                        </td>
+                        <td>L/S</td>
+                        <td>23</td>
+                        <td>50</td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              fontWeight: 400,
+                              width: "50px",
+                              border: "0px",
+
+                              verticalAlign: "middle",
+                            }}
+                            type="text"
+                            onKeyPress={handlepresss}
+                            className="supplier_form"
+                            onChange={handlechangecalc}
+                            value={freight?.origin_pickup_gp}
+                            name="origin_pickup_gp"
+                            id="floatingInput"
+                            placeholder="0.00%"
+                          />
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              border: "0px",
+                              verticalAlign: "middle",
+                              width: "100px",
+                            }}
+                            value={finalori}
+                            className="supplier_form"
+                          />{" "}
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              width: "100px",
+                              border: "0px",
+                              verticalAlign: "middle",
+                            }}
+                            value={freight.roe_origin_currency}
+                            className="supplier_form"
+                          />
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              width: "100px",
+                              border: "0px",
+                              verticalAlign: "middle",
+                            }}
+                            value={parseFloat(
+                              finalori * freight.roe_origin_currency
+                            ).toFixed(2)}
+                            placeholder="0.00"
+                            className="supplier_form"
+                          />
+                        </td>
+                      </tr>
+                      <tr>
+                        <td> </td>
+                        <td>Documentation Fee</td>
+                        <td>
+                          <select
+                            className="select_supplier"
+                            style={{
+                              margin: 0,
+                              fontSize: 13,
+                              fontWeight: 700,
+                              paddingLeft: 5,
+                              border: 0,
+                            }}
+                            onChange={handlechangecalc}
+                            name="freight_currency"
+                            value={freight?.freight_currency}
+                          >
+                            <option>Select</option>
+                            <option value="RAND">RAND</option>
+                            <option value="USD">USD</option>
+                            <option value="INR">INR</option>
+                            <option value="EURO">EURO</option>
+                          </select>
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              fontWeight: 400,
+                              border: "0px",
+                              width: "100px",
+                              verticalAlign: "middle",
+                            }}
+                            type="text"
+                            onKeyPress={handlepresss}
+                            className="supplier_form"
+                            onChange={handlechangecalc}
+                            value={freight?.origin_pick_up}
+                            name="origin_pick_up"
+                            id="floatingInput"
+                            placeholder="0.00"
+                          />
+                        </td>
+                        <td>L/S</td>
+                        <td>23</td>
+                        <td>50</td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              fontWeight: 400,
+                              width: "50px",
+                              border: "0px",
+
+                              verticalAlign: "middle",
+                            }}
+                            type="text"
+                            onKeyPress={handlepresss}
+                            className="supplier_form"
+                            onChange={handlechangecalc}
+                            value={freight?.origin_pickup_gp}
+                            name="origin_pickup_gp"
+                            id="floatingInput"
+                            placeholder="0.00%"
+                          />
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              border: "0px",
+                              verticalAlign: "middle",
+                              width: "100px",
+                            }}
+                            value={finalori}
+                            className="supplier_form"
+                          />{" "}
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              width: "100px",
+                              border: "0px",
+                              verticalAlign: "middle",
+                            }}
+                            value={freight.roe_origin_currency}
+                            className="supplier_form"
+                          />
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              width: "100px",
+                              border: "0px",
+                              verticalAlign: "middle",
+                            }}
+                            value={parseFloat(
+                              finalori * freight.roe_origin_currency
+                            ).toFixed(2)}
+                            placeholder="0.00"
+                            className="supplier_form"
+                          />
+                        </td>
+                      </tr>
+                      <tr>
+                        <td> </td>
+                        <td></td>
+                        <td>
+                          <select
+                            className="select_supplier"
+                            style={{
+                              margin: 0,
+                              fontSize: 13,
+                              fontWeight: 700,
+                              paddingLeft: 5,
+                              border: 0,
+                            }}
+                            onChange={handlechangecalc}
+                            name="freight_currency"
+                            value={freight?.freight_currency}
+                          >
+                            <option>Select</option>
+                            <option value="RAND">RAND</option>
+                            <option value="USD">USD</option>
+                            <option value="INR">INR</option>
+                            <option value="EURO">EURO</option>
+                          </select>
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              fontWeight: 400,
+                              border: "0px",
+                              width: "100px",
+                              verticalAlign: "middle",
+                            }}
+                            type="text"
+                            onKeyPress={handlepresss}
+                            className="supplier_form"
+                            onChange={handlechangecalc}
+                            value={freight?.origin_pick_up}
+                            name="origin_pick_up"
+                            id="floatingInput"
+                            placeholder="0.00"
+                          />
+                        </td>
+                        <td>L/S</td>
+                        <td>23</td>
+                        <td>50</td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              fontWeight: 400,
+                              width: "50px",
+                              border: "0px",
+
+                              verticalAlign: "middle",
+                            }}
+                            type="text"
+                            onKeyPress={handlepresss}
+                            className="supplier_form"
+                            onChange={handlechangecalc}
+                            value={freight?.origin_pickup_gp}
+                            name="origin_pickup_gp"
+                            id="floatingInput"
+                            placeholder="0.00%"
+                          />
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              border: "0px",
+                              verticalAlign: "middle",
+                              width: "100px",
+                            }}
+                            value={finalori}
+                            className="supplier_form"
+                          />{" "}
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              width: "100px",
+                              border: "0px",
+                              verticalAlign: "middle",
+                            }}
+                            value={freight.roe_origin_currency}
+                            className="supplier_form"
+                          />
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              width: "100px",
+                              border: "0px",
+                              verticalAlign: "middle",
+                            }}
+                            value={parseFloat(
+                              finalori * freight.roe_origin_currency
+                            ).toFixed(2)}
+                            placeholder="0.00"
+                            className="supplier_form"
+                          />
+                        </td>
+                      </tr>
+                      <tr>
+                        <td> </td>
+                        <td>Documentation Fee</td>
+                        <td>
+                          <select
+                            className="select_supplier"
+                            style={{
+                              margin: 0,
+                              fontSize: 13,
+                              fontWeight: 700,
+                              paddingLeft: 5,
+                              border: 0,
+                            }}
+                            onChange={handlechangecalc}
+                            name="freight_currency"
+                            value={freight?.freight_currency}
+                          >
+                            <option>Select</option>
+                            <option value="RAND">RAND</option>
+                            <option value="USD">USD</option>
+                            <option value="INR">INR</option>
+                            <option value="EURO">EURO</option>
+                          </select>
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              fontWeight: 400,
+                              border: "0px",
+                              width: "100px",
+                              verticalAlign: "middle",
+                            }}
+                            type="text"
+                            onKeyPress={handlepresss}
+                            className="supplier_form"
+                            onChange={handlechangecalc}
+                            value={freight?.origin_pick_up}
+                            name="origin_pick_up"
+                            id="floatingInput"
+                            placeholder="0.00"
+                          />
+                        </td>
+                        <td>L/S</td>
+                        <td>23</td>
+                        <td>50</td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              fontWeight: 400,
+                              width: "50px",
+                              border: "0px",
+
+                              verticalAlign: "middle",
+                            }}
+                            type="text"
+                            onKeyPress={handlepresss}
+                            className="supplier_form"
+                            onChange={handlechangecalc}
+                            value={freight?.origin_pickup_gp}
+                            name="origin_pickup_gp"
+                            id="floatingInput"
+                            placeholder="0.00%"
+                          />
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              border: "0px",
+                              verticalAlign: "middle",
+                              width: "100px",
+                            }}
+                            value={finalori}
+                            className="supplier_form"
+                          />{" "}
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              width: "100px",
+                              border: "0px",
+                              verticalAlign: "middle",
+                            }}
+                            value={freight.roe_origin_currency}
+                            className="supplier_form"
+                          />
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              width: "100px",
+                              border: "0px",
+                              verticalAlign: "middle",
+                            }}
+                            value={parseFloat(
+                              finalori * freight.roe_origin_currency
+                            ).toFixed(2)}
+                            placeholder="0.00"
+                            className="supplier_form"
+                          />
+                        </td>
+                      </tr>
+                      <tr>
+                        <td></td>
+                        <td colSpan={5}>
+                          <strong> Total - Transit Charges</strong>
+                        </td>
+                        <td colSpan={4}> 970.00 </td>
+                        <td> 17,634.00 </td>
+                      </tr>
+                      {/* Destination Charges */}
+                      <tr>
+                        <td>Destination Charges </td>
+                        <td>Customs Clearing Fees</td>
+                        <td>
+                          <select
+                            className="select_supplier"
+                            style={{
+                              margin: 0,
+                              fontSize: 13,
+                              fontWeight: 700,
+                              paddingLeft: 5,
+                              border: 0,
+                            }}
+                            onChange={handlechangecalc}
+                            name="freight_currency"
+                            value={freight?.freight_currency}
+                          >
+                            <option>Select</option>
+                            <option value="RAND">RAND</option>
+                            <option value="USD">USD</option>
+                            <option value="INR">INR</option>
+                            <option value="EURO">EURO</option>
+                          </select>
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              fontWeight: 400,
+                              border: "0px",
+                              width: "100px",
+                              verticalAlign: "middle",
+                            }}
+                            type="text"
+                            onKeyPress={handlepresss}
+                            className="supplier_form"
+                            onChange={handlechangecalc}
+                            value={freight?.origin_pick_up}
+                            name="origin_pick_up"
+                            id="floatingInput"
+                            placeholder="0.00"
+                          />
+                        </td>
+                        <td>L/S</td>
+                        <td>23</td>
+                        <td>50</td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              fontWeight: 400,
+                              width: "50px",
+                              border: "0px",
+
+                              verticalAlign: "middle",
+                            }}
+                            type="text"
+                            onKeyPress={handlepresss}
+                            className="supplier_form"
+                            onChange={handlechangecalc}
+                            value={freight?.origin_pickup_gp}
+                            name="origin_pickup_gp"
+                            id="floatingInput"
+                            placeholder="0.00%"
+                          />
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              border: "0px",
+                              verticalAlign: "middle",
+                              width: "100px",
+                            }}
+                            value={finalori}
+                            className="supplier_form"
+                          />{" "}
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              width: "100px",
+                              border: "0px",
+                              verticalAlign: "middle",
+                            }}
+                            value={freight.roe_origin_currency}
+                            className="supplier_form"
+                          />
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              width: "100px",
+                              border: "0px",
+                              verticalAlign: "middle",
+                            }}
+                            value={parseFloat(
+                              finalori * freight.roe_origin_currency
+                            ).toFixed(2)}
+                            placeholder="0.00"
+                            className="supplier_form"
+                          />
+                        </td>
+                      </tr>
+                      <tr>
+                        {/* Destination Charges */}
+                        <td> </td>
+                        <td>THC Levy</td>
+                        <td>
+                          <select
+                            className="select_supplier"
+                            style={{
+                              margin: 0,
+                              fontSize: 13,
+                              fontWeight: 700,
+                              paddingLeft: 5,
+                              border: 0,
+                            }}
+                            onChange={handlechangecalc}
+                            name="freight_currency"
+                            value={freight?.freight_currency}
+                          >
+                            <option>Select</option>
+                            <option value="RAND">RAND</option>
+                            <option value="USD">USD</option>
+                            <option value="INR">INR</option>
+                            <option value="EURO">EURO</option>
+                          </select>
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              fontWeight: 400,
+                              border: "0px",
+                              width: "100px",
+                              verticalAlign: "middle",
+                            }}
+                            type="text"
+                            onKeyPress={handlepresss}
+                            className="supplier_form"
+                            onChange={handlechangecalc}
+                            value={freight?.origin_pick_up}
+                            name="origin_pick_up"
+                            id="floatingInput"
+                            placeholder="0.00"
+                          />
+                        </td>
+                        <td>L/S</td>
+                        <td>23</td>
+                        <td>50</td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              fontWeight: 400,
+                              width: "50px",
+                              border: "0px",
+
+                              verticalAlign: "middle",
+                            }}
+                            type="text"
+                            onKeyPress={handlepresss}
+                            className="supplier_form"
+                            onChange={handlechangecalc}
+                            value={freight?.origin_pickup_gp}
+                            name="origin_pickup_gp"
+                            id="floatingInput"
+                            placeholder="0.00%"
+                          />
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              border: "0px",
+                              verticalAlign: "middle",
+                              width: "100px",
+                            }}
+                            value={finalori}
+                            className="supplier_form"
+                          />{" "}
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              width: "100px",
+                              border: "0px",
+                              verticalAlign: "middle",
+                            }}
+                            value={freight.roe_origin_currency}
+                            className="supplier_form"
+                          />
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              width: "100px",
+                              border: "0px",
+                              verticalAlign: "middle",
+                            }}
+                            value={parseFloat(
+                              finalori * freight.roe_origin_currency
+                            ).toFixed(2)}
+                            placeholder="0.00"
+                            className="supplier_form"
+                          />
+                        </td>
+                      </tr>
+                      <tr>
+                        {/* Destination Charges */}
+                        <td> </td>
+                        <td>Unpack Charges</td>
+                        <td>
+                          <select
+                            className="select_supplier"
+                            style={{
+                              margin: 0,
+                              fontSize: 13,
+                              fontWeight: 700,
+                              paddingLeft: 5,
+                              border: 0,
+                            }}
+                            onChange={handlechangecalc}
+                            name="freight_currency"
+                            value={freight?.freight_currency}
+                          >
+                            <option>Select</option>
+                            <option value="RAND">RAND</option>
+                            <option value="USD">USD</option>
+                            <option value="INR">INR</option>
+                            <option value="EURO">EURO</option>
+                          </select>
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              fontWeight: 400,
+                              border: "0px",
+                              width: "100px",
+                              verticalAlign: "middle",
+                            }}
+                            type="text"
+                            onKeyPress={handlepresss}
+                            className="supplier_form"
+                            onChange={handlechangecalc}
+                            value={freight?.origin_pick_up}
+                            name="origin_pick_up"
+                            id="floatingInput"
+                            placeholder="0.00"
+                          />
+                        </td>
+                        <td>L/S</td>
+                        <td>23</td>
+                        <td>50</td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              fontWeight: 400,
+                              width: "50px",
+                              border: "0px",
+
+                              verticalAlign: "middle",
+                            }}
+                            type="text"
+                            onKeyPress={handlepresss}
+                            className="supplier_form"
+                            onChange={handlechangecalc}
+                            value={freight?.origin_pickup_gp}
+                            name="origin_pickup_gp"
+                            id="floatingInput"
+                            placeholder="0.00%"
+                          />
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              border: "0px",
+                              verticalAlign: "middle",
+                              width: "100px",
+                            }}
+                            value={finalori}
+                            className="supplier_form"
+                          />{" "}
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              width: "100px",
+                              border: "0px",
+                              verticalAlign: "middle",
+                            }}
+                            value={freight.roe_origin_currency}
+                            className="supplier_form"
+                          />
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              width: "100px",
+                              border: "0px",
+                              verticalAlign: "middle",
+                            }}
+                            value={parseFloat(
+                              finalori * freight.roe_origin_currency
+                            ).toFixed(2)}
+                            placeholder="0.00"
+                            className="supplier_form"
+                          />
+                        </td>
+                      </tr>
+                      <tr>
+                        {/* Destination Charges */}
+                        <td> </td>
+                        <td>Fuel Surcharge Levy w/m</td>
+                        <td>
+                          <select
+                            className="select_supplier"
+                            style={{
+                              margin: 0,
+                              fontSize: 13,
+                              fontWeight: 700,
+                              paddingLeft: 5,
+                              border: 0,
+                            }}
+                            onChange={handlechangecalc}
+                            name="freight_currency"
+                            value={freight?.freight_currency}
+                          >
+                            <option>Select</option>
+                            <option value="RAND">RAND</option>
+                            <option value="USD">USD</option>
+                            <option value="INR">INR</option>
+                            <option value="EURO">EURO</option>
+                          </select>
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              fontWeight: 400,
+                              border: "0px",
+                              width: "100px",
+                              verticalAlign: "middle",
+                            }}
+                            type="text"
+                            onKeyPress={handlepresss}
+                            className="supplier_form"
+                            onChange={handlechangecalc}
+                            value={freight?.origin_pick_up}
+                            name="origin_pick_up"
+                            id="floatingInput"
+                            placeholder="0.00"
+                          />
+                        </td>
+                        <td>L/S</td>
+                        <td>23</td>
+                        <td>50</td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              fontWeight: 400,
+                              width: "50px",
+                              border: "0px",
+
+                              verticalAlign: "middle",
+                            }}
+                            type="text"
+                            onKeyPress={handlepresss}
+                            className="supplier_form"
+                            onChange={handlechangecalc}
+                            value={freight?.origin_pickup_gp}
+                            name="origin_pickup_gp"
+                            id="floatingInput"
+                            placeholder="0.00%"
+                          />
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              border: "0px",
+                              verticalAlign: "middle",
+                              width: "100px",
+                            }}
+                            value={finalori}
+                            className="supplier_form"
+                          />{" "}
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              width: "100px",
+                              border: "0px",
+                              verticalAlign: "middle",
+                            }}
+                            value={freight.roe_origin_currency}
+                            className="supplier_form"
+                          />
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              width: "100px",
+                              border: "0px",
+                              verticalAlign: "middle",
+                            }}
+                            value={parseFloat(
+                              finalori * freight.roe_origin_currency
+                            ).toFixed(2)}
+                            placeholder="0.00"
+                            className="supplier_form"
+                          />
+                        </td>
+                      </tr>
+                      <tr>
+                        {/* Destination Charges */}
+                        <td> </td>
+                        <td>Admin Charges</td>
+                        <td>
+                          <select
+                            className="select_supplier"
+                            style={{
+                              margin: 0,
+                              fontSize: 13,
+                              fontWeight: 700,
+                              paddingLeft: 5,
+                              border: 0,
+                            }}
+                            onChange={handlechangecalc}
+                            name="freight_currency"
+                            value={freight?.freight_currency}
+                          >
+                            <option>Select</option>
+                            <option value="RAND">RAND</option>
+                            <option value="USD">USD</option>
+                            <option value="INR">INR</option>
+                            <option value="EURO">EURO</option>
+                          </select>
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              fontWeight: 400,
+                              border: "0px",
+                              width: "100px",
+                              verticalAlign: "middle",
+                            }}
+                            type="text"
+                            onKeyPress={handlepresss}
+                            className="supplier_form"
+                            onChange={handlechangecalc}
+                            value={freight?.origin_pick_up}
+                            name="origin_pick_up"
+                            id="floatingInput"
+                            placeholder="0.00"
+                          />
+                        </td>
+                        <td>L/S</td>
+                        <td>23</td>
+                        <td>50</td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              fontWeight: 400,
+                              width: "50px",
+                              border: "0px",
+
+                              verticalAlign: "middle",
+                            }}
+                            type="text"
+                            onKeyPress={handlepresss}
+                            className="supplier_form"
+                            onChange={handlechangecalc}
+                            value={freight?.origin_pickup_gp}
+                            name="origin_pickup_gp"
+                            id="floatingInput"
+                            placeholder="0.00%"
+                          />
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              border: "0px",
+                              verticalAlign: "middle",
+                              width: "100px",
+                            }}
+                            value={finalori}
+                            className="supplier_form"
+                          />{" "}
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              width: "100px",
+                              border: "0px",
+                              verticalAlign: "middle",
+                            }}
+                            value={freight.roe_origin_currency}
+                            className="supplier_form"
+                          />
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              width: "100px",
+                              border: "0px",
+                              verticalAlign: "middle",
+                            }}
+                            value={parseFloat(
+                              finalori * freight.roe_origin_currency
+                            ).toFixed(2)}
+                            placeholder="0.00"
+                            className="supplier_form"
+                          />
+                        </td>
+                      </tr>
+                      <tr>
+                        {/* Destination Charges */}
+                        <td> </td>
+                        <td>Port Cargo Dues</td>
+                        <td>
+                          <select
+                            className="select_supplier"
+                            style={{
+                              margin: 0,
+                              fontSize: 13,
+                              fontWeight: 700,
+                              paddingLeft: 5,
+                              border: 0,
+                            }}
+                            onChange={handlechangecalc}
+                            name="freight_currency"
+                            value={freight?.freight_currency}
+                          >
+                            <option>Select</option>
+                            <option value="RAND">RAND</option>
+                            <option value="USD">USD</option>
+                            <option value="INR">INR</option>
+                            <option value="EURO">EURO</option>
+                          </select>
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              fontWeight: 400,
+                              border: "0px",
+                              width: "100px",
+                              verticalAlign: "middle",
+                            }}
+                            type="text"
+                            onKeyPress={handlepresss}
+                            className="supplier_form"
+                            onChange={handlechangecalc}
+                            value={freight?.origin_pick_up}
+                            name="origin_pick_up"
+                            id="floatingInput"
+                            placeholder="0.00"
+                          />
+                        </td>
+                        <td>L/S</td>
+                        <td>23</td>
+                        <td>50</td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              fontWeight: 400,
+                              width: "50px",
+                              border: "0px",
+
+                              verticalAlign: "middle",
+                            }}
+                            type="text"
+                            onKeyPress={handlepresss}
+                            className="supplier_form"
+                            onChange={handlechangecalc}
+                            value={freight?.origin_pickup_gp}
+                            name="origin_pickup_gp"
+                            id="floatingInput"
+                            placeholder="0.00%"
+                          />
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              border: "0px",
+                              verticalAlign: "middle",
+                              width: "100px",
+                            }}
+                            value={finalori}
+                            className="supplier_form"
+                          />{" "}
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              width: "100px",
+                              border: "0px",
+                              verticalAlign: "middle",
+                            }}
+                            value={freight.roe_origin_currency}
+                            className="supplier_form"
+                          />
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              width: "100px",
+                              border: "0px",
+                              verticalAlign: "middle",
+                            }}
+                            value={parseFloat(
+                              finalori * freight.roe_origin_currency
+                            ).toFixed(2)}
+                            placeholder="0.00"
+                            className="supplier_form"
+                          />
+                        </td>
+                      </tr>
+                      <tr>
+                        {/* Destination Charges */}
+                        <td> </td>
+                        <td>Advanced Load House Fee USD</td>
+                        <td>
+                          <select
+                            className="select_supplier"
+                            style={{
+                              margin: 0,
+                              fontSize: 13,
+                              fontWeight: 700,
+                              paddingLeft: 5,
+                              border: 0,
+                            }}
+                            onChange={handlechangecalc}
+                            name="freight_currency"
+                            value={freight?.freight_currency}
+                          >
+                            <option>Select</option>
+                            <option value="RAND">RAND</option>
+                            <option value="USD">USD</option>
+                            <option value="INR">INR</option>
+                            <option value="EURO">EURO</option>
+                          </select>
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              fontWeight: 400,
+                              border: "0px",
+                              width: "100px",
+                              verticalAlign: "middle",
+                            }}
+                            type="text"
+                            onKeyPress={handlepresss}
+                            className="supplier_form"
+                            onChange={handlechangecalc}
+                            value={freight?.origin_pick_up}
+                            name="origin_pick_up"
+                            id="floatingInput"
+                            placeholder="0.00"
+                          />
+                        </td>
+                        <td>L/S</td>
+                        <td>23</td>
+                        <td>50</td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              fontWeight: 400,
+                              width: "50px",
+                              border: "0px",
+
+                              verticalAlign: "middle",
+                            }}
+                            type="text"
+                            onKeyPress={handlepresss}
+                            className="supplier_form"
+                            onChange={handlechangecalc}
+                            value={freight?.origin_pickup_gp}
+                            name="origin_pickup_gp"
+                            id="floatingInput"
+                            placeholder="0.00%"
+                          />
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              border: "0px",
+                              verticalAlign: "middle",
+                              width: "100px",
+                            }}
+                            value={finalori}
+                            className="supplier_form"
+                          />{" "}
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              width: "100px",
+                              border: "0px",
+                              verticalAlign: "middle",
+                            }}
+                            value={freight.roe_origin_currency}
+                            className="supplier_form"
+                          />
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              width: "100px",
+                              border: "0px",
+                              verticalAlign: "middle",
+                            }}
+                            value={parseFloat(
+                              finalori * freight.roe_origin_currency
+                            ).toFixed(2)}
+                            placeholder="0.00"
+                            className="supplier_form"
+                          />
+                        </td>
+                      </tr>
+                      <tr>
+                        {/* Destination Charges */}
+                        <td> </td>
+                        <td>3rd Party CFS Charge: LCL Handling Out w/m</td>
+                        <td>
+                          <select
+                            className="select_supplier"
+                            style={{
+                              margin: 0,
+                              fontSize: 13,
+                              fontWeight: 700,
+                              paddingLeft: 5,
+                              border: 0,
+                            }}
+                            onChange={handlechangecalc}
+                            name="freight_currency"
+                            value={freight?.freight_currency}
+                          >
+                            <option>Select</option>
+                            <option value="RAND">RAND</option>
+                            <option value="USD">USD</option>
+                            <option value="INR">INR</option>
+                            <option value="EURO">EURO</option>
+                          </select>
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              fontWeight: 400,
+                              border: "0px",
+                              width: "100px",
+                              verticalAlign: "middle",
+                            }}
+                            type="text"
+                            onKeyPress={handlepresss}
+                            className="supplier_form"
+                            onChange={handlechangecalc}
+                            value={freight?.origin_pick_up}
+                            name="origin_pick_up"
+                            id="floatingInput"
+                            placeholder="0.00"
+                          />
+                        </td>
+                        <td>L/S</td>
+                        <td>23</td>
+                        <td>50</td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              fontWeight: 400,
+                              width: "50px",
+                              border: "0px",
+
+                              verticalAlign: "middle",
+                            }}
+                            type="text"
+                            onKeyPress={handlepresss}
+                            className="supplier_form"
+                            onChange={handlechangecalc}
+                            value={freight?.origin_pickup_gp}
+                            name="origin_pickup_gp"
+                            id="floatingInput"
+                            placeholder="0.00%"
+                          />
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              border: "0px",
+                              verticalAlign: "middle",
+                              width: "100px",
+                            }}
+                            value={finalori}
+                            className="supplier_form"
+                          />{" "}
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              width: "100px",
+                              border: "0px",
+                              verticalAlign: "middle",
+                            }}
+                            value={freight.roe_origin_currency}
+                            className="supplier_form"
+                          />
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              width: "100px",
+                              border: "0px",
+                              verticalAlign: "middle",
+                            }}
+                            value={parseFloat(
+                              finalori * freight.roe_origin_currency
+                            ).toFixed(2)}
+                            placeholder="0.00"
+                            className="supplier_form"
+                          />
+                        </td>
+                      </tr>
+                      <tr>
+                        {/* Destination Charges */}
+                        <td> </td>
+                        <td>Delivery Charges</td>
+                        <td>
+                          <select
+                            className="select_supplier"
+                            style={{
+                              margin: 0,
+                              fontSize: 13,
+                              fontWeight: 700,
+                              paddingLeft: 5,
+                              border: 0,
+                            }}
+                            onChange={handlechangecalc}
+                            name="freight_currency"
+                            value={freight?.freight_currency}
+                          >
+                            <option>Select</option>
+                            <option value="RAND">RAND</option>
+                            <option value="USD">USD</option>
+                            <option value="INR">INR</option>
+                            <option value="EURO">EURO</option>
+                          </select>
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              fontWeight: 400,
+                              border: "0px",
+                              width: "100px",
+                              verticalAlign: "middle",
+                            }}
+                            type="text"
+                            onKeyPress={handlepresss}
+                            className="supplier_form"
+                            onChange={handlechangecalc}
+                            value={freight?.origin_pick_up}
+                            name="origin_pick_up"
+                            id="floatingInput"
+                            placeholder="0.00"
+                          />
+                        </td>
+                        <td>L/S</td>
+                        <td>23</td>
+                        <td>50</td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              fontWeight: 400,
+                              width: "50px",
+                              border: "0px",
+
+                              verticalAlign: "middle",
+                            }}
+                            type="text"
+                            onKeyPress={handlepresss}
+                            className="supplier_form"
+                            onChange={handlechangecalc}
+                            value={freight?.origin_pickup_gp}
+                            name="origin_pickup_gp"
+                            id="floatingInput"
+                            placeholder="0.00%"
+                          />
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              border: "0px",
+                              verticalAlign: "middle",
+                              width: "100px",
+                            }}
+                            value={finalori}
+                            className="supplier_form"
+                          />{" "}
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              width: "100px",
+                              border: "0px",
+                              verticalAlign: "middle",
+                            }}
+                            value={freight.roe_origin_currency}
+                            className="supplier_form"
+                          />
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              width: "100px",
+                              border: "0px",
+                              verticalAlign: "middle",
+                            }}
+                            value={parseFloat(
+                              finalori * freight.roe_origin_currency
+                            ).toFixed(2)}
+                            placeholder="0.00"
+                            className="supplier_form"
+                          />
+                        </td>
+                      </tr>
+                      <tr>
+                        {/* Destination Charges */}
+                        <td> </td>
+                        <td>Fuel Surcharge</td>
+                        <td>
+                          <select
+                            className="select_supplier"
+                            style={{
+                              margin: 0,
+                              fontSize: 13,
+                              fontWeight: 700,
+                              paddingLeft: 5,
+                              border: 0,
+                            }}
+                            onChange={handlechangecalc}
+                            name="freight_currency"
+                            value={freight?.freight_currency}
+                          >
+                            <option>Select</option>
+                            <option value="RAND">RAND</option>
+                            <option value="USD">USD</option>
+                            <option value="INR">INR</option>
+                            <option value="EURO">EURO</option>
+                          </select>
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              fontWeight: 400,
+                              border: "0px",
+                              width: "100px",
+                              verticalAlign: "middle",
+                            }}
+                            type="text"
+                            onKeyPress={handlepresss}
+                            className="supplier_form"
+                            onChange={handlechangecalc}
+                            value={freight?.origin_pick_up}
+                            name="origin_pick_up"
+                            id="floatingInput"
+                            placeholder="0.00"
+                          />
+                        </td>
+                        <td>L/S</td>
+                        <td>23</td>
+                        <td>50</td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              fontWeight: 400,
+                              width: "50px",
+                              border: "0px",
+
+                              verticalAlign: "middle",
+                            }}
+                            type="text"
+                            onKeyPress={handlepresss}
+                            className="supplier_form"
+                            onChange={handlechangecalc}
+                            value={freight?.origin_pickup_gp}
+                            name="origin_pickup_gp"
+                            id="floatingInput"
+                            placeholder="0.00%"
+                          />
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              border: "0px",
+                              verticalAlign: "middle",
+                              width: "100px",
+                            }}
+                            value={finalori}
+                            className="supplier_form"
+                          />{" "}
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              width: "100px",
+                              border: "0px",
+                              verticalAlign: "middle",
+                            }}
+                            value={freight.roe_origin_currency}
+                            className="supplier_form"
+                          />
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              width: "100px",
+                              border: "0px",
+                              verticalAlign: "middle",
+                            }}
+                            value={parseFloat(
+                              finalori * freight.roe_origin_currency
+                            ).toFixed(2)}
+                            placeholder="0.00"
+                            className="supplier_form"
+                          />
+                        </td>
+                      </tr>
+
+                      <tr>
+                        <td></td>
+                        <td colSpan={5}>
+                          <strong> Total - Destination Charges </strong>
+                        </td>
+                        <td colSpan={4}> 970.00 </td>
+                        <td> 17,634.00 </td>
+                      </tr>
+                      {/* admin charges */}
+                      <tr>
+                        {/* Destination Charges */}
+                        <td> Admin Charges</td>
+                        <td>Agency fee</td>
+                        <td>
+                          <select
+                            className="select_supplier"
+                            style={{
+                              margin: 0,
+                              fontSize: 13,
+                              fontWeight: 700,
+                              paddingLeft: 5,
+                              border: 0,
+                            }}
+                            onChange={handlechangecalc}
+                            name="freight_currency"
+                            value={freight?.freight_currency}
+                          >
+                            <option>Select</option>
+                            <option value="RAND">RAND</option>
+                            <option value="USD">USD</option>
+                            <option value="INR">INR</option>
+                            <option value="EURO">EURO</option>
+                          </select>
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              fontWeight: 400,
+                              border: "0px",
+                              width: "100px",
+                              verticalAlign: "middle",
+                            }}
+                            type="text"
+                            onKeyPress={handlepresss}
+                            className="supplier_form"
+                            onChange={handlechangecalc}
+                            value={freight?.origin_pick_up}
+                            name="origin_pick_up"
+                            id="floatingInput"
+                            placeholder="0.00"
+                          />
+                        </td>
+                        <td>L/S</td>
+                        <td>23</td>
+                        <td>50</td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              fontWeight: 400,
+                              width: "50px",
+                              border: "0px",
+
+                              verticalAlign: "middle",
+                            }}
+                            type="text"
+                            onKeyPress={handlepresss}
+                            className="supplier_form"
+                            onChange={handlechangecalc}
+                            value={freight?.origin_pickup_gp}
+                            name="origin_pickup_gp"
+                            id="floatingInput"
+                            placeholder="0.00%"
+                          />
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              border: "0px",
+                              verticalAlign: "middle",
+                              width: "100px",
+                            }}
+                            value={finalori}
+                            className="supplier_form"
+                          />{" "}
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              width: "100px",
+                              border: "0px",
+                              verticalAlign: "middle",
+                            }}
+                            value={freight.roe_origin_currency}
+                            className="supplier_form"
+                          />
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              width: "100px",
+                              border: "0px",
+                              verticalAlign: "middle",
+                            }}
+                            value={parseFloat(
+                              finalori * freight.roe_origin_currency
+                            ).toFixed(2)}
+                            placeholder="0.00"
+                            className="supplier_form"
+                          />
+                        </td>
+                      </tr>
+                      <tr>
+                        <td> </td>
+                        <td>Disbursement fee</td>
+                        <td>
+                          <select
+                            className="select_supplier"
+                            style={{
+                              margin: 0,
+                              fontSize: 13,
+                              fontWeight: 700,
+                              paddingLeft: 5,
+                              border: 0,
+                            }}
+                            onChange={handlechangecalc}
+                            name="freight_currency"
+                            value={freight?.freight_currency}
+                          >
+                            <option>Select</option>
+                            <option value="RAND">RAND</option>
+                            <option value="USD">USD</option>
+                            <option value="INR">INR</option>
+                            <option value="EURO">EURO</option>
+                          </select>
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              fontWeight: 400,
+                              border: "0px",
+                              width: "100px",
+                              verticalAlign: "middle",
+                            }}
+                            type="text"
+                            onKeyPress={handlepresss}
+                            className="supplier_form"
+                            onChange={handlechangecalc}
+                            value={freight?.origin_pick_up}
+                            name="origin_pick_up"
+                            id="floatingInput"
+                            placeholder="0.00"
+                          />
+                        </td>
+                        <td>L/S</td>
+                        <td>23</td>
+                        <td>50</td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              fontWeight: 400,
+                              width: "50px",
+                              border: "0px",
+
+                              verticalAlign: "middle",
+                            }}
+                            type="text"
+                            onKeyPress={handlepresss}
+                            className="supplier_form"
+                            onChange={handlechangecalc}
+                            value={freight?.origin_pickup_gp}
+                            name="origin_pickup_gp"
+                            id="floatingInput"
+                            placeholder="0.00%"
+                          />
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              border: "0px",
+                              verticalAlign: "middle",
+                              width: "100px",
+                            }}
+                            value={finalori}
+                            className="supplier_form"
+                          />{" "}
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              width: "100px",
+                              border: "0px",
+                              verticalAlign: "middle",
+                            }}
+                            value={freight.roe_origin_currency}
+                            className="supplier_form"
+                          />
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              width: "100px",
+                              border: "0px",
+                              verticalAlign: "middle",
+                            }}
+                            value={parseFloat(
+                              finalori * freight.roe_origin_currency
+                            ).toFixed(2)}
+                            placeholder="0.00"
+                            className="supplier_form"
+                          />
+                        </td>
+                      </tr>
+                      <tr>
+                        <td> </td>
+                        <td>Documentation & Admin Fee</td>
+                        <td>
+                          <select
+                            className="select_supplier"
+                            style={{
+                              margin: 0,
+                              fontSize: 13,
+                              fontWeight: 700,
+                              paddingLeft: 5,
+                              border: 0,
+                            }}
+                            onChange={handlechangecalc}
+                            name="freight_currency"
+                            value={freight?.freight_currency}
+                          >
+                            <option>Select</option>
+                            <option value="RAND">RAND</option>
+                            <option value="USD">USD</option>
+                            <option value="INR">INR</option>
+                            <option value="EURO">EURO</option>
+                          </select>
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              fontWeight: 400,
+                              border: "0px",
+                              width: "100px",
+                              verticalAlign: "middle",
+                            }}
+                            type="text"
+                            onKeyPress={handlepresss}
+                            className="supplier_form"
+                            onChange={handlechangecalc}
+                            value={freight?.origin_pick_up}
+                            name="origin_pick_up"
+                            id="floatingInput"
+                            placeholder="0.00"
+                          />
+                        </td>
+                        <td>L/S</td>
+                        <td>23</td>
+                        <td>50</td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              fontWeight: 400,
+                              width: "50px",
+                              border: "0px",
+
+                              verticalAlign: "middle",
+                            }}
+                            type="text"
+                            onKeyPress={handlepresss}
+                            className="supplier_form"
+                            onChange={handlechangecalc}
+                            value={freight?.origin_pickup_gp}
+                            name="origin_pickup_gp"
+                            id="floatingInput"
+                            placeholder="0.00%"
+                          />
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              border: "0px",
+                              verticalAlign: "middle",
+                              width: "100px",
+                            }}
+                            value={finalori}
+                            className="supplier_form"
+                          />{" "}
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              width: "100px",
+                              border: "0px",
+                              verticalAlign: "middle",
+                            }}
+                            value={freight.roe_origin_currency}
+                            className="supplier_form"
+                          />
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              width: "100px",
+                              border: "0px",
+                              verticalAlign: "middle",
+                            }}
+                            value={parseFloat(
+                              finalori * freight.roe_origin_currency
+                            ).toFixed(2)}
+                            placeholder="0.00"
+                            className="supplier_form"
+                          />
+                        </td>
+                      </tr>
+                      <tr>
+                        <td></td>
+                        <td colSpan={5}>
+                          <strong> Total - Admin Charges</strong>
+                        </td>
+                        <td colSpan={4}> 970.00 </td>
+                        <td> 17,634.00 </td>
+                      </tr>
+                      {/* wasted */}
+          
+                    </tbody>
+                  </table>
+
+                  <div className="text-center mt-3">
                     <button className="ship_btn" onClick={apihit}>
                       Get Quote
                     </button>

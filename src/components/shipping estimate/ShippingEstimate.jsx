@@ -463,21 +463,21 @@ export default function ShippingEstimate() {
     const element = pdfRef.current;
     const contentWidth = element.scrollWidth;
     const contentHeight = element.scrollHeight;
- 
-const rect = element.getBoundingClientRect();
 
-const options = {
-  margin: 0,
-  filename: "page.pdf",
-  image: { type: "jpeg", quality: 1 },
-  html2canvas: { scale: 1.5, useCORS: true },
-  jsPDF: {
-    unit: "px",
-    format: [rect.width, rect.height],
-    orientation: "portrait",
-  },
-  pagebreak: false,
-};
+    const rect = element.getBoundingClientRect();
+
+    const options = {
+      margin: 0,
+      filename: "page.pdf",
+      image: { type: "jpeg", quality: 1 },
+      html2canvas: { scale: 1.5, useCORS: true },
+      jsPDF: {
+        unit: "px",
+        format: [rect.width, rect.height],
+        orientation: "portrait",
+      },
+      pagebreak: false,
+    };
 
     html2pdf().from(element).set(options).save();
   };
@@ -5251,8 +5251,6 @@ const options = {
                         <td colSpan={4}> 970.00 </td>
                         <td> 17,634.00 </td>
                       </tr>
-                      {/* wasted */}
-          
                     </tbody>
                   </table>
 

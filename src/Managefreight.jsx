@@ -527,6 +527,10 @@ const handleSave = () => {
       toast.error(error.response?.data?.message || "Permission denied");
     }
   };
+  const hanldeclicknavi11 = async (freight_id) => {
+    console.log(freight_id)
+        navigate("/Admin/SupplierEstimation", { state: { data: freight_id } });
+  };
 
   // const hanldeclicknavi = (freight_id) => {
   // try {
@@ -1149,6 +1153,33 @@ const handleSave = () => {
                                                         }}
                                                       ></i>
                                                       Estimate Quote
+                                                    </p>
+                                                  </div>
+                                                </a>
+                                                <a
+                                                  className="dropdown-item li_icon"
+                                                  onClick={() => {
+                                                    hanldeclicknavi11(
+                                                      item.freight_id
+                                                    );
+                                                  }}
+                                                >
+                                                  <div
+                                                    style={{
+                                                      cursor: "pointer",
+                                                    }}
+                                                  >
+                                                    <p className="mb-0">
+                                                      <i
+                                                        class="fi fi-ss-document-signed"
+                                                        style={{
+                                                          marginRight: "10px",
+                                                          width: "20px",
+                                                          color:
+                                                            "rgb(27 34 69)",
+                                                        }}
+                                                      ></i>
+                                                  Supplier Estimation
                                                     </p>
                                                   </div>
                                                 </a>

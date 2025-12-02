@@ -72,6 +72,7 @@ import Editclearenceuser from "./pages/Editclearenceuser";
 import BookingInsForm from "./pages/BookingInsForm";
 import Clearenceorderdetailspage from "./pages/Clearenceorderdetailspage";
 import Contactus from "./components/Warehouse/Contactus";
+import SupplierEstimation from "./pages/SupplierEstimation";
 const Dashboard = lazy(() => import("./pages/Dashboard"));
 const Users = lazy(() => import("./pages/Users"));
 const Messages = lazy(() => import("./pages/Messages"));
@@ -140,6 +141,7 @@ export default function App() {
                 />
                 <Route index path="/Admin/messages" element={<Messages />} />
                 <Route index path="/Admin/analytics" element={<Analytics />} />
+                <Route index path="/Admin/SupplierEstimation" element={<SupplierEstimation />} />
                 <Route
                   index
                   path="/Admin/file-manager"

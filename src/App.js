@@ -73,6 +73,7 @@ import BookingInsForm from "./pages/BookingInsForm";
 import Clearenceorderdetailspage from "./pages/Clearenceorderdetailspage";
 import Contactus from "./components/Warehouse/Contactus";
 import SupplierEstimation from "./pages/SupplierEstimation";
+import Supplierestimationview from "./pages/Supplierestimationview";
 const Dashboard = lazy(() => import("./pages/Dashboard"));
 const Users = lazy(() => import("./pages/Users"));
 const Messages = lazy(() => import("./pages/Messages"));
@@ -316,6 +317,11 @@ export default function App() {
                   index
                   path="/Admin/shipping-estimate"
                   element={<ShippingaddfreightEstimate />}
+                />
+                <Route
+                  index
+                  path="/Admin/supplier-estimation-view"
+                  element={<Supplierestimationview />}
                 />
                 <Route
                   index

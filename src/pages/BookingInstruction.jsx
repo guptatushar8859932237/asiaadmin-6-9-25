@@ -115,7 +115,7 @@
 //                                 >
 //                                   ADDRESS
 //                                 </th>
-//                                 <td 
+//                                 <td
 //                                 // style={{ borderBottom: "1px solid #000" }}
 //                                 >
 //                                   {info.shipment_ref === "consignee"
@@ -346,7 +346,7 @@
 //                                     border: "1px solid #000",
 //                                     textAlign: "center",
 //                                   }}
-//                                 //  className= {data.bk_comm_Invoice==="Yes"?"fa fa-check":""}    
+//                                 //  className= {data.bk_comm_Invoice==="Yes"?"fa fa-check":""}
 //                                 >
 //                                    <i  className= {data.bk_comm_Invoice==="Yes"?"fa fa-check":""} ></i>
 //                                 </td>
@@ -394,7 +394,7 @@
 //                                     borderBottom: "1px solid #000",
 //                                     borderRight: "1px solid #000",
 //                                   }}
-                                 
+
 //                                 >
 //                                   PACKING LIST
 //                                 </th>
@@ -404,7 +404,7 @@
 //                                     border: "1px solid #000",
 //                                     textAlign: "center",
 //                                   }}
-//                                     // className= {data.bk_packing_list==="Yes"?"fa fa-check":""} 
+//                                     // className= {data.bk_packing_list==="Yes"?"fa fa-check":""}
 //                                 >
 //                                  <i  className= {data.bk_packing_list==="Yes"?"fa fa-check":""} ></i>
 //                                 </td>
@@ -415,7 +415,7 @@
 //                                     borderRight: "none",
 //                                     textAlign: "center",
 //                                   }}
-//                                     // className= {data.bk_packing_list==="No"?"fa fa-check":""} 
+//                                     // className= {data.bk_packing_list==="No"?"fa fa-check":""}
 //                                 >
 //                                   <i  className= {data.bk_packing_list==="No"?"fa fa-check":""} ></i>
 //                                 </td>
@@ -436,7 +436,7 @@
 //                                     border: "1px solid #000",
 //                                     textAlign: "center",
 //                                   }}
-//                                     // className= {data.bk_trasprt_doc==="Yes"?"fa fa-check":""} 
+//                                     // className= {data.bk_trasprt_doc==="Yes"?"fa fa-check":""}
 //                                 > <i  className= {data.bk_trasprt_doc==="Yes"?"fa fa-check":""} ></i>
 //                                 </td>
 //                                 <td
@@ -446,7 +446,7 @@
 //                                     borderRight: "none",
 //                                     textAlign: "center",
 //                                   }}
-//                                     // className= {data.bk_trasprt_doc==="No"?"fa fa-check":""} 
+//                                     // className= {data.bk_trasprt_doc==="No"?"fa fa-check":""}
 //                                 >
 //                                   <i  className= {data.bk_trasprt_doc==="No"?"fa fa-check":""} ></i>
 //                                 </td>
@@ -619,7 +619,7 @@
 //                                     textAlign: "center",
 //                                   }}
 //                                 >
-                                  
+
 //                                 </td>
 //                               </tr>
 //                               <tr>
@@ -1257,7 +1257,7 @@
 //                                   style={{
 //                                     borderBottom: "1px solid #000",
 //                                     borderRight: "1px solid #000",
-                                    
+
 //                                   }}
 //                                 >
 //                                   <i
@@ -2277,12 +2277,12 @@
 //                               </tr>
 //                               <tr>
 //                                 <td>
-                                 
+
 //                                 </td>
 //                               </tr>
 //                               <tr>
 //                                 <td >
-                                
+
 //                                 </td>
 //                               </tr>
 //                             </table>
@@ -2432,11 +2432,12 @@ const BookingInstruction = () => {
   const loaction = useLocation();
   console.log(loaction?.state?.data);
   const info = loaction?.state?.data;
-  const { toPDF, targetRef } = usePDF({ filename: "Booking Instruction.pdf",
-      pdfOptions: {
-    margin: [20, 0, 20, 0], // top, right, bottom, left
-  },
-   });
+  const { toPDF, targetRef } = usePDF({
+    filename: "Booking Instruction.pdf",
+    pdfOptions: {
+      margin: [20, 0, 20, 0], // top, right, bottom, left
+    },
+  });
 
   const getdata = async () => {
     try {
@@ -2490,7 +2491,12 @@ const BookingInstruction = () => {
                       <div>
                         <div style={{ display: "flex" }}>
                           <div
-                            style={{ width: "50%", border: "1px solid #000",paddingBottom:"10px" }}>
+                            style={{
+                              width: "50%",
+                              border: "1px solid #000",
+                              paddingBottom: "10px",
+                            }}
+                          >
                             <table style={{ background: "#b2b3b730" }}>
                               <tr>
                                 <td
@@ -2558,7 +2564,7 @@ const BookingInstruction = () => {
                               </tr>
                               <tr>
                                 <td
-                                  // style={{ borderTop: "1px solid #000" }}
+                                // style={{ borderTop: "1px solid #000" }}
                                 ></td>
                               </tr>
                               <tr>
@@ -3474,7 +3480,6 @@ const BookingInstruction = () => {
                                     borderLeft: "unset",
                                   }}
                                 >
-                                   
                                   DUTIES & TAXES
                                 </td>
                                 <td
@@ -3889,7 +3894,7 @@ const BookingInstruction = () => {
                                   style={{
                                     border: "1px solid #000",
                                     textAlign: "center",
-                                  borderRight:"unset",
+                                    borderRight: "unset",
                                     borderTop: "unset",
                                   }}
                                 >
@@ -3906,7 +3911,7 @@ const BookingInstruction = () => {
                                   style={{
                                     borderBottom: "1px solid #000",
                                     textAlign: "center",
-                                    borderLeft:"1px solid #000"
+                                    borderLeft: "1px solid #000",
                                   }}
                                 >
                                   <i
@@ -4211,9 +4216,8 @@ const BookingInstruction = () => {
                                     border: "1px solid #000",
                                     textAlign: "center",
                                     borderTop: "none",
-                                 borderLeft:'unset',
+                                    borderLeft: "unset",
                                     borderBottom: "1px solid #000",
-
                                   }}
                                 >
                                   {data?.bk_Instru_origin}
@@ -4221,9 +4225,8 @@ const BookingInstruction = () => {
                                 <td
                                   style={{
                                     width: "140px",
-                                       textAlign: "center",
-                                       borderBottom: "1px solid #000",
-                                    
+                                    textAlign: "center",
+                                    borderBottom: "1px solid #000",
                                   }}
                                 >
                                   {" "}
@@ -4320,7 +4323,6 @@ const BookingInstruction = () => {
                                     textAlign: "center",
                                     borderTop: "none",
                                     borderLeft: "none",
-
                                   }}
                                 >
                                   {data.bk_hazard_cargo === "Yes" ? (
@@ -4337,7 +4339,6 @@ const BookingInstruction = () => {
                                     textAlign: "center",
                                     borderTop: "none",
                                     borderLeft: "none",
-
                                   }}
                                 >
                                   {data.bk_hazard_cargo === "No" ? (
@@ -4376,7 +4377,6 @@ const BookingInstruction = () => {
                                     textAlign: "center",
                                     borderTop: "none",
                                     borderLeft: "none",
-
                                   }}
                                 >
                                   {/* {data.bk_cargo_packed} */}
@@ -4390,7 +4390,6 @@ const BookingInstruction = () => {
                                     textAlign: "center",
                                     borderTop: "none",
                                     borderLeft: "none",
-
                                   }}
                                 >
                                   {data.bk_cargo_packed === "No" ? "No" : ""}
@@ -4414,7 +4413,6 @@ const BookingInstruction = () => {
                                     textAlign: "center",
                                     borderTop: "none",
                                     borderLeft: "none",
-
                                   }}
                                 >
                                   {data.bk_cargo_packed === "Yes" ? (
@@ -4431,7 +4429,6 @@ const BookingInstruction = () => {
                                     textAlign: "center",
                                     borderTop: "none",
                                     borderLeft: "none",
-
                                   }}
                                 >
                                   {" "}
@@ -4470,7 +4467,6 @@ const BookingInstruction = () => {
                                     textAlign: "center",
                                     borderTop: "none",
                                     borderLeft: "none",
-
                                   }}
                                 >
                                   {/* {data.bk_battery_MSDS} */}
@@ -4484,7 +4480,6 @@ const BookingInstruction = () => {
                                     textAlign: "center",
                                     borderTop: "none",
                                     borderLeft: "none",
-
                                   }}
                                 >
                                   {data.bk_battery_MSDS === "No" ? "No" : ""}
@@ -4509,7 +4504,6 @@ const BookingInstruction = () => {
                                     textAlign: "center",
                                     borderTop: "none",
                                     borderLeft: "none",
-
                                   }}
                                 >
                                   {data.bk_battery_MSDS === "Yes" ? (
@@ -4526,7 +4520,6 @@ const BookingInstruction = () => {
                                     textAlign: "center",
                                     borderTop: "none",
                                     borderLeft: "none",
-
                                   }}
                                 >
                                   {" "}
@@ -4566,7 +4559,6 @@ const BookingInstruction = () => {
                                     textAlign: "center",
                                     borderTop: "none",
                                     borderLeft: "none",
-
                                   }}
                                 ></td>
                                 <td
@@ -4577,7 +4569,6 @@ const BookingInstruction = () => {
                                     textAlign: "center",
                                     borderTop: "none",
                                     borderLeft: "none",
-
                                   }}
                                 ></td>
                                 <td
@@ -4599,7 +4590,6 @@ const BookingInstruction = () => {
                                     textAlign: "center",
                                     borderTop: "none",
                                     borderLeft: "none",
-
                                   }}
                                 ></td>
                                 <td
@@ -4610,7 +4600,6 @@ const BookingInstruction = () => {
                                     textAlign: "center",
                                     borderTop: "none",
                                     borderLeft: "none",
-
                                   }}
                                 ></td>
                                 <td
@@ -4643,7 +4632,6 @@ const BookingInstruction = () => {
                                     textAlign: "center",
                                     borderTop: "none",
                                     borderLeft: "none",
-
                                   }}
                                 ></td>
                                 <td
@@ -4654,7 +4642,6 @@ const BookingInstruction = () => {
                                     textAlign: "center",
                                     borderTop: "none",
                                     borderLeft: "none",
-
                                   }}
                                 ></td>
                                 <td
@@ -4676,7 +4663,6 @@ const BookingInstruction = () => {
                                     textAlign: "center",
                                     borderTop: "none",
                                     borderLeft: "none",
-
                                   }}
                                 ></td>
                                 <td
@@ -4687,7 +4673,6 @@ const BookingInstruction = () => {
                                     textAlign: "center",
                                     borderTop: "none",
                                     borderLeft: "none",
-
                                   }}
                                 ></td>
                                 <td
@@ -4931,7 +4916,7 @@ const BookingInstruction = () => {
                                     borderRight: "1px solid #000",
                                   }}
                                 >
-                                  COLLECTION ADDRESS
+                                  Opening Times
                                 </th>
                                 <td
                                   style={{
@@ -4939,7 +4924,7 @@ const BookingInstruction = () => {
                                     borderBottom: "1px solid #000",
                                   }}
                                 >
-                                  {data.bk_coll_dddress}
+                                  {data.bk_opening_times}
                                 </td>
                               </tr>
                               <tr>
@@ -4949,7 +4934,8 @@ const BookingInstruction = () => {
                                     width: "40%",
                                   }}
                                 >
-                                  CONTACT NAME AND TEL
+                                  Opening Times Confirm Loading Facilities at
+                                  Collection Point
                                 </th>
                                 <td
                                   style={{
@@ -4957,7 +4943,7 @@ const BookingInstruction = () => {
                                     borderBottom: "none",
                                   }}
                                 >
-                                  Adress line one
+                                  {data?.bk_loading_facilities}
                                 </td>
                               </tr>
                             </table>
@@ -5170,7 +5156,8 @@ const BookingInstruction = () => {
                                 }}
                               >
                                 <p style={{ fontSize: "10px" }}>
-                                  This document is the property of Asia Direct - Africa; Distribution and reproduction
+                                  This document is the property of Asia Direct -
+                                  Africa; Distribution and reproduction
                                   prohibited without authorisation of the QHSE
                                   Manager
                                 </p>

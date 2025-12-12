@@ -1470,6 +1470,11 @@ export default function WarehouseOrder() {
     setIsModalOpen(false);
     handleOpenModal3();
   };
+
+  const handleCloseModalpopup = () => {
+    setIsModalOpen(false);
+  };
+
   const handleOpenModal2 = () => setIsModalOpen2(true);
   const handleOpenModal3 = () => setIsModalOpen3(true);
   const handleCloseModal2 = () => setIsModalOpen2(false);
@@ -2432,7 +2437,7 @@ const handpechangepro = () => {
                       </Modal>
                       <Modal
                         open={isModalOpen}
-                        onClose={handleCloseModal}
+                        onClose={handleCloseModalpopup}
                         aria-labelledby="modal-title"
                         aria-describedby="modal-description"
                         className="editWare"
@@ -2442,7 +2447,7 @@ const handpechangepro = () => {
                             <h2 id="modal-modal-title">Edit Warehouse Order</h2>
                             <button
                               className="btn btn-close"
-                              onClick={handleCloseModal}
+                              onClick={handleCloseModalpopup}
                             >
                               <CloseIcon />
                             </button>
@@ -2617,16 +2622,7 @@ const handpechangepro = () => {
                                       onChange={handleInputChange}
                                     />
                                   </Grid>
-                                  {/* <Grid item xs={12} sm={6}>
-                          {/* <label>Select Document </label> */}
-                          {/* <select name="documentName" className="w-100 py-3"  onChange={handleInputChange}>
-                            <option value="">Select Document</option>
-                            <option value="Warehouse Entry Docs">  Shipper Docs</option>
-                            <option value="Warehouse Entry Docs">Warehouse Docs</option>
-                            <option value="Invoice, Packing List">Invoice / Packing </option>
-                            <option value="Product Literature">Product Literature</option>
-                            <option value="Letters of Authority">LOA</option>
-                          </select> */}
+                                 
                             <div className="row mb-3 mt-4">
                                                           <div className="col-9 mt-3">
                                                             <h4 className="freight_hd">Document Section</h4>

@@ -20,23 +20,15 @@ export default function Supplierestimationview() {
   const [supplierdata, setSupplierdata] = useState([]);
   const [dat, setDat] = useState([]);
   const [openmodal, setOpenmodal] = useState(false);
-   const [selected, setSelected] = useState([]); // selected IDs
+  const [selected, setSelected] = useState([]);
   const [open, setOpen] = useState(false);
   const { toPDF, targetRef } = usePDF({ filename: "page.pdf" });
   const navigate = useNavigate();
-  const getdata = location?.state?.data[0];
+  const getdata = location?.state?.data;
   console.log(getdata);
-  const handlechange = (e) => {
-    const { name, value } = e.target;
-    setUpdate({ ...update, [name]: value });
-  };
 
-  const andlemodaloen =()=>{
-setOpenmodal(true)
-  }
   const handlechangecalc = (e) => {
     const { name, value } = e.target;
-
     setFreight((prevInputData) => ({
       ...prevInputData,
       [name]: value,
@@ -339,24 +331,6 @@ setOpenmodal(true)
         toast.error(error.message);
       });
   };
-//   const supplier = () => {
-//     axios
-//       .post(`${process.env.REACT_APP_BASE_URL}get-suppler-selected`, {
-//         freight_id: getdata.id,
-//       })
-//       .then((response) => {
-//         console.log(response);
-//         setClient(response.data.data);
-//       })
-//       .catch((error) => {
-//         toast.error(error.response.data);
-//       });
-//   };
-
-//   useEffect(() => {
-//     supplier();
-//   }, []);
-
   const handlepresss = (e) => {
     if (e.charCode < 42 || e.charCode > 57) {
       e.preventDefault();
@@ -370,16 +344,14 @@ setOpenmodal(true)
     const day = String(today.getDate()).padStart(2, "0");
     return `${year}-${month}-${day}`;
   };
-
   useEffect(() => {
     getsupplier();
   }, []);
   useEffect(() => {
     getdataapi();
   }, []);
-
-  const data1= (location.state.data.id)
-  const data2= (location.state.freight_id.data)
+  const data1 = location.state.data.id;
+  const data2 = location.state.freight_id.data;
   const getsupplier = () => {
     axios
       .get(`${process.env.REACT_APP_BASE_URL}supplier-list`)
@@ -394,14 +366,17 @@ setOpenmodal(true)
   const getdataapi = async () => {
     console.log(getdata);
     const data123456 = {
-        supplier_id:data1,
-    freight_id: data2
+      supplier_id: data1,
+      freight_id: data2,
     };
     console.log(data123456);
     await axios
-      .post(`${process.env.REACT_APP_BASE_URL}GetShipEstimateSupplierId`, data123456)
+      .post(
+        `${process.env.REACT_APP_BASE_URL}GetShipEstimateSupplierId`,
+        data123456
+      )
       .then((response) => {
-        console.log(response.data);
+        console.log(response);
         setFreight(response.data.data);
       })
       .catch((error) => {
@@ -409,134 +384,145 @@ setOpenmodal(true)
       });
   };
   const handleclicknav = () => {
-    navigate("/Admin/managefreight");
+    navigate("/Admin/SupplierEstimation",{ state: { data: data2 } });
   };
-  const closemodal  =()=>{
-    setOpenmodal(false)
-  }
-
-    const getdata1 = () => {
-      axios
-        .get(`${process.env.REACT_APP_BASE_URL}supplier-list`)
-        .then((response) => {
-          setDat(response.data.data);
-        })
-        .catch((error) => {
-          console.log(error);
-        });
-    };
-    useEffect(() => {
-      getdata1();
-    }, []);
-
-    const handleSelect = (id) => {
+  const closemodal = () => {
+    setOpenmodal(false);
+  };
+  const getdata1 = () => {
+    axios
+      .get(`${process.env.REACT_APP_BASE_URL}supplier-list`)
+      .then((response) => {
+        setDat(response.data.data);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+  useEffect(() => {
+    getdata1();
+  }, []);
+  const handleSelect = (id) => {
     if (selected.includes(id)) {
       setSelected(selected.filter((item) => item !== id));
     } else {
       setSelected([...selected, id]);
     }
   };
-
-  const handleAddSupplier =async()=>{
+  const handleAddSupplier = async () => {
     if (selected.length === 0) {
       toast.error("Please select at least one supplier.");
       return;
     }
-    const response = await axios.post(`${process.env.REACT_APP_BASE_URL}/freight/assign-Suppliers`,{freight_id:getdata.freight_id,supplier_ids:selected})
-    if(response.data.success){
+    const response = await axios.post(
+      `${process.env.REACT_APP_BASE_URL}/freight/assign-Suppliers`,
+      { freight_id: getdata.freight_id, supplier_ids: selected }
+    );
+    if (response.data.success) {
       toast.success(response.data.message);
       setOpenmodal(false);
     }
-      console.log("something went wrong")
+    console.log("something went wrong");
+  };
+  const handkeassign = async () => {
+  try {
+    const dataassign = {
+      freight_id: data1,
+      supplier_id: data2,
+    };
+    const response = await axios.post(
+      `${process.env.REACT_APP_BASE_URL}ApproveShippingEstimate`,
+      dataassign
+    );
+    if (response.data?.success) {
+      toast.success(response.data.message);
+    } else {
+      toast.error(response.data?.message || "Something went wrong");
+    }
+  } catch (error) {
+    console.error("API Error:", error);
+    toast.error(error.response?.data?.message || "Server error occurred");
   }
-
+};
   return (
     <>
       {openmodal && (
-                <div className="custom-modal">
-                  <div className="custom-modal-content">
-                    <div className="custom-modal-header">
-                      <h5>Select Supplier</h5>
-                      <button className="btn-close" onClick={() => closemodal()}>
-                        <CloseIcon />
-                      </button>
-                    </div>
-                    <div className="custom-modal-body">
-                      <div style={{  margin: "20px" }}>
-      {/* Selected Box */}
-      <div
-        onClick={() => setOpen(!open)}
-        style={{
-          padding: "10px",
-          border: "1px solid black",
-          borderRadius: "5px",
-          cursor: "pointer",
-          background: "#fff",
-        }}
-      >
-        {selected.length > 0
-          ? `${selected.length} selected`
-          : "Select Users"}
-      </div>
-
-      {/* Dropdown */}
-      {open && (
-        <div
-          style={{
-            border: "1px solid #ccc",
-            borderRadius: "5px",
-            marginTop: "5px",
-            padding: "10px",
-            maxHeight: "200px",
-            overflowY: "auto",
-            background: "white",
-          }}
-        >
-          {dat.map((item) => (
-            <label
-              key={item.id}
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: "10px",
-                marginBottom: "8px",
-                cursor: "pointer",
-              }}
-            >
-              <input
-                type="checkbox"
-                checked={selected.includes(item.id)}
-                onChange={() => handleSelect(item.id)}
-              />
-              <div>
-                <strong>{item.name}</strong>
-                <div style={{ fontSize: "12px", color: "gray" }}>
-                  {item.email}
+        <div className="custom-modal">
+          <div className="custom-modal-content">
+            <div className="custom-modal-header">
+              <h5>Select Supplier</h5>
+              <button className="btn-close" onClick={() => closemodal()}>
+                <CloseIcon />
+              </button>
+            </div>
+            <div className="custom-modal-body">
+              <div style={{ margin: "20px" }}>
+                {/* Selected Box */}
+                <div
+                  onClick={() => setOpen(!open)}
+                  style={{
+                    padding: "10px",
+                    border: "1px solid black",
+                    borderRadius: "5px",
+                    cursor: "pointer",
+                    background: "#fff",
+                  }}
+                >
+                  {selected.length > 0
+                    ? `${selected.length} selected`
+                    : "Select Users"}
                 </div>
+
+                {/* Dropdown */}
+                {open && (
+                  <div
+                    style={{
+                      border: "1px solid #ccc",
+                      borderRadius: "5px",
+                      marginTop: "5px",
+                      padding: "10px",
+                      maxHeight: "200px",
+                      overflowY: "auto",
+                      background: "white",
+                    }}
+                  >
+                    {dat.map((item) => (
+                      <label
+                        key={item.id}
+                        style={{
+                          display: "flex",
+                          alignItems: "center",
+                          gap: "10px",
+                          marginBottom: "8px",
+                          cursor: "pointer",
+                        }}
+                      >
+                        <input
+                          type="checkbox"
+                          checked={selected.includes(item.id)}
+                          onChange={() => handleSelect(item.id)}
+                        />
+                        <div>
+                          <strong>{item.name}</strong>
+                          <div style={{ fontSize: "12px", color: "gray" }}>
+                            {item.email}
+                          </div>
+                        </div>
+                      </label>
+                    ))}
+                  </div>
+                )}
+                <br />
               </div>
-            </label>
-          ))}
+            </div>
+            <div className="custom-modal-footer">
+              <button className="btn btn-primary" onClick={handleAddSupplier}>
+                Add Supplier
+              </button>
+            </div>
+          </div>
         </div>
       )}
-
-      <br />
-
-      {/* Selected IDs (for testing) */}
-      {/* <div>
-        <strong>Selected IDs:</strong> {JSON.stringify(selected)}
-      </div> */}
-    </div>
-                    </div>
-                    <div className="custom-modal-footer">
-                      <button className="btn btn-primary"
-                       onClick={handleAddSupplier}
-                       >
-                        Add Supplier
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              )}
       <div className="wpWrapper ">
         <div className="container-fluid">
           <div className=" ">
@@ -564,7 +550,7 @@ setOpenmodal(true)
                   </div>
                 </div>
               </div>
-              <section style={{ marginTop: "10px" }} ref={targetRef}>
+              <section style={{ marginTop: "10px" }} >
                 <div
                   style={{
                     height: "auto",
@@ -690,9 +676,9 @@ setOpenmodal(true)
                                     }}
                                   >
                                     <strong>
-                                      {getdata?.client_name}
+                                      {freight?.client_name}
                                       <br />
-                                      {getdata?.address_1}
+                                      {freight?.address_1}
                                     </strong>
                                   </td>
                                 </tr>
@@ -744,7 +730,7 @@ setOpenmodal(true)
                                           marginTop: 10,
                                         }}
                                       >
-                                        {getdata?.no_of_packages}
+                                        {freight?.no_of_packages}
                                       </p>
                                     </div>
                                     <div
@@ -769,7 +755,7 @@ setOpenmodal(true)
                                           marginTop: 10,
                                         }}
                                       >
-                                        {getdata?.incoterm}
+                                        {freight?.incoterm}
                                       </p>
                                     </div>
                                     <div
@@ -794,7 +780,7 @@ setOpenmodal(true)
                                           marginTop: 10,
                                         }}
                                       >
-                                        {getdata?.dimension}
+                                        {freight?.dimension}
                                       </p>
                                     </div>
                                     <div
@@ -819,7 +805,7 @@ setOpenmodal(true)
                                           marginTop: 10,
                                         }}
                                       >
-                                        {getdata?.weight}
+                                        {freight?.weight}
                                       </p>
                                     </div>
                                     <div
@@ -844,7 +830,7 @@ setOpenmodal(true)
                                           marginTop: 10,
                                         }}
                                       >
-                                        {getdata?.no_of_packages}
+                                        {freight?.no_of_packages}
                                       </p>
                                     </div>
                                   </td>
@@ -933,7 +919,7 @@ setOpenmodal(true)
                                   <td
                                     style={{ paddingBottom: 10, fontSize: 14 }}
                                   >
-                                    {getdata?.client_ref_name}
+                                    {freight?.client_ref_name}
                                   </td>
                                 </tr>
                                 <tr>
@@ -955,7 +941,7 @@ setOpenmodal(true)
                                       padding: "0px 10px 10px 10px",
                                     }}
                                   >
-                                    {new Date(getdata?.date).toLocaleDateString(
+                                    {new Date(freight?.date).toLocaleDateString(
                                       "en-GB"
                                     )}
                                   </td>
@@ -1025,7 +1011,7 @@ setOpenmodal(true)
                                           marginTop: 10,
                                         }}
                                       >
-                                        {getdata?.collection_from_name}
+                                        {freight?.collection_from_name}
                                       </p>
                                     </div>
                                     {/* <div
@@ -1075,7 +1061,7 @@ setOpenmodal(true)
                                           marginTop: 10,
                                         }}
                                       >
-                                        {getdata?.port_of_loading}
+                                        {freight?.port_of_loading}
                                       </p>
                                     </div>
                                     <div
@@ -1101,7 +1087,7 @@ setOpenmodal(true)
                                           marginTop: 10,
                                         }}
                                       >
-                                        {getdata?.post_of_discharge}
+                                        {freight?.post_of_discharge}
                                       </p>
                                     </div>
                                     <div
@@ -1126,7 +1112,7 @@ setOpenmodal(true)
                                           marginTop: 10,
                                         }}
                                       >
-                                        {getdata?.place_of_delivery}
+                                        {freight?.place_of_delivery}
                                       </p>
                                     </div>
                                     <div
@@ -1154,7 +1140,7 @@ setOpenmodal(true)
                                           marginTop: 10,
                                         }}
                                       >
-                                        {getdata?.quote_received}
+                                        {freight?.quote_received}
                                       </p>
                                     </div>
                                     {/* <div
@@ -1182,7 +1168,7 @@ setOpenmodal(true)
                                           marginTop: 10,
                                         }}
                                       >
-                                        {getdata?.quote_received}
+                                        {freight?.quote_received}
                                       </p>
                                     </div> */}
                                     <div
@@ -1207,7 +1193,7 @@ setOpenmodal(true)
                                           marginTop: 10,
                                         }}
                                       >
-                                        {getdata?.transit_time}
+                                        {freight?.transit_time}
                                       </p>
                                     </div>
                                   </td>
@@ -1230,8 +1216,7 @@ setOpenmodal(true)
                               width: "31%",
                               borderBottom: "0px solid transparent",
                               height: 22,
-                              borderTop:"unset",
-                        
+                              borderTop: "unset",
                             }}
                           >
                             <p
@@ -1470,7 +1455,7 @@ setOpenmodal(true)
                                   paddingLeft: 5,
                                 }}
                               >
-                                {getdata?.freight} Freight
+                                {freight?.freight} Freight
                               </p>
                             </div>
                             <div
@@ -6652,6 +6637,4678 @@ setOpenmodal(true)
                     </tbody>
                   </table>
                   <div className="text-center">
+                    <button className="ship_btn" onClick={apihit}>
+                      Get Quote
+                    </button>
+                  </div>
+
+                  {
+                    finalestimate? <div style={{marginTop:"10px"}} className="d-flex justify-content-between">
+                   <div><button className="ship_btn1" onClick={()=>{handkeassign()}}>Assign this Quote</button></div>
+                   <div><button className="ship_btn2">Cancle Quote</button></div>
+                  </div> : null
+                  }
+                </div>
+              </section>
+                <section ref={targetRef} style={{ margin: 0, padding: 0 }}>
+                <div
+                  style={{
+                    width: "100%",
+                    padding: "20px",
+                    outline: "auto",
+                    height: "auto",
+                  }}
+                  className="pdf-page"
+                >
+                  <p>
+                    <table style={{ margin: "20px" }}>
+                      <tbody>
+                        <tr>
+                          <td style={{ width: "50%" }}>
+                            <div>
+                              <img
+                                style={{ height: 55 }}
+                                src={logo}
+                                alt="hellow"
+                              />
+                            </div>
+                          </td>
+                          <td style={{ width: "50%", color: "#000" }}>
+                            <p
+                              style={{
+                                fontSize: 20,
+                                fontWeight: 600,
+                                marginBottom: "unset",
+                                borderBottom: "1px solid #cb191e",
+                                display: "inline-block",
+                                paddingBottom: 5,
+                              }}
+                            >
+                              Asia Direct - Africa
+                            </p>
+                            <p
+                              style={{
+                                fontSize: 14,
+                                fontWeight: 500,
+                                marginBottom: "unset",
+                                lineHeight: "1.5",
+                                marginTop: 10,
+                              }}
+                            >
+                              Asia Direct, Unit 4 Villa Valencia 2 Anemoon Road
+                              Glen Marais 1619 South Africa Mauritania
+                              www.asiaDirect.africa{" "}
+                            </p>
+                            <p>
+                              <span>VAT Number: 4740280377</span>
+                              <br />
+                              TEL: +27 10 448 0733
+                            </p>
+                            <p> </p>
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                    <table style={{ paddingTop: "20px", marginTop: "20px" }}>
+                      <tbody>
+                        <tr>
+                          <td
+                            style={{ fontSize: 14, textTransform: "lowercase" }}
+                          ></td>
+                          <td
+                            style={{
+                              fontSize: 14,
+                              padding: "0px 20px",
+                              textTransform: "lowercase",
+                            }}
+                          ></td>
+                          <td
+                            style={{ fontSize: 14, textTransform: "lowercase" }}
+                          ></td>
+                        </tr>
+                      </tbody>
+                    </table>
+                    <table
+                      style={{
+                        border: "2px solid #1b2245",
+                        padding: "10px 20px",
+                        width: "100%",
+                        marginTop: 20,
+                      }}
+                    >
+                      <tbody>
+                        <tr>
+                          <td
+                            style={{
+                              textAlign: "center",
+                              fontSize: 14,
+                              fontWeight: 600,
+                              width: "100%",
+                            }}
+                          >
+                            FREIGHT ESTIMATE
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                    <table
+                      style={{
+                        border: "2px solid #1b2245",
+                        borderTop: "unset",
+                        width: "100%",
+                      }}
+                    >
+                      <tbody>
+                        <tr>
+                          <td
+                            style={{
+                              width: "50%",
+                              borderRight: "2px solid #1a2142",
+                              height: "100%",
+                            }}
+                          >
+                            <table>
+                              <tbody>
+                                <tr>
+                                  <td
+                                    style={{
+                                      fontSize: 14,
+                                      padding: "0px 10px",
+                                    }}
+                                  >
+                                    <strong>
+                                      {getdata.client_name}
+                                      <br />
+                                      {getdata.address_1}
+                                    </strong>
+                                  </td>
+                                </tr>
+                              </tbody>
+                            </table>
+                            <table
+                              style={{
+                                background: "#1b2245",
+                                width: "100%",
+                                color: "white",
+                                fontSize: 14,
+                                textAlign: "center",
+                                margin: "10px 0px",
+                                padding: 2,
+                              }}
+                            >
+                              <tbody>
+                                <tr>
+                                  <td style={{ fontSize: 14 }}>
+                                    Shipment Details ISO Commodity
+                                  </td>
+                                </tr>
+                              </tbody>
+                            </table>
+                            <table style={{ width: "100%" }}>
+                              <tbody>
+                                <tr>
+                                  {}
+                                  <td style={{ padding: "0px 10px" }}>
+                                    <div
+                                      style={{
+                                        display: "flex",
+                                        justifyContent: "space-between",
+                                      }}
+                                    >
+                                      <p
+                                        style={{
+                                          fontSize: 14,
+                                          marginBottom: "unset",
+                                          marginTop: 10,
+                                        }}
+                                      >
+                                        <strong> No. of Packages</strong>
+                                      </p>
+                                      <p
+                                        style={{
+                                          fontSize: 14,
+                                          marginBottom: "unset",
+                                          marginTop: 10,
+                                        }}
+                                      >
+                                        {getdata?.no_of_packages}
+                                      </p>
+                                    </div>
+                                    <div
+                                      style={{
+                                        display: "flex",
+                                        justifyContent: "space-between",
+                                      }}
+                                    >
+                                      <p
+                                        style={{
+                                          fontSize: 14,
+                                          marginBottom: "unset",
+                                          marginTop: 10,
+                                        }}
+                                      >
+                                        <strong>Package Type</strong>
+                                      </p>
+                                      <p
+                                        style={{
+                                          fontSize: 14,
+                                          marginBottom: "unset",
+                                          marginTop: 10,
+                                        }}
+                                      >
+                                        Sea
+                                      </p>
+                                    </div>
+                                    <div
+                                      style={{
+                                        display: "flex",
+                                        justifyContent: "space-between",
+                                      }}
+                                    >
+                                      <p
+                                        style={{
+                                          fontSize: 14,
+                                          marginBottom: "unset",
+                                          marginTop: 10,
+                                        }}
+                                      >
+                                        <strong>Weight</strong>
+                                      </p>
+                                      <p
+                                        style={{
+                                          fontSize: 14,
+                                          marginBottom: "unset",
+                                          marginTop: 10,
+                                        }}
+                                      >
+                                        {getdata?.weight}
+                                      </p>
+                                    </div>
+                                    <div
+                                      style={{
+                                        display: "flex",
+                                        justifyContent: "space-between",
+                                      }}
+                                    >
+                                      <p
+                                        style={{
+                                          fontSize: 14,
+                                          marginBottom: "unset",
+                                          marginTop: 10,
+                                        }}
+                                      >
+                                        <strong>M3</strong>
+                                      </p>
+                                      <p
+                                        style={{
+                                          fontSize: 14,
+                                          marginBottom: "unset",
+                                          marginTop: 10,
+                                        }}
+                                      >
+                                        0.00
+                                      </p>
+                                    </div>
+                                    <div
+                                      style={{
+                                        display: "flex",
+                                        justifyContent: "space-between",
+                                      }}
+                                    >
+                                      <p
+                                        style={{
+                                          fontSize: 14,
+                                          marginBottom: "unset",
+                                          marginTop: 10,
+                                        }}
+                                      >
+                                        <strong>Volumetric (kgs)</strong>
+                                      </p>
+                                      <p
+                                        style={{
+                                          fontSize: 14,
+                                          marginBottom: "unset",
+                                          marginTop: 10,
+                                        }}
+                                      >
+                                        0.00
+                                      </p>
+                                    </div>
+                                    <div
+                                      style={{
+                                        display: "flex",
+                                        justifyContent: "space-between",
+                                      }}
+                                    >
+                                      <p
+                                        style={{
+                                          fontSize: 14,
+                                          marginBottom: "unset",
+                                          marginTop: 10,
+                                        }}
+                                      >
+                                        <strong>Chargeable</strong>
+                                      </p>
+                                      <p
+                                        style={{
+                                          fontSize: 14,
+                                          marginBottom: "unset",
+                                          marginTop: 10,
+                                        }}
+                                      >
+                                        0.00
+                                      </p>
+                                    </div>
+                                    <div
+                                      style={{
+                                        display: "flex",
+                                        justifyContent: "space-between",
+                                      }}
+                                    >
+                                      <p
+                                        style={{
+                                          fontSize: 14,
+                                          marginBottom: "unset",
+                                          marginTop: 10,
+                                        }}
+                                      >
+                                        <strong>Commodity</strong>
+                                      </p>
+                                      <p
+                                        style={{
+                                          fontSize: 14,
+                                          marginBottom: "unset",
+                                          marginTop: 10,
+                                        }}
+                                      >
+                                        0.00
+                                      </p>
+                                    </div>
+                                    <div
+                                      style={{
+                                        display: "flex",
+                                        justifyContent: "space-between",
+                                      }}
+                                    >
+                                      <p
+                                        style={{
+                                          fontSize: 14,
+                                          marginBottom: "unset",
+                                          marginTop: 10,
+                                        }}
+                                      >
+                                        <strong>Hazardous</strong>
+                                      </p>
+                                      <p
+                                        style={{
+                                          fontSize: 14,
+                                          marginBottom: "unset",
+                                          marginTop: 10,
+                                        }}
+                                      >
+                                        0.00
+                                      </p>
+                                    </div>
+                                    <div
+                                      style={{
+                                        display: "flex",
+                                        justifyContent: "space-between",
+                                      }}
+                                    >
+                                      <p
+                                        style={{
+                                          fontSize: 14,
+                                          marginBottom: "unset",
+                                          marginTop: 10,
+                                        }}
+                                      >
+                                        <strong>Incoterm</strong>
+                                      </p>
+                                      <p
+                                        style={{
+                                          fontSize: 14,
+                                          marginBottom: "unset",
+                                          marginTop: 10,
+                                        }}
+                                      >
+                                        {getdata?.incoterm}
+                                      </p>
+                                    </div>
+                                    {/* <div
+                                      style={{
+                                        display: "flex",
+                                        justifyContent: "space-between",
+                                      }}
+                                    >
+                                      <p
+                                        style={{
+                                          fontSize: 14,
+                                          marginBottom: "unset",
+                                          marginTop: 10,
+                                        }}
+                                      >
+                                        <strong>dimension</strong>
+                                      </p>
+                                      <p
+                                        style={{
+                                          fontSize: 14,
+                                          marginBottom: "unset",
+                                          marginTop: 10,
+                                        }}
+                                      >
+                                        {getdata?.dimension}
+                                      </p>
+                                    </div> */}
+
+                                    <div
+                                      style={{
+                                        display: "flex",
+                                        justifyContent: "space-between",
+                                      }}
+                                    >
+                                      <p
+                                        style={{
+                                          fontSize: 14,
+                                          marginBottom: "unset",
+                                          marginTop: 10,
+                                        }}
+                                      >
+                                        <strong> Freight</strong>
+                                      </p>
+                                      <p
+                                        style={{
+                                          fontSize: 14,
+                                          marginBottom: "unset",
+                                          marginTop: 10,
+                                        }}
+                                      >
+                                        Sea
+                                      </p>
+                                    </div>
+                                  </td>
+                                </tr>
+                              </tbody>
+                            </table>
+                            <table
+                              style={{
+                                background: "#1b2245",
+                                width: "100%",
+                                color: "white",
+                                fontSize: 14,
+                                textAlign: "center",
+                                margin: "10px 0px",
+                                padding: 2,
+                              }}
+                            >
+                              <tbody>
+                                <tr>
+                                  <td style={{ fontSize: 14 }}>
+                                    Rate of Exchange
+                                  </td>
+                                </tr>
+                              </tbody>
+                            </table>
+                            <table style={{ width: "100%" }}>
+                              <tbody>
+                                <tr>
+                                  <td>
+                                    <div
+                                      style={{
+                                        display: "flex",
+                                        justifyContent: "space-between",
+                                        padding: 10,
+                                      }}
+                                    >
+                                      <p
+                                        style={{
+                                          fontSize: 14,
+                                          marginBottom: "unset",
+                                          marginTop: 10,
+                                        }}
+                                      >
+                                        <strong>Final Base Currency</strong>
+                                      </p>
+                                      <select
+                                        className="select_supplier border"
+                                        style={{
+                                          margin: 0,
+                                          fontSize: 13,
+                                          fontWeight: 700,
+                                          paddingLeft: 5,
+                                          width: "40%",
+                                          border: "2px",
+                                        }}
+                                        onChange={handlechangecalc}
+                                        name="final_base_currency"
+                                        value={freight?.final_base_currency}
+                                      >
+                                        <option>Select</option>
+                                        <option value="RAND">RAND</option>
+                                        <option value="USD">USD</option>
+                                        <option value="INR">INR</option>
+                                        <option value="EURO">EURO</option>
+                                      </select>
+                                    </div>
+                                  </td>
+                                </tr>
+                              </tbody>
+                            </table>
+                          </td>
+                          <td style={{ width: "50%", paddingTop: 10 }}>
+                            <table>
+                              <tbody>
+                                <tr>
+                                  <td
+                                    style={{
+                                      width: 170,
+                                      display: "block",
+                                      padding: "0px 10px 10px 10px",
+                                      fontSize: 14,
+                                    }}
+                                  >
+                                    <strong>Reference</strong>
+                                  </td>
+                                  <td
+                                    style={{ paddingBottom: 10, fontSize: 14 }}
+                                  >
+                                    {getdata?.client_ref_name}
+                                  </td>
+                                </tr>
+                                <tr>
+                                  <td
+                                    style={{
+                                      padding: "0px 10px 10px 10px",
+                                      width: 170,
+                                      display: "block",
+                                      paddingBottom: 10,
+                                      fontSize: 14,
+                                    }}
+                                  >
+                                    <strong>Quote Date</strong>
+                                  </td>
+                                  <td
+                                    style={{
+                                      paddingBottom: 15,
+                                      fontSize: 14,
+                                      padding: "0px 10px 10px 10px",
+                                    }}
+                                  >
+                                    {new Date(getdata?.date).toLocaleDateString(
+                                      "en-GB"
+                                    )}
+                                  </td>
+                                </tr>
+                                {/* <tr>
+                                  <td
+                                    style={{
+                                      padding: "0px 10px 10px 10px",
+                                      width: 170,
+                                      display: "block",
+                                      paddingBottom: 10,
+                                      fontSize: 14,
+                                    }}
+                                  >
+                                    <strong>Valid Until</strong>
+                                  </td>
+                                  <td
+                                    style={{ paddingBottom: 15, fontSize: 14 }}
+                                  >
+                                    2023/11/07
+                                  </td>
+                                </tr> */}
+                              </tbody>
+                            </table>
+                            <table
+                              style={{
+                                background: "#1b2245",
+                                width: "100%",
+                                color: "white",
+                                fontSize: 14,
+                                textAlign: "center",
+                                margin: "10px 0px",
+                                padding: 2,
+                              }}
+                            >
+                              <tbody>
+                                <tr>
+                                  <td style={{ fontSize: 14 }}>
+                                    Shipment Details
+                                  </td>
+                                </tr>
+                              </tbody>
+                            </table>
+                            <table style={{ width: "100%" }}>
+                              <tbody>
+                                <tr>
+                                  <td style={{ padding: "0px 10px" }}>
+                                    <div
+                                      style={{
+                                        display: "flex",
+                                        justifyContent: "space-between",
+                                      }}
+                                    >
+                                      <p
+                                        style={{
+                                          fontSize: 14,
+                                          marginBottom: "unset",
+                                          marginTop: 10,
+                                        }}
+                                      >
+                                        <strong> Country of Origin</strong>
+                                      </p>
+                                      <p
+                                        style={{
+                                          fontSize: 14,
+                                          marginBottom: "unset",
+                                          marginTop: 10,
+                                        }}
+                                      >
+                                        {getdata.collection_from_name}
+                                      </p>
+                                    </div>
+                                    <div
+                                      style={{
+                                        display: "flex",
+                                        justifyContent: "space-between",
+                                      }}
+                                    >
+                                      <p
+                                        style={{
+                                          fontSize: 14,
+                                          marginBottom: "unset",
+                                          marginTop: 10,
+                                        }}
+                                      >
+                                        <strong> Place of Receipt</strong>
+                                      </p>
+                                      <p
+                                        style={{
+                                          fontSize: 14,
+                                          marginBottom: "unset",
+                                          marginTop: 10,
+                                        }}
+                                      >
+                                        78
+                                      </p>
+                                    </div>
+                                    <div
+                                      style={{
+                                        display: "flex",
+                                        justifyContent: "space-between",
+                                      }}
+                                    >
+                                      <p
+                                        style={{
+                                          fontSize: 14,
+                                          marginBottom: "unset",
+                                          marginTop: 10,
+                                        }}
+                                      >
+                                        <strong>Port of Loading</strong>
+                                      </p>
+                                      <p
+                                        style={{
+                                          fontSize: 14,
+                                          marginBottom: "unset",
+                                          marginTop: 10,
+                                        }}
+                                      >
+                                        {getdata?.port_of_loading}
+                                      </p>
+                                    </div>
+                                    <div
+                                      style={{
+                                        display: "flex",
+                                        justifyContent: "space-between",
+                                      }}
+                                    >
+                                      <p
+                                        style={{
+                                          fontSize: 14,
+                                          marginBottom: "unset",
+                                          marginTop: 10,
+                                        }}
+                                      >
+                                        <strong>Port of Discharge</strong>
+                                      </p>
+                                      <p
+                                        className="text-dark"
+                                        style={{
+                                          fontSize: 14,
+                                          marginBottom: "unset",
+                                          marginTop: 10,
+                                        }}
+                                      >
+                                        {getdata?.post_of_discharge}
+                                      </p>
+                                    </div>
+                                    <div
+                                      style={{
+                                        display: "flex",
+                                        justifyContent: "space-between",
+                                      }}
+                                    >
+                                      <p
+                                        style={{
+                                          fontSize: 14,
+                                          marginBottom: "unset",
+                                          marginTop: 10,
+                                        }}
+                                      >
+                                        <strong> Place of Delivery</strong>
+                                      </p>
+                                      <p
+                                        style={{
+                                          fontSize: 14,
+                                          marginBottom: "unset",
+                                          marginTop: 10,
+                                        }}
+                                      >
+                                        {getdata?.place_of_delivery}
+                                      </p>
+                                    </div>
+                                    <div
+                                      style={{
+                                        display: "flex",
+                                        justifyContent: "space-between",
+                                      }}
+                                    >
+                                      <p
+                                        style={{
+                                          fontSize: 14,
+                                          marginBottom: "unset",
+                                          marginTop: 10,
+                                        }}
+                                      >
+                                        <strong>
+                                          {" "}
+                                          Freight Collect Accepted
+                                        </strong>
+                                      </p>
+                                      <p
+                                        style={{
+                                          fontSize: 14,
+                                          marginBottom: "unset",
+                                          marginTop: 10,
+                                        }}
+                                      >
+                                        {getdata?.quote_received}
+                                      </p>
+                                    </div>
+                                    <div
+                                      style={{
+                                        display: "flex",
+                                        justifyContent: "space-between",
+                                      }}
+                                    >
+                                      <p
+                                        style={{
+                                          fontSize: 14,
+                                          marginBottom: "unset",
+                                          marginTop: 10,
+                                        }}
+                                      >
+                                        <strong> Date</strong>
+                                      </p>
+                                      <p
+                                        style={{
+                                          fontSize: 14,
+                                          marginBottom: "unset",
+                                          marginTop: 10,
+                                        }}
+                                      >
+                                        12/23/2045
+                                      </p>
+                                    </div>
+                                    {/* <div
+                                      style={{
+                                        display: "flex",
+                                        justifyContent: "space-between",
+                                      }}
+                                    >
+                                      <p
+                                        style={{
+                                          fontSize: 14,
+                                          marginBottom: "unset",
+                                          marginTop: 10,
+                                        }}
+                                      >
+                                        <strong>
+                                          {" "}
+                                          Frequency from Port of Loading
+                                        </strong>
+                                      </p>
+                                      <p
+                                        style={{
+                                          fontSize: 14,
+                                          marginBottom: "unset",
+                                          marginTop: 10,
+                                        }}
+                                      >
+                                        {getdata?.quote_received}
+                                      </p>
+                                    </div> */}
+
+                                    {/* <div
+                                      style={{
+                                        display: "flex",
+                                        justifyContent: "space-between",
+                                      }}
+                                    >
+                                      <p
+                                        style={{
+                                          fontSize: 14,
+                                          marginBottom: "unset",
+                                          marginTop: 10,
+                                        }}
+                                      >
+                                        <strong> Estimated Transit Time</strong>
+                                      </p>
+                                      <p
+                                        style={{
+                                          fontSize: 14,
+                                          marginBottom: "unset",
+                                          marginTop: 10,
+                                        }}
+                                      >
+                                        {getdata?.transit_time}
+                                      </p>
+                                    </div> */}
+                                  </td>
+                                </tr>
+                              </tbody>
+                            </table>
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </p>
+                  {/* new table */}
+                  <table style={{ width: "100%" }}>
+                    <tbody>
+                      <tr>
+                        <td
+                          style={{ padding: 0, borderRight: "1px solid black" }}
+                        >
+                          <div
+                            style={{
+                              border: "1px solid black",
+                              width: "31%",
+                              borderBottom: "0px solid transparent",
+                              height: 22,
+                              borderTop: "unset",
+                            }}
+                          >
+                            <p
+                              style={{
+                                margin: 0,
+                                fontSize: 13,
+                                fontWeight: 700,
+                                textTransform: "uppercase",
+                                paddingLeft: 5,
+                              }}
+                            >
+                              QUOTE INFORMATION
+                            </p>
+                          </div>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+
+                  <table class="cost-table">
+                    <thead>
+                      <tr>
+                        <th>Items</th>
+                        <th>Description</th>
+                        <th>
+                          <div>Currency</div>
+                        </th>
+                        <th>Cost</th>
+                        <th>Unit type</th>
+                        <th>Unit</th>
+                        <th>T/ Cost</th>
+                        <th>GP</th>
+                        <th>Amt</th>
+                        <th>ROE</th>
+                        <th>Final Amount</th>
+                      </tr>
+                    </thead>
+
+                    <tbody>
+                      {/* origin charges */}
+                      <tr>
+                        <td>Origin Charges</td>
+                        <td>Pick-Up Fee</td>
+                        <td>
+                          <select
+                            className="select_supplier"
+                            style={{
+                              margin: 0,
+                              fontSize: 13,
+                              fontWeight: 700,
+                              paddingLeft: 5,
+                              border: 0,
+                            }}
+                            onChange={handlechangecalc}
+                            name="freight_currency"
+                            value={freight?.freight_currency}
+                          >
+                            <option>Select</option>
+                            <option value="RAND">RAND</option>
+                            <option value="USD">USD</option>
+                            <option value="INR">INR</option>
+                            <option value="EURO">EURO</option>
+                          </select>
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              fontWeight: 400,
+                              border: "0px",
+                              width: "100px",
+                              verticalAlign: "middle",
+                            }}
+                            type="text"
+                            onKeyPress={handlepresss}
+                            className="supplier_form"
+                            onChange={handlechangecalc}
+                            value={freight?.origin_pick_up}
+                            name="origin_pick_up"
+                            id="floatingInput"
+                            placeholder="0.00"
+                          />
+                        </td>
+                        <td>L/S</td>
+                        <td>23</td>
+                        <td>50</td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              fontWeight: 400,
+                              width: "50px",
+                              border: "0px",
+
+                              verticalAlign: "middle",
+                            }}
+                            type="text"
+                            onKeyPress={handlepresss}
+                            className="supplier_form"
+                            onChange={handlechangecalc}
+                            value={freight?.origin_pickup_gp}
+                            name="origin_pickup_gp"
+                            id="floatingInput"
+                            placeholder="0.00%"
+                          />
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              border: "0px",
+                              verticalAlign: "middle",
+                              width: "100px",
+                            }}
+                            value={finalori}
+                            className="supplier_form"
+                          />{" "}
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              width: "100px",
+                              border: "0px",
+                              verticalAlign: "middle",
+                            }}
+                            value={freight.roe_origin_currency}
+                            className="supplier_form"
+                          />
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              width: "100px",
+                              border: "0px",
+                              verticalAlign: "middle",
+                            }}
+                            value={parseFloat(
+                              finalori * freight.roe_origin_currency
+                            ).toFixed(2)}
+                            placeholder="0.00"
+                            className="supplier_form"
+                          />
+                        </td>
+                      </tr>
+                      <tr>
+                        <td></td>
+                        <td>Fuel Surcharge</td>
+                        <td>
+                          <select
+                            className="select_supplier"
+                            style={{
+                              margin: 0,
+                              fontSize: 13,
+                              fontWeight: 700,
+                              paddingLeft: 5,
+                              border: 0,
+                            }}
+                            onChange={handlechangecalc}
+                            name="freight_currency"
+                            value={freight?.freight_currency}
+                          >
+                            <option>Select</option>
+                            <option value="RAND">RAND</option>
+                            <option value="USD">USD</option>
+                            <option value="INR">INR</option>
+                            <option value="EURO">EURO</option>
+                          </select>
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              fontWeight: 400,
+                              border: "0px",
+                              width: "100px",
+                              verticalAlign: "middle",
+                            }}
+                            type="text"
+                            onKeyPress={handlepresss}
+                            className="supplier_form"
+                            onChange={handlechangecalc}
+                            value={freight?.origin_pick_up}
+                            name="origin_pick_up"
+                            id="floatingInput"
+                            placeholder="0.00"
+                          />
+                        </td>
+                        <td>L/S</td>
+                        <td>23</td>
+                        <td>50</td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              fontWeight: 400,
+                              width: "50px",
+                              border: "0px",
+
+                              verticalAlign: "middle",
+                            }}
+                            type="text"
+                            onKeyPress={handlepresss}
+                            className="supplier_form"
+                            onChange={handlechangecalc}
+                            value={freight?.origin_pickup_gp}
+                            name="origin_pickup_gp"
+                            id="floatingInput"
+                            placeholder="0.00%"
+                          />
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              border: "0px",
+                              verticalAlign: "middle",
+                              width: "100px",
+                            }}
+                            value={finalori}
+                            className="supplier_form"
+                          />{" "}
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              width: "100px",
+                              border: "0px",
+                              verticalAlign: "middle",
+                            }}
+                            value={freight.roe_origin_currency}
+                            className="supplier_form"
+                          />
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              width: "100px",
+                              border: "0px",
+                              verticalAlign: "middle",
+                            }}
+                            value={parseFloat(
+                              finalori * freight.roe_origin_currency
+                            ).toFixed(2)}
+                            placeholder="0.00"
+                            className="supplier_form"
+                          />
+                        </td>
+                      </tr>
+                      <tr>
+                        <td></td>
+                        <td>CFS Charge</td>
+                        <td>
+                          <select
+                            className="select_supplier"
+                            style={{
+                              margin: 0,
+                              fontSize: 13,
+                              fontWeight: 700,
+                              paddingLeft: 5,
+                              border: 0,
+                            }}
+                            onChange={handlechangecalc}
+                            name="freight_currency"
+                            value={freight?.freight_currency}
+                          >
+                            <option>Select</option>
+                            <option value="RAND">RAND</option>
+                            <option value="USD">USD</option>
+                            <option value="INR">INR</option>
+                            <option value="EURO">EURO</option>
+                          </select>
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              fontWeight: 400,
+                              border: "0px",
+                              width: "100px",
+                              verticalAlign: "middle",
+                            }}
+                            type="text"
+                            onKeyPress={handlepresss}
+                            className="supplier_form"
+                            onChange={handlechangecalc}
+                            value={freight?.origin_pick_up}
+                            name="origin_pick_up"
+                            id="floatingInput"
+                            placeholder="0.00"
+                          />
+                        </td>
+                        <td>L/S</td>
+                        <td>23</td>
+                        <td>50</td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              fontWeight: 400,
+                              width: "50px",
+                              border: "0px",
+
+                              verticalAlign: "middle",
+                            }}
+                            type="text"
+                            onKeyPress={handlepresss}
+                            className="supplier_form"
+                            onChange={handlechangecalc}
+                            value={freight?.origin_pickup_gp}
+                            name="origin_pickup_gp"
+                            id="floatingInput"
+                            placeholder="0.00%"
+                          />
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              border: "0px",
+                              verticalAlign: "middle",
+                              width: "100px",
+                            }}
+                            value={finalori}
+                            className="supplier_form"
+                          />{" "}
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              width: "100px",
+                              border: "0px",
+                              verticalAlign: "middle",
+                            }}
+                            value={freight.roe_origin_currency}
+                            className="supplier_form"
+                          />
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              width: "100px",
+                              border: "0px",
+                              verticalAlign: "middle",
+                            }}
+                            value={parseFloat(
+                              finalori * freight.roe_origin_currency
+                            ).toFixed(2)}
+                            placeholder="0.00"
+                            className="supplier_form"
+                          />
+                        </td>
+                      </tr>
+                      <tr>
+                        <td></td>
+                        <td>Documentation Fee</td>
+                        <td>
+                          <select
+                            className="select_supplier"
+                            style={{
+                              margin: 0,
+                              fontSize: 13,
+                              fontWeight: 700,
+                              paddingLeft: 5,
+                              border: 0,
+                            }}
+                            onChange={handlechangecalc}
+                            name="freight_currency"
+                            value={freight?.freight_currency}
+                          >
+                            <option>Select</option>
+                            <option value="RAND">RAND</option>
+                            <option value="USD">USD</option>
+                            <option value="INR">INR</option>
+                            <option value="EURO">EURO</option>
+                          </select>
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              fontWeight: 400,
+                              border: "0px",
+                              width: "100px",
+                              verticalAlign: "middle",
+                            }}
+                            type="text"
+                            onKeyPress={handlepresss}
+                            className="supplier_form"
+                            onChange={handlechangecalc}
+                            value={freight?.origin_pick_up}
+                            name="origin_pick_up"
+                            id="floatingInput"
+                            placeholder="0.00"
+                          />
+                        </td>
+                        <td>L/S</td>
+                        <td>23</td>
+                        <td>50</td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              fontWeight: 400,
+                              width: "50px",
+                              border: "0px",
+
+                              verticalAlign: "middle",
+                            }}
+                            type="text"
+                            onKeyPress={handlepresss}
+                            className="supplier_form"
+                            onChange={handlechangecalc}
+                            value={freight?.origin_pickup_gp}
+                            name="origin_pickup_gp"
+                            id="floatingInput"
+                            placeholder="0.00%"
+                          />
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              border: "0px",
+                              verticalAlign: "middle",
+                              width: "100px",
+                            }}
+                            value={finalori}
+                            className="supplier_form"
+                          />{" "}
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              width: "100px",
+                              border: "0px",
+                              verticalAlign: "middle",
+                            }}
+                            value={freight.roe_origin_currency}
+                            className="supplier_form"
+                          />
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              width: "100px",
+                              border: "0px",
+                              verticalAlign: "middle",
+                            }}
+                            value={parseFloat(
+                              finalori * freight.roe_origin_currency
+                            ).toFixed(2)}
+                            placeholder="0.00"
+                            className="supplier_form"
+                          />
+                        </td>
+                      </tr>
+                      <tr>
+                        <td></td>
+                        <td>Forwarding Fee</td>
+                        <td>
+                          <select
+                            className="select_supplier"
+                            style={{
+                              margin: 0,
+                              fontSize: 13,
+                              fontWeight: 700,
+                              paddingLeft: 5,
+                              border: 0,
+                            }}
+                            onChange={handlechangecalc}
+                            name="freight_currency"
+                            value={freight?.freight_currency}
+                          >
+                            <option>Select</option>
+                            <option value="RAND">RAND</option>
+                            <option value="USD">USD</option>
+                            <option value="INR">INR</option>
+                            <option value="EURO">EURO</option>
+                          </select>
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              fontWeight: 400,
+                              border: "0px",
+                              width: "100px",
+                              verticalAlign: "middle",
+                            }}
+                            type="text"
+                            onKeyPress={handlepresss}
+                            className="supplier_form"
+                            onChange={handlechangecalc}
+                            value={freight?.origin_pick_up}
+                            name="origin_pick_up"
+                            id="floatingInput"
+                            placeholder="0.00"
+                          />
+                        </td>
+                        <td>L/S</td>
+                        <td>23</td>
+                        <td>50</td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              fontWeight: 400,
+                              width: "50px",
+                              border: "0px",
+
+                              verticalAlign: "middle",
+                            }}
+                            type="text"
+                            onKeyPress={handlepresss}
+                            className="supplier_form"
+                            onChange={handlechangecalc}
+                            value={freight?.origin_pickup_gp}
+                            name="origin_pickup_gp"
+                            id="floatingInput"
+                            placeholder="0.00%"
+                          />
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              border: "0px",
+                              verticalAlign: "middle",
+                              width: "100px",
+                            }}
+                            value={finalori}
+                            className="supplier_form"
+                          />{" "}
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              width: "100px",
+                              border: "0px",
+                              verticalAlign: "middle",
+                            }}
+                            value={freight.roe_origin_currency}
+                            className="supplier_form"
+                          />
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              width: "100px",
+                              border: "0px",
+                              verticalAlign: "middle",
+                            }}
+                            value={parseFloat(
+                              finalori * freight.roe_origin_currency
+                            ).toFixed(2)}
+                            placeholder="0.00"
+                            className="supplier_form"
+                          />
+                        </td>
+                      </tr>
+                      <tr>
+                        <td></td>
+                        <td>Customs Clearance</td>
+                        <td>
+                          <select
+                            className="select_supplier"
+                            style={{
+                              margin: 0,
+                              fontSize: 13,
+                              fontWeight: 700,
+                              paddingLeft: 5,
+                              border: 0,
+                            }}
+                            onChange={handlechangecalc}
+                            name="freight_currency"
+                            value={freight?.freight_currency}
+                          >
+                            <option>Select</option>
+                            <option value="RAND">RAND</option>
+                            <option value="USD">USD</option>
+                            <option value="INR">INR</option>
+                            <option value="EURO">EURO</option>
+                          </select>
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              fontWeight: 400,
+                              border: "0px",
+                              width: "100px",
+                              verticalAlign: "middle",
+                            }}
+                            type="text"
+                            onKeyPress={handlepresss}
+                            className="supplier_form"
+                            onChange={handlechangecalc}
+                            value={freight?.origin_pick_up}
+                            name="origin_pick_up"
+                            id="floatingInput"
+                            placeholder="0.00"
+                          />
+                        </td>
+                        <td>L/S</td>
+                        <td>23</td>
+                        <td>50</td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              fontWeight: 400,
+                              width: "50px",
+                              border: "0px",
+
+                              verticalAlign: "middle",
+                            }}
+                            type="text"
+                            onKeyPress={handlepresss}
+                            className="supplier_form"
+                            onChange={handlechangecalc}
+                            value={freight?.origin_pickup_gp}
+                            name="origin_pickup_gp"
+                            id="floatingInput"
+                            placeholder="0.00%"
+                          />
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              border: "0px",
+                              verticalAlign: "middle",
+                              width: "100px",
+                            }}
+                            value={finalori}
+                            className="supplier_form"
+                          />{" "}
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              width: "100px",
+                              border: "0px",
+                              verticalAlign: "middle",
+                            }}
+                            value={freight.roe_origin_currency}
+                            className="supplier_form"
+                          />
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              width: "100px",
+                              border: "0px",
+                              verticalAlign: "middle",
+                            }}
+                            value={parseFloat(
+                              finalori * freight.roe_origin_currency
+                            ).toFixed(2)}
+                            placeholder="0.00"
+                            className="supplier_form"
+                          />
+                        </td>
+                      </tr>
+                      <tr>
+                        <td></td>
+                        <td>SOLAS VGM Admin Fee</td>
+                        <td>
+                          <select
+                            className="select_supplier"
+                            style={{
+                              margin: 0,
+                              fontSize: 13,
+                              fontWeight: 700,
+                              paddingLeft: 5,
+                              border: 0,
+                            }}
+                            onChange={handlechangecalc}
+                            name="freight_currency"
+                            value={freight?.freight_currency}
+                          >
+                            <option>Select</option>
+                            <option value="RAND">RAND</option>
+                            <option value="USD">USD</option>
+                            <option value="INR">INR</option>
+                            <option value="EURO">EURO</option>
+                          </select>
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              fontWeight: 400,
+                              border: "0px",
+                              width: "100px",
+                              verticalAlign: "middle",
+                            }}
+                            type="text"
+                            onKeyPress={handlepresss}
+                            className="supplier_form"
+                            onChange={handlechangecalc}
+                            value={freight?.origin_pick_up}
+                            name="origin_pick_up"
+                            id="floatingInput"
+                            placeholder="0.00"
+                          />
+                        </td>
+                        <td>L/S</td>
+                        <td>23</td>
+                        <td>50</td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              fontWeight: 400,
+                              width: "50px",
+                              border: "0px",
+
+                              verticalAlign: "middle",
+                            }}
+                            type="text"
+                            onKeyPress={handlepresss}
+                            className="supplier_form"
+                            onChange={handlechangecalc}
+                            value={freight?.origin_pickup_gp}
+                            name="origin_pickup_gp"
+                            id="floatingInput"
+                            placeholder="0.00%"
+                          />
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              border: "0px",
+                              verticalAlign: "middle",
+                              width: "100px",
+                            }}
+                            value={finalori}
+                            className="supplier_form"
+                          />{" "}
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              width: "100px",
+                              border: "0px",
+                              verticalAlign: "middle",
+                            }}
+                            value={freight.roe_origin_currency}
+                            className="supplier_form"
+                          />
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              width: "100px",
+                              border: "0px",
+                              verticalAlign: "middle",
+                            }}
+                            value={parseFloat(
+                              finalori * freight.roe_origin_currency
+                            ).toFixed(2)}
+                            placeholder="0.00"
+                            className="supplier_form"
+                          />
+                        </td>
+                      </tr>
+                      <tr>
+                        <td></td>
+                        <td colSpan={5}>
+                          <strong>Total - Origin Charges </strong>
+                        </td>
+                        <td colSpan={4}> 970.00 </td>
+                        <td> 17,634.00 </td>
+                      </tr>
+                      {/* freight charges */}
+                      <tr>
+                        <td>Freight Charges</td>
+                        <td>Ocean freight</td>
+                        <td>
+                          <select
+                            className="select_supplier"
+                            style={{
+                              margin: 0,
+                              fontSize: 13,
+                              fontWeight: 700,
+                              paddingLeft: 5,
+                              border: 0,
+                            }}
+                            onChange={handlechangecalc}
+                            name="freight_currency"
+                            value={freight?.freight_currency}
+                          >
+                            <option>Select</option>
+                            <option value="RAND">RAND</option>
+                            <option value="USD">USD</option>
+                            <option value="INR">INR</option>
+                            <option value="EURO">EURO</option>
+                          </select>
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              fontWeight: 400,
+                              border: "0px",
+                              width: "100px",
+                              verticalAlign: "middle",
+                            }}
+                            type="text"
+                            onKeyPress={handlepresss}
+                            className="supplier_form"
+                            onChange={handlechangecalc}
+                            value={freight?.origin_pick_up}
+                            name="origin_pick_up"
+                            id="floatingInput"
+                            placeholder="0.00"
+                          />
+                        </td>
+                        <td>L/S</td>
+                        <td>23</td>
+                        <td>50</td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              fontWeight: 400,
+                              width: "50px",
+                              border: "0px",
+
+                              verticalAlign: "middle",
+                            }}
+                            type="text"
+                            onKeyPress={handlepresss}
+                            className="supplier_form"
+                            onChange={handlechangecalc}
+                            value={freight?.origin_pickup_gp}
+                            name="origin_pickup_gp"
+                            id="floatingInput"
+                            placeholder="0.00%"
+                          />
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              border: "0px",
+                              verticalAlign: "middle",
+                              width: "100px",
+                            }}
+                            value={finalori}
+                            className="supplier_form"
+                          />{" "}
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              width: "100px",
+                              border: "0px",
+                              verticalAlign: "middle",
+                            }}
+                            value={freight.roe_origin_currency}
+                            className="supplier_form"
+                          />
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              width: "100px",
+                              border: "0px",
+                              verticalAlign: "middle",
+                            }}
+                            value={parseFloat(
+                              finalori * freight.roe_origin_currency
+                            ).toFixed(2)}
+                            placeholder="0.00"
+                            className="supplier_form"
+                          />
+                        </td>
+                      </tr>
+                      <tr>
+                        <td>Insurance</td>
+                        <td>Ocean freight</td>
+                        <td>
+                          <select
+                            className="select_supplier"
+                            style={{
+                              margin: 0,
+                              fontSize: 13,
+                              fontWeight: 700,
+                              paddingLeft: 5,
+                              border: 0,
+                            }}
+                            onChange={handlechangecalc}
+                            name="freight_currency"
+                            value={freight?.freight_currency}
+                          >
+                            <option>Select</option>
+                            <option value="RAND">RAND</option>
+                            <option value="USD">USD</option>
+                            <option value="INR">INR</option>
+                            <option value="EURO">EURO</option>
+                          </select>
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              fontWeight: 400,
+                              border: "0px",
+                              width: "100px",
+                              verticalAlign: "middle",
+                            }}
+                            type="text"
+                            onKeyPress={handlepresss}
+                            className="supplier_form"
+                            onChange={handlechangecalc}
+                            value={freight?.origin_pick_up}
+                            name="origin_pick_up"
+                            id="floatingInput"
+                            placeholder="0.00"
+                          />
+                        </td>
+                        <td>L/S</td>
+                        <td>23</td>
+                        <td>50</td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              fontWeight: 400,
+                              width: "50px",
+                              border: "0px",
+
+                              verticalAlign: "middle",
+                            }}
+                            type="text"
+                            onKeyPress={handlepresss}
+                            className="supplier_form"
+                            onChange={handlechangecalc}
+                            value={freight?.origin_pickup_gp}
+                            name="origin_pickup_gp"
+                            id="floatingInput"
+                            placeholder="0.00%"
+                          />
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              border: "0px",
+                              verticalAlign: "middle",
+                              width: "100px",
+                            }}
+                            value={finalori}
+                            className="supplier_form"
+                          />{" "}
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              width: "100px",
+                              border: "0px",
+                              verticalAlign: "middle",
+                            }}
+                            value={freight.roe_origin_currency}
+                            className="supplier_form"
+                          />
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              width: "100px",
+                              border: "0px",
+                              verticalAlign: "middle",
+                            }}
+                            value={parseFloat(
+                              finalori * freight.roe_origin_currency
+                            ).toFixed(2)}
+                            placeholder="0.00"
+                            className="supplier_form"
+                          />
+                        </td>
+                      </tr>
+                      <tr>
+                        <td></td>
+                        <td colSpan={5}>
+                          <strong> Total - Freight Charges</strong>
+                        </td>
+                        <td colSpan={4}> 970.00 </td>
+                        <td> 17,634.00 </td>
+                      </tr>
+
+                      {/* transit charges */}
+                      <tr>
+                        <td>Transit Charges</td>
+                        <td>Customs Clearing Fees</td>
+                        <td>
+                          <select
+                            className="select_supplier"
+                            style={{
+                              margin: 0,
+                              fontSize: 13,
+                              fontWeight: 700,
+                              paddingLeft: 5,
+                              border: 0,
+                            }}
+                            onChange={handlechangecalc}
+                            name="freight_currency"
+                            value={freight?.freight_currency}
+                          >
+                            <option>Select</option>
+                            <option value="RAND">RAND</option>
+                            <option value="USD">USD</option>
+                            <option value="INR">INR</option>
+                            <option value="EURO">EURO</option>
+                          </select>
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              fontWeight: 400,
+                              border: "0px",
+                              width: "100px",
+                              verticalAlign: "middle",
+                            }}
+                            type="text"
+                            onKeyPress={handlepresss}
+                            className="supplier_form"
+                            onChange={handlechangecalc}
+                            value={freight?.origin_pick_up}
+                            name="origin_pick_up"
+                            id="floatingInput"
+                            placeholder="0.00"
+                          />
+                        </td>
+                        <td>L/S</td>
+                        <td>23</td>
+                        <td>50</td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              fontWeight: 400,
+                              width: "50px",
+                              border: "0px",
+
+                              verticalAlign: "middle",
+                            }}
+                            type="text"
+                            onKeyPress={handlepresss}
+                            className="supplier_form"
+                            onChange={handlechangecalc}
+                            value={freight?.origin_pickup_gp}
+                            name="origin_pickup_gp"
+                            id="floatingInput"
+                            placeholder="0.00%"
+                          />
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              border: "0px",
+                              verticalAlign: "middle",
+                              width: "100px",
+                            }}
+                            value={finalori}
+                            className="supplier_form"
+                          />{" "}
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              width: "100px",
+                              border: "0px",
+                              verticalAlign: "middle",
+                            }}
+                            value={freight.roe_origin_currency}
+                            className="supplier_form"
+                          />
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              width: "100px",
+                              border: "0px",
+                              verticalAlign: "middle",
+                            }}
+                            value={parseFloat(
+                              finalori * freight.roe_origin_currency
+                            ).toFixed(2)}
+                            placeholder="0.00"
+                            className="supplier_form"
+                          />
+                        </td>
+                      </tr>
+                      <tr>
+                        <td> </td>
+                        <td>THC Levy</td>
+                        <td>
+                          <select
+                            className="select_supplier"
+                            style={{
+                              margin: 0,
+                              fontSize: 13,
+                              fontWeight: 700,
+                              paddingLeft: 5,
+                              border: 0,
+                            }}
+                            onChange={handlechangecalc}
+                            name="freight_currency"
+                            value={freight?.freight_currency}
+                          >
+                            <option>Select</option>
+                            <option value="RAND">RAND</option>
+                            <option value="USD">USD</option>
+                            <option value="INR">INR</option>
+                            <option value="EURO">EURO</option>
+                          </select>
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              fontWeight: 400,
+                              border: "0px",
+                              width: "100px",
+                              verticalAlign: "middle",
+                            }}
+                            type="text"
+                            onKeyPress={handlepresss}
+                            className="supplier_form"
+                            onChange={handlechangecalc}
+                            value={freight?.origin_pick_up}
+                            name="origin_pick_up"
+                            id="floatingInput"
+                            placeholder="0.00"
+                          />
+                        </td>
+                        <td>L/S</td>
+                        <td>23</td>
+                        <td>50</td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              fontWeight: 400,
+                              width: "50px",
+                              border: "0px",
+
+                              verticalAlign: "middle",
+                            }}
+                            type="text"
+                            onKeyPress={handlepresss}
+                            className="supplier_form"
+                            onChange={handlechangecalc}
+                            value={freight?.origin_pickup_gp}
+                            name="origin_pickup_gp"
+                            id="floatingInput"
+                            placeholder="0.00%"
+                          />
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              border: "0px",
+                              verticalAlign: "middle",
+                              width: "100px",
+                            }}
+                            value={finalori}
+                            className="supplier_form"
+                          />{" "}
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              width: "100px",
+                              border: "0px",
+                              verticalAlign: "middle",
+                            }}
+                            value={freight.roe_origin_currency}
+                            className="supplier_form"
+                          />
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              width: "100px",
+                              border: "0px",
+                              verticalAlign: "middle",
+                            }}
+                            value={parseFloat(
+                              finalori * freight.roe_origin_currency
+                            ).toFixed(2)}
+                            placeholder="0.00"
+                            className="supplier_form"
+                          />
+                        </td>
+                      </tr>
+                      <tr>
+                        <td> </td>
+                        <td>Unpack Charges</td>
+                        <td>
+                          <select
+                            className="select_supplier"
+                            style={{
+                              margin: 0,
+                              fontSize: 13,
+                              fontWeight: 700,
+                              paddingLeft: 5,
+                              border: 0,
+                            }}
+                            onChange={handlechangecalc}
+                            name="freight_currency"
+                            value={freight?.freight_currency}
+                          >
+                            <option>Select</option>
+                            <option value="RAND">RAND</option>
+                            <option value="USD">USD</option>
+                            <option value="INR">INR</option>
+                            <option value="EURO">EURO</option>
+                          </select>
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              fontWeight: 400,
+                              border: "0px",
+                              width: "100px",
+                              verticalAlign: "middle",
+                            }}
+                            type="text"
+                            onKeyPress={handlepresss}
+                            className="supplier_form"
+                            onChange={handlechangecalc}
+                            value={freight?.origin_pick_up}
+                            name="origin_pick_up"
+                            id="floatingInput"
+                            placeholder="0.00"
+                          />
+                        </td>
+                        <td>L/S</td>
+                        <td>23</td>
+                        <td>50</td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              fontWeight: 400,
+                              width: "50px",
+                              border: "0px",
+
+                              verticalAlign: "middle",
+                            }}
+                            type="text"
+                            onKeyPress={handlepresss}
+                            className="supplier_form"
+                            onChange={handlechangecalc}
+                            value={freight?.origin_pickup_gp}
+                            name="origin_pickup_gp"
+                            id="floatingInput"
+                            placeholder="0.00%"
+                          />
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              border: "0px",
+                              verticalAlign: "middle",
+                              width: "100px",
+                            }}
+                            value={finalori}
+                            className="supplier_form"
+                          />{" "}
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              width: "100px",
+                              border: "0px",
+                              verticalAlign: "middle",
+                            }}
+                            value={freight.roe_origin_currency}
+                            className="supplier_form"
+                          />
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              width: "100px",
+                              border: "0px",
+                              verticalAlign: "middle",
+                            }}
+                            value={parseFloat(
+                              finalori * freight.roe_origin_currency
+                            ).toFixed(2)}
+                            placeholder="0.00"
+                            className="supplier_form"
+                          />
+                        </td>
+                      </tr>
+                      <tr>
+                        <td> </td>
+                        <td>3rd Party CFS Charge: LCL Handling Out w/ms</td>
+                        <td>
+                          <select
+                            className="select_supplier"
+                            style={{
+                              margin: 0,
+                              fontSize: 13,
+                              fontWeight: 700,
+                              paddingLeft: 5,
+                              border: 0,
+                            }}
+                            onChange={handlechangecalc}
+                            name="freight_currency"
+                            value={freight?.freight_currency}
+                          >
+                            <option>Select</option>
+                            <option value="RAND">RAND</option>
+                            <option value="USD">USD</option>
+                            <option value="INR">INR</option>
+                            <option value="EURO">EURO</option>
+                          </select>
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              fontWeight: 400,
+                              border: "0px",
+                              width: "100px",
+                              verticalAlign: "middle",
+                            }}
+                            type="text"
+                            onKeyPress={handlepresss}
+                            className="supplier_form"
+                            onChange={handlechangecalc}
+                            value={freight?.origin_pick_up}
+                            name="origin_pick_up"
+                            id="floatingInput"
+                            placeholder="0.00"
+                          />
+                        </td>
+                        <td>L/S</td>
+                        <td>23</td>
+                        <td>50</td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              fontWeight: 400,
+                              width: "50px",
+                              border: "0px",
+
+                              verticalAlign: "middle",
+                            }}
+                            type="text"
+                            onKeyPress={handlepresss}
+                            className="supplier_form"
+                            onChange={handlechangecalc}
+                            value={freight?.origin_pickup_gp}
+                            name="origin_pickup_gp"
+                            id="floatingInput"
+                            placeholder="0.00%"
+                          />
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              border: "0px",
+                              verticalAlign: "middle",
+                              width: "100px",
+                            }}
+                            value={finalori}
+                            className="supplier_form"
+                          />{" "}
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              width: "100px",
+                              border: "0px",
+                              verticalAlign: "middle",
+                            }}
+                            value={freight.roe_origin_currency}
+                            className="supplier_form"
+                          />
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              width: "100px",
+                              border: "0px",
+                              verticalAlign: "middle",
+                            }}
+                            value={parseFloat(
+                              finalori * freight.roe_origin_currency
+                            ).toFixed(2)}
+                            placeholder="0.00"
+                            className="supplier_form"
+                          />
+                        </td>
+                      </tr>
+                      <tr>
+                        <td> </td>
+                        <td>Admin Charges</td>
+                        <td>
+                          <select
+                            className="select_supplier"
+                            style={{
+                              margin: 0,
+                              fontSize: 13,
+                              fontWeight: 700,
+                              paddingLeft: 5,
+                              border: 0,
+                            }}
+                            onChange={handlechangecalc}
+                            name="freight_currency"
+                            value={freight?.freight_currency}
+                          >
+                            <option>Select</option>
+                            <option value="RAND">RAND</option>
+                            <option value="USD">USD</option>
+                            <option value="INR">INR</option>
+                            <option value="EURO">EURO</option>
+                          </select>
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              fontWeight: 400,
+                              border: "0px",
+                              width: "100px",
+                              verticalAlign: "middle",
+                            }}
+                            type="text"
+                            onKeyPress={handlepresss}
+                            className="supplier_form"
+                            onChange={handlechangecalc}
+                            value={freight?.origin_pick_up}
+                            name="origin_pick_up"
+                            id="floatingInput"
+                            placeholder="0.00"
+                          />
+                        </td>
+                        <td>L/S</td>
+                        <td>23</td>
+                        <td>50</td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              fontWeight: 400,
+                              width: "50px",
+                              border: "0px",
+
+                              verticalAlign: "middle",
+                            }}
+                            type="text"
+                            onKeyPress={handlepresss}
+                            className="supplier_form"
+                            onChange={handlechangecalc}
+                            value={freight?.origin_pickup_gp}
+                            name="origin_pickup_gp"
+                            id="floatingInput"
+                            placeholder="0.00%"
+                          />
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              border: "0px",
+                              verticalAlign: "middle",
+                              width: "100px",
+                            }}
+                            value={finalori}
+                            className="supplier_form"
+                          />{" "}
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              width: "100px",
+                              border: "0px",
+                              verticalAlign: "middle",
+                            }}
+                            value={freight.roe_origin_currency}
+                            className="supplier_form"
+                          />
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              width: "100px",
+                              border: "0px",
+                              verticalAlign: "middle",
+                            }}
+                            value={parseFloat(
+                              finalori * freight.roe_origin_currency
+                            ).toFixed(2)}
+                            placeholder="0.00"
+                            className="supplier_form"
+                          />
+                        </td>
+                      </tr>
+                      <tr>
+                        <td> </td>
+                        <td>Port Cargo Dues</td>
+                        <td>
+                          <select
+                            className="select_supplier"
+                            style={{
+                              margin: 0,
+                              fontSize: 13,
+                              fontWeight: 700,
+                              paddingLeft: 5,
+                              border: 0,
+                            }}
+                            onChange={handlechangecalc}
+                            name="freight_currency"
+                            value={freight?.freight_currency}
+                          >
+                            <option>Select</option>
+                            <option value="RAND">RAND</option>
+                            <option value="USD">USD</option>
+                            <option value="INR">INR</option>
+                            <option value="EURO">EURO</option>
+                          </select>
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              fontWeight: 400,
+                              border: "0px",
+                              width: "100px",
+                              verticalAlign: "middle",
+                            }}
+                            type="text"
+                            onKeyPress={handlepresss}
+                            className="supplier_form"
+                            onChange={handlechangecalc}
+                            value={freight?.origin_pick_up}
+                            name="origin_pick_up"
+                            id="floatingInput"
+                            placeholder="0.00"
+                          />
+                        </td>
+                        <td>L/S</td>
+                        <td>23</td>
+                        <td>50</td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              fontWeight: 400,
+                              width: "50px",
+                              border: "0px",
+
+                              verticalAlign: "middle",
+                            }}
+                            type="text"
+                            onKeyPress={handlepresss}
+                            className="supplier_form"
+                            onChange={handlechangecalc}
+                            value={freight?.origin_pickup_gp}
+                            name="origin_pickup_gp"
+                            id="floatingInput"
+                            placeholder="0.00%"
+                          />
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              border: "0px",
+                              verticalAlign: "middle",
+                              width: "100px",
+                            }}
+                            value={finalori}
+                            className="supplier_form"
+                          />{" "}
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              width: "100px",
+                              border: "0px",
+                              verticalAlign: "middle",
+                            }}
+                            value={freight.roe_origin_currency}
+                            className="supplier_form"
+                          />
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              width: "100px",
+                              border: "0px",
+                              verticalAlign: "middle",
+                            }}
+                            value={parseFloat(
+                              finalori * freight.roe_origin_currency
+                            ).toFixed(2)}
+                            placeholder="0.00"
+                            className="supplier_form"
+                          />
+                        </td>
+                      </tr>
+                      <tr>
+                        <td> </td>
+                        <td>Advanced Load House Fee USD</td>
+                        <td>
+                          <select
+                            className="select_supplier"
+                            style={{
+                              margin: 0,
+                              fontSize: 13,
+                              fontWeight: 700,
+                              paddingLeft: 5,
+                              border: 0,
+                            }}
+                            onChange={handlechangecalc}
+                            name="freight_currency"
+                            value={freight?.freight_currency}
+                          >
+                            <option>Select</option>
+                            <option value="RAND">RAND</option>
+                            <option value="USD">USD</option>
+                            <option value="INR">INR</option>
+                            <option value="EURO">EURO</option>
+                          </select>
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              fontWeight: 400,
+                              border: "0px",
+                              width: "100px",
+                              verticalAlign: "middle",
+                            }}
+                            type="text"
+                            onKeyPress={handlepresss}
+                            className="supplier_form"
+                            onChange={handlechangecalc}
+                            value={freight?.origin_pick_up}
+                            name="origin_pick_up"
+                            id="floatingInput"
+                            placeholder="0.00"
+                          />
+                        </td>
+                        <td>L/S</td>
+                        <td>23</td>
+                        <td>50</td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              fontWeight: 400,
+                              width: "50px",
+                              border: "0px",
+
+                              verticalAlign: "middle",
+                            }}
+                            type="text"
+                            onKeyPress={handlepresss}
+                            className="supplier_form"
+                            onChange={handlechangecalc}
+                            value={freight?.origin_pickup_gp}
+                            name="origin_pickup_gp"
+                            id="floatingInput"
+                            placeholder="0.00%"
+                          />
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              border: "0px",
+                              verticalAlign: "middle",
+                              width: "100px",
+                            }}
+                            value={finalori}
+                            className="supplier_form"
+                          />{" "}
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              width: "100px",
+                              border: "0px",
+                              verticalAlign: "middle",
+                            }}
+                            value={freight.roe_origin_currency}
+                            className="supplier_form"
+                          />
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              width: "100px",
+                              border: "0px",
+                              verticalAlign: "middle",
+                            }}
+                            value={parseFloat(
+                              finalori * freight.roe_origin_currency
+                            ).toFixed(2)}
+                            placeholder="0.00"
+                            className="supplier_form"
+                          />
+                        </td>
+                      </tr>
+                      <tr>
+                        <td> </td>
+                        <td>Documentation Fee</td>
+                        <td>
+                          <select
+                            className="select_supplier"
+                            style={{
+                              margin: 0,
+                              fontSize: 13,
+                              fontWeight: 700,
+                              paddingLeft: 5,
+                              border: 0,
+                            }}
+                            onChange={handlechangecalc}
+                            name="freight_currency"
+                            value={freight?.freight_currency}
+                          >
+                            <option>Select</option>
+                            <option value="RAND">RAND</option>
+                            <option value="USD">USD</option>
+                            <option value="INR">INR</option>
+                            <option value="EURO">EURO</option>
+                          </select>
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              fontWeight: 400,
+                              border: "0px",
+                              width: "100px",
+                              verticalAlign: "middle",
+                            }}
+                            type="text"
+                            onKeyPress={handlepresss}
+                            className="supplier_form"
+                            onChange={handlechangecalc}
+                            value={freight?.origin_pick_up}
+                            name="origin_pick_up"
+                            id="floatingInput"
+                            placeholder="0.00"
+                          />
+                        </td>
+                        <td>L/S</td>
+                        <td>23</td>
+                        <td>50</td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              fontWeight: 400,
+                              width: "50px",
+                              border: "0px",
+
+                              verticalAlign: "middle",
+                            }}
+                            type="text"
+                            onKeyPress={handlepresss}
+                            className="supplier_form"
+                            onChange={handlechangecalc}
+                            value={freight?.origin_pickup_gp}
+                            name="origin_pickup_gp"
+                            id="floatingInput"
+                            placeholder="0.00%"
+                          />
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              border: "0px",
+                              verticalAlign: "middle",
+                              width: "100px",
+                            }}
+                            value={finalori}
+                            className="supplier_form"
+                          />{" "}
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              width: "100px",
+                              border: "0px",
+                              verticalAlign: "middle",
+                            }}
+                            value={freight.roe_origin_currency}
+                            className="supplier_form"
+                          />
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              width: "100px",
+                              border: "0px",
+                              verticalAlign: "middle",
+                            }}
+                            value={parseFloat(
+                              finalori * freight.roe_origin_currency
+                            ).toFixed(2)}
+                            placeholder="0.00"
+                            className="supplier_form"
+                          />
+                        </td>
+                      </tr>
+                      <tr>
+                        <td> </td>
+                        <td></td>
+                        <td>
+                          <select
+                            className="select_supplier"
+                            style={{
+                              margin: 0,
+                              fontSize: 13,
+                              fontWeight: 700,
+                              paddingLeft: 5,
+                              border: 0,
+                            }}
+                            onChange={handlechangecalc}
+                            name="freight_currency"
+                            value={freight?.freight_currency}
+                          >
+                            <option>Select</option>
+                            <option value="RAND">RAND</option>
+                            <option value="USD">USD</option>
+                            <option value="INR">INR</option>
+                            <option value="EURO">EURO</option>
+                          </select>
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              fontWeight: 400,
+                              border: "0px",
+                              width: "100px",
+                              verticalAlign: "middle",
+                            }}
+                            type="text"
+                            onKeyPress={handlepresss}
+                            className="supplier_form"
+                            onChange={handlechangecalc}
+                            value={freight?.origin_pick_up}
+                            name="origin_pick_up"
+                            id="floatingInput"
+                            placeholder="0.00"
+                          />
+                        </td>
+                        <td>L/S</td>
+                        <td>23</td>
+                        <td>50</td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              fontWeight: 400,
+                              width: "50px",
+                              border: "0px",
+
+                              verticalAlign: "middle",
+                            }}
+                            type="text"
+                            onKeyPress={handlepresss}
+                            className="supplier_form"
+                            onChange={handlechangecalc}
+                            value={freight?.origin_pickup_gp}
+                            name="origin_pickup_gp"
+                            id="floatingInput"
+                            placeholder="0.00%"
+                          />
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              border: "0px",
+                              verticalAlign: "middle",
+                              width: "100px",
+                            }}
+                            value={finalori}
+                            className="supplier_form"
+                          />{" "}
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              width: "100px",
+                              border: "0px",
+                              verticalAlign: "middle",
+                            }}
+                            value={freight.roe_origin_currency}
+                            className="supplier_form"
+                          />
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              width: "100px",
+                              border: "0px",
+                              verticalAlign: "middle",
+                            }}
+                            value={parseFloat(
+                              finalori * freight.roe_origin_currency
+                            ).toFixed(2)}
+                            placeholder="0.00"
+                            className="supplier_form"
+                          />
+                        </td>
+                      </tr>
+                      <tr>
+                        <td> </td>
+                        <td>Documentation Fee</td>
+                        <td>
+                          <select
+                            className="select_supplier"
+                            style={{
+                              margin: 0,
+                              fontSize: 13,
+                              fontWeight: 700,
+                              paddingLeft: 5,
+                              border: 0,
+                            }}
+                            onChange={handlechangecalc}
+                            name="freight_currency"
+                            value={freight?.freight_currency}
+                          >
+                            <option>Select</option>
+                            <option value="RAND">RAND</option>
+                            <option value="USD">USD</option>
+                            <option value="INR">INR</option>
+                            <option value="EURO">EURO</option>
+                          </select>
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              fontWeight: 400,
+                              border: "0px",
+                              width: "100px",
+                              verticalAlign: "middle",
+                            }}
+                            type="text"
+                            onKeyPress={handlepresss}
+                            className="supplier_form"
+                            onChange={handlechangecalc}
+                            value={freight?.origin_pick_up}
+                            name="origin_pick_up"
+                            id="floatingInput"
+                            placeholder="0.00"
+                          />
+                        </td>
+                        <td>L/S</td>
+                        <td>23</td>
+                        <td>50</td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              fontWeight: 400,
+                              width: "50px",
+                              border: "0px",
+
+                              verticalAlign: "middle",
+                            }}
+                            type="text"
+                            onKeyPress={handlepresss}
+                            className="supplier_form"
+                            onChange={handlechangecalc}
+                            value={freight?.origin_pickup_gp}
+                            name="origin_pickup_gp"
+                            id="floatingInput"
+                            placeholder="0.00%"
+                          />
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              border: "0px",
+                              verticalAlign: "middle",
+                              width: "100px",
+                            }}
+                            value={finalori}
+                            className="supplier_form"
+                          />{" "}
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              width: "100px",
+                              border: "0px",
+                              verticalAlign: "middle",
+                            }}
+                            value={freight.roe_origin_currency}
+                            className="supplier_form"
+                          />
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              width: "100px",
+                              border: "0px",
+                              verticalAlign: "middle",
+                            }}
+                            value={parseFloat(
+                              finalori * freight.roe_origin_currency
+                            ).toFixed(2)}
+                            placeholder="0.00"
+                            className="supplier_form"
+                          />
+                        </td>
+                      </tr>
+                      <tr>
+                        <td></td>
+                        <td colSpan={5}>
+                          <strong> Total - Transit Charges</strong>
+                        </td>
+                        <td colSpan={4}> 970.00 </td>
+                        <td> 17,634.00 </td>
+                      </tr>
+                      {/* Destination Charges */}
+                      <tr>
+                        <td>Destination Charges </td>
+                        <td>Customs Clearing Fees</td>
+                        <td>
+                          <select
+                            className="select_supplier"
+                            style={{
+                              margin: 0,
+                              fontSize: 13,
+                              fontWeight: 700,
+                              paddingLeft: 5,
+                              border: 0,
+                            }}
+                            onChange={handlechangecalc}
+                            name="freight_currency"
+                            value={freight?.freight_currency}
+                          >
+                            <option>Select</option>
+                            <option value="RAND">RAND</option>
+                            <option value="USD">USD</option>
+                            <option value="INR">INR</option>
+                            <option value="EURO">EURO</option>
+                          </select>
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              fontWeight: 400,
+                              border: "0px",
+                              width: "100px",
+                              verticalAlign: "middle",
+                            }}
+                            type="text"
+                            onKeyPress={handlepresss}
+                            className="supplier_form"
+                            onChange={handlechangecalc}
+                            value={freight?.origin_pick_up}
+                            name="origin_pick_up"
+                            id="floatingInput"
+                            placeholder="0.00"
+                          />
+                        </td>
+                        <td>L/S</td>
+                        <td>23</td>
+                        <td>50</td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              fontWeight: 400,
+                              width: "50px",
+                              border: "0px",
+
+                              verticalAlign: "middle",
+                            }}
+                            type="text"
+                            onKeyPress={handlepresss}
+                            className="supplier_form"
+                            onChange={handlechangecalc}
+                            value={freight?.origin_pickup_gp}
+                            name="origin_pickup_gp"
+                            id="floatingInput"
+                            placeholder="0.00%"
+                          />
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              border: "0px",
+                              verticalAlign: "middle",
+                              width: "100px",
+                            }}
+                            value={finalori}
+                            className="supplier_form"
+                          />{" "}
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              width: "100px",
+                              border: "0px",
+                              verticalAlign: "middle",
+                            }}
+                            value={freight.roe_origin_currency}
+                            className="supplier_form"
+                          />
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              width: "100px",
+                              border: "0px",
+                              verticalAlign: "middle",
+                            }}
+                            value={parseFloat(
+                              finalori * freight.roe_origin_currency
+                            ).toFixed(2)}
+                            placeholder="0.00"
+                            className="supplier_form"
+                          />
+                        </td>
+                      </tr>
+                      <tr>
+                        {/* Destination Charges */}
+                        <td> </td>
+                        <td>THC Levy</td>
+                        <td>
+                          <select
+                            className="select_supplier"
+                            style={{
+                              margin: 0,
+                              fontSize: 13,
+                              fontWeight: 700,
+                              paddingLeft: 5,
+                              border: 0,
+                            }}
+                            onChange={handlechangecalc}
+                            name="freight_currency"
+                            value={freight?.freight_currency}
+                          >
+                            <option>Select</option>
+                            <option value="RAND">RAND</option>
+                            <option value="USD">USD</option>
+                            <option value="INR">INR</option>
+                            <option value="EURO">EURO</option>
+                          </select>
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              fontWeight: 400,
+                              border: "0px",
+                              width: "100px",
+                              verticalAlign: "middle",
+                            }}
+                            type="text"
+                            onKeyPress={handlepresss}
+                            className="supplier_form"
+                            onChange={handlechangecalc}
+                            value={freight?.origin_pick_up}
+                            name="origin_pick_up"
+                            id="floatingInput"
+                            placeholder="0.00"
+                          />
+                        </td>
+                        <td>L/S</td>
+                        <td>23</td>
+                        <td>50</td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              fontWeight: 400,
+                              width: "50px",
+                              border: "0px",
+
+                              verticalAlign: "middle",
+                            }}
+                            type="text"
+                            onKeyPress={handlepresss}
+                            className="supplier_form"
+                            onChange={handlechangecalc}
+                            value={freight?.origin_pickup_gp}
+                            name="origin_pickup_gp"
+                            id="floatingInput"
+                            placeholder="0.00%"
+                          />
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              border: "0px",
+                              verticalAlign: "middle",
+                              width: "100px",
+                            }}
+                            value={finalori}
+                            className="supplier_form"
+                          />{" "}
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              width: "100px",
+                              border: "0px",
+                              verticalAlign: "middle",
+                            }}
+                            value={freight.roe_origin_currency}
+                            className="supplier_form"
+                          />
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              width: "100px",
+                              border: "0px",
+                              verticalAlign: "middle",
+                            }}
+                            value={parseFloat(
+                              finalori * freight.roe_origin_currency
+                            ).toFixed(2)}
+                            placeholder="0.00"
+                            className="supplier_form"
+                          />
+                        </td>
+                      </tr>
+                      <tr>
+                        {/* Destination Charges */}
+                        <td> </td>
+                        <td>Unpack Charges</td>
+                        <td>
+                          <select
+                            className="select_supplier"
+                            style={{
+                              margin: 0,
+                              fontSize: 13,
+                              fontWeight: 700,
+                              paddingLeft: 5,
+                              border: 0,
+                            }}
+                            onChange={handlechangecalc}
+                            name="freight_currency"
+                            value={freight?.freight_currency}
+                          >
+                            <option>Select</option>
+                            <option value="RAND">RAND</option>
+                            <option value="USD">USD</option>
+                            <option value="INR">INR</option>
+                            <option value="EURO">EURO</option>
+                          </select>
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              fontWeight: 400,
+                              border: "0px",
+                              width: "100px",
+                              verticalAlign: "middle",
+                            }}
+                            type="text"
+                            onKeyPress={handlepresss}
+                            className="supplier_form"
+                            onChange={handlechangecalc}
+                            value={freight?.origin_pick_up}
+                            name="origin_pick_up"
+                            id="floatingInput"
+                            placeholder="0.00"
+                          />
+                        </td>
+                        <td>L/S</td>
+                        <td>23</td>
+                        <td>50</td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              fontWeight: 400,
+                              width: "50px",
+                              border: "0px",
+
+                              verticalAlign: "middle",
+                            }}
+                            type="text"
+                            onKeyPress={handlepresss}
+                            className="supplier_form"
+                            onChange={handlechangecalc}
+                            value={freight?.origin_pickup_gp}
+                            name="origin_pickup_gp"
+                            id="floatingInput"
+                            placeholder="0.00%"
+                          />
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              border: "0px",
+                              verticalAlign: "middle",
+                              width: "100px",
+                            }}
+                            value={finalori}
+                            className="supplier_form"
+                          />{" "}
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              width: "100px",
+                              border: "0px",
+                              verticalAlign: "middle",
+                            }}
+                            value={freight.roe_origin_currency}
+                            className="supplier_form"
+                          />
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              width: "100px",
+                              border: "0px",
+                              verticalAlign: "middle",
+                            }}
+                            value={parseFloat(
+                              finalori * freight.roe_origin_currency
+                            ).toFixed(2)}
+                            placeholder="0.00"
+                            className="supplier_form"
+                          />
+                        </td>
+                      </tr>
+                      <tr>
+                        {/* Destination Charges */}
+                        <td> </td>
+                        <td>Fuel Surcharge Levy w/m</td>
+                        <td>
+                          <select
+                            className="select_supplier"
+                            style={{
+                              margin: 0,
+                              fontSize: 13,
+                              fontWeight: 700,
+                              paddingLeft: 5,
+                              border: 0,
+                            }}
+                            onChange={handlechangecalc}
+                            name="freight_currency"
+                            value={freight?.freight_currency}
+                          >
+                            <option>Select</option>
+                            <option value="RAND">RAND</option>
+                            <option value="USD">USD</option>
+                            <option value="INR">INR</option>
+                            <option value="EURO">EURO</option>
+                          </select>
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              fontWeight: 400,
+                              border: "0px",
+                              width: "100px",
+                              verticalAlign: "middle",
+                            }}
+                            type="text"
+                            onKeyPress={handlepresss}
+                            className="supplier_form"
+                            onChange={handlechangecalc}
+                            value={freight?.origin_pick_up}
+                            name="origin_pick_up"
+                            id="floatingInput"
+                            placeholder="0.00"
+                          />
+                        </td>
+                        <td>L/S</td>
+                        <td>23</td>
+                        <td>50</td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              fontWeight: 400,
+                              width: "50px",
+                              border: "0px",
+
+                              verticalAlign: "middle",
+                            }}
+                            type="text"
+                            onKeyPress={handlepresss}
+                            className="supplier_form"
+                            onChange={handlechangecalc}
+                            value={freight?.origin_pickup_gp}
+                            name="origin_pickup_gp"
+                            id="floatingInput"
+                            placeholder="0.00%"
+                          />
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              border: "0px",
+                              verticalAlign: "middle",
+                              width: "100px",
+                            }}
+                            value={finalori}
+                            className="supplier_form"
+                          />{" "}
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              width: "100px",
+                              border: "0px",
+                              verticalAlign: "middle",
+                            }}
+                            value={freight.roe_origin_currency}
+                            className="supplier_form"
+                          />
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              width: "100px",
+                              border: "0px",
+                              verticalAlign: "middle",
+                            }}
+                            value={parseFloat(
+                              finalori * freight.roe_origin_currency
+                            ).toFixed(2)}
+                            placeholder="0.00"
+                            className="supplier_form"
+                          />
+                        </td>
+                      </tr>
+                      <tr>
+                        {/* Destination Charges */}
+                        <td> </td>
+                        <td>Admin Charges</td>
+                        <td>
+                          <select
+                            className="select_supplier"
+                            style={{
+                              margin: 0,
+                              fontSize: 13,
+                              fontWeight: 700,
+                              paddingLeft: 5,
+                              border: 0,
+                            }}
+                            onChange={handlechangecalc}
+                            name="freight_currency"
+                            value={freight?.freight_currency}
+                          >
+                            <option>Select</option>
+                            <option value="RAND">RAND</option>
+                            <option value="USD">USD</option>
+                            <option value="INR">INR</option>
+                            <option value="EURO">EURO</option>
+                          </select>
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              fontWeight: 400,
+                              border: "0px",
+                              width: "100px",
+                              verticalAlign: "middle",
+                            }}
+                            type="text"
+                            onKeyPress={handlepresss}
+                            className="supplier_form"
+                            onChange={handlechangecalc}
+                            value={freight?.origin_pick_up}
+                            name="origin_pick_up"
+                            id="floatingInput"
+                            placeholder="0.00"
+                          />
+                        </td>
+                        <td>L/S</td>
+                        <td>23</td>
+                        <td>50</td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              fontWeight: 400,
+                              width: "50px",
+                              border: "0px",
+
+                              verticalAlign: "middle",
+                            }}
+                            type="text"
+                            onKeyPress={handlepresss}
+                            className="supplier_form"
+                            onChange={handlechangecalc}
+                            value={freight?.origin_pickup_gp}
+                            name="origin_pickup_gp"
+                            id="floatingInput"
+                            placeholder="0.00%"
+                          />
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              border: "0px",
+                              verticalAlign: "middle",
+                              width: "100px",
+                            }}
+                            value={finalori}
+                            className="supplier_form"
+                          />{" "}
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              width: "100px",
+                              border: "0px",
+                              verticalAlign: "middle",
+                            }}
+                            value={freight.roe_origin_currency}
+                            className="supplier_form"
+                          />
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              width: "100px",
+                              border: "0px",
+                              verticalAlign: "middle",
+                            }}
+                            value={parseFloat(
+                              finalori * freight.roe_origin_currency
+                            ).toFixed(2)}
+                            placeholder="0.00"
+                            className="supplier_form"
+                          />
+                        </td>
+                      </tr>
+                      <tr>
+                        {/* Destination Charges */}
+                        <td> </td>
+                        <td>Port Cargo Dues</td>
+                        <td>
+                          <select
+                            className="select_supplier"
+                            style={{
+                              margin: 0,
+                              fontSize: 13,
+                              fontWeight: 700,
+                              paddingLeft: 5,
+                              border: 0,
+                            }}
+                            onChange={handlechangecalc}
+                            name="freight_currency"
+                            value={freight?.freight_currency}
+                          >
+                            <option>Select</option>
+                            <option value="RAND">RAND</option>
+                            <option value="USD">USD</option>
+                            <option value="INR">INR</option>
+                            <option value="EURO">EURO</option>
+                          </select>
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              fontWeight: 400,
+                              border: "0px",
+                              width: "100px",
+                              verticalAlign: "middle",
+                            }}
+                            type="text"
+                            onKeyPress={handlepresss}
+                            className="supplier_form"
+                            onChange={handlechangecalc}
+                            value={freight?.origin_pick_up}
+                            name="origin_pick_up"
+                            id="floatingInput"
+                            placeholder="0.00"
+                          />
+                        </td>
+                        <td>L/S</td>
+                        <td>23</td>
+                        <td>50</td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              fontWeight: 400,
+                              width: "50px",
+                              border: "0px",
+
+                              verticalAlign: "middle",
+                            }}
+                            type="text"
+                            onKeyPress={handlepresss}
+                            className="supplier_form"
+                            onChange={handlechangecalc}
+                            value={freight?.origin_pickup_gp}
+                            name="origin_pickup_gp"
+                            id="floatingInput"
+                            placeholder="0.00%"
+                          />
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              border: "0px",
+                              verticalAlign: "middle",
+                              width: "100px",
+                            }}
+                            value={finalori}
+                            className="supplier_form"
+                          />{" "}
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              width: "100px",
+                              border: "0px",
+                              verticalAlign: "middle",
+                            }}
+                            value={freight.roe_origin_currency}
+                            className="supplier_form"
+                          />
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              width: "100px",
+                              border: "0px",
+                              verticalAlign: "middle",
+                            }}
+                            value={parseFloat(
+                              finalori * freight.roe_origin_currency
+                            ).toFixed(2)}
+                            placeholder="0.00"
+                            className="supplier_form"
+                          />
+                        </td>
+                      </tr>
+                      <tr>
+                        {/* Destination Charges */}
+                        <td> </td>
+                        <td>Advanced Load House Fee USD</td>
+                        <td>
+                          <select
+                            className="select_supplier"
+                            style={{
+                              margin: 0,
+                              fontSize: 13,
+                              fontWeight: 700,
+                              paddingLeft: 5,
+                              border: 0,
+                            }}
+                            onChange={handlechangecalc}
+                            name="freight_currency"
+                            value={freight?.freight_currency}
+                          >
+                            <option>Select</option>
+                            <option value="RAND">RAND</option>
+                            <option value="USD">USD</option>
+                            <option value="INR">INR</option>
+                            <option value="EURO">EURO</option>
+                          </select>
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              fontWeight: 400,
+                              border: "0px",
+                              width: "100px",
+                              verticalAlign: "middle",
+                            }}
+                            type="text"
+                            onKeyPress={handlepresss}
+                            className="supplier_form"
+                            onChange={handlechangecalc}
+                            value={freight?.origin_pick_up}
+                            name="origin_pick_up"
+                            id="floatingInput"
+                            placeholder="0.00"
+                          />
+                        </td>
+                        <td>L/S</td>
+                        <td>23</td>
+                        <td>50</td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              fontWeight: 400,
+                              width: "50px",
+                              border: "0px",
+
+                              verticalAlign: "middle",
+                            }}
+                            type="text"
+                            onKeyPress={handlepresss}
+                            className="supplier_form"
+                            onChange={handlechangecalc}
+                            value={freight?.origin_pickup_gp}
+                            name="origin_pickup_gp"
+                            id="floatingInput"
+                            placeholder="0.00%"
+                          />
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              border: "0px",
+                              verticalAlign: "middle",
+                              width: "100px",
+                            }}
+                            value={finalori}
+                            className="supplier_form"
+                          />{" "}
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              width: "100px",
+                              border: "0px",
+                              verticalAlign: "middle",
+                            }}
+                            value={freight.roe_origin_currency}
+                            className="supplier_form"
+                          />
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              width: "100px",
+                              border: "0px",
+                              verticalAlign: "middle",
+                            }}
+                            value={parseFloat(
+                              finalori * freight.roe_origin_currency
+                            ).toFixed(2)}
+                            placeholder="0.00"
+                            className="supplier_form"
+                          />
+                        </td>
+                      </tr>
+                      <tr>
+                        {/* Destination Charges */}
+                        <td> </td>
+                        <td>3rd Party CFS Charge: LCL Handling Out w/m</td>
+                        <td>
+                          <select
+                            className="select_supplier"
+                            style={{
+                              margin: 0,
+                              fontSize: 13,
+                              fontWeight: 700,
+                              paddingLeft: 5,
+                              border: 0,
+                            }}
+                            onChange={handlechangecalc}
+                            name="freight_currency"
+                            value={freight?.freight_currency}
+                          >
+                            <option>Select</option>
+                            <option value="RAND">RAND</option>
+                            <option value="USD">USD</option>
+                            <option value="INR">INR</option>
+                            <option value="EURO">EURO</option>
+                          </select>
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              fontWeight: 400,
+                              border: "0px",
+                              width: "100px",
+                              verticalAlign: "middle",
+                            }}
+                            type="text"
+                            onKeyPress={handlepresss}
+                            className="supplier_form"
+                            onChange={handlechangecalc}
+                            value={freight?.origin_pick_up}
+                            name="origin_pick_up"
+                            id="floatingInput"
+                            placeholder="0.00"
+                          />
+                        </td>
+                        <td>L/S</td>
+                        <td>23</td>
+                        <td>50</td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              fontWeight: 400,
+                              width: "50px",
+                              border: "0px",
+
+                              verticalAlign: "middle",
+                            }}
+                            type="text"
+                            onKeyPress={handlepresss}
+                            className="supplier_form"
+                            onChange={handlechangecalc}
+                            value={freight?.origin_pickup_gp}
+                            name="origin_pickup_gp"
+                            id="floatingInput"
+                            placeholder="0.00%"
+                          />
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              border: "0px",
+                              verticalAlign: "middle",
+                              width: "100px",
+                            }}
+                            value={finalori}
+                            className="supplier_form"
+                          />{" "}
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              width: "100px",
+                              border: "0px",
+                              verticalAlign: "middle",
+                            }}
+                            value={freight.roe_origin_currency}
+                            className="supplier_form"
+                          />
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              width: "100px",
+                              border: "0px",
+                              verticalAlign: "middle",
+                            }}
+                            value={parseFloat(
+                              finalori * freight.roe_origin_currency
+                            ).toFixed(2)}
+                            placeholder="0.00"
+                            className="supplier_form"
+                          />
+                        </td>
+                      </tr>
+                      <tr>
+                        {/* Destination Charges */}
+                        <td> </td>
+                        <td>Delivery Charges</td>
+                        <td>
+                          <select
+                            className="select_supplier"
+                            style={{
+                              margin: 0,
+                              fontSize: 13,
+                              fontWeight: 700,
+                              paddingLeft: 5,
+                              border: 0,
+                            }}
+                            onChange={handlechangecalc}
+                            name="freight_currency"
+                            value={freight?.freight_currency}
+                          >
+                            <option>Select</option>
+                            <option value="RAND">RAND</option>
+                            <option value="USD">USD</option>
+                            <option value="INR">INR</option>
+                            <option value="EURO">EURO</option>
+                          </select>
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              fontWeight: 400,
+                              border: "0px",
+                              width: "100px",
+                              verticalAlign: "middle",
+                            }}
+                            type="text"
+                            onKeyPress={handlepresss}
+                            className="supplier_form"
+                            onChange={handlechangecalc}
+                            value={freight?.origin_pick_up}
+                            name="origin_pick_up"
+                            id="floatingInput"
+                            placeholder="0.00"
+                          />
+                        </td>
+                        <td>L/S</td>
+                        <td>23</td>
+                        <td>50</td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              fontWeight: 400,
+                              width: "50px",
+                              border: "0px",
+
+                              verticalAlign: "middle",
+                            }}
+                            type="text"
+                            onKeyPress={handlepresss}
+                            className="supplier_form"
+                            onChange={handlechangecalc}
+                            value={freight?.origin_pickup_gp}
+                            name="origin_pickup_gp"
+                            id="floatingInput"
+                            placeholder="0.00%"
+                          />
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              border: "0px",
+                              verticalAlign: "middle",
+                              width: "100px",
+                            }}
+                            value={finalori}
+                            className="supplier_form"
+                          />{" "}
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              width: "100px",
+                              border: "0px",
+                              verticalAlign: "middle",
+                            }}
+                            value={freight.roe_origin_currency}
+                            className="supplier_form"
+                          />
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              width: "100px",
+                              border: "0px",
+                              verticalAlign: "middle",
+                            }}
+                            value={parseFloat(
+                              finalori * freight.roe_origin_currency
+                            ).toFixed(2)}
+                            placeholder="0.00"
+                            className="supplier_form"
+                          />
+                        </td>
+                      </tr>
+                      <tr>
+                        {/* Destination Charges */}
+                        <td> </td>
+                        <td>Fuel Surcharge</td>
+                        <td>
+                          <select
+                            className="select_supplier"
+                            style={{
+                              margin: 0,
+                              fontSize: 13,
+                              fontWeight: 700,
+                              paddingLeft: 5,
+                              border: 0,
+                            }}
+                            onChange={handlechangecalc}
+                            name="freight_currency"
+                            value={freight?.freight_currency}
+                          >
+                            <option>Select</option>
+                            <option value="RAND">RAND</option>
+                            <option value="USD">USD</option>
+                            <option value="INR">INR</option>
+                            <option value="EURO">EURO</option>
+                          </select>
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              fontWeight: 400,
+                              border: "0px",
+                              width: "100px",
+                              verticalAlign: "middle",
+                            }}
+                            type="text"
+                            onKeyPress={handlepresss}
+                            className="supplier_form"
+                            onChange={handlechangecalc}
+                            value={freight?.origin_pick_up}
+                            name="origin_pick_up"
+                            id="floatingInput"
+                            placeholder="0.00"
+                          />
+                        </td>
+                        <td>L/S</td>
+                        <td>23</td>
+                        <td>50</td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              fontWeight: 400,
+                              width: "50px",
+                              border: "0px",
+
+                              verticalAlign: "middle",
+                            }}
+                            type="text"
+                            onKeyPress={handlepresss}
+                            className="supplier_form"
+                            onChange={handlechangecalc}
+                            value={freight?.origin_pickup_gp}
+                            name="origin_pickup_gp"
+                            id="floatingInput"
+                            placeholder="0.00%"
+                          />
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              border: "0px",
+                              verticalAlign: "middle",
+                              width: "100px",
+                            }}
+                            value={finalori}
+                            className="supplier_form"
+                          />{" "}
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              width: "100px",
+                              border: "0px",
+                              verticalAlign: "middle",
+                            }}
+                            value={freight.roe_origin_currency}
+                            className="supplier_form"
+                          />
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              width: "100px",
+                              border: "0px",
+                              verticalAlign: "middle",
+                            }}
+                            value={parseFloat(
+                              finalori * freight.roe_origin_currency
+                            ).toFixed(2)}
+                            placeholder="0.00"
+                            className="supplier_form"
+                          />
+                        </td>
+                      </tr>
+
+                      <tr>
+                        <td></td>
+                        <td colSpan={5}>
+                          <strong> Total - Destination Charges </strong>
+                        </td>
+                        <td colSpan={4}> 970.00 </td>
+                        <td> 17,634.00 </td>
+                      </tr>
+                      {/* admin charges */}
+                      <tr>
+                        {/* Destination Charges */}
+                        <td> Admin Charges</td>
+                        <td>Agency fee</td>
+                        <td>
+                          <select
+                            className="select_supplier"
+                            style={{
+                              margin: 0,
+                              fontSize: 13,
+                              fontWeight: 700,
+                              paddingLeft: 5,
+                              border: 0,
+                            }}
+                            onChange={handlechangecalc}
+                            name="freight_currency"
+                            value={freight?.freight_currency}
+                          >
+                            <option>Select</option>
+                            <option value="RAND">RAND</option>
+                            <option value="USD">USD</option>
+                            <option value="INR">INR</option>
+                            <option value="EURO">EURO</option>
+                          </select>
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              fontWeight: 400,
+                              border: "0px",
+                              width: "100px",
+                              verticalAlign: "middle",
+                            }}
+                            type="text"
+                            onKeyPress={handlepresss}
+                            className="supplier_form"
+                            onChange={handlechangecalc}
+                            value={freight?.origin_pick_up}
+                            name="origin_pick_up"
+                            id="floatingInput"
+                            placeholder="0.00"
+                          />
+                        </td>
+                        <td>L/S</td>
+                        <td>23</td>
+                        <td>50</td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              fontWeight: 400,
+                              width: "50px",
+                              border: "0px",
+
+                              verticalAlign: "middle",
+                            }}
+                            type="text"
+                            onKeyPress={handlepresss}
+                            className="supplier_form"
+                            onChange={handlechangecalc}
+                            value={freight?.origin_pickup_gp}
+                            name="origin_pickup_gp"
+                            id="floatingInput"
+                            placeholder="0.00%"
+                          />
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              border: "0px",
+                              verticalAlign: "middle",
+                              width: "100px",
+                            }}
+                            value={finalori}
+                            className="supplier_form"
+                          />{" "}
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              width: "100px",
+                              border: "0px",
+                              verticalAlign: "middle",
+                            }}
+                            value={freight.roe_origin_currency}
+                            className="supplier_form"
+                          />
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              width: "100px",
+                              border: "0px",
+                              verticalAlign: "middle",
+                            }}
+                            value={parseFloat(
+                              finalori * freight.roe_origin_currency
+                            ).toFixed(2)}
+                            placeholder="0.00"
+                            className="supplier_form"
+                          />
+                        </td>
+                      </tr>
+                      <tr>
+                        <td> </td>
+                        <td>Disbursement fee</td>
+                        <td>
+                          <select
+                            className="select_supplier"
+                            style={{
+                              margin: 0,
+                              fontSize: 13,
+                              fontWeight: 700,
+                              paddingLeft: 5,
+                              border: 0,
+                            }}
+                            onChange={handlechangecalc}
+                            name="freight_currency"
+                            value={freight?.freight_currency}
+                          >
+                            <option>Select</option>
+                            <option value="RAND">RAND</option>
+                            <option value="USD">USD</option>
+                            <option value="INR">INR</option>
+                            <option value="EURO">EURO</option>
+                          </select>
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              fontWeight: 400,
+                              border: "0px",
+                              width: "100px",
+                              verticalAlign: "middle",
+                            }}
+                            type="text"
+                            onKeyPress={handlepresss}
+                            className="supplier_form"
+                            onChange={handlechangecalc}
+                            value={freight?.origin_pick_up}
+                            name="origin_pick_up"
+                            id="floatingInput"
+                            placeholder="0.00"
+                          />
+                        </td>
+                        <td>L/S</td>
+                        <td>23</td>
+                        <td>50</td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              fontWeight: 400,
+                              width: "50px",
+                              border: "0px",
+
+                              verticalAlign: "middle",
+                            }}
+                            type="text"
+                            onKeyPress={handlepresss}
+                            className="supplier_form"
+                            onChange={handlechangecalc}
+                            value={freight?.origin_pickup_gp}
+                            name="origin_pickup_gp"
+                            id="floatingInput"
+                            placeholder="0.00%"
+                          />
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              border: "0px",
+                              verticalAlign: "middle",
+                              width: "100px",
+                            }}
+                            value={finalori}
+                            className="supplier_form"
+                          />{" "}
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              width: "100px",
+                              border: "0px",
+                              verticalAlign: "middle",
+                            }}
+                            value={freight.roe_origin_currency}
+                            className="supplier_form"
+                          />
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              width: "100px",
+                              border: "0px",
+                              verticalAlign: "middle",
+                            }}
+                            value={parseFloat(
+                              finalori * freight.roe_origin_currency
+                            ).toFixed(2)}
+                            placeholder="0.00"
+                            className="supplier_form"
+                          />
+                        </td>
+                      </tr>
+                      <tr>
+                        <td> </td>
+                        <td>Documentation & Admin Fee</td>
+                        <td>
+                          <select
+                            className="select_supplier"
+                            style={{
+                              margin: 0,
+                              fontSize: 13,
+                              fontWeight: 700,
+                              paddingLeft: 5,
+                              border: 0,
+                            }}
+                            onChange={handlechangecalc}
+                            name="freight_currency"
+                            value={freight?.freight_currency}
+                          >
+                            <option>Select</option>
+                            <option value="RAND">RAND</option>
+                            <option value="USD">USD</option>
+                            <option value="INR">INR</option>
+                            <option value="EURO">EURO</option>
+                          </select>
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              fontWeight: 400,
+                              border: "0px",
+                              width: "100px",
+                              verticalAlign: "middle",
+                            }}
+                            type="text"
+                            onKeyPress={handlepresss}
+                            className="supplier_form"
+                            onChange={handlechangecalc}
+                            value={freight?.origin_pick_up}
+                            name="origin_pick_up"
+                            id="floatingInput"
+                            placeholder="0.00"
+                          />
+                        </td>
+                        <td>L/S</td>
+                        <td>23</td>
+                        <td>50</td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              fontWeight: 400,
+                              width: "50px",
+                              border: "0px",
+
+                              verticalAlign: "middle",
+                            }}
+                            type="text"
+                            onKeyPress={handlepresss}
+                            className="supplier_form"
+                            onChange={handlechangecalc}
+                            value={freight?.origin_pickup_gp}
+                            name="origin_pickup_gp"
+                            id="floatingInput"
+                            placeholder="0.00%"
+                          />
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              border: "0px",
+                              verticalAlign: "middle",
+                              width: "100px",
+                            }}
+                            value={finalori}
+                            className="supplier_form"
+                          />{" "}
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              width: "100px",
+                              border: "0px",
+                              verticalAlign: "middle",
+                            }}
+                            value={freight.roe_origin_currency}
+                            className="supplier_form"
+                          />
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              width: "100px",
+                              border: "0px",
+                              verticalAlign: "middle",
+                            }}
+                            value={parseFloat(
+                              finalori * freight.roe_origin_currency
+                            ).toFixed(2)}
+                            placeholder="0.00"
+                            className="supplier_form"
+                          />
+                        </td>
+                      </tr>
+                      <tr>
+                        <td></td>
+                        <td colSpan={5}>
+                          <strong> Total - Admin Charges</strong>
+                        </td>
+                        <td colSpan={4}> 970.00 </td>
+                        <td> 17,634.00 </td>
+                      </tr>
+                    </tbody>
+                  </table>
+
+                  <div className="text-center mt-3">
                     <button className="ship_btn" onClick={apihit}>
                       Get Quote
                     </button>

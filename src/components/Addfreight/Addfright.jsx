@@ -104,7 +104,7 @@ const Addfright = () => {
       .catch((error) => {
         console.log(error.response.data.data);
       });
-  };
+  };           
   const handleclick = () => {
     handlevalidate(data);
   };
@@ -178,6 +178,9 @@ const Addfright = () => {
     }
     if (!value.priority) {
       error.priority = "Priority is required";
+    }
+    if (!selectedOption) {
+      error.supplier = "Client is required";
     }
     if (!value.assign_to_clearing) {
       error.assign_to_clearing = "Assign to clearing is required";
@@ -539,6 +542,7 @@ const handleSave = () => {
                             styles={customStyles}
                             isSearchable
                           />
+                          <p className="text-danger mb-0">{error.supplier}</p>
                         </div>
                       </div>
                       <div className="row">

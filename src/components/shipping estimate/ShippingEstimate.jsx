@@ -5623,6 +5623,7 @@ setOpenmodal(true)
 
   useEffect(() => {
     supplier();
+    supplierSelected()
   }, []);
 
   const handlepresss = (e) => {
@@ -5630,6 +5631,31 @@ setOpenmodal(true)
       e.preventDefault();
     }
   };
+// ////////////////////////////////////////////////////supplier selected
+
+
+
+const supplierSelected = async () => {
+  try {
+    const response = await axios.post(
+      `${process.env.REACT_APP_BASE_URL}get-suppler-selected`,
+      { freight_id: getdata.freight_id }
+    );
+    console.log(response);
+    if (response?.data?.data) {
+      setSelected(response.data.data.map((item) => item.id));
+      // setClient(response.data.data);
+    } else {
+      console.log("No data found");
+    }
+  } catch (error) {
+    console.log("Something went wrong:", error);
+  }
+};
+
+
+
+
   const dateformate = new Date(getdata?.date).toLocaleDateString("en-GB");
   const getTodayDate = () => {
     const today = new Date();

@@ -148,6 +148,7 @@ export default function Addshipment() {
     }));
   };
   const handleOptionChange = (event, newValue) => {
+    console.log(newValue)
     setSelectedOption(newValue);
   };
   const handleDeleteShipmentDetail = (item) => {
@@ -713,6 +714,7 @@ const handleclickprintdate = async () => {
                       <option>Select...</option>
                       <option value="freight">Freight / Order</option>
                       <option value="batch">Groupage / Batch</option>
+                      <option value="Assign Clearance">Assign Clearance</option>
                     </select>
                   </div>
                   <div className="col-12 freightAuto">
@@ -746,6 +748,38 @@ const handleclickprintdate = async () => {
                         )}
                       />
                     </Box>
+                  </div>
+                  <div className="col-12 freightAuto">
+               
+                      {data1.shipment_waybill === "Assign Clearance"?(
+                        <>
+                        <label className="ware_label mt-3">Add Clearance</label>
+                    <Box sx={{ width: 280 }}>
+                      <Autocomplete
+                        options={
+                          data1.shipment_waybill === "freight"
+                            ? freightOptions
+                            : batchOptions
+                        }
+                        getOptionLabel={(option) =>
+                          data1.shipment_waybill === "freight"
+                            ? `${option.freight_number || "N/A"} / ${
+                                option.order_number || "N/A"
+                              }`
+                            : option.batch_number
+                        }
+                        value={selectedOption}
+                        onChange={handleOptionChange}
+                        renderInput={(params) => (
+                          <TextField
+                            {...params}
+                            placeholder="Search & Select"
+                            variant="outlined"
+                          />
+                        )}
+                      />
+                    </Box>
+                    </>):""}
                   </div>
                   <div className="col-12" style={{ marginTop: "31px" }}>
                     <div className="text-center">

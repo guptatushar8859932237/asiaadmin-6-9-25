@@ -420,7 +420,6 @@ const CustomClearaceOrder = () => {
         toast.error(error.response.data.message);
       });
   };
-
   const handlelcickdeletettach = (id) => {
     setClearanceid(id);
     setOpenmodal(true);
@@ -496,7 +495,6 @@ const CustomClearaceOrder = () => {
           user_type: usertype,
         }
       );
-
       if (permission.data.success === true) {
         console.log("a");
         navigate("/Admin/custom-calcualate", { state: { data: id } });
@@ -507,7 +505,6 @@ const CustomClearaceOrder = () => {
       toast.error("Something went wrong");
     }
   };
-
   useEffect(() => {
     getClient();
   }, []);
@@ -526,11 +523,9 @@ const CustomClearaceOrder = () => {
       e.preventDefault();
     }
   };
-
   //////////////////////////////////////////// edit modal work///////////////////////////////////////
   const handleOpenModal = () => setIsModalOpen(true);
   const handleCloseModal = () => setIsModalOpen(false);
-
   const editQuotation = async (id) => {
     console.log(id);
     const datauser = constgetdata.find((item) => item.id === id.id);
@@ -538,7 +533,6 @@ const CustomClearaceOrder = () => {
     navigate("/Admin/Editpdfclearence", { state: { data: [datauser] } });
     // navigate("/Admin/Editpdfclearence", { state: { data: id, secretdata :"dataedit" } });
   };
-
   const postData = () => {
     const dtatapost = {
       origin: data.origin,
@@ -561,7 +555,6 @@ const CustomClearaceOrder = () => {
         toast.error(error.response.data.message);
       });
   };
-
   const handleFileChange = (e, fieldName) => {
     const files = Array.from(e.target.files);
     setFormFiles((prev) => ({
@@ -659,7 +652,7 @@ const CustomClearaceOrder = () => {
                                         </div>
                                         <p className="origin">
                                           {item.port_of_exit_name}
-                                          <span className="fright_type"></span>
+                                          <span className="fright_type">{item?.freight}</span>
                                         </p>
                                       </div>
                                     </div>

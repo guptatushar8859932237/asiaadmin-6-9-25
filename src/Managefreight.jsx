@@ -187,7 +187,6 @@ const handleSave = () => {
         staff_id: userid,
         route_url: "/freight-list",
         user_type: usertype,
-        
       };
       const permission = await axios.post(
         `${process.env.REACT_APP_BASE_URL}CheckPermission`,
@@ -200,6 +199,7 @@ const handleSave = () => {
             `${process.env.REACT_APP_BASE_URL}freight-list`,{  user_id:userid, user_type: usertype }
           );
           setLoader(false);
+          console.log("frightDataresponse", response.data.data);
           setData(response.data.data);
         } catch (error) {
           setLoader(false);
@@ -528,7 +528,7 @@ const handleSave = () => {
     }
   };
   const hanldeclicknavi11 = async (freight_id) => {
-    console.log(freight_id)
+    // console.log(freight_id)
         navigate("/Admin/SupplierEstimation", { state: { data: freight_id } });
   };
 
@@ -1257,7 +1257,7 @@ const handleSave = () => {
                                             <>
                                               <span className="dot bg-info me-2"></span>
                                               <p className="text-info mb-0">
-                                                Estimated
+                                                Estimated :{item?.estimate_count}
                                               </p>
                                             </>
                                           ) : (

@@ -318,7 +318,7 @@ export default function App() {
                   path="/Admin/shipping-estimate"
                   element={<ShippingaddfreightEstimate />}
                 />
-                <Route
+                <Route                                    
                   index
                   path="/Admin/supplier-estimation-view"
                   element={<Supplierestimationview />}

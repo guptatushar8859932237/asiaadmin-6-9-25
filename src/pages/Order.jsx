@@ -315,7 +315,6 @@ export default function Order() {
           user_type: usertype,
         }
       );
-
       if (permission.data.success) {
         const allData = data.filter((item) => item.id === id);
         navigate("/Admin/trackorder", { state: { data: allData } });
@@ -324,7 +323,6 @@ export default function Order() {
       }
     } catch (error) {
       console.error("Error checking permission:", error);
-
       if (error.response && error.response.status === 400) {
         toast.error("Permission Denied: You don’t have access to this page");
       } else {
@@ -332,7 +330,6 @@ export default function Order() {
       }
     }
   };
-
   const assignclearing = async (item) => {
     try {
       const permission = await axios.post(
@@ -366,18 +363,14 @@ export default function Order() {
       }
     }
   };
-
   const track12345 = (id) => {
     const alldaatat = data.filter((item) => {
       return item.id === id;
     });
     navigate("/Admin/OrderDetail", { state: { data: alldaatat } });
   };
- 
-
   const userid = JSON.parse(localStorage.getItem("data123"))?.id;
   const usertype = JSON.parse(localStorage.getItem("data123"))?.user_type;
-
   const handlenavival = async (id) => {
     try {
       const datapost = {
@@ -385,13 +378,10 @@ export default function Order() {
         route_url: "/Admin/updatedelivery",
         user_type: usertype,
       };
-
-      // Using POST request to check permission
       const permission = await axios.post(
         `${process.env.REACT_APP_BASE_URL}CheckPermission`,
         datapost
       );
-
       if (permission.data.success) {
         const alldata = data?.filter((item) => item.id === id);
         console.log(alldata);
@@ -401,8 +391,6 @@ export default function Order() {
       }
     } catch (error) {
       console.error("Error checking permission:", error);
-
-      // Handling 400 error
       if (error.response && error.response.status === 400) {
         toast.error("Permission Denied: You don’t have access to this page");
       } else {
@@ -410,9 +398,7 @@ export default function Order() {
       }
     }
   };
-
   const filteredData = data.filter((item) => {
-    // console.log(item);
     return (
       item?.client_name?.toLowerCase()?.includes(searchQuery?.toLowerCase()) ||
       item?.track_status?.toLowerCase()?.includes(searchQuery?.toLowerCase()) ||
@@ -447,7 +433,6 @@ export default function Order() {
   const handlePageChange = (page) => {
     setCurrentPage(page);
     getorder(page);
-    // postData1(page)
   };
   const handleclicknaviwaybill = (freight_id) => {
     const alldata = data?.filter((item) => {
@@ -532,7 +517,6 @@ export default function Order() {
     axios
       .get(`${process.env.REACT_APP_BASE_URL}getWarehouse`)
       .then((response) => {
-        // console.log(response.data.data);
         setWarehousedata(response.data.data);
       })
       .catch((error) => {
@@ -572,7 +556,6 @@ export default function Order() {
     axios
       .get(`${process.env.REACT_APP_BASE_URL}GetCountries`)
       .then((response) => {
-        // console.log(response.data.data);
         setCountries(response.data.data);
       })
       .catch((error) => {
@@ -606,7 +589,6 @@ export default function Order() {
         .then((response) => {
           if (response.data.success === true) {
             closeModal1();
-            // setData(response.data.data);
           }
         })
         .catch((error) => {
@@ -780,7 +762,6 @@ export default function Order() {
           setLoader(false);
           closeModalclose()
           getorder()
-          // frightData();
           toast.success(response.data.message);
         }
         return 0;
@@ -790,24 +771,17 @@ export default function Order() {
         toast.error(error.response?.data || "An error occurred");
       });
   };
-// const [openModalorder, setOpenModalorder] = useState(false);
-
   const track123 = (item) => {
   setSelectedItem(item);  // save item data
   setOpenModalorder(true);
 };
-
- 
  const [warehouseType, setWarehouseType] = useState(""); // radio state
   const [selectedSupplier, setSelectedSupplier] = useState("");
-
-
   const supplierOptions = [
     { id: 1, name: "Supplier A" },
     { id: 2, name: "Supplier B" },
     { id: 3, name: "Supplier C" },
   ];  
-
  const handleWarehouseChange = async (e) => {
     const type = e.target.value;
     setWarehouseType(type);
@@ -831,7 +805,6 @@ export default function Order() {
       }
     }
   };
-
  const handleUpdateForSupplier = async () => {
     if (!selectedSupplier) {
       toast.error("Please select supplier!");
@@ -875,7 +848,7 @@ const  closewarehouse=()=>{
         }}
       >
         <div className="modal-content modal-dialog modal-dialog-centered">
-          <div className="modal-header" style={{ width: "100%" }}>
+          <div className="modal-header" style={{ width: "350px" }}>
             <h5 className="modal-title">Assign Order</h5>
             <button type="button" className="btn-close" onClick={closewarehouse}>
               <CloseIcon />
@@ -886,6 +859,7 @@ const  closewarehouse=()=>{
               <div className="row">
                 <div className="col-lg-12 mb-3">
                   <h5>Select Warehouse</h5>
+                  <div className="d-flex justify-content-between">
                   <div>
                     <input
                       type="radio"
@@ -899,7 +873,7 @@ const  closewarehouse=()=>{
                       Asia Direct Warehouse
                     </label>
                   </div>
-                  <div className="mt-2">
+                  <div className="">
                     <input
                       type="radio"
                       id="supplierWare"
@@ -911,6 +885,7 @@ const  closewarehouse=()=>{
                     <label htmlFor="supplierWare" className="ms-2">
                       Supplier Warehouse
                     </label>
+                  </div>
                   </div>
                 </div>
                 {warehouseType === "supplier" && (
@@ -939,7 +914,7 @@ const  closewarehouse=()=>{
                 Update
               </button>
             )}
-            <button type="button" className="btn cross_btn" onClick={closewarehouse}>
+            <button type="button" className="btn cross_btn ms-2" onClick={closewarehouse}>
               Close
             </button>
           </div>

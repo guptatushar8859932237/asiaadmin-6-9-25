@@ -4539,7 +4539,6 @@ span.cursor-pointer {
   display: block;
   font-weight: normal;
 }
-
 input {
   font-size: 14px;
 }
@@ -4583,20 +4582,16 @@ select {
   text-align: center;
   font-weight: 600;
 }
-
 .checkInsForm label {
   margin-left: 5px;
   font-size: 13px;
 }
-
 .checkInsForm input {
   margin-bottom: 10px;
 }
-
 .bookingInsForm .ware_label {
   font-size: 13px;
 }
-
 .checkInsForm div:nth-child(1) {
   margin-right: 15px;
 }
@@ -4653,7 +4648,6 @@ button.bg_page {
 input.form-control {
   font-size: 14px;
 }
-
 .popup-overlay {
   position: fixed;
   top: 0;
@@ -4666,7 +4660,6 @@ input.form-control {
   justify-content: center;
   z-index: 9999; /* make sure it's above everything */
 }
-
 .popup {
   background: #fff;
   padding: 20px;
@@ -4685,8 +4678,6 @@ input.form-control {
   font-weight: 600;
   line-height: normal !important;
 }
-
-/* new pdf */
 .cost-table thead {
   background: #fff;
   color: #000;
@@ -4730,3 +4721,20 @@ td {
   border-collapse: separate;
   border-spacing: 0px;
 }
+ .cost-table select {
+    border: unset;
+}
+ .cost-table input {
+    border: unset;
+   padding: 0px 2px;
+}
+ .cost-table select {
+    border: unset;
+    width: 70px;
+}
+ .cost-table input {
+    border: unset;
+    width: 70px;
+    padding: 0px 2px;
+}
+

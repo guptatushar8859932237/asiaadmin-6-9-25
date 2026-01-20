@@ -1,7 +1,7 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { FaEdit } from "react-icons/fa";
-import { AiFillDelete } from "react-icons/ai";
+import { AiFillDelete, AiFillMessage } from "react-icons/ai";
 import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import Swal from "sweetalert2";
@@ -37,6 +37,7 @@ const ManageCustomer = () => {
     province: "",
     country: "",
     code: "",
+    country_code: "",
     company_id: "",
     importers_ref: "",
     tax_ref: "",
@@ -74,6 +75,7 @@ const ManageCustomer = () => {
       province: getData.province,
       country: getData.country,
       code: getData.code,
+      country_code: getData.country_code,
       company_id: getData.company_id,
       importers_ref: getData.importers_ref,
       tax_ref: getData.tax_ref,
@@ -87,9 +89,9 @@ const ManageCustomer = () => {
     } else if (!emailRegex.test(value.email)) {
       error.email = "Supplier Email is invalid";
     }
-    if (!value.cellphone) {
-      error.cellphone = "Cellphone is Required";
-    }
+    // if (!value.cellphone) {
+    //   error.cellphone = "Cellphone is Required";
+    // }
     if (!value.address_1) {
       error.address_1 = "Address is Required";
     }
@@ -99,9 +101,9 @@ const ManageCustomer = () => {
     if (!value.code) {
       error.code = "Code is Required";
     }
-    if (!value.telephone) {
-      error.telephone = "Telephone is Required";
-    }
+    // if (!value.telephone) {
+    //   error.telephone = "Telephone is Required";
+    // }
     if (!value.client_ref) {
       error.client_ref = "Client Ref is Required";
     }
@@ -115,10 +117,31 @@ const ManageCustomer = () => {
     handlevalidate(data);
   };
   const apihit = async () => {
+    console.log(data);
+    const payload = {
+      client_name: data.client_name,
+      email: data.email,
+      client_ref: data.client_ref,
+      contact_person: data.contact_person,
+      cellphone: data.cellphone,
+      telephone: data.telephone,
+      address_1: data.address_1,
+      address_2: data.address_2,
+      city: data.city,
+      province: data.province,
+      country: data.country,
+      code: data.code,
+      country_code: data.country_code,
+      company_id: data.company_id,
+      importers_ref: data.importers_ref,
+      tax_ref: data.tax_ref,
+      password: data.password,
+    };
+    console.log(payload)
     try {
       const response = await axios.post(
         `${process.env.REACT_APP_BASE_URL}add-customer`,
-        data
+        payload
       );
       if (response.data.success) {
         toast.success(response.data.message);
@@ -136,25 +159,6 @@ const ManageCustomer = () => {
   useEffect(() => {
     getclientlistr();
   }, []);
-  // const getclientlistr =async (page) => {
-  //   console.log(page);
-  //   const postdata ={
-  //     page:page,
-  //     limit:10,
-  //   }
-  //  await axios
-  //     .get(`${process.env.REACT_APP_BASE_URL}client-list`,postdata)
-  //     .then((response) => {
-  //       console.log(response.data);
-  //       setLoader(false);
-  //       setPagenation(response.data)
-  //       setSupplierdata(response.data.data);
-  //     })
-  //     .catch((error) => {
-  //       console.log(error.response);
-  //       setLoader(false);
-  //     });
-  // };
   const getsearchValu = () => {
     const postdata = {
       search: searinpdata.search,
@@ -238,6 +242,7 @@ const ManageCustomer = () => {
       code: inputData.code,
       company_id: inputData.company_id,
       importers_ref: inputData.importers_ref,
+      country_code: inputData.country_code,
       tax_ref: inputData.tax_ref,
       client_id: id1,
       password: inputData.password,
@@ -367,6 +372,16 @@ const ManageCustomer = () => {
   const handleclosemodal = () => {
     setOpenmodal(false);
   };
+
+  const querryinQuote = (item) => {
+    console.log("item", item);
+    navigate("/Admin/QuotationInFreight", { state: { data: item } });
+  };
+    const handlekey = (e) => {
+    if (e.charCode < 44 || e.charCode > 57) {
+      e.preventDefault();
+    }
+  };
   return (
     <>
       {loader ? (
@@ -413,7 +428,7 @@ const ManageCustomer = () => {
                   </button>
                 </div>
               </div>
-              <div
+              {/* <div
                 className="modal fade"
                 id="exampleModal"
                 tabIndex={-1}
@@ -424,7 +439,7 @@ const ManageCustomer = () => {
                   <div className="modal-content">
                     <div className="modal-header">
                       <h5 className="modal-title" id="exampleModalLabel">
-                        Add Customer
+                        Add Customer1111
                       </h5>
                       <button
                         type="button"
@@ -516,9 +531,8 @@ const ManageCustomer = () => {
                           <label>Country</label>
                           <select
                             name="country"
-                            placeholder="Country"
-                            onChange={handlechange}
                             value={data.country}
+                            onChange={handlechange}
                             className="w-100 border p-2 rounded"
                           >
                             <option>Select...</option>
@@ -664,7 +678,7 @@ const ManageCustomer = () => {
                     </button>
                   </div>
                 </div>
-              </div>
+              </div> */}
               <div className="table-responsive mt-2">
                 <table className="table mt-4 table-striped tableICon">
                   <thead>
@@ -694,7 +708,11 @@ const ManageCustomer = () => {
                               <td className="col-2">{item.email} </td>
                               <td>{item.cellphone}</td>
                               <td>{item.telephone}</td>
-                              <td>{new Date(item.created_at).toLocaleDateString("en-GB")}</td>
+                              <td>
+                                {new Date(item.created_at).toLocaleDateString(
+                                  "en-GB"
+                                )}
+                              </td>
                               <td>
                                 {item.status == 1 ? (
                                   <label
@@ -755,6 +773,15 @@ const ManageCustomer = () => {
                                       }}
                                     />
                                   </div>
+                                  <div className="action_btn1 ms-2">
+                                    <AiFillMessage
+                                      style={{ cursor: "pointer" }}
+                                      className="text-success"
+                                      onClick={() => {
+                                        querryinQuote(item);
+                                      }}
+                                    />
+                                  </div>
                                   <div className="ms-2">
                                     <button
                                       type="button"
@@ -776,7 +803,7 @@ const ManageCustomer = () => {
                                       aria-labelledby="staticBackdropLabel"
                                       aria-hidden="true"
                                     >
-                                      <div className="modal-dialog modal-dialog-scrollable modal-dialog-centered">
+                                      <div className="modal-dialog modal-lg modal-dialog-scrollable modal-dialog-centered">
                                         <div className="modal-content">
                                           <div className="modal-header">
                                             <h5
@@ -796,7 +823,7 @@ const ManageCustomer = () => {
                                           </div>
                                           <div className="modal-body">
                                             <div className="row">
-                                                <div className="col-md-6 mb-3">
+                                              <div className="col-md-6 mb-3">
                                                 <label>Client Name</label>
                                                 <input
                                                   type="text"
@@ -829,7 +856,7 @@ const ManageCustomer = () => {
                                                   className="form-control"
                                                 ></input>
                                               </div>
-                                               <div className="col-md-6 mb-3">
+                                              <div className="col-md-6 mb-3">
                                                 <label>Client Ref</label>
                                                 <input
                                                   type="text"
@@ -839,7 +866,35 @@ const ManageCustomer = () => {
                                                   className="form-control"
                                                 ></input>
                                               </div>
-                                               <div className="col-md-6 mb-3">
+                                              <div className="col-6 d-flex">
+                                                <div className="col-md-4 mb-3">
+                                                <label>Country Code</label>
+                                                <select
+                                                  name="country_code"
+                                                  onChange={submitInputdata}
+                                                  value={inputData.country_code}
+                                                  className="form-control"
+                                                >
+                                                  <option>Select...</option>
+                                                  {updatedata &&
+                                                    updatedata.length > 0 &&
+                                                    updatedata.map(
+                                                      (item, index) => {
+                                                        return (
+                                                          <>
+                                                            <option
+                                                              key={index}
+                                                              value={item.id}
+                                                            >
+                                                              +{item.phonecode} {item.shortname}
+                                                            </option>
+                                                          </>
+                                                        );
+                                                      }
+                                                    )}
+                                                </select>
+                                              </div>
+                                              <div className="col-md-8 mb-3">
                                                 <label>Cellphone</label>
                                                 <input
                                                   type="text"
@@ -850,7 +905,36 @@ const ManageCustomer = () => {
                                                   className="form-control"
                                                 ></input>
                                               </div>
-                                              <div className="col-md-6 mb-3">
+                                                </div>
+                                               <div className="col-6 d-flex">
+                                                <div className="col-md-4 mb-3">
+                                                <label>Country Code</label>
+                                                <select
+                                                  name="country_code"
+                                                  onChange={submitInputdata}
+                                                  value={inputData.country_code}
+                                                  className="form-control"
+                                                >
+                                                  <option>Select...</option>
+                                                  {updatedata &&
+                                                    updatedata.length > 0 &&
+                                                    updatedata.map(
+                                                      (item, index) => {
+                                                        return (
+                                                          <>
+                                                            <option
+                                                              key={index}
+                                                              value={item.id}
+                                                            >
+                                                              +{item.phonecode} {item.shortname}
+                                                            </option>
+                                                          </>
+                                                        );
+                                                      }
+                                                    )}
+                                                </select>
+                                              </div>
+                                              <div className="col-md-8 mb-3">
                                                 <label>Telephone</label>
                                                 <input
                                                   type="text"
@@ -860,7 +944,8 @@ const ManageCustomer = () => {
                                                   className="form-control"
                                                 ></input>
                                               </div>
-                                               <div className="col-md-6 mb-3">
+                                              </div>
+                                              <div className="col-md-6 mb-3">
                                                 <label>Address 1</label>
                                                 <input
                                                   type="text"
@@ -927,7 +1012,7 @@ const ManageCustomer = () => {
                                                     )}
                                                 </select>
                                               </div>
-                                                    <div className="col-md-6 mb-3">
+                                              <div className="col-md-6 mb-3">
                                                 <label>Postal Code</label>
                                                 <input
                                                   type="text"
@@ -938,7 +1023,7 @@ const ManageCustomer = () => {
                                                   className="form-control"
                                                 ></input>
                                               </div>
-                                                 <div className="col-md-6 mb-3">
+                                              <div className="col-md-6 mb-3">
                                                 <label>
                                                   Company Reg / ID #
                                                 </label>
@@ -950,7 +1035,7 @@ const ManageCustomer = () => {
                                                   className="form-control"
                                                 ></input>
                                               </div>
-                                             <div className="col-md-6 mb-3">
+                                              <div className="col-md-6 mb-3">
                                                 <label>Importer Refrence</label>
                                                 <input
                                                   type="text"
@@ -1062,7 +1147,7 @@ const ManageCustomer = () => {
                       </button>
                     </div>
                     <div className="newModalGap noFormaControl">
-                       <div className="row my-3">
+                      <div className="row my-3">
                         <div className="col-md-6">
                           <label>Client Name</label>
                           <input
@@ -1089,7 +1174,7 @@ const ManageCustomer = () => {
                           />
                         </div>
                       </div>
-                       <div className="row my-3">
+                      <div className="row my-3">
                         <div className="col-md-6">
                           <label>Client Ref</label>
                           <input
@@ -1114,34 +1199,92 @@ const ManageCustomer = () => {
                           <p className="text-danger mb-0">{error.email}</p>
                         </div>
                       </div>
-                        <div className="row my-3">
-                        <div className="col-md-6">
-                          <label>Cellphone</label>
+                      
+                      <div className="row my-3">
+                        <div className="d-flex col-md-6">
+                            <div className="col-4">
+                          <label className="mb-3">Country Code</label>
+                          <select
+                            name="country_code"
+                            onChange={handlechange}
+                            className="form-control"
+                          >
+                            <option>Select...</option>
+                            {updatedata &&
+                              updatedata.length > 0 &&
+                              updatedata.map((item) => (
+                                <option key={item.id} value={item.phonecode}>
+                                  +{item.phonecode} {item.shortname}
+                                </option>
+                              ))}
+                          </select>
+                            </div>
+                            <div className="col-8">
+                               <label>Cellphone</label>
                           <input
                             type="text"
                             name="cellphone"
                             onChange={handlechange}
-                            value={data.cellphone}
+                             onKeyPress={handlekey}
                             placeholder="Cellphone"
-                            className="w-100 border p-2 rounded"
+                            className="w-100 border form-control p-2 rounded"
                           />
+                        </div>
+                         
+                          {/* <input
+                            type="text"
+                            name="cellphone"
+                            value={inputData.cellphone}
+                            onChange={submitInputdata}
+                            className="w-100 border p-2 rounded"
+                          /> */}
                           <p className="text-danger mb-0">{error.cellphone}</p>
                         </div>
-                        <div className="col-md-6">
+                            <div className="col-6 d-flex ">
+ <div className="col-4">
+                          <label className="mb-3">Country Code</label>
+                          <select
+                            name="country_code"
+                           
+                           onChange={handlechange}
+                            
+                            className="form-control"
+                          >
+                            <option>Select...</option>
+                            {updatedata &&
+                              updatedata.length > 0 &&
+                              updatedata.map((item) => (
+                                <option key={item.id} value={item.phonecode}>
+                                  +{item.phonecode} {item.shortname}
+                                </option>
+                              ))}
+                          </select>
+                            </div>
+                        <div className="col-md-8">
+
                           <label>Telephone</label>
                           <input
                             type="text"
                             name="telephone"
                             onChange={handlechange}
-                            value={data.telephone}
+                             onKeyPress={handlekey}
                             placeholder="Telephone"
                             className="w-100 border p-2 rounded"
                           />
+                          {/* <input
+                            type="text"
+                            name="telephone"
+                            value={inputData.telephone}
+                            onChange={submitInputdata}
+                            className="w-100 border p-2 rounded"
+                          /> */}
                           <p className="text-danger mb-0">{error.telephone}</p>
                         </div>
+                            </div>
+                        
                       </div>
-                         <div className="row my-3">
-                         <div className="col-md-6">
+                      <div className="row my-3">
+                        <div className="col-md-6">
                           <label>Address 1</label>
                           <input
                             type="text"
@@ -1153,7 +1296,7 @@ const ManageCustomer = () => {
                           />
                           <p className="text-danger mb-0">{error.address_1}</p>
                         </div>
-                         <div className="col-md-6">
+                        <div className="col-md-6">
                           <label>Address 2</label>
                           <input
                             type="text"
@@ -1165,8 +1308,8 @@ const ManageCustomer = () => {
                           />
                         </div>
                       </div>
-                       <div className="row ">
-                         <div className="col-md-6">
+                      <div className="row ">
+                        <div className="col-md-6">
                           <label>City</label>
                           <input
                             type="text"
@@ -1177,7 +1320,7 @@ const ManageCustomer = () => {
                             className="w-100 border p-2 rounded"
                           />
                         </div>
-                          <div className="col-md-6">
+                        <div className="col-md-6">
                           <label>Province</label>
                           <input
                             type="text"
@@ -1189,14 +1332,14 @@ const ManageCustomer = () => {
                           />
                         </div>
                       </div>
-                      <div className="row my-3">
-                                <div className="col-md-6">
+<div className="row my-3">
+                        <div className="col-md-6">
                           <label>Country</label>
                           <select
                             name="country"
                             value={data.country}
-                            onChange={handlechange}
-                            className="w-100 border p-2 rounded"
+                           onChange={handlechange}
+                            className="form-control"
                           >
                             <option>Select...</option>
                             {updatedata &&
@@ -1208,7 +1351,7 @@ const ManageCustomer = () => {
                               ))}
                           </select>
                         </div>
-                            <div className="col-md-6">
+                        <div className="col-md-6">
                           <label>Postal Code</label>
                           <input
                             type="text"
@@ -1222,7 +1365,7 @@ const ManageCustomer = () => {
                         </div>
                       </div>
                       <div className="row my-3">
-                         <div className="col-md-6">
+                        <div className="col-md-6">
                           <label>Company Reg/ID#</label>
                           <input
                             type="text"
@@ -1233,7 +1376,7 @@ const ManageCustomer = () => {
                             className="w-100 border p-2 rounded"
                           />
                         </div>
-                         <div className="col-md-6">
+                        <div className="col-md-6">
                           <label>Importer Reference</label>
                           <input
                             type="text"

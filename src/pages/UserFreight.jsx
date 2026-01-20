@@ -1,6 +1,6 @@
 import axios from "axios";
-import { useEffect, useState } from "react";
-import { AiFillDelete } from "react-icons/ai";
+import { useEffect, useRef, useState } from "react";
+import { AiFillDelete, AiOutlineUsergroupAdd } from "react-icons/ai";
 import { ToastContainer, toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import FormControl from "@mui/material/FormControl";
@@ -31,11 +31,15 @@ export default function UserFreight() {
   const [data, setData] = useState([]);
   const [dataId, setDataId] = useState();
   const [searchQuery, setSearchQuery] = useState("");
+  const [supplierName, setSupplierName] = useState([]);
+  const [supplierData, setSupplierData] = useState([]);
   const [updatedata, setUpdatedata] = useState([]);
   const [apidata, setApidata] = useState([]);
   const [data1, setData1] = useState({});
   const [clientdata, setClientdata] = useState([]);
+  const [freightIdAssignTask, setFreightIdAssignTask] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [pagenationdata, setPagenationdata] = useState(1);
   const [openModal1, setOpenModal1] = useState(false);
   const [eid, setEid] = useState(null);
   const [file1, setFile1] = useState(null);
@@ -43,10 +47,7 @@ export default function UserFreight() {
   const [selectfile1, setSelectfile1] = useState(null);
   const [loader, setLoader] = useState(true);
   const [country, setCountry] = useState([]);
-   const [formData, setFormData] = useState(null);
-    const [formData1, setFormData1] = useState(null);
-    const [formData2, setFormData2] = useState(null);
-    const [formData3, setFormData3] = useState(null);
+  const [openmodalAssignFreight, setOpenmodalAssignFreight] = useState(false);
   const [status1, setStatus1] = useState("Status");
   const [inputdata, setInputdata] = useState({
     add_attachments: "",
@@ -78,55 +79,43 @@ export default function UserFreight() {
   const navigate = useNavigate();
   const userid = JSON.parse(localStorage.getItem("data123"))?.id;
   const usertype = JSON.parse(localStorage.getItem("data123"))?.user_type;
- const [show1, setShow1] = useState(false);
-      const [selectedDocs, setSelectedDocs] = useState([]);
-    
-     const docOptions = [
-      { id: "Customs Documents", label: "Customs docs" },
-      { id: "Supporting Documents", label: "Supporting docs" },
-      { id: "Invoice, Packing List", label: "Invoice / Packing " },
-      { id: "Product Literature", label: "Product Literature" },
-      { id: "Letters of authority", label: "Letters of authority" },
-      { id: "Waybills", label: "Freight Docs" },
-      { id: "Waybills", label: "Shipping instruction" },
-      { id: "AD_Quotations", label: "Attach Quote" },
-      { id: "Supplier Invoices", label: "Supplier Invoices" }
-    ];
-      const handleShow = () => setShow1(true);
-      const handleClose = () => setShow1(false);
-    
-      // Handle dropdown change
-      const handleSelect = (e) => {
-        const selected = e.target.value;
-        if (selected && !selectedDocs.find((doc) => doc.name === selected)) {
-          setSelectedDocs([...selectedDocs, { name: selected, files: [] }]);
-        }
-      };
-    
-      // Handle file upload for each document type
-      const handleFileChangefil = (e, docName) => {
-        const files = Array.from(e.target.files);
-        setSelectedDocs((prev) =>
-          prev.map((doc) =>
-            doc.name === docName ? { ...doc, files } : doc
-          )
-        );
-      };
-    
-      // For saving data (you can send to API)
-    const handleSave = () => {
-      console.log("Uploaded Documents:", selectedDocs);
-    
-      // To see filenames instead of [object Object]
-      selectedDocs.forEach(doc => {
-        console.log("Doc Type:", doc);
-        doc.files.forEach(file => {
-          console.log("File:", file.name, "| Size:", file.size, "bytes");
-        });
+  const [show1, setShow1] = useState(false);
+  const [selectedDocs, setSelectedDocs] = useState([]);
+  const docOptions = [
+    { id: "Customs Documents", label: "Customs docs" },
+    { id: "Supporting Documents", label: "Supporting docs" },
+    { id: "Invoice, Packing List", label: "Invoice / Packing " },
+    { id: "Product Literature", label: "Product Literature" },
+    { id: "Letters of authority", label: "Letters of authority" },
+    { id: "Waybills", label: "Freight Docs" },
+    { id: "Waybills", label: "Shipping instruction" },
+    { id: "AD_Quotations", label: "Attach Quote" },
+    { id: "Supplier Invoices", label: "Supplier Invoices" },
+  ];
+  const handleShow = () => setShow1(true);
+  const handleClose = () => setShow1(false);
+  const handleSelect = (e) => {
+    const selected = e.target.value;
+    if (selected && !selectedDocs.find((doc) => doc.name === selected)) {
+      setSelectedDocs([...selectedDocs, { name: selected, files: [] }]);
+    }
+  };
+  const handleFileChangefil = (e, docName) => {
+    const files = Array.from(e.target.files);
+    setSelectedDocs((prev) =>
+      prev.map((doc) => (doc.name === docName ? { ...doc, files } : doc))
+    );
+  };
+  const handleSave = () => {
+    console.log("Uploaded Documents:", selectedDocs);
+    selectedDocs.forEach((doc) => {
+      console.log("Doc Type:", doc);
+      doc.files.forEach((file) => {
+        console.log("File:", file.name, "| Size:", file.size, "bytes");
       });
-    
-      handleClose();
-    };
+    });
+    handleClose();
+  };
   const updatecountry = () => {
     axios
       .get(`${process.env.REACT_APP_BASE_URL}GetCountries`)
@@ -143,7 +132,7 @@ export default function UserFreight() {
   useEffect(() => {
     frightData();
   }, []);
-  const frightData = async () => {
+  const frightData = async (page) => {
     try {
       setLoader(true);
       const postdata = {
@@ -156,11 +145,17 @@ export default function UserFreight() {
         postdata
       );
       if (permission.status === 200 && permission.data.success) {
+        const payload = {
+          user_id: userid,
+          page: page,
+        };
         try {
           const response = await axios.post(
-            `${process.env.REACT_APP_BASE_URL}new-freight-list`
+            `${process.env.REACT_APP_BASE_URL}new-freight-list`,
+            payload
           );
           console.log(response.data.data);
+          setPagenationdata(response.data);
           setData(response.data.data);
         } catch (error) {
           toast.error(error.response?.data?.message || "Something went wrong");
@@ -186,7 +181,6 @@ export default function UserFreight() {
     };
     fetchData();
   }, []);
-  /////////////////////////////////////////////////delete function//////////////////////////////////////////
   const handledelete = async (id) => {
     const permission = await axios.post(
       `${process.env.REACT_APP_BASE_URL}CheckPermission`,
@@ -276,27 +270,8 @@ export default function UserFreight() {
     const { name, value } = e.target;
     setInputdata({ ...inputdata, [name]: value });
   };
-
-
-  // multiple imagge
-    const handleFileChange4 = (event) => {
-    const files = event.target.files;
-    setFormData({ ...formData, supplier_invoice: files });
-  };
-  const handleFileChange1 = (event) => {
-    const files = event.target.files;
-    setFormData1({ ...formData1, packing_list: files });
-  };
-  const handleFileChange2 = (event) => {
-    const files = event.target.files;
-    setFormData2({ ...formData2, licenses: files });
-  };
-  const handleFileChange3 = (event) => {
-    const files = event.target.files;
-    setFormData3({ ...formData3, other_documents: files });
-  };
-  const handleupdateapipost =async (id) => {
-    const permission =await axios.post(
+  const handleupdateapipost = async (id) => {
+    const permission = await axios.post(
       `${process.env.REACT_APP_BASE_URL}CheckPermission`,
       {
         staff_id: userid,
@@ -304,7 +279,7 @@ export default function UserFreight() {
         user_type: usertype,
       }
     );
-    console.log(permission)
+    console.log(permission);
     if (permission.status === 200) {
       console.log("Client ID:", inputdata.client_id);
       const formData12 = new FormData();
@@ -347,27 +322,22 @@ export default function UserFreight() {
       );
       formData12.append("road_freight_option", inputdata.road_freight_option);
       formData12.append("sea_freight_option", inputdata.sea_freight_option);
-   
- 
-    // if (formData2) {
-    //   for (let i = 0; i < formData2.licenses.length; i++) {
-    //     formData12.append("document", formData2.licenses[i]);
-    //   }
-    // }
-   
-       selectedDocs.forEach(doc => {
-  console.log("Doc Type:", doc.name);
-
-  doc.files.forEach(file => {
-    formData12.append(doc.name, file); // 👈 each file append
-    console.log("File:", file.name, "| Size:", file.size, "bytes");
-  });
-});
-
+      // if (formData2) {
+      //   for (let i = 0; i < formData2.licenses.length; i++) {
+      //     formData12.append("document", formData2.licenses[i]);
+      //   }
+      // }
+      selectedDocs.forEach((doc) => {
+        console.log("Doc Type:", doc.name);
+        doc.files.forEach((file) => {
+          formData12.append(doc.name, file); // 👈 each file append
+          console.log("File:", file.name, "| Size:", file.size, "bytes");
+        });
+      });
       for (let pair of formData12.entries()) {
         console.log(`${pair[0]}: ${pair[1]}`);
       }
-    await  axios
+      await axios
         .post(`${process.env.REACT_APP_BASE_URL}update-freights`, formData12)
         .then((response) => {
           toast.success(response.data.message);
@@ -401,8 +371,8 @@ export default function UserFreight() {
     clientlist();
     getdata();
   }, []);
-  const handleaccepted = (id) => {
-    const permission = axios.post(
+  const handleaccepted = async (id) => {
+    const permission = await axios.post(
       `${process.env.REACT_APP_BASE_URL}CheckPermission`,
       {
         staff_id: userid,
@@ -410,8 +380,9 @@ export default function UserFreight() {
         user_type: usertype,
       }
     );
-    if (permission.status === 200 && permission.data.success) {
-      axios
+    console.log(permission);
+    if (permission.data.success === true) {
+      await axios
         .post(`${process.env.REACT_APP_BASE_URL}status-Freight`, {
           status: 1,
           freight_id: id,
@@ -455,7 +426,7 @@ export default function UserFreight() {
       toast.error("Permission denied");
     }
   };
-  const hanldeclicknavicalc = async (id) => {
+  const hanldeclicknavicalc = async (id, estimate_id) => {
     console.log(id);
     const alldtaaa = data.filter((item) => {
       return item.freight_id === id;
@@ -471,7 +442,7 @@ export default function UserFreight() {
     );
     if (permission.status === 200 && permission.data.success) {
       naviagte("/Admin/shipping-estimate-client", {
-        state: { data: alldtaaa },
+        state: { data: alldtaaa, estimateid: estimate_id },
       });
     } else {
       toast.error("Permission denied");
@@ -535,7 +506,7 @@ export default function UserFreight() {
   };
   ///////////////////////////////pegination//////////////////////////////////////////////////////////
   const filteredData = data.filter((item) => {
-    console.log(item);
+    // console.log(item);
     return (
       item?.client_name?.toLowerCase()?.includes(searchQuery?.toLowerCase()) ||
       item?.product_desc?.toLowerCase()?.includes(searchQuery?.toLowerCase()) ||
@@ -554,12 +525,13 @@ export default function UserFreight() {
       item.freight_number.toLowerCase().includes(searchQuery.toLowerCase())
     );
   });
-  const totalPage = Math.ceil(filteredData.length / pageSize);
-  const startIndex = (currentPage - 1) * pageSize;
-  const endIndex = startIndex + pageSize;
+  const totalPage = Math.ceil(pagenationdata.total / pagenationdata.limit);
+  const startIndex = (currentPage - 1) * pagenationdata.limit;
+  const endIndex = startIndex + pagenationdata.limit;
   const currentdata = filteredData.slice(startIndex, endIndex);
   const handlePageChange = (page) => {
     setCurrentPage(page);
+    frightData(page);
   };
   const handlequotation = (id) => {
     axios
@@ -632,17 +604,67 @@ export default function UserFreight() {
       e.preventDefault();
     }
   };
-  console.log(inputdata.shipment_des);
   const handleSearch = (e) => {
-    setSearchQuery(e.target.value);
+    const value = e.target.value;
+
+    setSearchQuery(value);
     setCurrentPage(1);
+
+    throttledSearch(value); // ✅ throttled call
   };
-  const handleupdateapifile = (e) => {
-    const file = e.target.file[0];
-    if (file) {
-      setSelectfile1(file);
+
+  const throttle = (func, delay) => {
+    let lastCall = 0;
+
+    return (...args) => {
+      const now = Date.now();
+      if (now - lastCall >= delay) {
+        lastCall = now;
+        func(...args);
+      }
+    };
+  };
+  const throttledSearch = useRef(
+    throttle((value) => {
+      freightData1(value);
+    }, 1000)
+  ).current;
+  const freightData1 = async (searchValue) => {
+    try {
+      setLoader(true);
+
+      const postdata = {
+        staff_id: userid,
+        route_url: "/new-freight-list",
+        user_type: usertype,
+      };
+
+      const permission = await axios.post(
+        `${process.env.REACT_APP_BASE_URL}CheckPermission`,
+        postdata
+      );
+
+      if (permission.status === 200 && permission.data.success) {
+        const payload = {
+          user_id: userid,
+          search: searchValue, // ✅ direct value
+        };
+
+        const response = await axios.post(
+          `${process.env.REACT_APP_BASE_URL}new-freight-list`,
+          payload
+        );
+        console.log(response.data.data);
+        setData(response.data.data);
+        setPagenationdata(response.data);
+      }
+    } catch (error) {
+      toast.error(error.response?.data?.message || "Something went wrong");
+    } finally {
+      setLoader(false);
     }
   };
+
   useEffect(() => {
     getdataap();
   }, []);
@@ -675,12 +697,14 @@ export default function UserFreight() {
       endDate: data1.endDate,
       freightType: data1.freight,
       freightSpeed: data1.type,
+      user_id: userid,
     };
     axios
       .post(`${process.env.REACT_APP_BASE_URL}new-freight-list`, posdata)
       .then((response) => {
         if (response.data.success === true) {
           closeModal();
+           setPagenationdata(response.data);
           setData(response.data.data);
         }
       })
@@ -730,92 +754,195 @@ export default function UserFreight() {
         toast.error(error.response.data.message);
       });
   };
+  const Attchfreight = (item) => {
+    console.log(item);
+    setFreightIdAssignTask(item);
+    setOpenmodalAssignFreight(true);
+  };
+  const hanldecloseModal = () => {
+    setOpenmodalAssignFreight(false);
+  };
+
+  const AssignFreightToSupplier = async () => {
+    const payload = {
+      freight_id: freightIdAssignTask,
+      supplier_id: supplierName,
+    };
+    try {
+      const response = await axios.post(
+        `${process.env.REACT_APP_BASE_URL}assignFreightToSupplier`,
+        payload
+      );
+      console.log(response.data);
+      toast.success(response.data.message);
+      frightData();
+      setOpenmodalAssignFreight(false);
+    } catch (error) {
+      toast.error(error.response.data.message);
+    }
+  };
+  const getSupplierdata = () => {
+    axios
+      .get(`${process.env.REACT_APP_BASE_URL}supplier-list`)
+      .then((response) => {
+        setSupplierData(response.data.data);
+      })
+      .catch((error) => {
+        toast.error("Error fetching suppliers");
+      });
+  };
+
+  useEffect(() => {
+    getSupplierdata();
+  }, []);
+
+  const querryinQuote = (item) => {
+    console.log("item", item);
+    navigate("/Admin/QuotationInFreightCostumer", { state: { data: item } });
+  };
   return (
     <>
-      {loader ? (
-        <div class="loader-container">
-          <div class="loader"></div>
-          <p class="loader-text">Updating... This may take some time</p>
-        </div>
-      ) : (
-        <div className="wpWrapper">
-          <div className="container-fluid">
-            <div className="row manageFreight">
-              <div className="col-12">
-                <div className="d-flex justify-content-between align-items-center">
-                  <h4 className="freight_hd">Freight By User</h4>
-                  <div className="d-flex">
-                    <div className="me-2">
-                      <input
-                        className="py-1 rounded ps-1"
-                        type="text"
-                        value={searchQuery}
-                        onChange={handleSearch}
-                        placeholder="Search"
-                      ></input>
-                    </div>
+      <div className="wpWrapper">
+        <Modal
+          open={openmodalAssignFreight}
+          onClose={hanldecloseModal}
+          aria-labelledby="modal-modal-title"
+          aria-describedby="modal-modal-description"
+          className="newModal"
+        >
+          <Box
+            sx={{
+              position: "absolute",
+              top: "50%",
+              left: "50%",
+              transform: "translate(-50%, -50%)",
+              minWidth: 450,
+              bgcolor: "background.paper",
+              boxShadow: 24,
+            }}
+          >
+            <div className="modal-header">
+              <h2>
+                <h2 id="modal-modal-title">Assign Freight</h2>
+              </h2>
+              <button className="btn btn-close" onClick={hanldecloseModal}>
+                <CloseIcon />
+              </button>
+            </div>
+
+            <div className="newModalGap">
+              <div className="row my-3  "></div>
+              <div className="col-12 ">
+                <label>Assign Supplier</label>
+                <select
+                  className="form-cuntrol col-12 border px-3 py-2 mb-2"
+                  value={supplierName}
+                  onChange={(e) => {
+                    setSupplierName(e.target.value);
+                  }}
+                  name="attachdoc"
+                >
+                  <option>Select</option>
+                  {supplierData.map((item, index) => (
+                    <option key={index} value={item.id}>
+                      {item.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <Button
+                variant="contained"
+                className="text-center"
+                onClick={AssignFreightToSupplier}
+              >
+                Add Supplier
+              </Button>
+            </div>
+          </Box>
+        </Modal>
+        <div className="container-fluid">
+          <div className="row manageFreight">
+            <div className="col-12">
+              <div className="d-flex justify-content-between align-items-center">
+                <h4 className="freight_hd">Freight By User</h4>
+                <div className="d-flex">
+                  <div className="me-2">
+                    <input
+                      className="py-1 rounded ps-1"
+                      type="text"
+                      value={searchQuery}
+                      onChange={handleSearch}
+                      placeholder="Search"
+                    ></input>
+                  </div>
+                  <button
+                    className="dropdown-toggle me-2"
+                    onClick={handleclickopenmodal}
+                  >
+                    Filter
+                  </button>
+                  <div className="dropdown">
                     <button
-                      className="dropdown-toggle me-2"
-                      onClick={handleclickopenmodal}
+                      className="dropdown-toggle"
+                      type="button"
+                      data-bs-toggle="dropdown"
+                      aria-expanded="false"
                     >
-                      Filter
+                      {status1}
                     </button>
-                    <div className="dropdown">
-                      <button
-                        className="dropdown-toggle"
-                        type="button"
-                        data-bs-toggle="dropdown"
-                        aria-expanded="false"
-                      >
-                        {status1}
-                      </button>
-                      <ul className="dropdown-menu">
-                        <li className="filter_item">
-                          <p
-                            className="dropdown-item mb-0"
-                            onClick={handlelcickapiupdae}
-                          >
-                            Pending
-                          </p>
-                        </li>
-                        <li className="filter_item">
-                          <p
-                            className="dropdown-item mb-0"
-                            onClick={handlelcickapiupdate}
-                          >
-                            Accepted
-                          </p>
-                        </li>
-                        <li className="filter_item">
-                          <p
-                            className="dropdown-item mb-0"
-                            onClick={handlelcickapiupdatedeclined}
-                          >
-                            Declined
-                          </p>
-                        </li>
-                        <li className="filter_item">
-                          <p
-                            className="dropdown-item mb-0"
-                            onClick={handlelcickapiupdatepartial}
-                          >
-                            Estimated
-                          </p>
-                        </li>
-                      </ul>
-                    </div>
+                    <ul className="dropdown-menu">
+                      <li className="filter_item">
+                        <p
+                          className="dropdown-item mb-0"
+                          onClick={handlelcickapiupdae}
+                        >
+                          Pending
+                        </p>
+                      </li>
+                      <li className="filter_item">
+                        <p
+                          className="dropdown-item mb-0"
+                          onClick={handlelcickapiupdate}
+                        >
+                          Accepted
+                        </p>
+                      </li>
+                      <li className="filter_item">
+                        <p
+                          className="dropdown-item mb-0"
+                          onClick={handlelcickapiupdatedeclined}
+                        >
+                          Declined
+                        </p>
+                      </li>
+                      <li className="filter_item">
+                        <p
+                          className="dropdown-item mb-0"
+                          onClick={handlelcickapiupdatepartial}
+                        >
+                          Estimated
+                        </p>
+                      </li>
+                    </ul>
                   </div>
                 </div>
               </div>
             </div>
-            <div className="  mt-4">
-              <div className=" ">
+          </div>
+          <div className="  mt-4">
+            <div className=" ">
+              {loader ? (
+                <div class="loader-container">
+                  <div class="loader"></div>
+                  <p class="loader-text">Updating... This may take some time</p>
+                </div>
+              ) : (
                 <div className="table-responsive">
                   <table className="table table-striped tableICon">
                     <tbody>
-                      {currentdata &&
-                        currentdata.length > 0 &&
-                        currentdata.map((item, index) => {
+                      {data &&
+                        data.length > 0 &&
+                        data.map((item, index) => {
                           console.log(item);
                           return (
                             <>
@@ -924,6 +1051,22 @@ export default function UserFreight() {
                                                 />
                                                 Delete
                                               </a>
+                                              <a
+                                                className="dropdown-item li_icon"
+                                                onClick={() => {
+                                                  Attchfreight(item.freight_id);
+                                                }}
+                                              >
+                                                <AiOutlineUsergroupAdd
+                                                  className="text-danger"
+                                                  style={{
+                                                    marginRight: "10px",
+                                                    cursor: "pointer",
+                                                    width: "20px",
+                                                  }}
+                                                />
+                                                Assign Freight
+                                              </a>
                                               <a className="dropdown-item li_icon">
                                                 <div className="action_btn">
                                                   <div
@@ -1027,8 +1170,33 @@ export default function UserFreight() {
                                                   <div
                                                     type="button"
                                                     onClick={() => {
+                                                      querryinQuote(
+                                                        item
+                                                      );
+                                                    }}
+                                                    className="border-0 outline-none li_icon"
+                                                  >
+                                                    <CheckCircleIcon
+                                                      style={{
+                                                        color:
+                                                          "rgb(11, 65, 112)",
+                                                        marginRight: "10px",
+                                                        width: "20px",
+                                                        height: "15px",
+                                                      }}
+                                                    />
+                                                    Chat
+                                                  </div>
+                                                </div>
+                                              </a>
+                                              <a className="dropdown-item li_icon">
+                                                <div className="action_btn">
+                                                  <div
+                                                    type="button"
+                                                    onClick={() => {
                                                       hanldeclicknavicalc(
-                                                        item.freight_id
+                                                        item.freight_id,
+                                                        item.estimate_id
                                                       );
                                                     }}
                                                     className="border-0 outline-none li_icon"
@@ -1052,63 +1220,68 @@ export default function UserFreight() {
                                       </div>
                                     </div>
                                   </div>
-                                  <div className="">
-                                    <p
-                                      type="radio"
-                                      className="input_user mb-0"
-                                    />
-                                    <label className="status">
-                                      {item.status == 1 ? (
-                                        <div className="d-flex align-items-center">
-                                          <span className="dot bg-success me-2"></span>
-                                          <p className="text-success mb-0">
-                                            Accepted
-                                          </p>
-                                        </div>
-                                      ) : item.status == 2 ? (
-                                        <div className="d-flex align-items-center">
-                                          <span className="dot bg-danger me-2"></span>
-                                          <p className="text-danger mb-0">
-                                            Declined
-                                          </p>
-                                        </div>
-                                      ) : item.status == 3 ? (
-                                        <div className="d-flex align-items-center">
-                                          <span className="dot bg-secondary me-2"></span>
-                                          <p className="text-secondary mb-0">
-                                            Partial
-                                          </p>
-                                        </div>
-                                      ) : item.status == 4 ? (
-                                        <div className="d-flex align-items-center">
-                                          <span className="dot bg-info me-2"></span>
-                                          <p className="text-info mb-0">
-                                            Estimated
-                                          </p>
-                                        </div>
-                                      ) : item.status == 6 ? (
-                                        <div className="d-flex align-items-center">
-                                          <span className="dot bg-danger me-2"></span>
-                                          <p className="text-danger mb-0">
-                                            Quotation Rejected
-                                          </p>
-                                        </div>
-                                      ) : item.status == 5 ? (
-                                        <div className="d-flex align-items-center">
-                                          <span className="dot bg-success me-2"></span>
-                                          <p className="text-success mb-0">
-                                            Quotation Accepted
-                                          </p>
-                                        </div>
-                                      ) : (
-                                        <div className="d-flex align-items-center">
-                                          <span className="dot bg-dark me-2"></span>
-                                          <p className="text-dark mb-0">
-                                            pending
-                                          </p>
-                                        </div>
-                                      )}
-                                    </label>
+                                  <div className="d-flex justify-content-between">
+                                    <div>
+                                      <p
+                                        type="radio"
+                                        className="input_user mb-0"
+                                      />
+                                      <label className="status">
+                                        {item.status == 1 ? (
+                                          <div className="d-flex align-items-center">
+                                            <span className="dot bg-success me-2"></span>
+                                            <p className="text-success mb-0">
+                                              Accepted
+                                            </p>
+                                          </div>
+                                        ) : item.status == 2 ? (
+                                          <div className="d-flex align-items-center">
+                                            <span className="dot bg-danger me-2"></span>
+                                            <p className="text-danger mb-0">
+                                              Declined
+                                            </p>
+                                          </div>
+                                        ) : item.status == 3 ? (
+                                          <div className="d-flex align-items-center">
+                                            <span className="dot bg-secondary me-2"></span>
+                                            <p className="text-secondary mb-0">
+                                              Partial
+                                            </p>
+                                          </div>
+                                        ) : item.status == 4 ? (
+                                          <div className="d-flex align-items-center">
+                                            <span className="dot bg-info me-2"></span>
+                                            <p className="text-info mb-0">
+                                              Estimated
+                                            </p>
+                                          </div>
+                                        ) : item.status == 6 ? (
+                                          <div className="d-flex align-items-center">
+                                            <span className="dot bg-danger me-2"></span>
+                                            <p className="text-danger mb-0">
+                                              Quotation Rejected
+                                            </p>
+                                          </div>
+                                        ) : item.status == 5 ? (
+                                          <div className="d-flex align-items-center">
+                                            <span className="dot bg-success me-2"></span>
+                                            <p className="text-success mb-0">
+                                              Quotation Accepted
+                                            </p>
+                                          </div>
+                                        ) : (
+                                          <div className="d-flex align-items-center">
+                                            <span className="dot bg-dark me-2"></span>
+                                            <p className="text-dark mb-0">
+                                              pending
+                                            </p>
+                                          </div>
+                                        )}
+                                      </label>
+                                    </div>
+                                    <div>
+                                      <div>{item?.assigned_supplier_name}</div>
+                                    </div>
                                   </div>
                                 </td>
                                 <div
@@ -1401,9 +1574,6 @@ export default function UserFreight() {
                                                     >
                                                       {updatedata.map(
                                                         (option, index) => {
-                                                          console.log(
-                                                            typeof option.id
-                                                          );
                                                           return (
                                                             <>
                                                               <option
@@ -1483,9 +1653,6 @@ export default function UserFreight() {
                                                     >
                                                       {updatedata.map(
                                                         (option, index) => {
-                                                          console.log(
-                                                            typeof option.id
-                                                          );
                                                           return (
                                                             <>
                                                               <option
@@ -1520,85 +1687,145 @@ export default function UserFreight() {
                                               </div>
                                             </div>
                                             <div className="borderShip">
+                                              <div className="row mb-3 mt-4">
+                                                <div className="col-9 mt-3">
+                                                  <h4 className="freight_hd">
+                                                    Document Section
+                                                  </h4>
+                                                  <span class="line"></span>
+                                                </div>
+                                                <div className="col-3">
+                                                  <Button
+                                                    className="btn  btn-primary"
+                                                    onClick={handleShow}
+                                                  >
+                                                    Upload Documents
+                                                  </Button>
 
-                                               <div className="row mb-3 mt-4">
-                                                                              <div className="col-9 mt-3">
-                                                                                <h4 className="freight_hd">Document Section</h4>
-                                                                                <span class="line"></span>
-                                                                              </div>
-                                                                              <div className="col-3">
-                                                            <Button className="btn  btn-primary" onClick={handleShow}>
-                                                                      Upload Documents
-                                                                    </Button>
-                                                                                   
-                                                                                   {
-                                                                                    show1 ? <Modal
-                                                                    open={show1}
-                                                                    onClose={handleClose}
-                                                                    slotProps={{
-                                                                      backdrop: {
-                                                                        sx: { backgroundColor: "rgba(0,0,0,0.2)" }, // lighter background
-                                                                      },
-                                                                    }}
-                                                                  >
-                                                                    <Box
-                                                                      sx={{
-                                                                        p: 3,
-                                                                        bgcolor: "background.paper",
-                                                                        borderRadius: 2,
-                                                                        width: 500,
-                                                                        mx: "auto",
-                                                                        mt: 10,
-                                                                      }}
-                                                                    >
-                                                                      <h2>Upload Documents</h2>
-                                                            
-                                                                      {/* Dropdown */}
-                                                                      <FormControl fullWidth sx={{ mt: 2 }}>
-                                                                        <InputLabel id="doc-select-label">Select Document Type</InputLabel>
-                                                                        <Select
-                                                                          labelId="doc-select-label"
-                                                                          // value={selected}
-                                                                          onChange={handleSelect}
-                                                                        >
-                                                                          {docOptions.map((option) => (
-                                                                            <MenuItem key={option.id} value={option.id}>
-                                                                              {option.label}
-                                                                            </MenuItem>
-                                                                          ))}
-                                                                        </Select>
-                                                                      </FormControl>
-                                                            
-                                                                      {/* Dynamic file inputs */}
-                                                                      <div className="mt-3">
-                                                                        {selectedDocs.map((doc, index) => (
-                                                                          <div key={index} className="mb-3">
-                                                                            <label className="fw-bold">{doc.name}</label>
-                                                                            <input
-                                                                              type="file"
-                                                                              className="form-control"
-                                                                              multiple
-                                                                              accept="image/*,application/pdf"
-                                                                              onChange={(e) => handleFileChangefil(e, doc.name)}
-                                                                            />
-                                                                          </div>
-                                                                        ))}
-                                                                      </div>
-                                                            
-                                                                      {/* Footer buttons */}
-                                                                      <Box sx={{ display: "flex", justifyContent: "flex-end", gap: 2, mt: 3 }}>
-                                                                        <Button onClick={handleClose}>Cancel</Button>
-                                                                        <Button variant="contained" color="success" onClick={handleSave}>
-                                                                          Save Documents
-                                                                        </Button>
-                                                                      </Box>
-                                                                    </Box>
-                                                                  </Modal> : ""
-                                                                                   }   
-                                                                              </div>
-                                                                            </div>
+                                                  {show1 ? (
+                                                    <Modal
+                                                      open={show1}
+                                                      onClose={handleClose}
+                                                      slotProps={{
+                                                        backdrop: {
+                                                          sx: {
+                                                            backgroundColor:
+                                                              "rgba(0,0,0,0.2)",
+                                                          }, // lighter background
+                                                        },
+                                                      }}
+                                                    >
+                                                      <Box
+                                                        sx={{
+                                                          p: 3,
+                                                          bgcolor:
+                                                            "background.paper",
+                                                          borderRadius: 2,
+                                                          width: 500,
+                                                          mx: "auto",
+                                                          mt: 10,
+                                                        }}
+                                                      >
+                                                        <h2>
+                                                          Upload Documents
+                                                        </h2>
+
+                                                        {/* Dropdown */}
+                                                        <FormControl
+                                                          fullWidth
+                                                          sx={{ mt: 2 }}
+                                                        >
+                                                          <InputLabel id="doc-select-label">
+                                                            Select Document Type
+                                                          </InputLabel>
+                                                          <Select
+                                                            labelId="doc-select-label"
+                                                            // value={selected}
+                                                            onChange={
+                                                              handleSelect
+                                                            }
+                                                          >
+                                                            {docOptions.map(
+                                                              (option) => (
+                                                                <MenuItem
+                                                                  key={
+                                                                    option.id
+                                                                  }
+                                                                  value={
+                                                                    option.id
+                                                                  }
+                                                                >
+                                                                  {option.label}
+                                                                </MenuItem>
+                                                              )
+                                                            )}
+                                                          </Select>
+                                                        </FormControl>
+
+                                                        {/* Dynamic file inputs */}
+                                                        <div className="mt-3">
+                                                          {selectedDocs.map(
+                                                            (doc, index) => (
+                                                              <div
+                                                                key={index}
+                                                                className="mb-3"
+                                                              >
+                                                                <label className="fw-bold">
+                                                                  {doc.name}
+                                                                </label>
+                                                                <input
+                                                                  type="file"
+                                                                  className="form-control"
+                                                                  multiple
+                                                                  accept="image/*,application/pdf"
+                                                                  onChange={(
+                                                                    e
+                                                                  ) =>
+                                                                    handleFileChangefil(
+                                                                      e,
+                                                                      doc.name
+                                                                    )
+                                                                  }
+                                                                />
+                                                              </div>
+                                                            )
+                                                          )}
+                                                        </div>
+
+                                                        {/* Footer buttons */}
+                                                        <Box
+                                                          sx={{
+                                                            display: "flex",
+                                                            justifyContent:
+                                                              "flex-end",
+                                                            gap: 2,
+                                                            mt: 3,
+                                                          }}
+                                                        >
+                                                          <Button
+                                                            onClick={
+                                                              handleClose
+                                                            }
+                                                          >
+                                                            Cancel
+                                                          </Button>
+                                                          <Button
+                                                            variant="contained"
+                                                            color="success"
+                                                            onClick={handleSave}
+                                                          >
+                                                            Save Documents
+                                                          </Button>
+                                                        </Box>
+                                                      </Box>
+                                                    </Modal>
+                                                  ) : (
+                                                    ""
+                                                  )}
+                                                </div>
+                                              </div>
                                               <h4>Cargo details</h4>
-                                               
+
                                               <div className="row">
                                                 <div className="col-lg-6">
                                                   <div className="mb-3">
@@ -1741,7 +1968,7 @@ export default function UserFreight() {
                                                     />
                                                   </div>
                                                 </div>
-                        {/* <div className="col-6">
+                                                {/* <div className="col-6">
                           <label>Select Document </label>
                           <select name="documentName" onChange={handleupdateapi}>
                             <option value="">Select...</option>
@@ -1756,8 +1983,7 @@ export default function UserFreight() {
                             <option value="AD_Quotations">Attach Quote</option>
                           </select>
                         </div> */}
-                     
-                     
+
                                                 {/* <div className="col-lg-6">
                                                   <div className="mb-3">
                                                     <label>Document Name</label>
@@ -1854,7 +2080,7 @@ export default function UserFreight() {
                                                     </select>
                                                   </div>
                                                 </div>
-                                                     {/* <div className="row">
+                                                {/* <div className="row">
                                                     <div className="col-6 mt-3">
                                                       <h5>licenses</h5>
                                                       <input
@@ -1921,226 +2147,230 @@ export default function UserFreight() {
                     </button>
                   </div>
                 </div>
-              </div>
+              )}
             </div>
-            <ToastContainer />
           </div>
-          <Modal
-            open={openModal1}
-            onClose={closeModal1}
-            aria-labelledby="modal-modal-title"
-            aria-describedby="modal-modal-description"
+          <ToastContainer />
+        </div>
+        <Modal
+          open={openModal1}
+          onClose={closeModal1}
+          aria-labelledby="modal-modal-title"
+          aria-describedby="modal-modal-description"
+        >
+          <Box
+            sx={{
+              position: "absolute",
+              top: "50%",
+              left: "50%",
+              transform: "translate(-50%, -50%)",
+              bgcolor: "background.paper",
+              boxShadow: 24,
+            }}
           >
-            <Box
-              sx={{
-                position: "absolute",
-                top: "50%",
-                left: "50%",
-                transform: "translate(-50%, -50%)",
-                bgcolor: "background.paper",
-                boxShadow: 24,
-              }}
-            >
-              <div className="modal-header">
-                <h2 id="modal-modal-title">Filter</h2>
-                <button className="btn btn-close" onClick={closeModal1}>
-                  <CloseIcon />
-                </button>
-              </div>
+            <div className="modal-header">
+              <h2 id="modal-modal-title">Add Document</h2>
+              <button className="btn btn-close" onClick={closeModal1}>
+                <CloseIcon />
+              </button>
+            </div>
 
-              <div className="newModalGap">
-                <h5 className="mb-0">Attach Quote</h5>
-                <input
-                  type="file"
-                  className="border px-3 rounded py-2 my-2"
-                  onChange={handlefilechange}
-                ></input>
-              </div>
+            <div className="newModalGap">
+              <h5 className="mb-0">Attach Quote</h5>
+              <input
+                type="file"
+                className="border px-3 rounded py-2 my-2"
+                onChange={handlefilechange}
+              ></input>
+            </div>
 
-              <div className="modal-footer">
-                <Button variant="contained" className="mb-3" onClick={handlepostimage}>
-                  Apply
-                </Button>
-              </div>
-            </Box>
-          </Modal>
-          <Modal
-            open={isModalOpen}
-            onClose={closeModal}
-            aria-labelledby="modal-modal-title"
-            aria-describedby="modal-modal-description"
+            <div className="modal-footer">
+              <Button
+                variant="contained"
+                className="mb-3"
+                onClick={handlepostimage}
+              >
+                Apply
+              </Button>
+            </div>
+          </Box>
+        </Modal>
+        <Modal
+          open={isModalOpen}
+          onClose={closeModal}
+          aria-labelledby="modal-modal-title"
+          aria-describedby="modal-modal-description"
+        >
+          <Box
+            sx={{
+              position: "absolute",
+              top: "50%",
+              left: "50%",
+              transform: "translate(-50%, -50%)",
+              minWidth: 450,
+              bgcolor: "background.paper",
+              boxShadow: 24,
+            }}
           >
-            <Box
-              sx={{
-                position: "absolute",
-                top: "50%",
-                left: "50%",
-                transform: "translate(-50%, -50%)",
-                minWidth: 450,
-                bgcolor: "background.paper",
-                boxShadow: 24,
-              }}
-            >
-              <div className="modal-header">
-                <h2 id="modal-modal-title">Filter</h2>
-                <button className="btn btn-close" onClick={closeModal}>
-                  <CloseIcon />
-                </button>
-              </div>
-              <div className="newModalGap">
-                <div className="row my-3">
-                  <div className="col-6">
-                    <label>Delivery Type</label>
-                    <select
-                      name="type"
-                      onChange={handlechange}
-                      className="form-control"
-                    >
-                      <option value="">Select</option>
-                      <option value="express">Express</option>
-                      <option value="normal">Consolidation</option>
-                    </select>
-                  </div>
-                  <div className="col-6">
-                    <label>Priority </label>
-                    <div className="shipRefer1 d-flex">
-                      <div>
-                        <input
-                          type="radio"
-                          id="shipper"
-                          name="priority"
-                          style={{ cursor: "pointer" }}
-                          value="High"
-                          onChange={handlechange}
-                        />
-                        <label htmlFor="shipper">High</label>
-                      </div>
-                      <div>
-                        <input
-                          type="radio"
-                          id="shipper2"
-                          style={{ cursor: "pointer" }}
-                          name="priority"
-                          value="Medium"
-                          onChange={handlechange}
-                        />
-                        <label htmlFor="consignee">Medium</label>
-                      </div>
-                      <div>
-                        <input
-                          type="radio"
-                          id="shipper3"
-                          name="priority"
-                          style={{ cursor: "pointer" }}
-                          value="Low"
-                          onChange={handlechange}
-                        />
-                        <label htmlFor="mediumPr">Low</label>
-                      </div>
+            <div className="modal-header">
+              <h2 id="modal-modal-title">Filter</h2>
+              <button className="btn btn-close" onClick={closeModal}>
+                <CloseIcon />
+              </button>
+            </div>
+            <div className="newModalGap">
+              <div className="row my-3">
+                <div className="col-6">
+                  <label>Delivery Type</label>
+                  <select
+                    name="type"
+                    onChange={handlechange}
+                    className="form-control"
+                  >
+                    <option value="">Select</option>
+                    <option value="express">Express</option>
+                    <option value="normal">Consolidation</option>
+                  </select>
+                </div>
+                <div className="col-6">
+                  <label>Priority </label>
+                  <div className="shipRefer1 d-flex">
+                    <div>
+                      <input
+                        type="radio"
+                        id="shipper"
+                        name="priority"
+                        style={{ cursor: "pointer" }}
+                        value="High"
+                        onChange={handlechange}
+                      />
+                      <label htmlFor="shipper">High</label>
+                    </div>
+                    <div>
+                      <input
+                        type="radio"
+                        id="shipper2"
+                        style={{ cursor: "pointer" }}
+                        name="priority"
+                        value="Medium"
+                        onChange={handlechange}
+                      />
+                      <label htmlFor="consignee">Medium</label>
+                    </div>
+                    <div>
+                      <input
+                        type="radio"
+                        id="shipper3"
+                        name="priority"
+                        style={{ cursor: "pointer" }}
+                        value="Low"
+                        onChange={handlechange}
+                      />
+                      <label htmlFor="mediumPr">Low</label>
                     </div>
                   </div>
                 </div>
-                <div className="row mb-3">
-                  <div className="col-6">
-                    <label>Country of Origin</label>
-                    <select
-                      name="origin"
-                      onChange={handlechange}
-                      className="form-control"
-                    >
-                      <option value="">Select</option>
-                      {updatedata &&
-                        updatedata.length > 0 &&
-                        updatedata.map((item, index) => {
-                          return (
-                            <>
-                              <option value={item.id}>{item.name}</option>
-                            </>
-                          );
-                        })}
-                    </select>
-                  </div>
-                  <div className="col-6">
-                    <label>Delivery to Country </label>
-                    <select
-                      name="destination"
-                      onChange={handlechange}
-                      className="form-control"
-                    >
-                      <option value="">Select</option>
-                      {updatedata &&
-                        updatedata.length > 0 &&
-                        updatedata.map((item, index) => {
-                          return (
-                            <>
-                              <option value={item.id}>{item.name}</option>
-                            </>
-                          );
-                        })}
-                    </select>
-                  </div>
+              </div>
+              <div className="row mb-3">
+                <div className="col-6">
+                  <label>Country of Origin</label>
+                  <select
+                    name="origin"
+                    onChange={handlechange}
+                    className="form-control"
+                  >
+                    <option value="">Select</option>
+                    {updatedata &&
+                      updatedata.length > 0 &&
+                      updatedata.map((item, index) => {
+                        return (
+                          <>
+                            <option value={item.id}>{item.name}</option>
+                          </>
+                        );
+                      })}
+                  </select>
                 </div>
-                <div className="row mb-3">
-                  <div className="col-6">
-                    <label>Start Date</label>
-                    <input
-                      type="date"
-                      id="shipper3"
-                      name="startDate"
-                      style={{ cursor: "pointer" }}
-                      className="form-control"
-                      onChange={handlechange}
-                    />
-                  </div>
-                  <div className="col-6">
-                    <label>End Date </label>
-                    <input
-                      type="date"
-                      id="shipper3"
-                      name="endDate"
-                      style={{ cursor: "pointer" }}
-                      className="form-control"
-                      onChange={handlechange}
-                    />
-                  </div>
-                </div>
-                <div className="row mb-3">
-                  <div className="col-6">
-                    <label>Freight</label>
-                    <select
-                      name="freight"
-                      onChange={handlechange}
-                      className="form-control"
-                    >
-                      <option value="">Select...</option>
-                      <option value="Sea">Sea</option>
-                      <option value="Air">Air</option>
-                      <option value="Road">Road</option>
-                    </select>
-                  </div>
-                  <div className="col-6">
-                    <label>freight Type </label>
-                    <select
-                      name="type"
-                      onChange={handlechange}
-                      className="form-control"
-                    >
-                      <option value="">Select...</option>
-                      <option value="express">Express</option>
-                      <option value="normal">Normal</option>
-                    </select>
-                  </div>
+                <div className="col-6">
+                  <label>Delivery to Country </label>
+                  <select
+                    name="destination"
+                    onChange={handlechange}
+                    className="form-control"
+                  >
+                    <option value="">Select</option>
+                    {updatedata &&
+                      updatedata.length > 0 &&
+                      updatedata.map((item, index) => {
+                        return (
+                          <>
+                            <option value={item.id}>{item.name}</option>
+                          </>
+                        );
+                      })}
+                  </select>
                 </div>
               </div>
-              <div className="modal-footer mb-3">
-                <Button variant="contained" onClick={postData}>
-                  Apply
-                </Button>
+              <div className="row mb-3">
+                <div className="col-6">
+                  <label>Start Date</label>
+                  <input
+                    type="date"
+                    id="shipper3"
+                    name="startDate"
+                    style={{ cursor: "pointer" }}
+                    className="form-control"
+                    onChange={handlechange}
+                  />
+                </div>
+                <div className="col-6">
+                  <label>End Date </label>
+                  <input
+                    type="date"
+                    id="shipper3"
+                    name="endDate"
+                    style={{ cursor: "pointer" }}
+                    className="form-control"
+                    onChange={handlechange}
+                  />
+                </div>
               </div>
-            </Box>
-          </Modal>
-        </div>
-      )}
+              <div className="row mb-3">
+                <div className="col-6">
+                  <label>Freight</label>
+                  <select
+                    name="freight"
+                    onChange={handlechange}
+                    className="form-control"
+                  >
+                    <option value="">Select...</option>
+                    <option value="Sea">Sea</option>
+                    <option value="Air">Air</option>
+                    <option value="Road">Road</option>
+                  </select>
+                </div>
+                <div className="col-6">
+                  <label>freight Type </label>
+                  <select
+                    name="type"
+                    onChange={handlechange}
+                    className="form-control"
+                  >
+                    <option value="">Select...</option>
+                    <option value="express">Express</option>
+                    <option value="normal">Normal</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+            <div className="modal-footer mb-3">
+              <Button variant="contained" onClick={postData}>
+                Apply
+              </Button>
+            </div>
+          </Box>
+        </Modal>
+      </div>
     </>
   );
 }

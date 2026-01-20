@@ -1148,7 +1148,6 @@ export default function BookingInsForm() {
                           </div>
                         </div>
                       </div>
-
                       <div className="col-lg-6">
                         <label htmlFor="" className="ware_label">
                           Batteries MSDS must be provided
@@ -1207,7 +1206,6 @@ export default function BookingInsForm() {
                           </div>
                         </div>
                       </div>
-
                       <div className="col-lg-6">
                         <label htmlFor="" className="ware_label">
                           Is Asia Direct - Africa to arrange pre-shipment
@@ -1241,7 +1239,6 @@ export default function BookingInsForm() {
                           </div>
                         </div>
                       </div>
-
                       <div className="col-lg-6">
                         <label htmlFor="" className="ware_label">
                           Type of Export/Import Customs Entry Required

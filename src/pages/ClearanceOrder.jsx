@@ -4,27 +4,25 @@ import { toast, ToastContainer } from "react-toastify";
 import { Modal, Box, Button } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import { useNavigate } from "react-router-dom";
-
+import FormControl from "@mui/material/FormControl";
+import {InputLabel, MenuItem,  Select } from "@mui/material";
 const pageSize = 10;
 export default function ClearanceOrder() {
   const [openDropdown, setOpenDropdown] = useState(null);
   const [openSubmenu, setOpenSubmenu] = useState(null);
+  const [show1, setShow1] = useState(false);
   const dropdownRefs = useRef({});
+   const [selectedDocs, setSelectedDocs] = useState([]);
   const submenuRefs = useRef({});
-
   const toggleDropdown = (index) => {
     setOpenDropdown(openDropdown === index ? null : index);
     setOpenSubmenu(null);
   };
-
   const toggleSubmenu = (index) => {
     setOpenSubmenu(openSubmenu === index ? null : index);
   };
-
   const handleClickOutside = (event) => {
     let isClickInside = false;
-
-    // Check all open dropdowns and submenus
     Object.keys(dropdownRefs.current).forEach((key) => {
       if (
         dropdownRefs.current[key]?.contains(event.target) ||
@@ -33,7 +31,6 @@ export default function ClearanceOrder() {
         isClickInside = true;
       }
     });
-
     if (!isClickInside) {
       setOpenDropdown(null);
       setOpenSubmenu(null);
@@ -47,16 +44,16 @@ export default function ClearanceOrder() {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
-
   const handleAction = (action, item) => {
     console.log(`${action}:`, item);
   };
-
   const [age, setAge] = React.useState("");
   const [data1, setData1] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isModalOpen1, setIsModalOpen1] = useState(false);
   const [country, setCountry] = useState([]);
+   const handleShow = () => setShow1(true);
+      const handleClose = () => setShow1(false);
   const [isModalOpen2, setIsModalOpen2] = useState(false);
   const [apidata, setApidata] = useState({});
    const [formFiles, setFormFiles] = useState({
@@ -69,20 +66,22 @@ export default function ClearanceOrder() {
   const [loader, setLoader] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
+  const [pagenationdata, setPagenationdata] = useState(1);
   const [clearanceid, setClearanceid] = useState("");
   const [file, setFile] = useState(null);
   const navigate = useNavigate();
   useEffect(() => {
     getdata();
   }, []);
-  const getdata = async () => {
+  const getdata = async (page) => {
     setLoader(true);
     try {
       const response = await axios.post(
-        `${process.env.REACT_APP_BASE_URL}getCleranceOrder`,{ user_id:userid, user_type:usertype }
+        `${process.env.REACT_APP_BASE_URL}getCleranceOrder`,{ user_id:userid, user_type:usertype,page:page }
       );
       console.log(response.data.data);
       setData1(response.data.data);
+      setPagenationdata(response.data);
     } catch (error) {
       console.error(error?.response?.data || error.message);
     } finally {
@@ -93,7 +92,6 @@ export default function ClearanceOrder() {
   const handleChange = (event) => {
     setAge(event.target.value);
   };
-
   const handleclick = async (item) => {
     try {
       const postdata = {
@@ -168,6 +166,13 @@ export default function ClearanceOrder() {
       }
     }
   };
+
+    const handleSelect = (e) => {
+        const selected = e.target.value;
+        if (selected && !selectedDocs.find((doc) => doc.name === selected)) {
+          setSelectedDocs([...selectedDocs, { name: selected, files: [] }]);
+        }
+      };
   const handleclick121212 = async (item) => {
     try {
       const datapost = {
@@ -204,32 +209,53 @@ export default function ClearanceOrder() {
       }
     }
   };
-  const handleSearch = (e) => {
-    setSearchQuery(e.target.value);
-    setCurrentPage(1);
-  };
-  const filteredData = data1.filter((item) => {
-    console.log(item);
-    return (
-      item?.clearance_number
-        ?.toLowerCase()
-        ?.includes(searchQuery?.toLowerCase()) ||
-      item?.client_name?.toLowerCase()?.includes(searchQuery?.toLowerCase()) ||
-      item?.goods_desc?.toLowerCase()?.includes(searchQuery?.toLowerCase()) ||
-      item?.port_of_entry_name
-        ?.toLowerCase()
-        ?.includes(searchQuery?.toLowerCase()) ||
-      item?.port_of_exit_name
-        ?.toLowerCase()
-        ?.includes(searchQuery?.toLowerCase())
-    );
-  });
-  const totalPages = Math.ceil(filteredData.length / pageSize);
-  const startIndex = (currentPage - 1) * pageSize;
-  const endIndex = startIndex + pageSize;
-  const currentData = filteredData.slice(startIndex, endIndex);
+ 
+  const totalPages = Math.ceil(pagenationdata.total / pagenationdata.limit);
+  const startIndex = (currentPage - 1) * pagenationdata.limit;
+  const endIndex = startIndex + pagenationdata.limit;
   const handlePageChange = (currentData) => {
     setCurrentPage(currentData);
+getdata(currentData)
+  };
+
+     const handleSearch = (e) => {
+        const value = e.target.value;
+        setSearchQuery(value);
+        setCurrentPage(1);
+        throttledSearch(value); // ✅ throttled call
+      };
+    
+      const throttle = (func, delay) => {
+        let lastCall = 0;
+    
+        return (...args) => {
+          const now = Date.now();
+          if (now - lastCall >= delay) {
+            lastCall = now;
+            func(...args);
+          }
+        };
+      };
+      const throttledSearch = useRef(
+        throttle((value) => {
+          getdata1143(value);
+        }, 1000)
+      ).current;
+
+  const getdata1143 = async (page) => {
+    setLoader(true);
+    try {
+      const response = await axios.post(
+        `${process.env.REACT_APP_BASE_URL}getCleranceOrder`,{ user_id:userid, user_type:usertype, search:page }
+      );
+      console.log(response.data.data);
+      setData1(response.data.data);
+      setPagenationdata(response.data);
+    } catch (error) {
+      console.error(error?.response?.data || error.message);
+    } finally {
+      setLoader(false);
+    }
   };
   useEffect(() => {
     getcountry();
@@ -264,7 +290,8 @@ export default function ClearanceOrder() {
       .then((response) => {
         if (response.data.success === true) {
           handleCloseModal();
-          setData1(response.data.data);
+         setData1(response.data.data);
+      setPagenationdata(response.data);
         }
       })
       .catch((error) => {
@@ -388,7 +415,7 @@ export default function ClearanceOrder() {
     console.log(id);
     const regdata = data1.filter((item) => item !== id.id);
     console.log(regdata);
-    setApidata(id);
+    setApidata(regdata);
     handleOpenModal4();
   };
   const handlechnageupdate = (e) => {
@@ -425,10 +452,13 @@ export default function ClearanceOrder() {
       formdata.append("customer_ref", apidata.customer_ref);
       formdata.append("sales_representative", apidata.sales_representative);
       formdata.append("documentName", apidata.documentName);
-      console.log(formdata);
-         Object.values(formFiles).forEach((files) => {
-  files.forEach((file) => {
-    formdata.append("document", file); // static key
+
+     selectedDocs.forEach(doc => {
+  console.log("Doc Type:", doc.name);
+
+  doc.files.forEach(file => {
+    formdata.append(doc.name, file); // 👈 each file append
+    console.log("File:", file.name, "| Size:", file.size, "bytes");
   });
 });
       const response = await axios.post(
@@ -443,6 +473,37 @@ export default function ClearanceOrder() {
       toast.error(error?.response?.data?.message || "Something went wrong");
     }
   };
+
+   const docOptions = [
+      { id: "Customs Documents", label: "Customs docs" },
+      { id: "Supporting Documents", label: "Supporting docs" },
+      { id: "Invoice, Packing List", label: "Invoice / Packing " },
+      { id: "Product Literature", label: "Product Literature" },
+      { id: "Letters of authority", label: "Letters of authority" },
+      { id: "Waybills", label: "Freight Docs" },
+      { id: "Waybills", label: "Shipping instruction" },
+      { id: "AD_Quotations", label: "Attach Quote" },
+      { id: "Supplier Invoices", label: "Supplier Invoices" }
+    ];
+       const handleFileChangefil = (e, docName) => {
+        const files = Array.from(e.target.files);
+        setSelectedDocs((prev) =>
+          prev.map((doc) =>
+            doc.name === docName ? { ...doc, files } : doc
+          )
+        );
+      };
+
+       const handleSave = () => {
+      console.log("Uploaded Documents:", selectedDocs);
+      selectedDocs.forEach(doc => {
+        console.log("Doc Type:", doc);
+        doc.files.forEach(file => {
+          console.log("File:", file.name, "| Size:", file.size, "bytes");
+        });
+      });
+      handleClose();
+    };
   return (
     <>
       <Modal
@@ -742,7 +803,7 @@ export default function ClearanceOrder() {
                   ></input>
                 </div>
               </div>
-              <div className="col-md-6">
+              {/* <div className="col-md-6">
                 <div className="mb-3">
                   <label htmlFor="clearing_agent" className="form-label">
                     Add Attachment
@@ -765,20 +826,85 @@ export default function ClearanceOrder() {
                             <option value="AD_Quotations">Attach Quote</option>
                   </select>
                 </div>
-              </div>
+              </div> */}
             </div>
 
-               <div className="col-6 mt-3">
-                          <label>Upload Document</label>
-                          <input
-                            type="file"
-                            multiple
-                            className="w-100 mb-3 rounded"
-                            onChange={(e) =>
-                              handleFileChange(e, "other_documents")
-                            }
-                          />
-                        </div>
+         <div className="row mb-3 mt-4">
+                                        <div className="col-9 mt-3">
+                                          <h4 className="freight_hd">Document Section</h4>
+                                          <span class="line"></span>
+                                        </div>
+                                        <div className="col-3">
+                      <Button className="btn  btn-primary" onClick={handleShow}>
+                                Upload Documents
+                              </Button>
+                                             
+                                             {
+                                              show1 ? <Modal
+                              open={show1}
+                              onClose={handleClose}
+                              slotProps={{
+                                backdrop: {
+                                  sx: { backgroundColor: "rgba(0,0,0,0.2)" }, // lighter background
+                                },
+                              }}
+                            >
+                              <Box
+                                sx={{
+                                  p: 3,
+                                  bgcolor: "background.paper",
+                                  borderRadius: 2,
+                                  width: 500,
+                                  mx: "auto",
+                                  mt: 10,
+                                }}
+                              >
+                                <h2>Upload Documents</h2>
+                      
+                                {/* Dropdown */}
+                                <FormControl fullWidth sx={{ mt: 2 }}>
+                                  <InputLabel id="doc-select-label">Select Document Type</InputLabel>
+                                  <Select
+                                    labelId="doc-select-label"
+                                    // value={selected}
+                                    onChange={handleSelect}
+                                  >
+                                    {docOptions.map((option) => (
+                                      <MenuItem key={option.id} value={option.id}>
+                                        {option.label}
+                                      </MenuItem>
+                                    ))}
+                                  </Select>
+                                </FormControl>
+                      
+                                {/* Dynamic file inputs */}
+                                <div className="mt-3">
+                                  {selectedDocs.map((doc, index) => (
+                                    <div key={index} className="mb-3">
+                                      <label className="fw-bold">{doc.name}</label>
+                                      <input
+                                        type="file"
+                                        className="form-control"
+                                        multiple
+                                        accept="image/*,application/pdf"
+                                        onChange={(e) => handleFileChangefil(e, doc.name)}
+                                      />
+                                    </div>
+                                  ))}
+                                </div>
+                      
+                                {/* Footer buttons */}
+                                <Box sx={{ display: "flex", justifyContent: "flex-end", gap: 2, mt: 3 }}>
+                                  <Button onClick={handleClose}>Cancel</Button>
+                                  <Button variant="contained" color="success" onClick={handleSave}>
+                                    Save Documents
+                                  </Button>
+                                </Box>
+                              </Box>
+                            </Modal> : ""
+                                             }   
+                                        </div>
+                                      </div>
 
             <Button variant="contained" onClick={handleupdateupdate}>
               Update
@@ -786,12 +912,7 @@ export default function ClearanceOrder() {
           </div>
         </Box>
       </Modal>
-      {loader ? (
-        <div class="loader-container">
-          <div class="loader"></div>
-          <p class="loader-text">Updating... This may take some time</p>
-        </div>
-      ) : (
+     
         <>
           <div className="wpWrapper">
             <div className="container-fluid">
@@ -813,14 +934,20 @@ export default function ClearanceOrder() {
                   </div>
                 </div>
               </div>
+               {loader ? (
+        <div class="loader-container">
+          <div class="loader"></div>
+          <p class="loader-text">Updating... This may take some time</p>
+        </div>
+      ) : (
               <div className="mt-3">
                 <div className=" ">
                   <div className="table-responsive">
                     <table className="table table-striped tableICon">
                       <tbody style={{ border: "none" }}>
-                        {currentData &&
-                          currentData.length > 0 &&
-                          currentData.map((item, index) => {
+                        {data1 &&
+                          data1.length > 0 &&
+                          data1.map((item, index) => {
                             console.log(item);
                             return (
                               <>
@@ -1122,6 +1249,7 @@ export default function ClearanceOrder() {
                   </div>
                 </div>
               </div>
+      )}
             </div>
             <Modal
               open={isModalOpen}
@@ -1330,7 +1458,6 @@ export default function ClearanceOrder() {
           </div>
           <ToastContainer />
         </>
-      )}
     </>
   );
 }

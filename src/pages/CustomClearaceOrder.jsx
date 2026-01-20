@@ -1,5 +1,5 @@
 import axios from "axios";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { FaEdit } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
@@ -8,8 +8,16 @@ import VisibilityIcon from "@mui/icons-material/Visibility";
 import { AiFillDelete } from "react-icons/ai";
 import { MdDriveFileMoveOutline } from "react-icons/md";
 import CloseIcon from "@mui/icons-material/Close";
-import { Modal, Box, Button, FormControl, InputLabel, Select, MenuItem } from "@mui/material";
-import { Calculate, CopyAll, Download } from "@mui/icons-material";
+import {
+  Modal,
+  Box,
+  Button,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
+} from "@mui/material";
+import { AssignmentTurnedIn, Calculate, CopyAll, Download } from "@mui/icons-material";
 const pageSize = 10;
 const CustomClearaceOrder = () => {
   const [data, setData] = useState({
@@ -45,11 +53,16 @@ const CustomClearaceOrder = () => {
   const [isUpdating, setIsUpdating] = useState(false);
   const [loader, setLoader] = useState(true);
   const [selectedImage, setSelectedImage] = useState(null);
+  const [pagenation, setPagenation] = useState(1);
   const [filedata1, setFiledata1] = useState(null);
-    const [show1, setShow1] = useState(false);
-    const [selectedDocs, setSelectedDocs] = useState([]);
-  
-   const docOptions = [
+  const [freightIdAssignTask, setFreightIdAssignTask] = useState(null);
+  const [openmodalAssignFreight, setOpenmodalAssignFreight] = useState(false);
+  const [supplierName, setSupplierName] = useState("");
+  const [supplierData, setSupplierData] = useState([]);
+  const [show1, setShow1] = useState(false);
+  const [selectedDocs, setSelectedDocs] = useState([]);
+
+  const docOptions = [
     { id: "Customs Documents", label: "Customs docs" },
     { id: "Supporting Documents", label: "Supporting docs" },
     { id: "Invoice, Packing List", label: "Invoice / Packing " },
@@ -58,44 +71,42 @@ const CustomClearaceOrder = () => {
     { id: "Waybills", label: "Freight Docs" },
     { id: "Waybills", label: "Shipping instruction" },
     { id: "AD_Quotations", label: "Attach Quote" },
-    { id: "Supplier Invoices", label: "Supplier Invoices" }
+    { id: "Supplier Invoices", label: "Supplier Invoices" },
   ];
-    const handleShow = () => setShow1(true);
-    const handleClose = () => setShow1(false);
-  
-    // Handle dropdown change
-    const handleSelect = (e) => {
-      const selected = e.target.value;
-      if (selected && !selectedDocs.find((doc) => doc.name === selected)) {
-        setSelectedDocs([...selectedDocs, { name: selected, files: [] }]);
-      }
-    };
-  
-    // Handle file upload for each document type
-    const handleFileChangefil = (e, docName) => {
-      const files = Array.from(e.target.files);
-      setSelectedDocs((prev) =>
-        prev.map((doc) =>
-          doc.name === docName ? { ...doc, files } : doc
-        )
-      );
-    };
-  
-    // For saving data (you can send to API)
+  const handleShow = () => setShow1(true);
+  const handleClose = () => setShow1(false);
+
+  // Handle dropdown change
+  const handleSelect = (e) => {
+    const selected = e.target.value;
+    if (selected && !selectedDocs.find((doc) => doc.name === selected)) {
+      setSelectedDocs([...selectedDocs, { name: selected, files: [] }]);
+    }
+  };
+
+  // Handle file upload for each document type
+  const handleFileChangefil = (e, docName) => {
+    const files = Array.from(e.target.files);
+    setSelectedDocs((prev) =>
+      prev.map((doc) => (doc.name === docName ? { ...doc, files } : doc))
+    );
+  };
+
+  // For saving data (you can send to API)
   const handleSave = () => {
     console.log("Uploaded Documents:", selectedDocs);
-  
+
     // To see filenames instead of [object Object]
-    selectedDocs.forEach(doc => {
+    selectedDocs.forEach((doc) => {
       console.log("Doc Type:", doc);
-      doc.files.forEach(file => {
+      doc.files.forEach((file) => {
         console.log("File:", file.name, "| Size:", file.size, "bytes");
       });
     });
-  
+
     handleClose();
   };
-  
+
   const navigate = useNavigate();
   const handlechange = (e) => {
     const { name, value } = e.target;
@@ -109,6 +120,14 @@ const CustomClearaceOrder = () => {
   };
   const datagetuseirID = JSON.parse(localStorage.getItem("data123"));
   const handleclick = () => {
+    if (!data.freight || data.freight.trim() === "") {
+      toast.error("Freight is required");
+      return;
+    }
+    if (!data.loading_country || !data.discharge_country) {
+      toast.error("Loading & Discharge country is required");
+      return;
+    }
     console.log(datagetuseirID.id);
     const formdata = new FormData();
     formdata.append("user_id", data.client);
@@ -134,16 +153,15 @@ const CustomClearaceOrder = () => {
     formdata.append("comment_on_docs", data?.comment_on_docs);
     formdata.append("documentName", data?.documentName);
     formdata.append("sales_representative", data?.sales_representative);
-    formdata.append("added_user_id",userid);
+    formdata.append("added_user_id", userid);
     console.log(formdata);
-     selectedDocs.forEach(doc => {
-  console.log("Doc Type:", doc.name);
-
-  doc.files.forEach(file => {
-    formdata.append(doc.name, file); // 👈 each file append
-    console.log("File:", file.name, "| Size:", file.size, "bytes");
-  });
-});
+    selectedDocs.forEach((doc) => {
+      console.log("Doc Type:", doc.name);
+      doc.files.forEach((file) => {
+        formdata.append(doc.name, file); // 👈 each file append
+        console.log("File:", file.name, "| Size:", file.size, "bytes");
+      });
+    });
     for (let [key, value] of formdata.entries()) {
       console.log(`${key}: ${value}`);
     }
@@ -195,14 +213,14 @@ const CustomClearaceOrder = () => {
         formdata.append("customer_ref", inputdata.customer_ref);
         formdata.append("sales_representative", inputdata.sales_representative);
         formdata.append("documentName", inputdata.documentName);
-          selectedDocs.forEach(doc => {
-  console.log("Doc Type:", doc.name);
+        selectedDocs.forEach((doc) => {
+          console.log("Doc Type:", doc.name);
 
-  doc.files.forEach(file => {
-    formdata.append(doc.name, file); // 👈 each file append
-    console.log("File:", file.name, "| Size:", file.size, "bytes");
-  });
-});
+          doc.files.forEach((file) => {
+            formdata.append(doc.name, file);
+            console.log("File:", file.name, "| Size:", file.size, "bytes");
+          });
+        });
         axios
           .post(`${process.env.REACT_APP_BASE_URL}update-clearing`, formdata)
           .then((response) => {
@@ -274,7 +292,7 @@ const CustomClearaceOrder = () => {
     const { name, value } = e.target;
     setInputdata({ ...inputdata, [name]: value });
   };
-  const getdata = async () => {
+  const getdata = async (page) => {
     try {
       setLoader(true);
       const permission = await axios.post(
@@ -290,10 +308,14 @@ const CustomClearaceOrder = () => {
           const response = await axios.post(
             `${process.env.REACT_APP_BASE_URL}clearing-list`,
             {
+              user_id: userid,
               added_by: "1",
+              page: page     
             }
           );
           setConstgetdata(response?.data?.data || []);
+          console.log(response?.data);
+          setPagenation(response?.data);
         } catch (error) {
           toast.error(error.response?.data?.message || "Something went wrong");
         }
@@ -303,7 +325,7 @@ const CustomClearaceOrder = () => {
     } catch (error) {
       toast.error("Something went wrong");
     } finally {
-      setLoader(false); 
+      setLoader(false);
     }
   };
   const handelmdal = () => {
@@ -343,13 +365,14 @@ const CustomClearaceOrder = () => {
   };
   const handlePageChange = (page) => {
     setCurrentPage(page);
+    getdata(page);
   };
-  const handleSearch = (e) => {
-    setSearchQuery(e.target.value);
-    setCurrentPage(1);
-  };
+  // const handleSearch = (e) => {
+  //   setSearchQuery(e.target.value);
+  //   setCurrentPage(1);
+  // };
   const filteredData = constgetdata.filter((item) => {
-    console.log(item);
+    // console.log(item);
     return (
       item?.clearance_number
         ?.toLowerCase()
@@ -364,9 +387,9 @@ const CustomClearaceOrder = () => {
         ?.includes(searchQuery?.toLowerCase())
     );
   });
-  const totalPage = Math.ceil(filteredData.length / pageSize);
-  const startindex = (currentPage - 1) * pageSize;
-  const endIndex = startindex + pageSize;
+  const totalPage = Math.ceil(pagenation.total / pagenation.limit);
+  const startindex = (currentPage - 1) * pagenation.limit;
+  const endIndex = startindex + pagenation.limit;
   const currentdata = filteredData.slice(startindex, endIndex);
   const handleclickcleared = () => {
     axios
@@ -386,6 +409,51 @@ const CustomClearaceOrder = () => {
     getcountry();
     getclient();
   }, []);
+
+   const handleSearch = (e) => {
+      const value = e.target.value;
+  
+      setSearchQuery(value);
+      setCurrentPage(1);
+  
+      throttledSearch(value); // ✅ throttled call
+    };
+  
+    const throttle = (func, delay) => {
+      let lastCall = 0;
+  
+      return (...args) => {
+        const now = Date.now();
+        if (now - lastCall >= delay) {
+          lastCall = now;
+          func(...args);
+        }
+      };
+    };
+    const throttledSearch = useRef(
+      throttle((value) => {
+        freightData1(value);
+      }, 1000)
+    ).current;
+
+const freightData1 =async (value) => {
+        try {
+          const response = await axios.post(
+            `${process.env.REACT_APP_BASE_URL}clearing-list`,
+            {
+              user_id: userid,
+              added_by: "1",
+              search: value,
+            }
+          );
+          setConstgetdata(response?.data?.data || []);
+          console.log(response?.data);
+          setPagenation(response?.data);
+        } catch (error) {
+          toast.error(error.response?.data?.message || "Something went wrong");
+        }
+      } 
+
   const getcountry = () => {
     axios
       .get(`${process.env.REACT_APP_BASE_URL}GetCountries`)
@@ -541,6 +609,7 @@ const CustomClearaceOrder = () => {
       endDate: data.endDate,
       clearingType: data.clearingType,
       clearing_status: data.clearing_status,
+      user_id: userid,
       added_by: "1",
     };
     axios
@@ -549,6 +618,7 @@ const CustomClearaceOrder = () => {
         if (response.data.success === true) {
           handleCloseModal();
           setConstgetdata(response.data.data);
+          setPagenation(response.data);
         }
       })
       .catch((error) => {
@@ -562,17 +632,112 @@ const CustomClearaceOrder = () => {
       [fieldName]: files,
     }));
   };
+
+  const handlelcsendid = (item) => {
+    console.log(item.id);
+      console.log(item)
+    setFreightIdAssignTask(item)
+    setOpenmodalAssignFreight(true)
+  }
+
+    const hanldecloseModal=()=>{
+    setOpenmodalAssignFreight(false)
+  }
+
+   const AssignFreightToSupplier = async () => {
+        const payload = {
+          clearance_id: freightIdAssignTask.id,
+          supplier_id: supplierName
+        };
+        try {
+          const response = await axios.post(
+            `${process.env.REACT_APP_BASE_URL}assign-clearance-supplier`,
+            payload
+          );
+          console.log(response.data);
+          toast.success(response.data.message);
+          getClient()
+          setOpenmodalAssignFreight(false);
+        } catch (error) {
+          toast.error(error.response.data.message);
+        }
+      }
+       const getSupplierdata = () => {
+          axios
+            .get(`${process.env.REACT_APP_BASE_URL}supplier-list`)
+            .then((response) => {
+              setSupplierData(response.data.data);
+            })
+            .catch((error) => {
+              toast.error("Error fetching suppliers");
+            });
+        };
+      
+        useEffect(() => {
+          getSupplierdata();
+        }, []);
   return (
     <>
-      {loader ? (
-        <div class="loader-container">
-          <div class="loader"></div>
-          <p class="loader-text">Updating... This may take some time</p>
-        </div>
-      ) : (
+    
         <div className="wpWrapper">
           <div className="container-fluid">
             <div className="row manageFreight">
+               <Modal
+                                      open={openmodalAssignFreight}
+                                      onClose={hanldecloseModal}
+                                      aria-labelledby="modal-modal-title"
+                                      aria-describedby="modal-modal-description"
+                                      className="newModal"
+                                    >
+                                      <Box
+                                        sx={{
+                                          position: "absolute",
+                                          top: "50%",
+                                          left: "50%",
+                                          transform: "translate(-50%, -50%)",
+                                          minWidth: 450,
+                                          bgcolor: "background.paper",
+                                          boxShadow: 24,
+                                        }}
+                                      >
+                                        <div className="modal-header">
+                                          <h2>
+                                            <h2 id="modal-modal-title">Assign Clearance</h2>
+                                          </h2>
+                                          <button className="btn btn-close" onClick={hanldecloseModal}>
+                                            <CloseIcon />
+                                          </button>
+                                        </div>
+                        
+                                        <div className="newModalGap">
+                                          <div className="row my-3  ">
+                                          </div>
+                        <div className="col-12 ">
+                                              <label>Assign Supplier</label>
+                                              <select
+                                                className="form-cuntrol col-12 border px-3 py-2 mb-2"
+                                                value={supplierName}
+                                                onChange={(e)=>{setSupplierName(e.target.value)}}
+                                                name="attachdoc"
+                                              >
+                                                <option>Select</option>
+                                                {supplierData.map((item, index) => (
+                                                                  <option key={index} value={item.id}>
+                                                                   {item.name}
+                                                                  </option>
+                                                                ))}
+                                              </select>
+                                            </div>
+                                          <Button
+                                            variant="contained"
+                                            className="text-center"
+                                            onClick={AssignFreightToSupplier}
+                                          >
+                                            Add Supplier
+                                          </Button>
+                                        </div>
+                                      </Box>
+                                    </Modal>
               <div className="col-12">
                 <div className="d-flex justify-content-between align-items-center">
                   <div className="">
@@ -605,13 +770,18 @@ const CustomClearaceOrder = () => {
                 </div>
               </div>
             </div>
+              {loader ? (
+        <div class="loader-container">
+          <div class="loader"></div>
+          <p class="loader-text">Updating... This may take some time</p>
+        </div>
+      ) : (
             <div className="mt-4">
               <div>
                 <div className="table-responsive">
                   <table className="table table-striped table-hover">
                     <tbody>
-                      {currentdata.map((item, index) => {
-                        console.log(item);
+                      {constgetdata.map((item, index) => {
                         return (
                           <>
                             <tr key={index}>
@@ -652,7 +822,9 @@ const CustomClearaceOrder = () => {
                                         </div>
                                         <p className="origin">
                                           {item.port_of_exit_name}
-                                          <span className="fright_type">{item?.freight}</span>
+                                          <span className="fright_type">
+                                            {item?.freight}
+                                          </span>
                                         </p>
                                       </div>
                                     </div>
@@ -704,23 +876,6 @@ const CustomClearaceOrder = () => {
                                               />
                                               View Details
                                             </a>
-                                            {/* <a
-                                              className="dropdown-item li_icon"
-                                              onClick={() =>
-                                                handlelcickestrachange(item.id)
-                                              }
-                                            >
-                                              <Calculate
-                                                className="text-danger"
-                                                style={{
-                                                  marginRight: "10px",
-                                                  width: "20px",
-                                                  cursor: "pointer",
-                                                  height: "20px",
-                                                }}
-                                              />
-                                            Calculate Extra Charges
-                                            </a> */}
                                             <a
                                               className="dropdown-item li_icon"
                                               onClick={() =>
@@ -754,6 +909,23 @@ const CustomClearaceOrder = () => {
                                                 }}
                                               />
                                               Attach Quotation
+                                            </a>
+                                            <a
+                                              className="dropdown-item li_icon"
+                                              onClick={() =>
+                                                handlelcsendid(item)
+                                              }
+                                            >
+                                              <AssignmentTurnedIn
+                                                className="text-danger"
+                                                style={{
+                                                  marginRight: "10px",
+                                                  width: "20px",
+                                                  cursor: "pointer",
+                                                  height: "20px",
+                                                }}
+                                              />
+                                              Assign Clearance
                                             </a>
                                             <a
                                               className="dropdown-item li_icon"
@@ -833,7 +1005,7 @@ const CustomClearaceOrder = () => {
                                     </div>
                                   </div>
                                 </div>
-                                <div className="d-flex">
+                                <div className="d-flex justify-content-between">
                                   <div>
                                     <p className="input_user mb-0" />
                                     <label className="status">
@@ -872,8 +1044,10 @@ const CustomClearaceOrder = () => {
                                       )}
                                     </label>
                                   </div>
+
                                   <div className="ms-4">
-                                    <p>{item.sales_name}</p>
+                                    <p className="me-2">{item?.assigned_supplier_name}</p>
+                                    {item?.sales_name}
                                   </div>
                                 </div>
                               </td>
@@ -903,9 +1077,9 @@ const CustomClearaceOrder = () => {
                 </div>
               </div>
             </div>
+      )}
           </div>
         </div>
-      )}
       <Modal
         open={openmodal}
         onClose={handelmdal}
@@ -977,7 +1151,7 @@ const CustomClearaceOrder = () => {
                 <div className="col-md-6">
                   <div className="mb-2">
                     <label htmlFor="customer_ref" className="form-label">
-                      Mode of Freight
+                      Mode of Freight <span style={{ color: "red" }}>*</span>
                     </label>
 
                     <select
@@ -1005,7 +1179,7 @@ const CustomClearaceOrder = () => {
                     {lcientlist &&
                       lcientlist.length > 0 &&
                       lcientlist.map((item, index) => {
-                        console.log(item);
+                        // console.log(item);
                         return (
                           <>
                             <option key={index} value={item.id}>
@@ -1219,7 +1393,8 @@ const CustomClearaceOrder = () => {
                 <div className="col-md-6">
                   <div className="mb-3">
                     <label htmlFor="destination" className="form-label">
-                      Port of Loading Country
+                      Port of Loading Country{" "}
+                      <span style={{ color: "red" }}>*</span>
                     </label>
                     <select
                       id="port_of_entry"
@@ -1235,7 +1410,7 @@ const CustomClearaceOrder = () => {
                       {country &&
                         country.length > 0 &&
                         country.map((item, index) => {
-                          console.log(item);
+                          // console.log(item);
                           return (
                             <>
                               <option key={index} value={item.id}>
@@ -1250,7 +1425,8 @@ const CustomClearaceOrder = () => {
                 <div className="col-md-6">
                   <div className="mb-3">
                     <label htmlFor="port_of_entry" className="form-label">
-                      Port of Exit Country
+                      Port of Exit Country{" "}
+                      <span style={{ color: "red" }}>*</span>
                     </label>
                     <select
                       id="port_of_entry"
@@ -1266,7 +1442,7 @@ const CustomClearaceOrder = () => {
                       {country &&
                         country.length > 0 &&
                         country.map((item, index) => {
-                          console.log(item);
+                          // console.log(item);
                           return (
                             <>
                               <option key={index} value={item.id}>
@@ -1316,19 +1492,19 @@ const CustomClearaceOrder = () => {
                     ></input>
                   </div>
                 </div>
-              </div> 
-               <div className="row mb-3 mt-4">
-                                <div className="col-9 mt-3">
-                                  <h4 className="freight_hd">Document Section</h4>
-                                  <span class="line"></span>
-                                </div>
-                                <div className="col-3">
-              <Button className="btn  btn-primary" onClick={handleShow}>
-                        Upload Documents
-                      </Button>
-                                     
-                                     {
-                                      show1 ? <Modal
+              </div>
+              <div className="row mb-3 mt-4">
+                <div className="col-9 mt-3">
+                  <h4 className="freight_hd">Document Section</h4>
+                  <span class="line"></span>
+                </div>
+                <div className="col-3">
+                  <Button className="btn  btn-primary" onClick={handleShow}>
+                    Upload Documents
+                  </Button>
+
+                  {show1 ? (
+                    <Modal
                       open={show1}
                       onClose={handleClose}
                       slotProps={{
@@ -1348,13 +1524,12 @@ const CustomClearaceOrder = () => {
                         }}
                       >
                         <h2>Upload Documents</h2>
-              
-                        {/* Dropdown */}
                         <FormControl fullWidth sx={{ mt: 2 }}>
-                          <InputLabel id="doc-select-label">Select Document Type</InputLabel>
+                          <InputLabel id="doc-select-label">
+                            Select Document Type
+                          </InputLabel>
                           <Select
                             labelId="doc-select-label"
-                            // value={selected}
                             onChange={handleSelect}
                           >
                             {docOptions.map((option) => (
@@ -1364,8 +1539,6 @@ const CustomClearaceOrder = () => {
                             ))}
                           </Select>
                         </FormControl>
-              
-                        {/* Dynamic file inputs */}
                         <div className="mt-3">
                           {selectedDocs.map((doc, index) => (
                             <div key={index} className="mb-3">
@@ -1375,24 +1548,37 @@ const CustomClearaceOrder = () => {
                                 className="form-control"
                                 multiple
                                 accept="image/*,application/pdf"
-                                onChange={(e) => handleFileChangefil(e, doc.name)}
+                                onChange={(e) =>
+                                  handleFileChangefil(e, doc.name)
+                                }
                               />
                             </div>
                           ))}
                         </div>
-              
-                        {/* Footer buttons */}
-                        <Box sx={{ display: "flex", justifyContent: "flex-end", gap: 2, mt: 3 }}>
+                        <Box
+                          sx={{
+                            display: "flex",
+                            justifyContent: "flex-end",
+                            gap: 2,
+                            mt: 3,
+                          }}
+                        >
                           <Button onClick={handleClose}>Cancel</Button>
-                          <Button variant="contained" color="success" onClick={handleSave}>
+                          <Button
+                            variant="contained"
+                            color="success"
+                            onClick={handleSave}
+                          >
                             Save Documents
                           </Button>
                         </Box>
                       </Box>
-                    </Modal> : ""
-                                     }   
-                                </div>
-                              </div>
+                    </Modal>
+                  ) : (
+                    ""
+                  )}
+                </div>
+              </div>
               <div className="row">
                 <div className="col-md-12">
                   <h6 className="md_heading text-start">Cargo Details</h6>
@@ -1533,68 +1719,7 @@ const CustomClearaceOrder = () => {
                     ></input>
                   </div>
                 </div>
-                {/* <div className="col-6">
-                  <label>Select Document </label>
-                  <select
-                    name="documentName"
-                    onChange={isUpdating ? handleInputChange : handlechange}
-                  >
-                    <option value="">Select...</option>
-                    <option value="Customs Documents">Customs docs</option>
-                    <option value="Supporting Documents">
-                      Supporting docs
-                    </option>
-                    <option value="Invoice, Packing List">
-                      Invoice / Packing L
-                    </option>
-                    <option value="Product Literature">
-                      Product Literature
-                    </option>
-                    <option value="Letters of authority">LOA</option>
-                    <option value="Waybills">Freight Docs</option>
-                    <option value="Waybills">Shipping instruction</option>
-                    <option value="Supplier Invoices">Freight Invoices </option>
-                    <option value="AD_Quotations">Attach Quote</option>
-                  </select>
-                </div> */}
-                {/* <div className="col-md-6">
-                  <div className="mb-3">
-                    <label htmlFor="clearing_agent" className="form-label">
-                      Add Attachment
-                    </label>
-                    <select
-                      className="w-100 py-2 px-2 sel_custom"
-                      name="document_name"
-                      value={
-                        isUpdating
-                          ? inputdata.document_name
-                          : data.document_name
-                      }
-                      onChange={isUpdating ? handleInputChange : handlechange}
-                    >
-                      <option>Select...</option>
-                      <option value="packing list">Packing List</option>
-                      <option value="licenses/permits">Licenses/Permits</option>
-                      <option value="product literature">
-                        Product Literature
-                      </option>
-                      <option value="other documents">Other documents</option>
-                    </select>
-                  </div>
-                </div> */}
               </div>
-
-              {/* <div className="row">
-                <div className="col-12">
-                  <label>licenses</label>
-                  <input
-                    type="file"
-                    multiple
-                    className="w-100 mb-3 rounded"
-                    onChange={(e) => handleFileChange(e, "licenses")}
-                  />
-                </div>
-              </div> */}
             </div>
             <div className="modal-footer">
               <button

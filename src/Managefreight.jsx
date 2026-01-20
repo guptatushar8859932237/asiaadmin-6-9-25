@@ -1,6 +1,6 @@
 import axios from "axios";
-import { useEffect, useState } from "react";
-import { AiFillDelete } from "react-icons/ai";
+import { useEffect, useRef, useState } from "react";
+import { AiFillDelete, AiFillMessage } from "react-icons/ai";
 import { ToastContainer, toast } from "react-toastify";
 import { FaEdit } from "react-icons/fa";
 import Radio from "@mui/material/Radio";
@@ -10,13 +10,19 @@ import FormControl from "@mui/material/FormControl";
 import FormLabel from "@mui/material/FormLabel";
 import { useNavigate } from "react-router-dom";
 import { MdDriveFileMoveOutline } from "react-icons/md";
-import { Modal, Box, Button,  InputLabel, Select, MenuItem } from "@mui/material";
+import {
+  Modal,
+  Box,
+  Button,
+  InputLabel,
+  Select,
+  MenuItem,
+} from "@mui/material";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import DoNotDisturbIcon from "@mui/icons-material/DoNotDisturb";
 import Swal from "sweetalert2";
 import SupportAgentSharpIcon from "@mui/icons-material/SupportAgentSharp";
 import CloseIcon from "@mui/icons-material/Close";
-import { Form } from "react-bootstrap";
 const pageSize = 10;
 export default function Managefreight() {
   const navigate = useNavigate();
@@ -35,20 +41,20 @@ export default function Managefreight() {
   const [data, setData] = useState([]);
   const [data1, setData1] = useState([]);
   const [lcientlist, setLcientlist] = useState([]);
-  const [formData, setFormData] = useState(null);
-  const [formData1, setFormData1] = useState(null);
-  const [formData2, setFormData2] = useState(null);
-  const [formData3, setFormData3] = useState(null);
+  const [openmodalAssignFreight, setOpenmodalAssignFreight] = useState(false);
+  const [freightIdAssignTask, setFreightIdAssignTask] = useState(null);
   const [filedata1, setFiledata1] = useState(null);
   const [freigtid, setFreightId] = useState(null);
   const [status1, setStatus1] = useState("Status");
   const [staffdata, setStaffdata] = useState();
   const [updatedata, setUpdatedata] = useState([]);
+  const [supplierName, setSupplierName] = useState([]);
   const [apidata, setApidata] = useState([]);
-  const [file, setFile] = useState(null);
+  const [getUSer,setGetUSer]=useState([])
   const [staff, SetStaff] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [openmodal, setOpenmodal] = useState(false);
+  const [pagenationdata, setPagenationdata] = useState(1);
   const [inputdata, setInputdata] = useState({
     freight_id: "",
     client_ref: "",
@@ -93,56 +99,43 @@ export default function Managefreight() {
     cargo_pickup: "",
     sales_representative: "",
   });
-
   const [show1, setShow1] = useState(false);
   const [selectedDocs, setSelectedDocs] = useState([]);
-
- const docOptions = [
-  { id: "Customs Documents", label: "Customs docs" },
-  { id: "Supporting Documents", label: "Supporting docs" },
-  { id: "Invoice, Packing List", label: "Invoice / Packing " },
-  { id: "Product Literature", label: "Product Literature" },
-  { id: "Letters of authority", label: "Letters of authority" },
-  { id: "Waybills", label: "Freight Docs" },
-  { id: "Waybills", label: "Shipping instruction" },
-  { id: "AD_Quotations", label: "Attach Quote" },
-  { id: "Supplier Invoices", label: "Supplier Invoices" }
-];
+  const docOptions = [
+    { id: "Customs Documents", label: "Customs docs" },
+    { id: "Supporting Documents", label: "Supporting docs" },
+    { id: "Invoice, Packing List", label: "Invoice / Packing " },
+    { id: "Product Literature", label: "Product Literature" },
+    { id: "Letters of authority", label: "Letters of authority" },
+    { id: "Waybills", label: "Freight Docs" },
+    { id: "Waybills", label: "Shipping instruction" },
+    { id: "AD_Quotations", label: "Attach Quote" },
+    { id: "Supplier Invoices", label: "Supplier Invoices" },
+  ];
   const handleShow = () => setShow1(true);
   const handleClose = () => setShow1(false);
-
-  // Handle dropdown change
   const handleSelect = (e) => {
     const selected = e.target.value;
     if (selected && !selectedDocs.find((doc) => doc.name === selected)) {
       setSelectedDocs([...selectedDocs, { name: selected, files: [] }]);
     }
   };
-
-  // Handle file upload for each document type
   const handleFileChangefil = (e, docName) => {
     const files = Array.from(e.target.files);
     setSelectedDocs((prev) =>
-      prev.map((doc) =>
-        doc.name === docName ? { ...doc, files } : doc
-      )
+      prev.map((doc) => (doc.name === docName ? { ...doc, files } : doc))
     );
   };
-
-  // For saving data (you can send to API)
-const handleSave = () => {
-  console.log("Uploaded Documents:", selectedDocs);
-
-  // To see filenames instead of [object Object]
-  selectedDocs.forEach(doc => {
-    console.log("Doc Type:", doc);
-    doc.files.forEach(file => {
-      console.log("File:", file.name, "| Size:", file.size, "bytes");
+  const handleSave = () => {
+    console.log("Uploaded Documents:", selectedDocs);
+    selectedDocs.forEach((doc) => {
+      console.log("Doc Type:", doc);
+      doc.files.forEach((file) => {
+        console.log("File:", file.name, "| Size:", file.size, "bytes");
+      });
     });
-  });
-
-  handleClose();
-};
+    handleClose();
+  };
   useEffect(() => {
     getStaff();
     getstaff();
@@ -158,6 +151,7 @@ const handleSave = () => {
       });
   };
   const [clientdata, setClientdata] = useState([]);
+  const [supplierData, setSupplierData] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const updatecountry = () => {
     axios
@@ -181,7 +175,23 @@ const handleSave = () => {
   }, []);
   const userid = JSON.parse(localStorage.getItem("data123"))?.id;
   const usertype = JSON.parse(localStorage.getItem("data123"))?.user_type;
-  const frightData = async () => {
+
+  const getFreightWithoutpermission = async (page) => {
+    const payload =    { user_id: userid, user_type: usertype, page: page }
+      try {
+          const response = await axios.post(
+            `${process.env.REACT_APP_BASE_URL}freight-list`,payload);
+          // setLoader(false);
+          console.log("frightDataresponse", response.data);
+          setPagenationdata(response.data);
+          setData(response.data.data);
+        } catch (error) {
+          setLoader(false);
+          toast.error(error.response?.data?.message || "Something went wrong");
+        }
+  }
+
+  const frightData = async (page) => {
     try {
       const postdata = {
         staff_id: userid,
@@ -196,10 +206,12 @@ const handleSave = () => {
       if (permission.data.success) {
         try {
           const response = await axios.post(
-            `${process.env.REACT_APP_BASE_URL}freight-list`,{  user_id:userid, user_type: usertype }
+            `${process.env.REACT_APP_BASE_URL}freight-list`,
+            { user_id: userid, user_type: usertype, page: page }
           );
           setLoader(false);
-          console.log("frightDataresponse", response.data.data);
+          console.log("frightDataresponse", response.data);
+          setPagenationdata(response.data);
           setData(response.data.data);
         } catch (error) {
           setLoader(false);
@@ -214,11 +226,7 @@ const handleSave = () => {
   useEffect(() => {
     frightData();
   }, []);
-
-  const handleSearch = (e) => {
-    setSearchQuery(e.target.value);
-    setCurrentPage(1);
-  };
+ 
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -276,72 +284,73 @@ const handleSave = () => {
       toast.error("You don't have permission to access this page");
     }
   };
-  const handleFileChange4 = (event) => {
-    const files = event.target.files;
-    setFormData({ ...formData, supplier_invoice: files });
-  };
-  const handleFileChange1 = (event) => {
-    const files = event.target.files;
-    setFormData1({ ...formData1, packing_list: files });
-  };
-  const handleFileChange2 = (event) => {
-    const files = event.target.files;
-    setFormData2({ ...formData2, licenses: files });
-  };
-  const handleFileChange3 = (event) => {
-    const files = event.target.files;
-    setFormData3({ ...formData3, other_documents: files });
-  };
   /////////////////////////////////////////update freight///////////////////////////////////////////
-  const handleupdate = (freight_id) => {
-    const setUSer = data.filter((item) => item.freight_id === freight_id);
-    const getUSer = setUSer[0];
-    console.log(getUSer);
-    setInputdata({
-      freight_id: freight_id,
-      client_ref: getUSer.client_ref,
-      type: getUSer.type,
-      freight: getUSer.freight,
-      incoterm: getUSer.incoterm,
-      dimension: getUSer.dimension,
-      weight: getUSer.weight,
-      comment: getUSer.comment,
-      fcl_lcl: getUSer.fcl_lcl,
-      no_of_packages: getUSer.no_of_packages,
-      package_type: getUSer.package_type,
-      commodity: getUSer.commodity,
-      hazardous: getUSer.hazardous,
-      country_of_origin: getUSer.collection_from,
-      destination_country: getUSer.delivery_to,
-      supplier_address: getUSer.supplier_address,
-      port_of_loading: getUSer.port_of_loading,
-      post_of_discharge: getUSer.post_of_discharge,
-      place_of_delivery: getUSer.place_of_delivery,
-      transit_time: getUSer.transit_time,
-      add_attachments: getUSer.add_attachments,
-      nature_of_hazard: getUSer.nature_of_hazard,
-      volumetric_weight: getUSer.volumetric_weight,
-      shipment_ref: getUSer.shipment_ref,
-      assign_for_estimate: getUSer.assign_for_estimate,
-      assign_to_transporter: getUSer.assign_to_transporter,
-      assign_warehouse: getUSer.assign_warehouse,
-      assign_to_clearing: getUSer.assign_to_clearing,
-      send_to_warehouse: getUSer.send_to_warehouse,
-      shipment_origin: getUSer.shipment_origin,
-      shipment_des: getUSer.shipment_des,
-      priority: getUSer.priority,
-      is_active: getUSer.is_active,
-      ready_for_collection: getUSer.ready_for_collection,
-      quote_received: getUSer.quote_received,
-      client_quoted: getUSer.client_quoted,
-      insurance: getUSer.insurance,
-      product_desc: getUSer.product_desc,
-      client_ref_name: getUSer.client_ref_name,
-      document: getUSer.add_attachment_file,
-      shipper_name: getUSer.shipper_name,
-      supplier_address: getUSer.supplier_address,
-      sales_representative: getUSer.sales_id,
-    });
+  const handleupdate =async (freight_id) => {
+    const payload={
+      freight_id:freight_id
+    }
+     try {
+    const response = await axios.post(
+      `${process.env.REACT_APP_BASE_URL}freight-list-byId`,
+      payload
+    );
+
+    if (response?.data?.data?.length > 0) {
+      console.log(response.data.data[0])
+      // setGetUSer(response.data.data[0]);
+      setInputdata(response.data.data[0]);
+    }
+  } catch (error) {
+    console.error("Error fetching freight data by id:", error);
+  }
+    // const setUSer = data.filter((item) => item.freight_id === freight_id);
+    // const getUSer = setUSer[0];
+    // console.log(getUSer);
+    // setInputdata({
+    //   freight_id: freight_id,
+    //   client_ref: getUSer.client_ref,
+    //   type: getUSer.type,
+    //   freight: getUSer.freight,
+    //   incoterm: getUSer.incoterm,
+    //   dimension: getUSer.dimension,
+    //   weight: getUSer.weight,
+    //   comment: getUSer.comment,
+    //   fcl_lcl: getUSer.fcl_lcl,
+    //   no_of_packages: getUSer.no_of_packages,
+    //   package_type: getUSer.package_type,
+    //   commodity: getUSer.commodity,
+    //   hazardous: getUSer.hazardous,
+    //   country_of_origin: getUSer.collection_from,
+    //   destination_country: getUSer.delivery_to,
+    //   supplier_address: getUSer.supplier_address,
+    //   port_of_loading: getUSer.port_of_loading,
+    //   post_of_discharge: getUSer.post_of_discharge,
+    //   place_of_delivery: getUSer.place_of_delivery,
+    //   transit_time: getUSer.transit_time,
+    //   add_attachments: getUSer.add_attachments,
+    //   nature_of_hazard: getUSer.nature_of_hazard,
+    //   volumetric_weight: getUSer.volumetric_weight,
+    //   shipment_ref: getUSer.shipment_ref,
+    //   assign_for_estimate: getUSer.assign_for_estimate,
+    //   assign_to_transporter: getUSer.assign_to_transporter,
+    //   assign_warehouse: getUSer.assign_warehouse,
+    //   assign_to_clearing: getUSer.assign_to_clearing,
+    //   send_to_warehouse: getUSer.send_to_warehouse,
+    //   shipment_origin: getUSer.shipment_origin,
+    //   shipment_des: getUSer.shipment_des,
+    //   priority: getUSer.priority,
+    //   is_active: getUSer.is_active,
+    //   ready_for_collection: getUSer.ready_for_collection,
+    //   quote_received: getUSer.quote_received,
+    //   client_quoted: getUSer.client_quoted,
+    //   insurance: getUSer.insurance,
+    //   product_desc: getUSer.product_desc,
+    //   client_ref_name: getUSer.client_ref_name,
+    //   document: getUSer.add_attachment_file,
+    //   shipper_name: getUSer.shipper_name,
+    //   supplier_address: getUSer.supplier_address,
+    //   sales_representative: getUSer.sales_id,
+    // });
   };
   const handleupdateapi = (e) => {
     const { name, value } = e.target;
@@ -405,22 +414,12 @@ const handleSave = () => {
     formdata.append("cargo_pickup", inputdata.cargo_pickup);
     formdata.append("sales_representative", inputdata.sales_representative);
     formdata.append("documentName", inputdata.documentName);
-    
-    selectedDocs.forEach(doc => {
-  console.log("Doc Type:", doc.name);
-
-  doc.files.forEach(file => {
-    formdata.append(doc.name, file); // 👈 each file append
-    console.log("File:", file.name, "| Size:", file.size, "bytes");
-  });
-});
-    // if (formData2) {
-    //   for (let i = 0; i < formData2.licenses.length; i++) {
-    //     formdata.append("document", formData2.licenses[i]);
-    //   }
-    // }
-  
-    console.log(formdata);
+    selectedDocs.forEach((doc) => {
+      doc.files.forEach((file) => {
+        formdata.append(doc.name, file); // 👈 each file append
+        console.log("File:", file.name, "| Size:", file.size, "bytes");
+      });
+    });
     axios
       .post(`${process.env.REACT_APP_BASE_URL}edit-freight`, formdata)
       .then((response) => {
@@ -428,7 +427,7 @@ const handleSave = () => {
         console.log(response.data.message);
         if (response.data.success === true) {
           setLoader(false);
-          frightData();
+        getFreightWithoutpermission();
           toast.success(response.data.message);
         }
         return 0;
@@ -529,36 +528,13 @@ const handleSave = () => {
   };
   const hanldeclicknavi11 = async (freight_id) => {
     // console.log(freight_id)
-        navigate("/Admin/SupplierEstimation", { state: { data: freight_id } });
+    navigate("/Admin/SupplierEstimation", { state: { data: freight_id } });
   };
 
-  // const hanldeclicknavi = (freight_id) => {
-  // try {
-  //   const alldata = data.filter((item) => {
-  //     return item.freight_id === freight_id;
-  //   });
-  //   console.log(alldata);
-  //   const datapost = {
-  //     staff_id: userid,
-  //     route_url: "/Admin/shipping-estimate",
-  //     user_type: usertype,
-  //   };
-  //   const permission = axios.post(`${process.env.REACT_APP_BASE_URL}CheckPermission`,datapost)
-  //   console.log(permission.data.status)
-  //   if(permission.data.status === 200){
-  //   navigate("/Admin/shipping-estimate", { state: { data: alldata } });
-  //   }else{
-  //     toast.error("You don't have permission to access this page");
-  //   }
-  // } catch (error) {
-  //   toast.error("permission denied")
-  // }
-
-  // };
   ///////////////////////pegenation//////////////////////////////////////////
   const filteredData = data.filter((item) => {
     return (
-      item.type.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      item?.type?.toLowerCase()?.includes(searchQuery?.toLowerCase()) ||
       item?.client_name?.toLowerCase()?.includes(searchQuery?.toLowerCase()) ||
       item?.cargo_pickup?.toLowerCase()?.includes(searchQuery?.toLowerCase()) ||
       item?.product_desc?.toLowerCase()?.includes(searchQuery?.toLowerCase()) ||
@@ -573,18 +549,19 @@ const handleSave = () => {
         ?.toLowerCase()
         ?.includes(searchQuery?.toLowerCase()) ||
       item?.freight?.toLowerCase()?.includes(searchQuery?.toLowerCase()) ||
-      item.incoterm.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      item.freight.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      item.freight_number.toLowerCase().includes(searchQuery.toLowerCase())
+      item?.incoterm?.toLowerCase()?.includes(searchQuery?.toLowerCase()) ||
+      item?.freight?.toLowerCase()?.includes(searchQuery?.toLowerCase()) ||
+      item?.freight_number?.toLowerCase()?.includes(searchQuery?.toLowerCase())
     );
   });
   // search //////////////////////////////////////////////////
-  const totalPage = Math.ceil(filteredData.length / pageSize);
-  const startIndex = (currentPage - 1) * pageSize;
-  const endIndex = startIndex + pageSize;
+  const totalPage = Math.ceil(pagenationdata.total / pagenationdata.limit);
+  const startIndex = (currentPage - 1) * pagenationdata.limit;
+  const endIndex = startIndex + pagenationdata.limit;
   const currentdata = filteredData.slice(startIndex, endIndex);
   const handlePageChange = (page) => {
     setCurrentPage(page);
+    frightData(page);
   };
   ////////////////////////order move.//////////////////////////////////////////////
   const handlemoveOrder = async (item) => {
@@ -643,24 +620,6 @@ const handleSave = () => {
       hazardous: event.target.value,
     }));
   };
-  const handlechangeassignestimate = (event) => {
-    setInputdata((prevData) => ({
-      ...prevData,
-      assign_for_estimate: event.target.value,
-    }));
-  };
-  const Quoterecieved = (event) => {
-    setInputdata((prevData) => ({
-      ...prevData,
-      quote_received: event.target.value,
-    }));
-  };
-  const onchnageclientquote = (event) => {
-    setInputdata((prevData) => ({
-      ...prevData,
-      client_quoted: event.target.value,
-    }));
-  };
   const send_to_warehouse = (event) => {
     setInputdata((prevData) => ({
       ...prevData,
@@ -694,12 +653,6 @@ const handleSave = () => {
   const closeModal = () => {
     setIsModalOpen(false);
   };
-  const handleFileChange = (event) => {
-    const selectedFile = event.target.files[0];
-    if (selectedFile) {
-      setFile(selectedFile);
-    }
-  };
   const postData = () => {
     const postdata = {
       priority: data1.priority,
@@ -715,6 +668,7 @@ const handleSave = () => {
       .then((response) => {
         if (response.data.success === true) {
           closeModal();
+       setPagenationdata(response.data);
           setData(response.data.data);
         }
       })
@@ -730,6 +684,54 @@ const handleSave = () => {
         console.log(error.response.data);
       });
   };
+
+  const handleSearch = (e) => {
+    const value = e.target.value;
+
+    setSearchQuery(value);
+    setCurrentPage(1);
+
+    throttledSearch(value); // ✅ throttled call
+  };
+
+  const throttle = (func, delay) => {
+    let lastCall = 0;
+
+    return (...args) => {
+      const now = Date.now();
+      if (now - lastCall >= delay) {
+        lastCall = now;
+        func(...args);
+      }
+    };
+  };
+  const throttledSearch = useRef(
+    throttle((value) => {
+      freightData1(value);
+    }, 1000)
+  ).current;
+
+  const freightData1 = (searchTerm) => {
+    const postdata = {
+      staff_id: userid,
+      route_url: "/freight-list",
+      user_type: usertype,
+      search: searchTerm,
+    };
+    axios
+      .post(`${process.env.REACT_APP_BASE_URL}freight-list`, postdata)
+      .then((response) => {
+        setLoader(false);
+        console.log("frightDataresponse", response.data);
+        setPagenationdata(response.data);
+        setData(response.data.data);
+      })
+      .catch((error) => {
+        setLoader(false);
+        toast.error(error.response?.data?.message || "Something went wrong");
+      });
+  };
+
   const handlestatus = (id) => {
     console.log(id);
     const data123 = {
@@ -854,6 +856,25 @@ const handleSave = () => {
           console.log(error.response.data);
         });
   };
+
+  const AssignFreightToSupplier = async () => {
+    const payload = {
+      freight_id: freightIdAssignTask,
+      supplier_id: supplierName,
+    };
+    try {
+      const response = await axios.post(
+        `${process.env.REACT_APP_BASE_URL}assignFreightToSupplier`,
+        payload
+      );
+      console.log(response.data);
+      toast.success(response.data.message);
+      frightData();
+      setOpenmodalAssignFreight(false);
+    } catch (error) {
+      toast.error(error.response.data.message);
+    }
+  };
   const handecnagegetthedata = (e) => {
     setFiledata1(e.target.files[0]);
   };
@@ -868,107 +889,195 @@ const handleSave = () => {
       console.log(error.response.data.data);
     }
   };
+  const Attchfreight = (item) => {
+    setFreightIdAssignTask(item?.freight_id);
+    setOpenmodalAssignFreight(true);
+  };
+  const hanldecloseModal = () => {
+    setOpenmodalAssignFreight(false);
+  };
+  const getSupplierdata = () => {
+    axios
+      .get(`${process.env.REACT_APP_BASE_URL}staff-list`)
+      .then((response) => {
+        setSupplierData(response.data.data);
+      })
+      .catch((error) => {
+        toast.error("Error fetching suppliers");
+      });
+  };
+
+  useEffect(() => {
+    getSupplierdata();
+  }, []);
+
+  // const querryinQuote =(item)=>{
+  //   console.log("item",item)
+  //   navigate("/Admin/QuotationInFreight", { state: { data: item } });
+  // }
+ const querryinQuote = (item) => {
+    console.log("item", item);
+    navigate("/Admin/QuotationInFreightCostumer", { state: { data: item } });
+  };
   return (
     <>
-      {loader ? (
-        <div class="loader-container">
-          <div class="loader"></div>
-          <p class="loader-text">Updating... This may take some time</p>
-        </div>
-      ) : (
-        <div className="wpWrapper ">
-          <div className="container-fluid">
-            <div className="row manageFreight">
-              <div className="col-12">
-                <div className="d-flex justify-content-between">
-                  <div className="">
-                    <h4 className="freight_hd">Freight By Admin</h4>
+      <Modal
+        open={openmodalAssignFreight}
+        onClose={hanldecloseModal}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+        className="newModal"
+      >
+        <Box
+          sx={{
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            minWidth: 450,
+            bgcolor: "background.paper",
+            boxShadow: 24,
+          }}
+        >
+          <div className="modal-header">
+            <h2>
+              <h2 id="modal-modal-title">Assign Freight</h2>
+            </h2>
+            <button className="btn btn-close" onClick={hanldecloseModal}>
+              <CloseIcon />
+            </button>
+          </div>
+
+          <div className="newModalGap">
+            <div className="row my-3  "></div>
+            <div className="col-12 ">
+              <label>Assign Staff</label>
+              <select
+                className="form-cuntrol col-12 border px-3 py-2 mb-2"
+                value={supplierName}
+                onChange={(e) => {
+                  setSupplierName(e.target.value);
+                }}
+                name="attachdoc"
+              >
+                <option>Select</option>
+                {supplierData.map((item, index) => (
+                  <option key={index} value={item.id}>
+                    {item.full_name}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <Button
+              variant="contained"
+              className="text-center"
+              onClick={AssignFreightToSupplier}
+            >
+              Add Supplier
+            </Button>
+          </div>
+        </Box>
+      </Modal>
+
+      <div className="wpWrapper ">
+        <div className="container-fluid">
+          <div className="row manageFreight">
+            <div className="col-12">
+              <div className="d-flex justify-content-between">
+                <div className="">
+                  <h4 className="freight_hd">Freight By Admin</h4>
+                </div>
+                <div className="d-flex justify-content-end">
+                  <div className="me-2 searchManageFre">
+                    <input
+                      className="py-1 rounded ps-1"
+                      type="text"
+                      value={searchQuery}
+                      onChange={handleSearch}
+                      placeholder="Search"
+                    ></input>
                   </div>
-                  <div className="d-flex justify-content-end">
-                    <div className="me-2 searchManageFre">
-                      <input
-                        className="py-1 rounded ps-1"
-                        type="text"
-                        value={searchQuery}
-                        onChange={handleSearch}
-                        placeholder="Search"
-                      ></input>
-                    </div>
 
-                    <div className="dropdown">
-                      <button
-                        className="dropdown-toggle me-2"
-                        type="button"
-                        data-bs-toggle="dropdown"
-                        aria-expanded="false"
-                      >
-                        {status1}
-                      </button>
-                      <ul className="dropdown-menu">
-                        <li className="filter_item">
-                          <p
-                            className="dropdown-item mb-0"
-                            onClick={handlelcickapiupdae}
-                          >
-                            Pending
-                          </p>
-                        </li>
-                        <li className="filter_item">
-                          <p
-                            className="dropdown-item mb-0"
-                            onClick={handlelcickapiupdate}
-                          >
-                            Accepted
-                          </p>
-                        </li>
-                        <li className="filter_item">
-                          <p
-                            className="dropdown-item mb-0"
-                            onClick={handlelcickapiupdatedeclined}
-                          >
-                            Declined
-                          </p>
-                        </li>
-                        <li className="filter_item">
-                          <p
-                            className="dropdown-item mb-0"
-                            onClick={handlelcickapiupdatepartial}
-                          >
-                            Estimated
-                          </p>
-                        </li>
-                      </ul>
-                    </div>
+                  <div className="dropdown">
+                    <button
+                      className="dropdown-toggle me-2"
+                      type="button"
+                      data-bs-toggle="dropdown"
+                      aria-expanded="false"
+                    >
+                      {status1}
+                    </button>
+                    <ul className="dropdown-menu">
+                      <li className="filter_item">
+                        <p
+                          className="dropdown-item mb-0"
+                          onClick={handlelcickapiupdae}
+                        >
+                          Pending
+                        </p>
+                      </li>
+                      <li className="filter_item">
+                        <p
+                          className="dropdown-item mb-0"
+                          onClick={handlelcickapiupdate}
+                        >
+                          Accepted
+                        </p>
+                      </li>
+                      <li className="filter_item">
+                        <p
+                          className="dropdown-item mb-0"
+                          onClick={handlelcickapiupdatedeclined}
+                        >
+                          Declined
+                        </p>
+                      </li>
+                      <li className="filter_item">
+                        <p
+                          className="dropdown-item mb-0"
+                          onClick={handlelcickapiupdatepartial}
+                        >
+                          Estimated
+                        </p>
+                      </li>
+                    </ul>
+                  </div>
 
-                    <div className="me-2">
-                      <button type="button" onClick={handleclickopenmodal}>
-                        Filter
-                      </button>
-                    </div>
-                    <div className="">
-                      <button
-                        type="button"
-                        onClick={() => {
-                          navigate("/Admin/Addfreight");
-                        }}
-                      >
-                        Add
-                      </button>
-                    </div>
+                  <div className="me-2">
+                    <button type="button" onClick={handleclickopenmodal}>
+                      Filter
+                    </button>
+                  </div>
+                  <div className="">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        navigate("/Admin/Addfreight");
+                      }}
+                    >
+                      Add
+                    </button>
                   </div>
                 </div>
               </div>
             </div>
-            <div className="row">
-              <div className="mt-4">
+          </div>
+          <div className="row">
+            <div className="mt-4">
+              {loader ? (
+                <div class="loader-container">
+                  <div class="loader"></div>
+                  <p class="loader-text">Updating... This may take some time</p>
+                </div>
+              ) : (
                 <div>
                   <div className="table-responsive">
                     <table className="table table-striped tableICon">
                       <tbody>
-                        {currentdata &&
-                          currentdata.length > 0 &&
-                          currentdata.map((item, index) => {
-                            console.log(item);
+                        {data &&
+                          data.length > 0 &&
+                          data.map((item, index) => {
+                            // console.log(item);
                             const daaaa = new Date(
                               item?.freight_created_at
                             ).toLocaleDateString("en-GB");
@@ -1179,7 +1288,7 @@ const handleSave = () => {
                                                             "rgb(27 34 69)",
                                                         }}
                                                       ></i>
-                                                  Supplier Estimation
+                                                      Supplier Estimation
                                                     </p>
                                                   </div>
                                                 </a>
@@ -1204,6 +1313,42 @@ const handleSave = () => {
                                                 <a
                                                   className="dropdown-item li_icon"
                                                   onClick={() => {
+                                                    querryinQuote(item);
+                                                  }}
+                                                >
+                                                  <div className="">
+                                                    <AiFillMessage
+                                                      className="text-success"
+                                                      style={{
+                                                        color: "rgb(27 34 69)",
+                                                        marginRight: "10px",
+                                                        width: "20px",
+                                                      }}
+                                                    />
+                                                   Chat
+                                                  </div>
+                                                </a>
+                                                <a
+                                                  className="dropdown-item li_icon"
+                                                  onClick={() => {
+                                                    Attchfreight(item);
+                                                  }}
+                                                >
+                                                  <div className="">
+                                                    <MdDriveFileMoveOutline
+                                                      className="text-success"
+                                                      style={{
+                                                        color: "rgb(27 34 69)",
+                                                        marginRight: "10px",
+                                                        width: "20px",
+                                                      }}
+                                                    />
+                                                    Assign Freight
+                                                  </div>
+                                                </a>
+                                                <a
+                                                  className="dropdown-item li_icon"
+                                                  onClick={() => {
                                                     handlemoveOrder(item);
                                                   }}
                                                 >
@@ -1212,7 +1357,7 @@ const handleSave = () => {
                                                       className="text-success"
                                                       style={{
                                                         color: "rgb(27 34 69)",
-                                                        marginRight: "10px",  
+                                                        marginRight: "10px",
                                                         width: "20px",
                                                       }}
                                                     />
@@ -1257,7 +1402,8 @@ const handleSave = () => {
                                             <>
                                               <span className="dot bg-info me-2"></span>
                                               <p className="text-info mb-0">
-                                                Estimated :{item?.estimate_count}
+                                                Estimated :
+                                                {item?.estimate_count}
                                               </p>
                                             </>
                                           ) : (
@@ -1270,11 +1416,16 @@ const handleSave = () => {
                                           )}
                                         </label>
                                       </div>
-                                      <div>
-                                        
-                                        {item?.sales_name == "undefined" 
-                                          ? ""
-                                          : item?.sales_name}  
+                                      <div className="d-flex">
+                                        <div className="me-2">
+                                          {item.assigned_supplier_name}
+                                        </div>
+                                        <div>
+                                          {" "}
+                                          {item?.sales_name == "undefined"
+                                            ? ""
+                                            : item?.sales_name}{" "}
+                                        </div>
                                       </div>
                                     </div>
                                   </td>
@@ -1647,9 +1798,7 @@ const handleSave = () => {
                                                     </select>
                                                   </div>
                                                   <div className="col-lg-6 mb-3">
-                                                    <label>
-                                                     Shipper Name
-                                                    </label>
+                                                    <label>Shipper Name</label>
                                                     <input
                                                       type="text"
                                                       name="shipper_name"
@@ -1661,8 +1810,11 @@ const handleSave = () => {
                                                     />
                                                   </div>
                                                   <div className="col-lg-6">
-                                                    <label>  Supplier Address</label>
-                                                  <input
+                                                    <label>
+                                                      {" "}
+                                                      Supplier Address
+                                                    </label>
+                                                    <input
                                                       type="text"
                                                       name="supplier_address"
                                                       onChange={handleupdateapi}
@@ -1704,40 +1856,6 @@ const handleSave = () => {
                                                       </option>
                                                     </select>
                                                   </div>
-                                                  {/* <div className="col-lg-6 mb-3">
-                                                    <label>
-                                                      Sales Representative
-                                                    </label>
-                                                    <select
-                                                      className=""
-                                                      value={
-                                                        inputdata.sales_representative
-                                                      }
-                                                      name="sales_representative"
-                                                      onChange={handleupdateapi}
-                                                    >
-                                                      {staffdata &&
-                                                        staffdata.length > 0 &&
-                                                        staffdata.map(
-                                                          (item, index) => {
-                                                            return (
-                                                              <>
-                                                                <option
-                                                                  value={
-                                                                    item.id
-                                                                  }
-                                                                  key={index}
-                                                                >
-                                                                  {
-                                                                    item.full_name
-                                                                  }
-                                                                </option>
-                                                              </>
-                                                            );
-                                                          }
-                                                        )}
-                                                    </select>
-                                                  </div> */}
                                                   <div>
                                                     <div className="row">
                                                       <div className="col-lg-6">
@@ -1961,160 +2079,178 @@ const handleSave = () => {
                                                       placeholder="Volumetric Weight"
                                                     />
                                                   </div>
-                                                 <div className="row mb-3 mt-4">
-                  <div className="col-9 mt-3">
-                    <h4 className="freight_hd">Document Section</h4>
-                    <span class="line"></span>
-                  </div>
-                  <div className="col-3">
-<Button className="btn  btn-primary" onClick={handleShow}>
-          Upload Documents
-        </Button>
-                       
-                       {
-                        show1 ? <Modal
-        open={show1}
-        onClose={handleClose}
-        slotProps={{
-          backdrop: {
-            sx: { backgroundColor: "rgba(0,0,0,0.2)" }, // lighter background
-          },
-        }}
-      >
-        <Box
-          sx={{
-            p: 3,
-            bgcolor: "background.paper",
-            borderRadius: 2,
-            width: 500,
-            mx: "auto",
-            mt: 10,
-          }}
-        >
-          <h2>Upload Documents</h2>
+                                                  <div className="row mb-3 mt-4">
+                                                    <div className="col-9 mt-3">
+                                                      <h4 className="freight_hd">
+                                                        Document Section
+                                                      </h4>
+                                                      <span class="line"></span>
+                                                    </div>
+                                                    <div className="col-3">
+                                                      <Button
+                                                        className="btn  btn-primary"
+                                                        onClick={handleShow}
+                                                      >
+                                                        Upload Documents
+                                                      </Button>
 
-          {/* Dropdown */}
-          <FormControl fullWidth sx={{ mt: 2 }}>
-            <InputLabel id="doc-select-label">Select Document Type</InputLabel>
-            <Select
-              labelId="doc-select-label"
-              // value={selected}
-              onChange={handleSelect}
-            >
-              {docOptions.map((option) => (
-                <MenuItem key={option.id} value={option.id}>
-                  {option.label}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
+                                                      {show1 ? (
+                                                        <Modal
+                                                          open={show1}
+                                                          onClose={handleClose}
+                                                          slotProps={{
+                                                            backdrop: {
+                                                              sx: {
+                                                                backgroundColor:
+                                                                  "rgba(0,0,0,0.2)",
+                                                              }, // lighter background
+                                                            },
+                                                          }}
+                                                        >
+                                                          <Box
+                                                            sx={{
+                                                              p: 3,
+                                                              bgcolor:
+                                                                "background.paper",
+                                                              borderRadius: 2,
+                                                              width: 500,
+                                                              mx: "auto",
+                                                              mt: 10,
+                                                            }}
+                                                          >
+                                                            <h2>
+                                                              Upload Documents
+                                                            </h2>
 
-          {/* Dynamic file inputs */}
-          <div className="mt-3">
-            {selectedDocs.map((doc, index) => (
-              <div key={index} className="mb-3">
-                <label className="fw-bold">{doc.name}</label>
-                <input
-                  type="file"
-                  className="form-control"
-                  multiple
-                  accept="image/*,application/pdf"
-                  onChange={(e) => handleFileChangefil(e, doc.name)}
-                />
-              </div>
-            ))}
-          </div>
+                                                            {/* Dropdown */}
+                                                            <FormControl
+                                                              fullWidth
+                                                              sx={{ mt: 2 }}
+                                                            >
+                                                              <InputLabel id="doc-select-label">
+                                                                Select Document
+                                                                Type
+                                                              </InputLabel>
+                                                              <Select
+                                                                labelId="doc-select-label"
+                                                                // value={selected}
+                                                                onChange={
+                                                                  handleSelect
+                                                                }
+                                                              >
+                                                                {docOptions.map(
+                                                                  (option) => (
+                                                                    <MenuItem
+                                                                      key={
+                                                                        option.id
+                                                                      }
+                                                                      value={
+                                                                        option.id
+                                                                      }
+                                                                    >
+                                                                      {
+                                                                        option.label
+                                                                      }
+                                                                    </MenuItem>
+                                                                  )
+                                                                )}
+                                                              </Select>
+                                                            </FormControl>
 
-          {/* Footer buttons */}
-          <Box sx={{ display: "flex", justifyContent: "flex-end", gap: 2, mt: 3 }}>
-            <Button onClick={handleClose}>Cancel</Button>
-            <Button variant="contained" color="success" onClick={handleSave}>
-              Save Documents
-            </Button>
-          </Box>
-        </Box>
-      </Modal> : ""
-                       }   
-                  </div>
-                </div>
-                 {/* <Modal show={show1} onHide={handleClose} size="lg" centered>
-        <Modal.Header closeButton>
-          <Modal.Title>Upload Documents</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          {/* Dropdown for selecting document type */}
-          {/* <FormControl fullWidth>
-      <InputLabel id="doc-select-label">Select Document Type</InputLabel>
-      <Select
-        labelId="doc-select-label"
-        // value={selected}
-        onChange={handleSelect}
-      >
-        {docOptions.map((option) => (
-          <MenuItem key={option.id} value={option.id}>
-            {option.label}
-          </MenuItem>
-        ))}
-      </Select>
-    </FormControl> */}
+                                                            {/* Dynamic file inputs */}
+                                                            <div className="mt-3">
+                                                              {selectedDocs.map(
+                                                                (
+                                                                  doc,
+                                                                  index
+                                                                ) => (
+                                                                  <div
+                                                                    key={index}
+                                                                    className="mb-3"
+                                                                  >
+                                                                    <label className="fw-bold">
+                                                                      {doc.name}
+                                                                    </label>
+                                                                    <input
+                                                                      type="file"
+                                                                      className="form-control"
+                                                                      multiple
+                                                                      accept="image/*,application/pdf"
+                                                                      onChange={(
+                                                                        e
+                                                                      ) =>
+                                                                        handleFileChangefil(
+                                                                          e,
+                                                                          doc.name
+                                                                        )
+                                                                      }
+                                                                    />
+                                                                  </div>
+                                                                )
+                                                              )}
+                                                            </div>
 
-          {/* Render file inputs dynamically */}
-          <div className="mt-3">
-            {selectedDocs.map((doc, index) => (
-              <div key={index} className="mb-3">
-                <label className="fw-bold">{doc.name}</label>
-                <input
-                  type="file"
-                  className="form-control"
-                  multiple
-                  accept="image/*,application/pdf"
-                  onChange={(e) => handleFileChangefil(e, doc.name)}
-                />
-              </div>
-            ))}
-          </div>
-        {/* </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={handleClose}>
-            Cancel
-          </Button>
-          <Button variant="success" onClick={handleSave}>
-            Save Documents
-          </Button>
-        </Modal.Footer>
-      </Modal> */} 
-      
-                                                 
-                                                  {/* <div className="row">
-                                                    {/* <div className="col-6 mt-3">
-                                                      <h5>licenses</h5>
-                                                      <input
-                                                        type="file"
-                                                        name="licenses"
-                                                        className="mb-3 w-100 rounded"
-                                                        onChange={
-                                                          handleFileChange2
-                                                        }
-                                                        multiple
-                                                      />
-                                                    </div> */}
-                                                 {/* <div classNameCOL-6>
-                                                    <label>Select Document</label>
-                                                    <select name="documentName" onChange={handleupdateapi}>
-                            <option value="">Select...</option>
-                            <option value="Customs Documents">Customs docs</option>
-                            <option value="Supporting Documents">Supporting docs</option>
-                            <option value="Invoice, Packing List">Invoice / Packing L</option>
-                            <option value="Product Literature">Product Literature</option>
-                            <option value="Letters of authority">LOA</option>
-                            <option value="Waybills">Freight Docs</option>
-                            <option value="Waybills">Shipping instruction</option>
-                            <option value="Supplier Invoices">Freight Invoices </option>
-                            <option value="AD_Quotations">Attach Quote</option>
-                          </select>
-                                                 </div> */}
-                                                  {/* </div> / */}
-                                                 
+                                                            {/* Footer buttons */}
+                                                            <Box
+                                                              sx={{
+                                                                display: "flex",
+                                                                justifyContent:
+                                                                  "flex-end",
+                                                                gap: 2,
+                                                                mt: 3,
+                                                              }}
+                                                            >
+                                                              <Button
+                                                                onClick={
+                                                                  handleClose
+                                                                }
+                                                              >
+                                                                Cancel
+                                                              </Button>
+                                                              <Button
+                                                                variant="contained"
+                                                                color="success"
+                                                                onClick={
+                                                                  handleSave
+                                                                }
+                                                              >
+                                                                Save Documents
+                                                              </Button>
+                                                            </Box>
+                                                          </Box>
+                                                        </Modal>
+                                                      ) : (
+                                                        ""
+                                                      )}
+                                                    </div>
+                                                  </div>
+                                                  <div className="mt-3">
+                                                    {selectedDocs.map(
+                                                      (doc, index) => (
+                                                        <div
+                                                          key={index}
+                                                          className="mb-3"
+                                                        >
+                                                          <label className="fw-bold">
+                                                            {doc.name}
+                                                          </label>
+                                                          <input
+                                                            type="file"
+                                                            className="form-control"
+                                                            multiple
+                                                            accept="image/*,application/pdf"
+                                                            onChange={(e) =>
+                                                              handleFileChangefil(
+                                                                e,
+                                                                doc.name
+                                                              )
+                                                            }
+                                                          />
+                                                        </div>
+                                                      )
+                                                    )}
+                                                  </div>
+
                                                   {inputdata.hazardous ===
                                                   "yes" ? (
                                                     <div className=" col-lg-6  mb-3">
@@ -2448,7 +2584,7 @@ const handleSave = () => {
                                             </div>
                                           </div>
                                         </div>
-                      
+
                                         <div className="modal-footer">
                                           <button
                                             type="button"
@@ -2498,232 +2634,220 @@ const handleSave = () => {
                     </div>
                   </div>
                 </div>
-              </div>
+              )}
             </div>
-            <Modal
-              open={openmodal}
-              onClose={handleclosemodal}
-              aria-labelledby="modal-modal-title"
-              aria-describedby="modal-modal-description"
-              className="newModal"
+          </div>
+          <Modal
+            open={openmodal}
+            onClose={handleclosemodal}
+            aria-labelledby="modal-modal-title"
+            aria-describedby="modal-modal-description"
+            className="newModal"
+          >
+            <Box
+              sx={{
+                position: "absolute",
+                top: "50%",
+                left: "50%",
+                transform: "translate(-50%, -50%)",
+                minWidth: 450,
+                bgcolor: "background.paper",
+                boxShadow: 24,
+              }}
             >
-              <Box
-                sx={{
-                  position: "absolute",
-                  top: "50%",
-                  left: "50%",
-                  transform: "translate(-50%, -50%)",
-                  minWidth: 450,
-                  bgcolor: "background.paper",
-                  boxShadow: 24,
-                }}
-              >
-                <div className="modal-header">
-                  <h2>
-                    <h2 id="modal-modal-title">Attcah Quote</h2>
-                  </h2>
-                  <button className="btn btn-close" onClick={handleclosemodal}>
-                    <CloseIcon />
-                  </button>
-                </div>
+              <div className="modal-header">
+                <h2>
+                  <h2 id="modal-modal-title">Attcah Quote</h2>
+                </h2>
+                <button className="btn btn-close" onClick={handleclosemodal}>
+                  <CloseIcon />
+                </button>
+              </div>
 
-                <div className="newModalGap">
-                  <div className="row my-3  ">
-                    <div className="col-12 ">
-                      <label>Attach Quote</label>
-                      <input
-                        type="file"
-                        className="form-cuntrol border px-3 py-2"
-                        onChange={handecnagegetthedata}
-                        name="attachdoc"
-                      ></input>
-                    </div>
+              <div className="newModalGap">
+                <div className="row my-3  ">
+                  <div className="col-12 ">
+                    <label>Attach Quote</label>
+                    <input
+                      type="file"
+                      className="form-cuntrol border px-3 py-2"
+                      onChange={handecnagegetthedata}
+                      name="attachdoc"
+                    ></input>
                   </div>
+                </div>
 
-                  <Button
-                    variant="contained"
-                    className="text-center"
-                    onClick={postattachquote}
-                  >
-                    Add Quote
-                  </Button>
-                </div>
-              </Box>
-            </Modal>
-            <div className="row">
-              {loader ? (
-                <div class="loader-container">
-                  <div class="loader"></div>
-                  <p className="text-danger">
-                    Updating... This may take some time
-                  </p>
-                </div>
-              ) : (
-                <Modal
-                  open={isModalOpen}
-                  onClose={closeModal}
-                  aria-labelledby="modal-modal-title"
-                  aria-describedby="modal-modal-description"
-                  className="newModal"
+                <Button
+                  variant="contained"
+                  className="text-center"
+                  onClick={postattachquote}
                 >
-                  <Box
-                    sx={{
-                      position: "absolute",
-                      top: "50%",
-                      left: "50%",
-                      transform: "translate(-50%, -50%)",
-                      bgcolor: "background.paper",
-                      boxShadow: 24,
-                    }}
-                  >
-                    <div className="modal-header">
-                      <h2 id="modal-modal-title">Filter</h2>
-                      <button className="btn btn-close" onClick={closeModal}>
-                        <CloseIcon />{" "}
-                      </button>
-                    </div>
-                    {/*header end */}
+                  Add Quote
+                </Button>
+              </div>
+            </Box>
+          </Modal>
+          <div className="row">
+            {/* {loader ? (
+              <div class="loader-container">
+                <div class="loader"></div>
+                <p className="text-danger">
+                  Updating... This may take some time
+                </p>
+              </div>
+            ) : ( */}
+              <Modal
+                open={isModalOpen}
+                onClose={closeModal}
+                aria-labelledby="modal-modal-title"
+                aria-describedby="modal-modal-description"
+                className="newModal"
+              >
+                <Box
+                  sx={{
+                    position: "absolute",
+                    top: "50%",
+                    left: "50%",
+                    transform: "translate(-50%, -50%)",
+                    bgcolor: "background.paper",
+                    boxShadow: 24,
+                  }}
+                >
+                  <div className="modal-header">
+                    <h2 id="modal-modal-title">Filter</h2>
+                    <button className="btn btn-close" onClick={closeModal}>
+                      <CloseIcon />{" "}
+                    </button>
+                  </div>
+                  {/*header end */}
 
-                    <div className="newModalGap noFormaControl">
-                      <div className="row my-3  ">
-                        <div className="col-6">
-                          <label>Delivery Type</label>
-                          <select name="type" onChange={handlechange}>
-                            <option value="">Select</option>
-                            <option value="express">Express</option>
-                            <option value="normal">Consolidation</option>
-                          </select>
-                        </div>
-                        <div className="col-6">
-                          <label>Priority </label>
-                          <div className="shipRefer1 d-flex">
-                            <div>
-                              <input
-                                type="radio"
-                                id="shipper"
-                                name="priority"
-                                style={{ cursor: "pointer" }}
-                                value="High"
-                                onChange={handlechange}
-                              />
-                              <label htmlFor="shipper">High</label>
-                            </div>
-                            <div>
-                              <input
-                                type="radio"
-                                id="shipper2"
-                                style={{ cursor: "pointer" }}
-                                name="priority"
-                                value="Medium"
-                                onChange={handlechange}
-                              />
-                              <label htmlFor="consignee">Medium</label>
-                            </div>
-                            <div>
-                              <input
-                                type="radio"
-                                id="shipper3"
-                                name="priority"
-                                style={{ cursor: "pointer" }}
-                                value="Low"
-                                onChange={handlechange}
-                              />
-                              <label htmlFor="mediumPr">Low</label>
-                            </div>
+                  <div className="newModalGap noFormaControl">
+                    <div className="row my-3  ">
+                      <div className="col-6">
+                        <label>Delivery Type</label>
+                        <select name="type" onChange={handlechange}>
+                          <option value="">Select</option>
+                          <option value="express">Express</option>
+                          <option value="normal">Consolidation</option>
+                        </select>
+                      </div>
+                      <div className="col-6">
+                        <label>Priority </label>
+                        <div className="shipRefer1 d-flex">
+                          <div>
+                            <input
+                              type="radio"
+                              id="shipper"
+                              name="priority"
+                              style={{ cursor: "pointer" }}
+                              value="High"
+                              onChange={handlechange}
+                            />
+                            <label htmlFor="shipper">High</label>
+                          </div>
+                          <div>
+                            <input
+                              type="radio"
+                              id="shipper2"
+                              style={{ cursor: "pointer" }}
+                              name="priority"
+                              value="Medium"
+                              onChange={handlechange}
+                            />
+                            <label htmlFor="consignee">Medium</label>
+                          </div>
+                          <div>
+                            <input
+                              type="radio"
+                              id="shipper3"
+                              name="priority"
+                              style={{ cursor: "pointer" }}
+                              value="Low"
+                              onChange={handlechange}
+                            />
+                            <label htmlFor="mediumPr">Low</label>
                           </div>
                         </div>
                       </div>
-                      <div className="row mb-3">
-                        <div className="col-6">
-                          <label>Country of Origin</label>
-                          <select name="origin" onChange={handlechange}>
-                            <option value="">Select</option>
-                            {updatedata &&
-                              updatedata.length > 0 &&
-                              updatedata.map((item, index) => {
-                                return (
-                                  <>
-                                    <option value={item.id}>{item.name}</option>
-                                  </>
-                                );
-                              })}
-                          </select>
-                        </div>
-                        <div className="col-6">
-                          <label>Delivery to Country </label>
-                          <select name="destination" onChange={handlechange}>
-                            <option value="">Select</option>
-                            {updatedata &&
-                              updatedata.length > 0 &&
-                              updatedata.map((item, index) => {
-                                return (
-                                  <>
-                                    <option value={item.id}>{item.name}</option>
-                                  </>
-                                );
-                              })}
-                          </select>
-                        </div>
-                      </div>
-                      <div className="row mb-3">
-                        <div className="col-6">
-                          <label>Start Date</label>
-                          <input
-                            type="date"
-                            id="shipper3"
-                            name="startDate"
-                            style={{ cursor: "pointer" }}
-                            className="form-control"
-                            onChange={handlechange}
-                          />
-                        </div>
-                        <div className="col-6">
-                          <label>End Date </label>
-                          <input
-                            type="date"
-                            id="shipper3"
-                            name="endDate"
-                            style={{ cursor: "pointer" }}
-                            className="form-control"
-                            onChange={handlechange}
-                          />
-                        </div>
-                      </div>
-                      <div className="row mb-3">
-                        <div className="col-12">
-                          <label>Freight</label>
-                          <select name="freight" onChange={handlechange}>
-                            <option value="">Select...</option>
-                            <option value="Sea">Sea</option>
-                            <option value="Air">Air</option>
-                            <option value="Road">Road</option>
-                          </select>
-                        </div>
-                        {/* <div className="col-6">
-                      <label>freight Type </label>
-                      <select
-                        name="type"
-                        onChange={handlechange}
-                        className="form-control"
-                      >
-                        <option value="">Select...</option>
-                        <option value="express">Express</option>
-                        <option value="normal">Normal</option>
-                      </select>
-                    </div> */}
-                      </div>
-                      <Button variant="contained" onClick={postData}>
-                        Apply
-                      </Button>
                     </div>
-                  </Box>
-                </Modal>
-              )}
-              <ToastContainer />
-            </div>
+                    <div className="row mb-3">
+                      <div className="col-6">
+                        <label>Country of Origin</label>
+                        <select name="origin" onChange={handlechange}>
+                          <option value="">Select</option>
+                          {updatedata &&
+                            updatedata.length > 0 &&
+                            updatedata.map((item, index) => {
+                              return (
+                                <>
+                                  <option value={item.id}>{item.name}</option>
+                                </>
+                              );
+                            })}
+                        </select>
+                      </div>
+                      <div className="col-6">
+                        <label>Delivery to Country </label>
+                        <select name="destination" onChange={handlechange}>
+                          <option value="">Select</option>
+                          {updatedata &&
+                            updatedata.length > 0 &&
+                            updatedata.map((item, index) => {
+                              return (
+                                <>
+                                  <option value={item.id}>{item.name}</option>
+                                </>
+                              );
+                            })}
+                        </select>
+                      </div>
+                    </div>
+                    <div className="row mb-3">
+                      <div className="col-6">
+                        <label>Start Date</label>
+                        <input
+                          type="date"
+                          id="shipper3"
+                          name="startDate"
+                          style={{ cursor: "pointer" }}
+                          className="form-control"
+                          onChange={handlechange}
+                        />
+                      </div>
+                      <div className="col-6">
+                        <label>End Date </label>
+                        <input
+                          type="date"
+                          id="shipper3"
+                          name="endDate"
+                          style={{ cursor: "pointer" }}
+                          className="form-control"
+                          onChange={handlechange}
+                        />
+                      </div>
+                    </div>
+                    <div className="row mb-3">
+                      <div className="col-12">
+                        <label>Freight</label>
+                        <select name="freight" onChange={handlechange}>
+                          <option value="">Select...</option>
+                          <option value="Sea">Sea</option>
+                          <option value="Air">Air</option>
+                          <option value="Road">Road</option>
+                        </select>
+                      </div>
+                    </div>
+                    <Button variant="contained" onClick={postData}>
+                      Apply
+                    </Button>
+                  </div>
+                </Box>
+              </Modal>
+            {/* )} */}
+            <ToastContainer />
           </div>
         </div>
-      )}
+      </div>
     </>
   );
 }

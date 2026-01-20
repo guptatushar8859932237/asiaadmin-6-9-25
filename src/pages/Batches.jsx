@@ -14,8 +14,6 @@ import {
 import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
-import DownloadingIcon from "@mui/icons-material/Downloading";
-import LocalShippingIcon from "@mui/icons-material/LocalShipping";
 import RemoveRedEyeIcon from "@mui/icons-material/RemoveRedEye";
 import WarehouseIcon from "@mui/icons-material/Warehouse";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -23,8 +21,6 @@ import { useNavigate } from "react-router-dom";
 import RoomIcon from "@mui/icons-material/Room";
 import CloseIcon from "@mui/icons-material/Close";
 import { CopyAll } from "@mui/icons-material";
-
-const pageSize = 10;
 export default function Batches() {
   const [datauser, setDatauser] = useState([]);
   const [countruies, setCountruies] = useState([]);
@@ -40,6 +36,7 @@ export default function Batches() {
   const [file, setFile] = useState(null);
   const [inputdata, setInputdata] = useState([]);
   const [loader, setLoader] = useState(false);
+  const [pagenationData, setPagenationData] = useState(1);
   const [batches, setBatches] = useState([]);
   const [selectedimage, setSelectedimage] = useState(null);
   const navigate = useNavigate();
@@ -64,93 +61,21 @@ export default function Batches() {
     setEditData({ ...editData, [name]: value });
     setErrors({ ...errors, [name]: "" });
   };
-  const totalPages = Math.ceil(datauser.length / pageSize);
-  const startIndex = (currentPage - 1) * pageSize;
-  const endIndex = startIndex + pageSize;
-  const currentData = datauser.slice(startIndex, endIndex);
+  const totalPages = Math.ceil(pagenationData.total / pagenationData.limit);
   const handlePageChange = (currentData) => {
     setCurrentPage(currentData);
+    getdata(currentData);
   };
-  const validateFields = () => {
-    const newErrors = {};
-    if (!editData.Groupage_Batch_number)
-      newErrors.Groupage_Batch_number = "Batch number is required";
-    if (!editData.freight) newErrors.freight = "Freight is required";
-    if (!editData.Start_Date) newErrors.Start_Date = "Start date is required";
-    if (!editData.Total_Weight)
-      newErrors.Total_Weight = "Total weight is required";
-    if (!editData.Total_Dimension)
-      newErrors.Total_Dimension = "Total dimension is required";
-    if (!editData.Dispatched)
-      newErrors.Dispatched = "Dispatched status is required";
-    if (!editData.Time_in_Storage)
-      newErrors.Time_in_Storage = "Time in storage is required";
-    if (!editData.Costs_to_collect)
-      newErrors.Costs_to_collect = "Costs to collect are required";
-    if (!editData.Warehouse_Cost)
-      newErrors.Warehouse_Cost = "Warehouse cost is required";
-    if (!editData.Costs_to_dispatch)
-      newErrors.Costs_to_dispatch = "Costs to dispatch are required";
-    if (!editData.destination)
-      newErrors.destination = "Destination is required";
-    if (!editData.destination_country)
-      newErrors.destination_country = "Destination Country is required";
-    if (!editData.origin_country)
-      newErrors.origin_country = "Origin Country is required";
-    if (!editData.Agent) newErrors.Agent = "Agent is required";
-    if (!editData.warehouse) newErrors.warehouse = "Warehouse is required";
-    if (!editData.Forewarding_agent)
-      newErrors.Forewarding_agent = "Forwarding agent is required";
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
-  const postData1 = () => {
-    if (!validateFields()) {
-      return;
-    }
-    const data11221 = {
-      batch_number: editData.Groupage_Batch_number,
-      warehouse_id: editData.warehouse,
-      freight: editData.freight,
-      date_start: editData.Start_Date,
-      total_weight: parseFloat(editData.Total_Weight),
-      total_dimensions: parseFloat(editData.Total_Dimension),
-      dispatched: editData.Dispatched,
-      date_dispatch: editData.Date_dispatched,
-      time_in_storage: parseFloat(editData.Time_in_Storage),
-      costs_to_collect: parseFloat(editData.Costs_to_collect),
-      warehouse_cost: parseFloat(editData.Warehouse_Cost),
-      costs_to_dispatch: parseFloat(editData.Costs_to_dispatch),
-      destination: editData.destination,
-      agent: editData.Agent,
-      forwarding_agent: editData.Forewarding_agent,
-      batch_name: editData.batch_name,
-      freight_cost: editData.freight_cost,
-      costs_to_collect_des: editData.costs_to_collect_des,
-      costs_to_dispatch_des: editData.costs_to_dispatch_des,
-      warehouse_cost_des: editData.warehouse_cost_des,
-      vessel: editData.vessel,
-      origin_country: editData.origin_country,
-      destination_country: editData.destination_country,
-    };
-    axios
-      .post(`${process.env.REACT_APP_BASE_URL}createBatch`, data11221)
-      .then((response) => {
-        toast.success(response.data.message);
-        closeModal();
-        getdata();
-      })
-      .catch((error) => {
-        toast.error(error.response.data.message);
-      });
-  };
-  const getdata = () => {
+  const getdata = (page) => {
     setLoader(true);
+    const payload = {
+      page: page}
     axios
-      .get(`${process.env.REACT_APP_BASE_URL}getAllBatch`)
+      .post(`${process.env.REACT_APP_BASE_URL}NewGetAllBatch`,payload)
       .then((response) => {
         console.log(response.data.data);
         setLoader(false);
+        setPagenationData(response.data);
         setDatauser(response.data.data);
       })
       .catch((error) => {
@@ -170,23 +95,6 @@ export default function Batches() {
   const handlechnage = (e) => {
     setQuerry(e.target.value);
   };
-  const filterData = currentData.filter((item) => {
-    const queryLower = querry.toLowerCase();
-    return (
-      item.batch_number.toLowerCase().includes(queryLower) ||
-      item.batch_name.toLowerCase().includes(queryLower) ||
-      item.freight.toLowerCase().includes(queryLower) ||
-      item.total_dimensions.toString().includes(queryLower) ||
-      item.total_weight.toString().includes(queryLower) ||
-      item.agent.toLowerCase().includes(queryLower) ||
-      item.destination.toLowerCase().includes(queryLower) ||
-      item.forwarding_agent.toLowerCase().includes(queryLower) ||
-      (item.date_start &&
-        new Date(item.date_start)
-          .toLocaleDateString("en-CA")
-          .includes(queryLower))
-    );
-  });
   const handlekey = (e) => {
     if (e.charCode < 48 || e.charCode > 57) {
       e.preventDefault();
@@ -219,7 +127,6 @@ export default function Batches() {
   };
   const handleupdateapi = (e) => {
     const { name, value } = e.target;
-
     setInputdata((prevData) => ({
       ...prevData,
       [name]:
@@ -255,22 +162,17 @@ export default function Batches() {
         user_type: usertype,
         route_url: "/deleteBatche",
       };
-
-      // Await permission check response
       const permission = await axios.post(
         `${process.env.REACT_APP_BASE_URL}CheckPermission`,
         datapost
       );
-
       if (permission.data.success === true) {
         console.log("Deleting batch with ID:", id);
-
         try {
           const response = await axios.post(
             `${process.env.REACT_APP_BASE_URL}deleteBatche`,
             { batch_id: id }
           );
-
           if (response.data.success) {
             getdata();
             toast.success(
@@ -302,7 +204,6 @@ export default function Batches() {
       }
     }
   };
-
   const postData1234 = () => {
     const data123 = {
       date_created: formattedDate,
@@ -592,9 +493,9 @@ export default function Batches() {
                       </TableRow>
                     </TableHead>
                     <TableBody>
-                      {filterData &&
-                        filterData.length > 0 &&
-                        filterData.map((item, index) => {
+                      {datauser &&
+                        datauser.length > 0 &&
+                        datauser.map((item, index) => {
                           console.log(item);
                           return (
                             <>

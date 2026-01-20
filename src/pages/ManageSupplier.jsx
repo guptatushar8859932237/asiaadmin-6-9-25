@@ -6,9 +6,7 @@ import Swal from "sweetalert2";
 import { Box, Button, Modal } from "@mui/material";
 import { FaEdit } from "react-icons/fa";
 import CloseIcon from "@mui/icons-material/Close";
-
 const pageSize = 10;
-
 export default function ManageSupplier() {
   const [currentPage, setCurrentPage] = useState(1);
   const [data, setData] = useState([]);
@@ -17,12 +15,14 @@ export default function ManageSupplier() {
   const [searchQuery, setSearchQuery] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isModalOpen2, setIsModalOpen2] = useState(false);
+  const [pagenationData, setPagenationData] = useState(1);
 
   const [input, setInput] = useState({
     supplier_email: "",
     supplier_name: "",
     supplier_phone: "",
     supplier_country: "",
+    country_code: "",
     password: "",
   });
 
@@ -32,27 +32,38 @@ export default function ManageSupplier() {
     supplier_name: "",
     supplier_phone: "",
     supplier_country: "",
+    country_code: "",
     password: "",
     profile: null, // only for update
   });
 
   // ---------------- FETCH DATA ----------------
-  const getdata = () => {
-    setLoader(true);
-    axios
-      .get(`${process.env.REACT_APP_BASE_URL}supplier-list`)
-      .then((response) => {
-        setLoader(false);
-        setData(response.data.data);
-      })
-      .catch((error) => {
-        setLoader(false);
-        toast.error("Error fetching suppliers");
-      });
+  const getdata = async (page = 1, search = "") => {
+    try {
+      setLoader(true);
+
+      const payload = {
+        page: page,
+        limit: pageSize,
+        search: search,
+      };
+
+      const response = await axios.post(
+        `${process.env.REACT_APP_BASE_URL}new-supplier-list`,
+        payload
+      );
+
+      setData(response.data.data);
+      setPagenationData(response.data);
+    } catch (error) {
+      toast.error("Error fetching suppliers");
+    } finally {
+      setLoader(false);
+    }
   };
 
   useEffect(() => {
-    getdata();
+    getdata(currentPage, searchQuery);
   }, []);
 
   // ---------------- SEARCH + PAGINATION ----------------
@@ -63,9 +74,7 @@ export default function ManageSupplier() {
     );
   });
 
-  const totalPages = Math.ceil(filterdata.length / pageSize);
-  const startIndex = (currentPage - 1) * pageSize;
-  const currentData = filterdata.slice(startIndex, startIndex + pageSize);
+  const totalPages = Math.ceil(pagenationData.total / pagenationData.limit);
 
   // ---------------- HANDLE INPUT (ADD) ----------------
   const handlechange = (e) => {
@@ -81,6 +90,8 @@ export default function ManageSupplier() {
       phone_no: input.supplier_phone,
       country: input.supplier_country,
       password: input.password,
+      user_type: input.user_type,
+      country_code : input.country_code
     };
 
     axios
@@ -113,7 +124,7 @@ export default function ManageSupplier() {
       if (result.isConfirmed) {
         axios
           .post(`${process.env.REACT_APP_BASE_URL}delete-supplier`, {
-            staff_id: id,
+            supplier_id: id,
           })
           .then((res) => {
             toast.success(res.data.message);
@@ -137,6 +148,7 @@ export default function ManageSupplier() {
         supplier_name: usr.name,
         supplier_phone: usr.phone_no,
         supplier_country: usr.country,
+           country_code: usr.country_code,
         password: "",
         profile: null,
       });
@@ -163,6 +175,7 @@ export default function ManageSupplier() {
     formdata.append("supplier_name", inputdata.supplier_name);
     formdata.append("phone_no", inputdata.supplier_phone);
     formdata.append("country", inputdata.supplier_country);
+    formdata.append("country_code", inputdata.country_code);
 
     if (inputdata.password) {
       formdata.append("password", inputdata.password);
@@ -201,38 +214,71 @@ export default function ManageSupplier() {
   useEffect(() => {
     getcountry();
   }, []);
+  const handleSearch = (e) => {
+    const value = e.target.value;
 
+    setSearchQuery(value);
+    setCurrentPage(1);
+
+    getdata(1, value); // 🔥 API search
+  };
+
+  // const handleCountryChange = (e) => {
+  //   const countryId = e.target.value;
+
+  //   const selectedCountry = countruies.find((c) => c.id === Number(countryId));
+
+  //   setInput((prev) => ({
+  //     ...prev,
+  //     supplier_country: countryId,
+  //     supplier_phone: selectedCountry ? `+${selectedCountry.phonecode} ` : "",
+  //   }));
+  // };
+
+  // const handleEditCountryChange = (e) => {
+  //   const countryId = e.target.value;
+
+  //   const selectedCountry = countruies.find((c) => c.id === Number(countryId));
+
+  //   setInputdata((prev) => ({
+  //     ...prev,
+  //     supplier_country: countryId,
+  //     supplier_phone: selectedCountry
+  //       ? `+${selectedCountry.phonecode} `
+  //       : prev.supplier_phone,
+  //   }));
+  // };
   return (
     <>
-      {loader ? (
-        <div className="loader-container">
-          <div className="loader"></div>
-          <p>Loading...</p>
-        </div>
-      ) : (
-        <>
-          <div className="wpWrapper">
-            <div className="container-fluid">
-              <div className="d-flex justify-content-between my-3">
-                <h4>Manage Supplier</h4>
+      <>
+        <div className="wpWrapper">
+          <div className="container-fluid">
+            <div className="d-flex justify-content-between my-3">
+              <h4>Manage Supplier</h4>
 
-                <div className="d-flex">
-                  <input
-                    type="text"
-                    placeholder="Search"
-                    className="px-2 py-1"
-                    value={searchQuery}
-                    onChange={(e) => {
-                      setSearchQuery(e.target.value);
-                      setCurrentPage(1);
-                    }}
-                  />
-                  <button className="btn btn-primary ms-2" onClick={() => setIsModalOpen(true)}>
-                    Add Supplier
-                  </button>
-                </div>
+              <div className="d-flex">
+                <input
+                  type="text"
+                  placeholder="Search"
+                  className="px-2 py-1"
+                  value={searchQuery}
+                  onChange={handleSearch}
+                />
+                <button
+                  className="btn btn-primary ms-2"
+                  onClick={() => setIsModalOpen(true)}
+                >
+                  Add Supplier
+                </button>
               </div>
-              {/* ---------------- TABLE ---------------- */}
+            </div>
+            {/* ---------------- TABLE ---------------- */}
+            {loader ? (
+              <div className="loader-container">
+                <div className="loader"></div>
+                <p>Loading...</p>
+              </div>
+            ) : (
               <div className="table-responsive">
                 <table className="table table-striped">
                   <thead>
@@ -247,9 +293,9 @@ export default function ManageSupplier() {
                     </tr>
                   </thead>
                   <tbody>
-                    {currentData.map((item, index) => (
+                    {data.map((item, index) => (
                       <tr key={index}>
-                        <td>{startIndex + index + 1}</td>
+                        <td>{index + 1}</td>
                         <td>{item.name}</td>
                         <td>{item.email}</td>
                         <td>{item.phone_no}</td>
@@ -274,156 +320,223 @@ export default function ManageSupplier() {
                   </tbody>
                 </table>
                 {/* PAGINATION */}
-                <div className="d-flex justify-content-end align-items-center my-3">
+                <div className="d-flex justify-content-end align-items-end my-3">
                   <button
                     disabled={currentPage === 1}
-                    className="bg_page"
-                    onClick={() => setCurrentPage(currentPage - 1)}
+                    onClick={() => {
+                      setCurrentPage(currentPage - 1);
+                      getdata(currentPage - 1, searchQuery);
+                    }}
                   >
                     ◀
                   </button>
-                  <span className="mx-2">{`Page ${currentPage} of ${totalPages}`}</span>
+
+                  <span className="mx-2">
+                    Page {currentPage} of {totalPages}
+                  </span>
+
                   <button
                     disabled={currentPage === totalPages}
-                    className="bg_page"
-                    onClick={() => setCurrentPage(currentPage + 1)}
+                    onClick={() => {
+                      setCurrentPage(currentPage + 1);
+                      getdata(currentPage + 1, searchQuery);
+                    }}
                   >
                     ▶
                   </button>
                 </div>
               </div>
-            </div>
+            )}
           </div>
-          {/* ---------------- ADD SUPPLIER MODAL ---------------- */}
-          {isModalOpen && (
-            <div className="custom-modal">
-              <div className="custom-modal-content">
-                <div className="custom-modal-header">
-                  <h5>Add Supplier</h5>
-                  <button className="btn-close" onClick={() => setIsModalOpen(false)}>
-                    <CloseIcon />
-                  </button>
-                </div>
-                <div className="custom-modal-body">
-                  <label>Email</label>
-                  <input
-                    type="email"
-                    className="form-control mb-2"
-                    name="supplier_email"
-                    placeholder="test@example.com"
-                    onChange={handlechange}
-                  />
-                  <label>Full Name</label>
-                  <input
-                    type="text"
-                    className="form-control mb-2"
-                    name="supplier_name"
-                      placeholder="Supplier Name"
-                    onChange={handlechange}
-                  />
-                  <label>Phone Number</label>
-                  <input
-                    type="text"
-                    className="form-control mb-2"
-                    name="supplier_phone"
-                    placeholder="123456789"
-                    onChange={handlechange}
-                  />
-                  <label>Country</label>
-                  {/* <input
-                    type="text"
-                    className="form-control mb-2"
-                    name="supplier_country"
-                    onChange={handlechange}
-                  /> */}
-                   <label>Country of Origin</label>
-                          <select
-                            name="supplier_country"
-                            onChange={handlechange}
-                            className="form-control mb-2"
-                          >
-                            <option>Select</option>
-                            {countruies &&
-                              countruies.length > 0 &&
-                              countruies.map((item, index) => {
-                                return (
-                                  <>
-                                    <option key={index} value={item.id}>
-                                      {item.name}
-                                    </option>
-                                  </>
-                                );
-                              })}
-                          </select>
-                  {/* <label>Profile Image</label>
-                  <input
-                    type="file"
-                    className="form-control mb-2"
-                    name="supplier_profile"
-                    onChange={handlechange}
-                  /> */}
-                     <label>Password</label>
-                  <input
-                    type="password"
-                    className="form-control mb-2"
-                    name="password"
-                    onChange={handlechange}
-                  />
-                </div>
-               
-                <div className="custom-modal-footer">
-                  <button className="btn btn-primary" onClick={handleAddSupplier}>
-                    Add Supplier
-                  </button>
-                </div>
-              </div>
-            </div>
-          )}
-          {/* ---------------- EDIT SUPPLIER MODAL ---------------- */}
-          <Modal open={isModalOpen2} onClose={() => setIsModalOpen2(false)}>
-            <Box
-              sx={{
-                position: "absolute",
-                top: "50%",
-                left: "50%",
-                transform: "translate(-50%, -50%)",
-                bgcolor: "white",
-                p: 3,
-                borderRadius: 2,
-                width:"30%",
-              }}
-            >
-              <div className="modal-header">
-                <h4>Edit Supplier</h4>
-                <button className="btn-close" onClick={() => setIsModalOpen2(false)}>
+        </div>
+        {/* ---------------- ADD SUPPLIER MODAL ---------------- */}
+        {isModalOpen && (
+          <div className="custom-modal">
+            <div className="custom-modal-content">
+              <div className="custom-modal-header">
+                <h5>Add Supplier</h5>
+                <button
+                  className="btn-close"
+                  onClick={() => setIsModalOpen(false)}
+                >
                   <CloseIcon />
                 </button>
               </div>
-              <label>Email</label>
-              <input
-                type="email"
-                className="form-control mb-2"
-                name="supplier_email"
-                value={inputdata.supplier_email}
-                onChange={handleupdateapi}
-              />
-              <label>Name</label>
-              <input
-                type="text"
-                className="form-control mb-2"
-                name="supplier_name"
-                value={inputdata.supplier_name}
-                onChange={handleupdateapi}
-              />
-              <label>Phone</label>
-              <input
-                type="text"
-                className="form-control mb-2"
-                name="supplier_phone"
-                value={inputdata.supplier_phone}
-                onChange={handleupdateapi}
-              />
-              {/* <label>Country</label>
+              <div className="custom-modal-body">
+                <label>Email</label>
+                <input
+                  type="email"
+                  className="form-control mb-2"
+                  name="supplier_email"
+                  placeholder="test@example.com"
+                  onChange={handlechange}
+                />
+                <label>Full Name</label>
+                <input
+                  type="text"
+                  className="form-control mb-2"
+                  name="supplier_name"
+                  placeholder="Supplier Name"
+                  onChange={handlechange}
+                />
+                <div className="d-flex col-12">
+                  <div className="col-4">
+   <label>Country Code</label>
+                <select
+                  name="country_code"
+                  onChange={handlechange}
+                  className="form-control mb-2"
+                >
+                  <option>Select</option>
+                  {countruies &&
+                    countruies.length > 0 &&
+                    countruies.map((item, index) => {
+                      return (
+                        <>
+                          <option key={index} value={item.phonecode}>
+                            +{item.phonecode} {item.shortname}
+                          </option>
+                        </>
+                      );
+                    })}
+                </select>
+                  </div>
+                  <div className="col-8">
+                    <label>Phone Number</label>
+                <input
+                  type="text"
+                  className="form-control mb-2"
+                  name="supplier_phone"
+                  placeholder="Phone Number"
+                  value={input.supplier_phone}
+                  onChange={handlechange}
+                />
+                  </div>
+                </div>
+              
+                
+                <label>Country of Origin</label>
+                <select
+                  name="supplier_country"
+                  onChange={handlechange}
+                  className="form-control mb-2"
+                >
+                  <option>Select</option>
+                  {countruies &&
+                    countruies.length > 0 &&
+                    countruies.map((item, index) => {
+                      return (
+                        <>
+                          <option key={index} value={item.id}>
+                            {item.name}
+                          </option>
+                        </>
+                      );
+                    })}
+                </select>
+                <label>Register as</label>
+                <select
+                  name="user_type"
+                  onChange={handlechange}
+                  className="form-control mb-2"
+                >
+                  <option>select...</option>
+                  <option value="1">Supplier</option>
+                  <option value="2">Warehouse</option>
+                </select>
+                <label>Password</label>
+                <input
+                  type="password"
+                  className="form-control mb-2"
+                  name="password"
+                  onChange={handlechange}
+                />
+              </div>
+              <div className="custom-modal-footer">
+                <button className="btn btn-primary" onClick={handleAddSupplier}>
+                  Add Supplier
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+        <Modal open={isModalOpen2} onClose={() => setIsModalOpen2(false)}>
+          <Box
+            sx={{
+              position: "absolute",
+              top: "50%",
+              left: "50%",
+              transform: "translate(-50%, -50%)",
+              bgcolor: "white",
+              p: 3,
+              borderRadius: 2,
+              width: "30%",
+            }}
+          >
+            <div className="modal-header">
+              <h4>Edit Supplier</h4>
+              <button
+                className="btn-close"
+                onClick={() => setIsModalOpen2(false)}
+              >
+                <CloseIcon />
+              </button>
+            </div>
+            <label>Email</label>
+            <input
+              type="email"
+              className="form-control mb-2"
+              name="supplier_email"
+              value={inputdata.supplier_email}
+              onChange={handleupdateapi}
+            />
+            <label>Name</label>
+            <input
+              type="text"
+              className="form-control mb-2"
+              name="supplier_name"
+              value={inputdata.supplier_name}
+              onChange={handleupdateapi}
+            />
+            <div className="d-flex col-12">
+     <div className="col-4">
+ <label>Country Code</label>
+            <select
+              name="country_code"
+              value={inputdata.country_code}
+              onChange={handleupdateapi}
+              className="form-control mb-2"
+            >
+              <option>Select</option>
+              {countruies &&
+                countruies.length > 0 &&
+                countruies.map((item, index) => {
+                  console.log(item)
+                  return (
+                    <>
+                      <option key={index} value={item.id}>
+                        +{item.phonecode} {item.shortname}
+                      </option>
+                    </>
+                  );
+                })}
+            </select>
+                </div>
+
+
+         
+        <div className="col-8">
+    <label>Phone</label>
+            <input
+              type="text"
+              className="form-control mb-2"
+              name="supplier_phone"
+              value={inputdata.supplier_phone}
+              onChange={handleupdateapi}
+            />
+        </div>
+           </div>
+            {/* <label>Country</label>
               <input
                 type="text"
                 className="form-control mb-2"
@@ -431,50 +544,49 @@ export default function ManageSupplier() {
                 value={inputdata.supplier_country}
                 onChange={handleupdateapi}
               /> */}
-                 <label>Country of Origin</label>
-                          <select
-                            name="supplier_country"
-                            onChange={handleupdateapi}
-                            className="form-control mb-2"
-                             value={inputdata.supplier_country}
-                          >
-                            <option>Select</option>
-                            {countruies &&
-                              countruies.length > 0 &&
-                              countruies.map((item, index) => {
-                                return (
-                                  <>
-                                    <option key={index} value={item.id}>
-                                      {item.name}
-                                    </option>
-                                  </>
-                                );
-                              })}
-                          </select>
-              <label>Profile Image</label>
-              <input
-                type="file"
-                className="form-control mb-3"
-                name="profile"
-                onChange={handleupdateapi}
-              />
-
-                <label>Password</label>
-              <input
-                type="password"
-                className="form-control mb-2"
-                name="password"
              
-                onChange={handleupdateapi}
-              />
-              <Button variant="contained" fullWidth onClick={postData1234}>
-                Update Supplier
-              </Button>
-            </Box>
-          </Modal>
-          <ToastContainer />
-        </>
-      )}
+ <label>Country of Origin</label>
+            <select
+              name="supplier_country"
+              value={inputdata.supplier_country}
+              onChange={handleupdateapi}
+              className="form-control mb-2"
+            >
+              <option>Select</option>
+              {countruies &&
+                countruies.length > 0 &&
+                countruies.map((item, index) => {
+                  return (
+                    <>
+                      <option key={index} value={item.id}>
+                        {item.name}
+                      </option>
+                    </>
+                  );
+                })}
+            </select>
+            <label>Profile Image</label>
+            <input
+              type="file"
+              className="form-control mb-3"
+              name="profile"
+              onChange={handleupdateapi}
+            />
+
+            <label>Password</label>
+            <input
+              type="password"
+              className="form-control mb-2"
+              name="password"
+              onChange={handleupdateapi}
+            />
+            <Button variant="contained" fullWidth onClick={postData1234}>
+              Update Supplier
+            </Button>
+          </Box>
+        </Modal>
+        <ToastContainer />
+      </>
     </>
   );
 }

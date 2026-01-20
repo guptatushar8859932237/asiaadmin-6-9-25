@@ -1,5 +1,5 @@
 import axios from "axios";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import { AiFillDelete } from "react-icons/ai";
 import { useNavigate } from "react-router-dom";
@@ -16,9 +16,18 @@ import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import CalculateIcon from "@mui/icons-material/Calculate";
 import ReceiptIcon from "@mui/icons-material/Receipt";
 import TollIcon from "@mui/icons-material/Toll";
-import { Modal, Box, Button, FormControl, InputLabel, Select, MenuItem } from "@mui/material";
+import {
+  Modal,
+  Box,
+  Button,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
+} from "@mui/material";
 import { FaEdit } from "react-icons/fa";
 import CloseIcon from "@mui/icons-material/Close";
+import { AssignmentTurnedIn } from "@mui/icons-material";
 const pageSize = 10;
 export default function CustomebyUserap() {
   const [currentPage, setCurrentPage] = useState(1);
@@ -41,19 +50,18 @@ export default function CustomebyUserap() {
   const [error, setError] = useState([]);
   const [image1, setImage1] = useState(null);
   const [image2, setImahe2] = useState(null);
-  const [document, setDocument] = useState([]);
-  const [document1, setDocument1] = useState([]);
-  const [packing, setPacking] = useState([]);
-  const [licenses, setLicenses] = useState([]);
   const [constgetdata, setConstgetdata] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
   const [erd, setErd] = useState("");
   const [inputdata, setInputdata] = useState({});
-  const [imageupload1, setimageupload1] = useState(null);
-  // const [country,setCountry]=useState([])
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isModalOpen1, setIsModalOpen1] = useState(false);
   const [file1, setFile1] = useState(null);
   const [eid, setEid] = useState(null);
+  const [freightIdAssignTask, setFreightIdAssignTask] = useState(null);
+  const [openmodalAssignFreight, setOpenmodalAssignFreight] = useState(false);
+  const [supplierName, setSupplierName] = useState("");
+  const [supplierData, setSupplierData] = useState([]);
   const [openeditmodal, setOpeneditmodal] = useState(false);
   const [loader, setLoader] = useState(false);
   const [staffdata, setStaffdata] = useState([]);
@@ -61,63 +69,51 @@ export default function CustomebyUserap() {
   const [formData1, setFormData1] = useState(null);
   const [formData2, setFormData2] = useState(null);
   const [formData3, setFormData3] = useState(null);
-  const [imageupload2, setimageupload2] = useState(null);
   const [country, setCountry] = useState([]);
   const [age, setAge] = React.useState("");
+  const [pagenationData, setPagenationData] = useState(1);
   const [eids, setEids] = useState("");
   const handleChange = (event) => {
     setAge(event.target.value);
   };
   const navigate = useNavigate();
- const [show1, setShow1] = useState(false);
-      const [selectedDocs, setSelectedDocs] = useState([]);
-    
-     const docOptions = [
-      { id: "Customs Documents", label: "Customs docs" },
-      { id: "Supporting Documents", label: "Supporting docs" },
-      { id: "Invoice, Packing List", label: "Invoice / Packing " },
-      { id: "Product Literature", label: "Product Literature" },
-      { id: "Letters of authority", label: "Letters of authority" },
-      { id: "Waybills", label: "Freight Docs" },
-      { id: "Waybills", label: "Shipping instruction" },
-      { id: "AD_Quotations", label: "Attach Quote" },
-      { id: "Supplier Invoices", label: "Supplier Invoices" }
-    ];
-      const handleShow = () => setShow1(true);
-      const handleClose = () => setShow1(false);
-    
-      // Handle dropdown change
-      const handleSelect = (e) => {
-        const selected = e.target.value;
-        if (selected && !selectedDocs.find((doc) => doc.name === selected)) {
-          setSelectedDocs([...selectedDocs, { name: selected, files: [] }]);
-        }
-      };
-    
-      // Handle file upload for each document type
-      const handleFileChangefil = (e, docName) => {
-        const files = Array.from(e.target.files);
-        setSelectedDocs((prev) =>
-          prev.map((doc) =>
-            doc.name === docName ? { ...doc, files } : doc
-          )
-        );
-      };
-    
-      // For saving data (you can send to API)
-    const handleSave = () => {
-      console.log("Uploaded Documents:", selectedDocs);
-    
-      // To see filenames instead of [object Object]
-      selectedDocs.forEach(doc => {
-        console.log("Doc Type:", doc);
-        doc.files.forEach(file => {
-          console.log("File:", file.name, "| Size:", file.size, "bytes");
-        });
+  const [show1, setShow1] = useState(false);
+  const [selectedDocs, setSelectedDocs] = useState([]);
+  const docOptions = [
+    { id: "Customs Documents", label: "Customs docs" },
+    { id: "Supporting Documents", label: "Supporting docs" },
+    { id: "Invoice, Packing List", label: "Invoice / Packing " },
+    { id: "Product Literature", label: "Product Literature" },
+    { id: "Letters of authority", label: "Letters of authority" },
+    { id: "Waybills", label: "Freight Docs" },
+    { id: "Waybills", label: "Shipping instruction" },
+    { id: "AD_Quotations", label: "Attach Quote" },
+    { id: "Supplier Invoices", label: "Supplier Invoices" },
+  ];
+  const handleShow = () => setShow1(true);
+  const handleClose = () => setShow1(false);
+  const handleSelect = (e) => {
+    const selected = e.target.value;
+    if (selected && !selectedDocs.find((doc) => doc.name === selected)) {
+      setSelectedDocs([...selectedDocs, { name: selected, files: [] }]);
+    }
+  };
+  const handleFileChangefil = (e, docName) => {
+    const files = Array.from(e.target.files);
+    setSelectedDocs((prev) =>
+      prev.map((doc) => (doc.name === docName ? { ...doc, files } : doc))
+    );
+  };
+  const handleSave = () => {
+    console.log("Uploaded Documents:", selectedDocs);
+    selectedDocs.forEach((doc) => {
+      console.log("Doc Type:", doc);
+      doc.files.forEach((file) => {
+        console.log("File:", file.name, "| Size:", file.size, "bytes");
       });
-    
-      handleClose();
-    };
+    });
+    handleClose();
+  };
   //////////////////////////////////////////post data//////////////////////////////////////////////
   const handlechange = (e) => {
     const { name, value } = e.target;
@@ -134,18 +130,17 @@ export default function CustomebyUserap() {
   const handlevalifdate = (value) => {
     let error = {};
     if (!value.trans_reference) {
-      error.trans_reference = "trans refrence is required";
-      toast.error("trans refrence is required");
+      error.trans_reference = "trans reference is required";
+      toast.error("trans reference is required");
     }
     if (!value.customer_ref) {
-      error.customer_ref = "customer refrence is required";
-      toast.error("customer refrence is required");
+      error.customer_ref = "customer reference is required";
+      toast.error("customer reference is required");
     } else {
       apihit();
     }
     setError(error);
   };
-
   const handleclick = () => {
     handlevalifdate(data);
   };
@@ -227,10 +222,8 @@ export default function CustomebyUserap() {
       toast.error(permisssion.data.message);
     }
   };
-
   //////////////////////////////////////////////////get data/////////////////////////////////////////////////
-
-  const getdata = async () => {
+  const getdata = async (currentData) => {
     const permission = await axios.post(
       `${process.env.REACT_APP_BASE_URL}CheckPermission`,
       {
@@ -242,10 +235,46 @@ export default function CustomebyUserap() {
     if (permission.data.success === true) {
       setLoader(true);
       axios
-        .post(`${process.env.REACT_APP_BASE_URL}clearing-list`, { added_by: 2 })
+        .post(`${process.env.REACT_APP_BASE_URL}clearing-list`, {
+          added_by: 2,
+          user_id: userid,
+          page: currentData,
+        })
         .then((response) => {
           console.log(response?.data?.data);
           setConstgetdata(response?.data?.data);
+          setPagenationData(response.data);
+          setLoader(false);
+        })
+        .catch((error) => {
+          setLoader(false);
+          toast.error(error.response.data.message);
+        });
+    } else {
+      toast.error("error");
+    }
+  };
+  const getdata11 = async (currentData) => {
+    const permission = await axios.post(
+      `${process.env.REACT_APP_BASE_URL}CheckPermission`,
+      {
+        staff_id: userid,
+        route_url: "/clearing-list",
+        user_type: usertype,
+      }
+    );
+    if (permission.data.success === true) {
+      setLoader(true);
+      axios
+        .post(`${process.env.REACT_APP_BASE_URL}clearing-list`, {
+          added_by: 2,
+          user_id: userid,
+          search: currentData,
+        })
+        .then((response) => {
+          console.log(response?.data?.data);
+          setConstgetdata(response?.data?.data);
+          setPagenationData(response.data);
           setLoader(false);
         })
         .catch((error) => {
@@ -318,13 +347,13 @@ export default function CustomebyUserap() {
     formdata.append("total_dimension", inputdata.total_dimension);
     formdata.append("comment_on_docs", inputdata.comment_on_docs);
     formdata.append("documentName", inputdata.documentName);
-        selectedDocs.forEach(doc => {
-  console.log("Doc Type:", doc.name);
-  doc.files.forEach(file => {
-    formdata.append(doc.name, file); // 👈 each file append
-    console.log("File:", file.name, "| Size:", file.size, "bytes");
-  });
-});
+    selectedDocs.forEach((doc) => {
+      console.log("Doc Type:", doc.name);
+      doc.files.forEach((file) => {
+        formdata.append(doc.name, file); // 👈 each file append
+        console.log("File:", file.name, "| Size:", file.size, "bytes");
+      });
+    });
     console.log(formdata);
     axios
       .post(`${process.env.REACT_APP_BASE_URL}update-clearing`, formdata)
@@ -338,13 +367,14 @@ export default function CustomebyUserap() {
       });
   };
   ////////////////////////////////get table filter data///////////////////////////////////////////
-  const totalPages = Math.ceil(constgetdata.length / pageSize);
-  const startIndex = (currentPage - 1) * pageSize;
-  const endIndex = startIndex + pageSize;
+  const totalPages = Math.ceil(pagenationData?.total / pagenationData?.limit);
+  const startIndex = (currentPage - 1) * pagenationData?.limit;
+  const endIndex = startIndex + pagenationData?.limit;
   const currentData = constgetdata.slice(startIndex, endIndex);
 
   const handlePageChange = (currentData) => {
     setCurrentPage(currentData);
+    getdata(currentData);
   };
 
   const handleclickaccc = async (id) => {
@@ -357,7 +387,6 @@ export default function CustomebyUserap() {
           user_type: usertype,
         }
       );
-
       if (permission.data.success) {
         try {
           const response = await axios.post(
@@ -402,14 +431,6 @@ export default function CustomebyUserap() {
     });
     console.log(dataval);
     navigate("/Admin/Editclearence", {
-      state: { data: dataval },
-    });
-  };
-  const handleclickaccname = (id) => {
-    const dataval = constgetdata.filter((item) => {
-      return item.id === id;
-    });
-    navigate("/Admin/shipping-estimate-clearence", {
       state: { data: dataval },
     });
   };
@@ -478,6 +499,7 @@ export default function CustomebyUserap() {
       clearingType: data.clearing_type,
       clearing_status: data.clearing_status,
       added_by: "2",
+      user_id: userid,
     };
     axios
       .post(`${process.env.REACT_APP_BASE_URL}clearing-list`, postdata)
@@ -567,7 +589,92 @@ export default function CustomebyUserap() {
   useEffect(() => {
     getstaff();
   }, []);
-  const submithandlechnageupdate = (e) => {};
+  const handlelcsendid = (item) => {
+    console.log(item.id);
+    console.log(item);
+    setFreightIdAssignTask(item);
+    setOpenmodalAssignFreight(true);
+  };
+
+  const hanldecloseModal = () => {
+    setOpenmodalAssignFreight(false);
+  };
+
+  const AssignFreightToSupplier = async () => {
+    const payload = {
+      clearance_id: freightIdAssignTask.id,
+      supplier_id: supplierName,
+    };
+    try {
+      const response = await axios.post(
+        `${process.env.REACT_APP_BASE_URL}assign-clearance-supplier`,
+        payload
+      );
+      console.log(response.data);
+      toast.success(response.data.message);
+      getdata();
+      setOpenmodalAssignFreight(false);
+    } catch (error) {
+      toast.error(error.response.data.message);
+    }
+  };
+  const getSupplierdata = () => {
+    axios
+      .get(`${process.env.REACT_APP_BASE_URL}supplier-list`)
+      .then((response) => {
+        setSupplierData(response.data.data);
+      })
+      .catch((error) => {
+        toast.error("Error fetching suppliers");
+      });
+  };
+
+  useEffect(() => {
+    getSupplierdata();
+  }, []);
+  const handleSearch = (e) => {
+    const value = e.target.value;
+    setSearchQuery(value);
+    setCurrentPage(1);
+    throttledSearch(value); // ✅ throttled call
+  };
+
+  const throttle = (func, delay) => {
+    let lastCall = 0;
+    return (...args) => {
+      const now = Date.now();
+      if (now - lastCall >= delay) {
+        lastCall = now;
+        func(...args);
+      }
+    };
+  };
+
+  const throttledSearch = useRef(
+    throttle((value) => {
+      getdata11(value);
+    }, 1000)
+  ).current;
+
+  const getdata1 = async (currentData) => {
+    setLoader(true);
+    axios
+      .post(`${process.env.REACT_APP_BASE_URL}clearing-list`, {
+        added_by: 2,
+        user_id: userid,
+        page: currentData,
+      })
+      .then((response) => {
+        console.log(response?.data?.data);
+        setConstgetdata(response?.data?.data);
+        setPagenationData(response.data);
+        setLoader(false);
+      })
+      .catch((error) => {
+        setLoader(false);
+        toast.error(error.response.data.message);
+      });
+  };
 
   return (
     <>
@@ -800,84 +907,99 @@ export default function CustomebyUserap() {
             </div>
             <div className="row">
               <div className="col-md-12">
+                <div className="row mb-3 mt-4">
+                  <div className="col-9 mt-3">
+                    <h4 className="freight_hd">Document Section</h4>
+                    <span class="line"></span>
+                  </div>
+                  <div className="col-3">
+                    <Button className="btn  btn-primary" onClick={handleShow}>
+                      Upload Documents
+                    </Button>
 
+                    {show1 ? (
+                      <Modal
+                        open={show1}
+                        onClose={handleClose}
+                        slotProps={{
+                          backdrop: {
+                            sx: { backgroundColor: "rgba(0,0,0,0.2)" }, // lighter background
+                          },
+                        }}
+                      >
+                        <Box
+                          sx={{
+                            p: 3,
+                            bgcolor: "background.paper",
+                            borderRadius: 2,
+                            width: 500,
+                            mx: "auto",
+                            mt: 10,
+                          }}
+                        >
+                          <h2>Upload Documents</h2>
 
-                                                               <div className="row mb-3 mt-4">
-                                                                                              <div className="col-9 mt-3">
-                                                                                                <h4 className="freight_hd">Document Section</h4>
-                                                                                                <span class="line"></span>
-                                                                                              </div>
-                                                                                              <div className="col-3">
-                                                                            <Button className="btn  btn-primary" onClick={handleShow}>
-                                                                                      Upload Documents
-                                                                                    </Button>
-                                                                                                   
-                                                                                                   {
-                                                                                                    show1 ? <Modal
-                                                                                    open={show1}
-                                                                                    onClose={handleClose}
-                                                                                    slotProps={{
-                                                                                      backdrop: {
-                                                                                        sx: { backgroundColor: "rgba(0,0,0,0.2)" }, // lighter background
-                                                                                      },
-                                                                                    }}
-                                                                                  >
-                                                                                    <Box
-                                                                                      sx={{
-                                                                                        p: 3,
-                                                                                        bgcolor: "background.paper",
-                                                                                        borderRadius: 2,
-                                                                                        width: 500,
-                                                                                        mx: "auto",
-                                                                                        mt: 10,
-                                                                                      }}
-                                                                                    >
-                                                                                      <h2>Upload Documents</h2>
-                                                                            
-                                                                                      {/* Dropdown */}
-                                                                                      <FormControl fullWidth sx={{ mt: 2 }}>
-                                                                                        <InputLabel id="doc-select-label">Select Document Type</InputLabel>
-                                                                                        <Select
-                                                                                          labelId="doc-select-label"
-                                                                                          // value={selected}
-                                                                                          onChange={handleSelect}
-                                                                                        >
-                                                                                          {docOptions.map((option) => (
-                                                                                            <MenuItem key={option.id} value={option.id}>
-                                                                                              {option.label}
-                                                                                            </MenuItem>
-                                                                                          ))}
-                                                                                        </Select>
-                                                                                      </FormControl>
-                                                                            
-                                                                                      {/* Dynamic file inputs */}
-                                                                                      <div className="mt-3">
-                                                                                        {selectedDocs.map((doc, index) => (
-                                                                                          <div key={index} className="mb-3">
-                                                                                            <label className="fw-bold">{doc.name}</label>
-                                                                                            <input
-                                                                                              type="file"
-                                                                                              className="form-control"
-                                                                                              multiple
-                                                                                              accept="image/*,application/pdf"
-                                                                                              onChange={(e) => handleFileChangefil(e, doc.name)}
-                                                                                            />
-                                                                                          </div>
-                                                                                        ))}
-                                                                                      </div>
-                                                                            
-                                                                                      {/* Footer buttons */}
-                                                                                      <Box sx={{ display: "flex", justifyContent: "flex-end", gap: 2, mt: 3 }}>
-                                                                                        <Button onClick={handleClose}>Cancel</Button>
-                                                                                        <Button variant="contained" color="success" onClick={handleSave}>
-                                                                                          Save Documents
-                                                                                        </Button>
-                                                                                      </Box>
-                                                                                    </Box>
-                                                                                  </Modal> : ""
-                                                                                                   }   
-                                                                                              </div>
-                                                                                            </div>
+                          {/* Dropdown */}
+                          <FormControl fullWidth sx={{ mt: 2 }}>
+                            <InputLabel id="doc-select-label">
+                              Select Document Type
+                            </InputLabel>
+                            <Select
+                              labelId="doc-select-label"
+                              // value={selected}
+                              onChange={handleSelect}
+                            >
+                              {docOptions.map((option) => (
+                                <MenuItem key={option.id} value={option.id}>
+                                  {option.label}
+                                </MenuItem>
+                              ))}
+                            </Select>
+                          </FormControl>
+
+                          {/* Dynamic file inputs */}
+                          <div className="mt-3">
+                            {selectedDocs.map((doc, index) => (
+                              <div key={index} className="mb-3">
+                                <label className="fw-bold">{doc.name}</label>
+                                <input
+                                  type="file"
+                                  className="form-control"
+                                  multiple
+                                  accept="image/*,application/pdf"
+                                  onChange={(e) =>
+                                    handleFileChangefil(e, doc.name)
+                                  }
+                                />
+                              </div>
+                            ))}
+                          </div>
+
+                          {/* Footer buttons */}
+                          <Box
+                            sx={{
+                              display: "flex",
+                              justifyContent: "flex-end",
+                              gap: 2,
+                              mt: 3,
+                            }}
+                          >
+                            <Button onClick={handleClose}>Cancel</Button>
+                            <Button
+                              variant="contained"
+                              color="success"
+                              onClick={handleSave}
+                            >
+                              Save Documents
+                            </Button>
+                          </Box>
+                        </Box>
+                      </Modal>
+                    ) : (
+                      ""
+                    )}
+                  </div>
+                </div>
                 <h6 className="md_heading text-start">Cargo Details</h6>
               </div>
             </div>
@@ -1015,7 +1137,7 @@ export default function CustomebyUserap() {
                 </div>
               </div> */}
             </div>
-           
+
             {/* <div className="row">             
                 <div className="col-12 mt-3">
                   <h5>licenses</h5>
@@ -1034,284 +1156,335 @@ export default function CustomebyUserap() {
           </div>
         </Box>
       </Modal>
-      {loader ? (
-        <div class="loader-container">
-          <div class="loader"></div>
-          <p class="loader-text">Updating... This may take some time</p>
-        </div>
-      ) : (
-        <div className="wpWrapper">
-          <div className="container-fluid">
-            <div className="row manageFreight">
-              <div className="col-12">
-                <div className="d-flex justify-content-between">
-                  <h4 className="freight_hd">Custom Clearance User</h4>
-                  <div className="d-flex align-items-center">
-                    <div className="me-2">
-                      <input
-                        placeholder="Search"
-                        type="text"
-                        class="px-2 py-1 rounded"
-                      />
-                    </div>
-                    <button onClick={handleOpenModal}>Filter</button>
+      <Modal
+        open={openmodalAssignFreight}
+        onClose={hanldecloseModal}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+        className="newModal"
+      >
+        <Box
+          sx={{
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            minWidth: 450,
+            bgcolor: "background.paper",
+            boxShadow: 24,
+          }}
+        >
+          <div className="modal-header">
+            <h2>
+              <h2 id="modal-modal-title">Assign Clearance</h2>
+            </h2>
+            <button className="btn btn-close" onClick={hanldecloseModal}>
+              <CloseIcon />
+            </button>
+          </div>
+
+          <div className="newModalGap">
+            <div className="row my-3  "></div>
+            <div className="col-12 ">
+              <label>Assign Supplier</label>
+              <select
+                className="form-cuntrol col-12 border px-3 py-2 mb-2"
+                value={supplierName}
+                onChange={(e) => {
+                  setSupplierName(e.target.value);
+                }}
+                name="attachdoc"
+              >
+                <option>Select</option>
+                {supplierData.map((item, index) => (
+                  <option key={index} value={item.id}>
+                    {item.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <Button
+              variant="contained"
+              className="text-center"
+              onClick={AssignFreightToSupplier}
+            >
+              Add Supplier
+            </Button>
+          </div>
+        </Box>
+      </Modal>
+
+      <div className="wpWrapper">
+        <div className="container-fluid">
+          <div className="row manageFreight">
+            <div className="col-12">
+              <div className="d-flex justify-content-between">
+                <h4 className="freight_hd">Custom Clearance User</h4>
+                <div className="d-flex align-items-center">
+                  <div className="me-2">
+                    <input
+                      className="px-2 py-1 rounded "
+                      placeholder="Search"
+                      value={searchQuery}
+                      onChange={handleSearch}
+                    ></input>
                   </div>
+                  <button onClick={handleOpenModal}>Filter</button>
                 </div>
               </div>
             </div>
-            <div className="mt-3">
-              <div>
-                <div
-                  className="modal fade"
-                  id="exampleModal"
-                  tabIndex={-1}
-                  aria-labelledby="exampleModalLabel"
-                  aria-hidden="true"
-                >
-                  <div className="modal-dialog modal-lg">
-                    <div className="modal-content">
-                      <div className="modal-header">
-                        <h5 className="modal-title" id="exampleModalLabel">
-                          Add Clearance order
-                        </h5>
-                        <button
-                          type="button"
-                          className="btn-close"
-                          data-bs-dismiss="modal"
-                          aria-label="Close"
-                        />
+          </div>
+          <div className="mt-3">
+            <div>
+              <div
+                className="modal fade"
+                id="exampleModal"
+                tabIndex={-1}
+                aria-labelledby="exampleModalLabel"
+                aria-hidden="true"
+              >
+                <div className="modal-dialog modal-lg">
+                  <div className="modal-content">
+                    <div className="modal-header">
+                      <h5 className="modal-title" id="exampleModalLabel">
+                        Add Clearance order
+                      </h5>
+                      <button
+                        type="button"
+                        className="btn-close"
+                        data-bs-dismiss="modal"
+                        aria-label="Close"
+                      />
+                    </div>
+                    <div className="modal-body">
+                      <div className="row">
+                        <div className="col-lg-6">
+                          <label className="fs-5 fw-normal">
+                            Trans Refrence*
+                          </label>
+                          <input
+                            type="text"
+                            onChange={handlechange}
+                            name="trans_reference"
+                            className="w-100 border p-2 rounded "
+                            placeholder="Trans Refrence"
+                          ></input>
+                          <p className="text-danger">{error.trans_reference}</p>
+                        </div>
+                        <div className="col-lg-6">
+                          <label className="fs-5 fw-normal"> Client</label>
+                          <input
+                            type="type"
+                            onChange={handlechange}
+                            name="client"
+                            className="w-100 border p-2 rounded mb-3"
+                            placeholder="client"
+                          ></input>
+                        </div>
                       </div>
-                      <div className="modal-body">
-                        <div className="row">
-                          <div className="col-lg-6">
-                            <label className="fs-5 fw-normal">
-                              Trans Refrence*
-                            </label>
-                            <input
-                              type="text"
-                              onChange={handlechange}
-                              name="trans_reference"
-                              className="w-100 border p-2 rounded "
-                              placeholder="Trans Refrence"
-                            ></input>
-                            <p className="text-danger">
-                              {error.trans_reference}
-                            </p>
-                          </div>
-                          <div className="col-lg-6">
-                            <label className="fs-5 fw-normal"> Client</label>
-                            <input
-                              type="type"
-                              onChange={handlechange}
-                              name="client"
-                              className="w-100 border p-2 rounded mb-3"
-                              placeholder="client"
-                            ></input>
-                          </div>
+                      <div className="row">
+                        <div className="col-lg-6">
+                          <label className="fs-5 fw-normal">Customer Ref</label>
+                          <input
+                            type="text"
+                            onChange={handlechange}
+                            name="customer_ref"
+                            className="w-100 border p-2 rounded "
+                            placeholder="customer Refrence"
+                          ></input>
+                          <p className="text-danger">{error.customer_ref}</p>
                         </div>
-                        <div className="row">
-                          <div className="col-lg-6">
-                            <label className="fs-5 fw-normal">
-                              Customer Ref
-                            </label>
-                            <input
-                              type="text"
-                              onChange={handlechange}
-                              name="customer_ref"
-                              className="w-100 border p-2 rounded "
-                              placeholder="customer Refrence"
-                            ></input>
-                            <p className="text-danger">{error.customer_ref}</p>
-                          </div>
-                          <div className="col-lg-6">
-                            <label className="fs-5 fw-normal">
-                              Goods Description
-                            </label>
-                            <input
-                              type="text"
-                              onChange={handlechange}
-                              name="goods_desc"
-                              placeholder="Goods Description"
-                              className="w-100 border p-2 rounded mb-3"
-                            ></input>
-                          </div>
-                          <div className="col-lg-6">
-                            <label className="fs-5 fw-normal">
-                              Destination
-                            </label>
-                            <input
-                              type="text"
-                              name="destination"
-                              placeholder="destination"
-                              onChange={handlechange}
-                              className="w-100 border p-2 rounded mb-3"
-                            ></input>
-                          </div>
-                          <div className="col-lg-6">
-                            <label className="fs-5 fw-normal ">
-                              Port of Entry
-                            </label>
-                            <select
-                              onChange={handlechange}
-                              placeholder="Port Of Entry"
-                              name="port_of_entry"
-                              className="w-100 border mb-3 rounded p-2 bg-white"
-                            >
-                              <option>Select...</option>
-                              <option>Durban</option>
-                              <option>Johannesburg</option>
-                              <option>OR Tambo</option>
-                              <option>Capetown</option>
-                            </select>
-                          </div>
+                        <div className="col-lg-6">
+                          <label className="fs-5 fw-normal">
+                            Goods Description
+                          </label>
+                          <input
+                            type="text"
+                            onChange={handlechange}
+                            name="goods_desc"
+                            placeholder="Goods Description"
+                            className="w-100 border p-2 rounded mb-3"
+                          ></input>
                         </div>
-                        <div className="row">
-                          <div className="col-lg-12">
-                            <label className="fs-5 fw-normal">
-                              Port of Exit
-                            </label>
-                            <input
-                              type="text"
-                              name="port_of_exit"
-                              placeholder="Port Of Exit"
-                              onChange={handlechange}
-                              className="w-100 border p-2 rounded mb-3"
-                            ></input>
-                          </div>
+                        <div className="col-lg-6">
+                          <label className="fs-5 fw-normal">Destination</label>
+                          <input
+                            type="text"
+                            name="destination"
+                            placeholder="destination"
+                            onChange={handlechange}
+                            className="w-100 border p-2 rounded mb-3"
+                          ></input>
+                        </div>
+                        <div className="col-lg-6">
+                          <label className="fs-5 fw-normal ">
+                            Port of Entry
+                          </label>
+                          <select
+                            onChange={handlechange}
+                            placeholder="Port Of Entry"
+                            name="port_of_entry"
+                            className="w-100 border mb-3 rounded p-2 bg-white"
+                          >
+                            <option>Select...</option>
+                            <option>Durban</option>
+                            <option>Johannesburg</option>
+                            <option>OR Tambo</option>
+                            <option>Capetown</option>
+                          </select>
+                        </div>
+                      </div>
+                      <div className="row">
+                        <div className="col-lg-12">
+                          <label className="fs-5 fw-normal">Port of Exit</label>
+                          <input
+                            type="text"
+                            name="port_of_exit"
+                            placeholder="Port Of Exit"
+                            onChange={handlechange}
+                            className="w-100 border p-2 rounded mb-3"
+                          ></input>
+                        </div>
 
-                          <div className="col-lg-12">
-                            <label className="fs-5 fw-normal">
-                              Clearing Result
-                            </label>
-                            <input
-                              type="text"
-                              name="clearing_result"
-                              placeholder="Clearing Result"
-                              onChange={handlechange}
-                              className="w-100 border p-2 rounded mb-3"
-                            ></input>
-                          </div>
-                          <div className="col-lg-6 ">
-                            <label className="fs-5 fw-normal">
-                              Clearing Agent
-                            </label>
-                            <select
-                              name="clearing_agent"
-                              onChange={handlechange}
-                              placeholder="Clearing Agent"
-                              className="w-100 border mb-3 rounded p-2 mx-2 bg-white"
-                            >
-                              <option>Select...</option>
-                              <option>Amanda</option>
-                              <option>Mbedzi</option>
-                              <option>Kethu</option>
-                              <option>Sia</option>
-                              <option>Shingi</option>
-                              <option>Dolly</option>
-                              <option>CARRIER</option>
-                            </select>
-                          </div>
-                          <div className="col-lg-6">
-                            <label className="fs-5 fw-normal">
-                              Document Required
-                            </label>
-                            <select
-                              className="w-100 mb-3 border rounded p-2 bg-white"
-                              onChange={handlechange}
-                              name="document_req"
-                            >
-                              <option>Select...</option>
-                              <option>Not Rquired</option>
-                              <option>ITAC</option>
-                              <option>Other</option>
-                              <option>Documents Required</option>
-                            </select>
-                          </div>
+                        <div className="col-lg-12">
+                          <label className="fs-5 fw-normal">
+                            Clearing Result
+                          </label>
+                          <input
+                            type="text"
+                            name="clearing_result"
+                            placeholder="Clearing Result"
+                            onChange={handlechange}
+                            className="w-100 border p-2 rounded mb-3"
+                          ></input>
                         </div>
-                        <div className="row">
-                          <div className="col-lg-6">
+                        <div className="col-lg-6 ">
+                          <label className="fs-5 fw-normal">
+                            Clearing Agent
+                          </label>
+                          <select
+                            name="clearing_agent"
+                            onChange={handlechange}
+                            placeholder="Clearing Agent"
+                            className="w-100 border mb-3 rounded p-2 mx-2 bg-white"
+                          >
+                            <option>Select...</option>
+                            <option>Amanda</option>
+                            <option>Mbedzi</option>
+                            <option>Kethu</option>
+                            <option>Sia</option>
+                            <option>Shingi</option>
+                            <option>Dolly</option>
+                            <option>CARRIER</option>
+                          </select>
+                        </div>
+                        <div className="col-lg-6">
+                          <label className="fs-5 fw-normal">
+                            Document Required
+                          </label>
+                          <select
+                            className="w-100 mb-3 border rounded p-2 bg-white"
+                            onChange={handlechange}
+                            name="document_req"
+                          >
+                            <option>Select...</option>
+                            <option>Not Rquired</option>
+                            <option>ITAC</option>
+                            <option>Other</option>
+                            <option>Documents Required</option>
+                          </select>
+                        </div>
+                      </div>
+                      <div className="row">
+                        <div className="col-lg-6">
+                          {" "}
+                          <label className="fs-5 fw-normal">
+                            Clearing status
+                          </label>
+                          <select
+                            className="w-100 mb-3 border rounded py-2 bg-white"
+                            onChange={handlechange}
+                            name="clearing_status"
+                          >
+                            <option>Select...</option>
+                            <option>Pending</option>
+                            <option>Success</option>
+                            <option>Failed</option>
+                          </select>
+                        </div>
+
+                        <div className="col-lg-6">
+                          <label className="fs-5 fw-normal">
+                            Document Upload
+                          </label>
+                          <input
+                            type="file"
+                            name="document"
+                            onChange={handECHlhange}
+                            className="w-100 border p-1 rounded"
+                            required
+                          ></input>
+                          <p className="text-danger">{error.document}</p>
+                        </div>
+                      </div>
+
+                      <div className="row ">
+                        <div className="col-lg-6">
+                          <label className="fs-5 fw-normal"> SAD500</label>
+                          <input
+                            type="file"
+                            onChange={handECHlhange2}
+                            name="sad500"
+                            className="w-100 border p-1 rounded mb-3"
+                            required
+                          ></input>
+                        </div>
+                        <div className="col-lg-6">
+                          <label className="fs-5 fw-normal">
                             {" "}
-                            <label className="fs-5 fw-normal">
-                              Clearing status
-                            </label>
-                            <select
-                              className="w-100 mb-3 border rounded py-2 bg-white"
-                              onChange={handlechange}
-                              name="clearing_status"
-                            >
-                              <option>Select...</option>
-                              <option>Pending</option>
-                              <option>Success</option>
-                              <option>Failed</option>
-                            </select>
-                          </div>
-
-                          <div className="col-lg-6">
-                            <label className="fs-5 fw-normal">
-                              Document Upload
-                            </label>
-                            <input
-                              type="file"
-                              name="document"
-                              onChange={handECHlhange}
-                              className="w-100 border p-1 rounded"
-                              required
-                            ></input>
-                            <p className="text-danger">{error.document}</p>
-                          </div>
-                        </div>
-
-                        <div className="row ">
-                          <div className="col-lg-6">
-                            <label className="fs-5 fw-normal"> SAD500</label>
-                            <input
-                              type="file"
-                              onChange={handECHlhange2}
-                              name="sad500"
-                              className="w-100 border p-1 rounded mb-3"
-                              required
-                            ></input>
-                          </div>
-                          <div className="col-lg-6">
-                            <label className="fs-5 fw-normal">
-                              {" "}
-                              Comment on Docs
-                            </label>
-                            <input
-                              type="text"
-                              name="comment_on_docs"
-                              placeholder="Comment on Docs"
-                              onChange={handlechange}
-                              className="w-100 border p-2 rounded mb-3"
-                            ></input>
-                          </div>
+                            Comment on Docs
+                          </label>
+                          <input
+                            type="text"
+                            name="comment_on_docs"
+                            placeholder="Comment on Docs"
+                            onChange={handlechange}
+                            className="w-100 border p-2 rounded mb-3"
+                          ></input>
                         </div>
                       </div>
-                      <div className="modal-footer">
-                        <button
-                          type="button"
-                          className="btn btn-secondary"
-                          data-bs-dismiss="modal"
-                        >
-                          Close
-                        </button>
-                        <button
-                          type="button"
-                          onClick={handleclick}
-                          className="btn btn-primary"
-                        >
-                          save
-                        </button>
-                      </div>
+                    </div>
+                    <div className="modal-footer">
+                      <button
+                        type="button"
+                        className="btn btn-secondary"
+                        data-bs-dismiss="modal"
+                      >
+                        Close
+                      </button>
+                      <button
+                        type="button"
+                        onClick={handleclick}
+                        className="btn btn-primary"
+                      >
+                        save
+                      </button>
                     </div>
                   </div>
                 </div>
+              </div>
+              {loader ? (
+                <div class="loader-container">
+                  <div class="loader"></div>
+                  <p class="loader-text">Updating... This may take some time</p>
+                </div>
+              ) : (
                 <div className="table-responsive">
                   <table className="table table-striped">
                     <tbody style={{ border: "none" }}>
-                      {currentData &&
-                        currentData.length > 0 &&
-                        currentData.map((item, index) => {
+                      {constgetdata &&
+                        constgetdata.length > 0 &&
+                        constgetdata.map((item, index) => {
                           return (
                             <>
                               <tr>
@@ -1507,6 +1680,22 @@ export default function CustomebyUserap() {
                                               <a
                                                 className="dropdown-item li_icon"
                                                 onClick={() => {
+                                                  handlelcsendid(item);
+                                                }}
+                                              >
+                                                <AssignmentTurnedIn
+                                                  style={{
+                                                    color: "rgb(27 34 69)",
+                                                    marginRight: "10px",
+                                                    width: "20px",
+                                                    cursor: "pointer",
+                                                  }}
+                                                />
+                                                Assign Clearance
+                                              </a>
+                                              <a
+                                                className="dropdown-item li_icon"
+                                                onClick={() => {
                                                   handleModal(item.id);
                                                 }}
                                               >
@@ -1688,51 +1877,54 @@ export default function CustomebyUserap() {
                                       </div>
                                     </div>
                                   </div>
-                                  <div className="">
-                                    <p
-                                      type="radio"
-                                      className="input_user mb-0"
-                                    />
-                                    <label className="status">
-                                      {item?.quotation_status == "0" ? (
-                                        <div className="d-flex align-items-center">
-                                          <span className="dot bg-secondary me-2"></span>
-                                          <p className="text-secondary mb-0">
-                                            Pending
-                                          </p>
-                                        </div>
-                                      ) : item.quotation_status == "1" ? (
-                                        <div className="d-flex align-items-center">
-                                          <span className="dot bg-success me-2"></span>
-                                          <p className="text-success mb-0">
-                                            Accepted
-                                          </p>
-                                        </div>
-                                      ) : item.quotation_status == "2" ? (
-                                        <div className="d-flex align-items-center">
-                                          <span className="dot bg-info me-2"></span>
-                                          <p className="text-info mb-0">
-                                            Declined
-                                          </p>
-                                        </div>
-                                      ) : item.quotation_status == "3" ? (
-                                        <div className="d-flex align-items-center">
-                                          <span className="dot bg-success me-2"></span>
-                                          <p className="text-success mb-0">
-                                            Ordered
-                                          </p>
-                                        </div>
-                                      ) : item.quotation_status == "4" ? (
-                                        <div className="d-flex align-items-center">
-                                          <span className="dot bg-success me-2"></span>
-                                          <p className="text-success mb-0">
-                                            Estimated
-                                          </p>
-                                        </div>
-                                      ) : (
-                                        ""
-                                      )}
-                                    </label>
+                                  <div className="d-flex justify-content-between">
+                                    <div className="">
+                                      <p
+                                        type="radio"
+                                        className="input_user mb-0"
+                                      />
+                                      <label className="status">
+                                        {item?.quotation_status == "0" ? (
+                                          <div className="d-flex align-items-center">
+                                            <span className="dot bg-secondary me-2"></span>
+                                            <p className="text-secondary mb-0">
+                                              Pending
+                                            </p>
+                                          </div>
+                                        ) : item.quotation_status == "1" ? (
+                                          <div className="d-flex align-items-center">
+                                            <span className="dot bg-success me-2"></span>
+                                            <p className="text-success mb-0">
+                                              Accepted
+                                            </p>
+                                          </div>
+                                        ) : item.quotation_status == "2" ? (
+                                          <div className="d-flex align-items-center">
+                                            <span className="dot bg-info me-2"></span>
+                                            <p className="text-info mb-0">
+                                              Declined
+                                            </p>
+                                          </div>
+                                        ) : item.quotation_status == "3" ? (
+                                          <div className="d-flex align-items-center">
+                                            <span className="dot bg-success me-2"></span>
+                                            <p className="text-success mb-0">
+                                              Ordered
+                                            </p>
+                                          </div>
+                                        ) : item.quotation_status == "4" ? (
+                                          <div className="d-flex align-items-center">
+                                            <span className="dot bg-success me-2"></span>
+                                            <p className="text-success mb-0">
+                                              Estimated
+                                            </p>
+                                          </div>
+                                        ) : (
+                                          ""
+                                        )}
+                                      </label>
+                                    </div>
+                                    <div>{item?.assigned_supplier_name}</div>
                                   </div>
                                 </td>
 
@@ -1744,152 +1936,7 @@ export default function CustomebyUserap() {
                                   tabIndex={-1}
                                   aria-labelledby="staticBackdropLabel"
                                   aria-hidden="true"
-                                >
-                                  {/* <div className="modal-dialog">
-                                    <div className="modal-content">
-                                      <div className="modal-header">
-                                        <h5
-                                          className="modal-title"
-                                          id="staticBackdropLabel"
-                                        >
-                                          Update custom clearence
-                                        </h5>
-                                        <button
-                                          type="button"
-                                          className="btn-close"
-                                          data-bs-dismiss="modal"
-                                          aria-label="Close"
-                                        />
-                                      </div>
-                                      <div className="modal-body ">
-                                        <label>Customer Ref</label>
-                                        <input
-                                          type="text"
-                                          onChange={submithandlechnageupdate}
-                                          value={handlechnageupdate.customer_ref}
-                                          name="customer_ref"
-                                          className="w-100 border p-3 rounded mb-3"
-                                        ></input>
-                                        <label>Goods Description</label>
-                                        <input
-                                          type="text"
-                                          onChange={submithandlechnageupdate}
-                                          value={handlechnageupdate.clearance_number}
-                                          name="clearance_number"
-                                          className="w-100 border p-3 rounded mb-3"
-                                        ></input>
-                                        <label>Destination</label>
-                                        <input
-                                          type="text"
-                                          name="destination"
-                                          value={handlechnageupdate.destination}
-                                          onChange={submithandlechnageupdate}
-                                          className="w-100 border p-3 rounded mb-3"
-                                        ></input>
-
-                                        <label>Port of Entry</label>
-                                        <select
-                                          onChange={submithandlechnageupdate}
-                                          value={handlechnageupdate.port_of_entry}
-                                          name="port_of_entry"
-                                          className="w-100 border mb-3 rounded p-3 bg-white"
-                                        >
-                                          <option>Select...</option>
-                                          <option>Durban</option>
-                                          <option>Johannesburg</option>
-                                          <option>OR Tambo</option>
-                                          <option>Capetown</option>
-                                        </select>
-                                        <label>Country Of Origin</label>
-                                        <select
-                                          onChange={submithandlechnageupdate}
-                                          value={handlechnageupdate.port_of_entry}
-                                          name="port_of_entry"
-                                          className="w-100 border mb-3 rounded p-3 bg-white"
-                                        >
-                                          <option>select....</option>
-                                          {country &&
-                                            country.length > 0 &&
-                                            country.map((item, index) => {
-                                              // console.log(item);
-                                              return (
-                                                <>
-                                                  <option value={item.id}>
-                                                    {item?.name}
-                                                  </option>
-                                                </>
-                                              );
-                                            })}
-                                        </select>
-                                        <label>Port of Exit</label>
-                                        <select
-                                          onChange={submithandlechnageupdate}
-                                          value={handlechnageupdate.port_of_exit}
-                                          name="port_of_exit"
-                                          className="w-100 border mb-3 rounded p-3 bg-white"
-                                        >
-                                          <option>select....</option>
-                                          {country &&
-                                            country.length > 0 &&
-                                            country.map((item, index) => {
-                                              // console.log(item);
-                                              return (
-                                                <>
-                                                  <option value={item.id}>
-                                                    {item?.name}
-                                                  </option>
-                                                </>
-                                              );
-                                            })}
-                                        </select>
-                                        <label>Clearing Agent</label>
-                                        <select
-                                          name="clearing_agent"
-                                          value={inputdata.clearing_agent}
-                                          onChange={submitInputdata}
-                                          className="w-100 border mb-3 rounded p-3 bg-white"
-                                        >
-                                          <option>Select...</option>
-                                          <option>Amanda</option>
-                                          <option>Mbedzi</option>
-                                          <option>Kethu</option>
-                                          <option>Sia</option>
-                                          <option>Shingi</option>
-                                          <option>Dolly</option>
-                                          <option>CARRIER</option>
-                                        </select>
-
-                                        <label> Comment on Docs</label>
-                                        <input
-                                          type="text"
-                                          name="comment_on_docs"
-                                          onChange={submitInputdata}
-                                          placeholder="comment on docs"
-                                          value={inputdata.comment_on_docs}
-                                          className="w-100 border p-3 rounded mb-3"
-                                        ></input>
-                                      </div>
-                                      <div className="modal-footer">
-                                        <button
-                                          type="button"
-                                          onClick={() => {
-                                            handleupdateupdate(item.id);
-                                          }}
-                                          className="btn"
-                                        >
-                                          Update
-                                        </button>
-                                        <button
-                                          type="button"
-                                          className="btn cross_btn"
-                                          data-bs-dismiss="modal"
-                                        >
-                                          Close
-                                        </button>
-                                      </div>
-                                    </div>
-                                  </div> */}
-                                </div>
+                                ></div>
                               </tr>
                             </>
                           );
@@ -1897,86 +1944,87 @@ export default function CustomebyUserap() {
                     </tbody>
                   </table>
                 </div>
-                <div className="text-center d-flex justify-content-end align-items-center">
-                  <button
-                    disabled={currentPage === 1}
-                    className="bg_page"
-                    onClick={() => handlePageChange(currentPage - 1)}
-                  >
-                    <i class="fi fi-rr-angle-small-left page_icon"></i>
-                  </button>
-                  <span className="mx-2">{`Page ${currentPage} of ${totalPages}`}</span>
-                  <button
-                    disabled={currentPage === totalPages}
-                    className="bg_page"
-                    onClick={() => handlePageChange(currentPage + 1)}
-                  >
-                    <i class="fi fi-rr-angle-small-right page_icon"></i>
-                  </button>
-                </div>
-                <ToastContainer />
+              )}
+              <div className="text-center d-flex justify-content-end align-items-center">
+                <button
+                  disabled={currentPage === 1}
+                  className="bg_page"
+                  onClick={() => handlePageChange(currentPage - 1)}
+                >
+                  <i class="fi fi-rr-angle-small-left page_icon"></i>
+                </button>
+                <span className="mx-2">{`Page ${currentPage} of ${totalPages}`}</span>
+                <button
+                  disabled={currentPage === totalPages}
+                  className="bg_page"
+                  onClick={() => handlePageChange(currentPage + 1)}
+                >
+                  <i class="fi fi-rr-angle-small-right page_icon"></i>
+                </button>
               </div>
+              <ToastContainer />
             </div>
-            <Modal
-              open={isModalOpen1}
-              onClose={handleCloseModal1}
-              aria-labelledby="modal-modal-title"
-              aria-describedby="modal-modal-description"
+          </div>
+          <Modal
+            open={isModalOpen1}
+            onClose={handleCloseModal1}
+            aria-labelledby="modal-modal-title"
+            aria-describedby="modal-modal-description"
+          >
+            <Box
+              sx={{
+                position: "absolute",
+                top: "50%",
+                left: "50%",
+                transform: "translate(-50%, -50%)",
+              }}
             >
-              <Box
-                sx={{
-                  position: "absolute",
-                  top: "50%",
-                  left: "50%",
-                  transform: "translate(-50%, -50%)",
-                }}
-              >
-                <div className="modal-header">
-                  <h2 id="modal-modal-title">Filter</h2>
-                  <button className="btn btn-close" onClick={handleCloseModal1}>
-                    <CloseIcon />
-                  </button>
-                </div>
+              <div className="modal-header">
+                <h2 id="modal-modal-title">Filter</h2>
+                <button className="btn btn-close" onClick={handleCloseModal1}>
+                  <CloseIcon />
+                </button>
+              </div>
 
-                <div className="newModalGap">
-                  <h6>Attach Quote</h6>
-                  <input
-                    type="file"
-                    className="border px-3 rounded py-2 my-2 w-100"
-                    onChange={handleCloseModal1}
-                  ></input>
-                  <Button
-                    className="mt-2"
-                    variant="contained"
-                    onClick={postData123}
-                  >
-                    Apply
-                  </Button>
-                </div>
-              </Box>
-            </Modal>
-            <Modal
-              open={isModalOpen}
-              onClose={handleCloseModal}
-              aria-labelledby="modal-modal-title"
-              aria-describedby="modal-modal-description"
+              <div className="newModalGap">
+                <h6>Attach Quote</h6>
+                <input
+                  type="file"
+                  className="border px-3 rounded py-2 my-2 w-100"
+                  onChange={handleCloseModal1}
+                ></input>
+                <Button
+                  className="mt-2"
+                  variant="contained"
+                  onClick={postData123}
+                >
+                  Apply
+                </Button>
+              </div>
+            </Box>
+          </Modal>
+          <Modal
+            open={isModalOpen}
+            onClose={handleCloseModal}
+            aria-labelledby="modal-modal-title"
+            aria-describedby="modal-modal-description"
+          >
+            <Box
+              sx={{
+                position: "absolute",
+                top: "50%",
+                left: "50%",
+                transform: "translate(-50%, -50%)",
+              }}
             >
-              <Box
-                sx={{
-                  position: "absolute",
-                  top: "50%",
-                  left: "50%",
-                  transform: "translate(-50%, -50%)",
-                }}
-              >
-                <div className="modal-header">
-                  <h2 id="modal-modal-title">Filter</h2>
-                  <button className="btn btn-close" onClick={handleCloseModal}>
-                    <CloseIcon />
-                  </button>
-                </div>
-                <div className="newModalGap">
-                  {/* <div className="col-6">
+              <div className="modal-header">
+                <h2 id="modal-modal-title">Filter</h2>
+                <button className="btn btn-close" onClick={handleCloseModal}>
+                  <CloseIcon />
+                </button>
+              </div>
+              <div className="newModalGap">
+                {/* <div className="col-6">
                   <label>Delivery Type</label>
                   <select
                     name="type"
@@ -1988,7 +2036,7 @@ export default function CustomebyUserap() {
                     <option value="normal">Consolidation</option>
                   </select>
                 </div> */}
-                  {/* <div className="col-6">
+                {/* <div className="col-6">
                   <label>Priority </label>
                   <div className="shipRefer1 d-flex">
                     <div>
@@ -2027,85 +2075,85 @@ export default function CustomebyUserap() {
                   </div>
                 </div> */}
 
-                  <div className="row mb-3">
-                    <div className="col-6">
-                      <label>Country of Origin</label>
-                      <select
-                        name="origin"
-                        onChange={handlechange}
-                        className="form-control"
-                      >
-                        <option value="">Select</option>
-                        {country &&
-                          country.length > 0 &&
-                          country.map((item, index) => {
-                            return (
-                              <>
-                                <option value={item.id}>{item.name}</option>
-                              </>
-                            );
-                          })}
-                      </select>
-                    </div>
-                    <div className="col-6">
-                      <label>Delivery to Country </label>
-                      <select
-                        name="destination"
-                        onChange={handlechange}
-                        className="form-control"
-                      >
-                        <option value="">Select</option>
-                        {country &&
-                          country.length > 0 &&
-                          country.map((item, index) => {
-                            return (
-                              <>
-                                <option value={item.id}>{item.name}</option>
-                              </>
-                            );
-                          })}
-                      </select>
-                    </div>
+                <div className="row mb-3">
+                  <div className="col-6">
+                    <label>Country of Origin</label>
+                    <select
+                      name="origin"
+                      onChange={handlechange}
+                      className="form-control"
+                    >
+                      <option value="">Select</option>
+                      {country &&
+                        country.length > 0 &&
+                        country.map((item, index) => {
+                          return (
+                            <>
+                              <option value={item.id}>{item.name}</option>
+                            </>
+                          );
+                        })}
+                    </select>
                   </div>
-                  <div className="row mb-3">
-                    <div className="col-6">
-                      <label>Start Date</label>
-                      <input
-                        type="date"
-                        id="shipper3"
-                        name="startDate"
-                        style={{ cursor: "pointer" }}
-                        className="form-control"
-                        onChange={handlechange}
-                      />
-                    </div>
-                    <div className="col-6">
-                      <label>End Date </label>
-                      <input
-                        type="date"
-                        id="shipper3"
-                        name="endDate"
-                        style={{ cursor: "pointer" }}
-                        className="form-control"
-                        onChange={handlechange}
-                      />
-                    </div>
+                  <div className="col-6">
+                    <label>Delivery to Country </label>
+                    <select
+                      name="destination"
+                      onChange={handlechange}
+                      className="form-control"
+                    >
+                      <option value="">Select</option>
+                      {country &&
+                        country.length > 0 &&
+                        country.map((item, index) => {
+                          return (
+                            <>
+                              <option value={item.id}>{item.name}</option>
+                            </>
+                          );
+                        })}
+                    </select>
                   </div>
-                  <div className="row mb-3">
-                    <div className="col-12">
-                      <label>Freight</label>
-                      <select
-                        name="freight"
-                        onChange={handlechange}
-                        className="form-control"
-                      >
-                        <option value="">Select...</option>
-                        <option value="Sea">Sea</option>
-                        <option value="Air">Air</option>
-                        <option value="Road">Road</option>
-                      </select>
-                    </div>
-                    {/* <div className="col-6">
+                </div>
+                <div className="row mb-3">
+                  <div className="col-6">
+                    <label>Start Date</label>
+                    <input
+                      type="date"
+                      id="shipper3"
+                      name="startDate"
+                      style={{ cursor: "pointer" }}
+                      className="form-control"
+                      onChange={handlechange}
+                    />
+                  </div>
+                  <div className="col-6">
+                    <label>End Date </label>
+                    <input
+                      type="date"
+                      id="shipper3"
+                      name="endDate"
+                      style={{ cursor: "pointer" }}
+                      className="form-control"
+                      onChange={handlechange}
+                    />
+                  </div>
+                </div>
+                <div className="row mb-3">
+                  <div className="col-12">
+                    <label>Freight</label>
+                    <select
+                      name="freight"
+                      onChange={handlechange}
+                      className="form-control"
+                    >
+                      <option value="">Select...</option>
+                      <option value="Sea">Sea</option>
+                      <option value="Air">Air</option>
+                      <option value="Road">Road</option>
+                    </select>
+                  </div>
+                  {/* <div className="col-6">
                       <label>freight Type </label>
                       <select
                         name="type"
@@ -2117,16 +2165,15 @@ export default function CustomebyUserap() {
                         <option value="normal">Normal</option>
                       </select>
                     </div> */}
-                  </div>
-                  <Button variant="contained" onClick={postData}>
-                    Apply
-                  </Button>
                 </div>
-              </Box>
-            </Modal>
-          </div>
+                <Button variant="contained" onClick={postData}>
+                  Apply
+                </Button>
+              </div>
+            </Box>
+          </Modal>
         </div>
-      )}
+      </div>
     </>
   );
 }

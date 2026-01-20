@@ -28,12 +28,11 @@ import LocalShippingOutlinedIcon from "@mui/icons-material/LocalShippingOutlined
 import Groups2OutlinedIcon from "@mui/icons-material/Groups2Outlined";
 import SecurityOutlinedIcon from "@mui/icons-material/SecurityOutlined";
 import QueryStatsIcon from "@mui/icons-material/QueryStats";
-import AccountBalanceIcon from "@mui/icons-material/AccountBalance";
 import AssignmentIndIcon from "@mui/icons-material/AssignmentInd";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 import InsertDriveFileIcon from "@mui/icons-material/InsertDriveFile";
-import { Rule } from "@mui/icons-material";
+import { Group } from "@mui/icons-material";
 const routes = [
   {
     path: "/Admin/dashboard",
@@ -77,9 +76,36 @@ const routes = [
       },
     ],
   },
+   {
+    path: "",
+    name: "Freight Management",
+    icon: <FlightOutlinedIcon />,
+    subRoutes: [
+      {
+        path: "/Admin/order",
+        name: "Freight Orders",
+        icon: <ShoppingCartOutlinedIcon />,
+      },
+      {
+        path: "/Admin/manage-shipment",
+        name: "Shipments",
+        icon: <PeopleAltOutlinedIcon />,
+      },
+      {
+        path: "/Admin/releasedDashboard",
+        name: "Released Dashboard",
+        icon: <DashboardIcon />,
+      },
+      {
+        path: "/Admin/calculation-order",
+        name: "Clearance Order",
+        icon: <ShoppingCartOutlinedIcon />,
+      },
+    ],
+  },
   {
     path: "",
-    name: "Manage Invoices",
+    name: "Accounts",
     icon: <InsertDriveFileIcon />,
     subRoutes: [
       {
@@ -97,59 +123,11 @@ const routes = [
         name: "Cashbook",
         icon: <ShoppingCartOutlinedIcon />,
       },
-      {
-        path: "/Admin/releasedDashboard",
-        name: "Released Dashboard",
-        icon: <DashboardIcon />,
-      },
+      
     ],
   },
-  {
-    path: "",
-    name: "Manage Freight",
-    icon: <FlightOutlinedIcon />,
-    subRoutes: [
-      {
-        path: "/Admin/order",
-        name: "Freight Orders",
-        icon: <ShoppingCartOutlinedIcon />,
-      },
-      {
-        path: "/Admin/manage-shipment",
-        name: "Shipments",
-        icon: <PeopleAltOutlinedIcon />,
-      },
-    ],
-  },
-  {
-    path: "",
-    name: "Custom Clearance",
-    icon: <PlaylistAddCheckOutlinedIcon />,
-    subRoutes: [
-      {
-        path: "/Admin/calculation-order",
-        name: "Clearance Order",
-        icon: <ShoppingCartOutlinedIcon />,
-      },
-      {
-        path: "/Admin/google_drive",
-        name: "Google drive",
-        icon: <ShoppingCartOutlinedIcon />,
-      },
-    ],
-  },
-  {
-    path: "",
-    name: "Batches",
-    icon: <WorkspacePremiumOutlinedIcon />,
-    subRoutes: [
-      {
-        path: "/Admin/Batches",
-        name: "Batches",
-        icon: <MilitaryTechOutlinedIcon />,
-      },
-    ],
-  },
+ 
+ 
   {
     path: "",
     name: "Warehouse",
@@ -159,6 +137,11 @@ const routes = [
         path: "/Admin/WarehouseOrder",
         name: "Warehouse Order",
         icon: <ShoppingCartOutlinedIcon />,
+      },
+       {
+        path: "/Admin/Batches",
+        name: "Batches",
+        icon: <MilitaryTechOutlinedIcon />,
       },
     ],
   },
@@ -175,57 +158,85 @@ const routes = [
     ],
   },
   {
-    path: "/Admin/countryoforigin",
-    name: "Country Of Origin",
-    icon: <LanguageOutlinedIcon />,
-  },
-  {
+    path: "",
+    name: "User Management ",
+    icon: <PeopleAltOutlinedIcon />,
+    subRoutes: [
+      {
     path: "/Admin/manage-customer",
     name: "Manage Customers",
     icon: <PeopleAltOutlinedIcon />,
   },
+    {
+      path: "/Admin/manage-supplier",
+      name: "Manage Suppliers",
+      icon: <LocalShippingOutlinedIcon />,
+    },
+    {
+      path: "/Admin/manage-staff",
+      name: "Manage Staff",
+      icon: <Groups2OutlinedIcon />,
+    },
+    ],
+  },
+  {
+    path: "",
+    name: "Facilities Management",
+    icon: <PeopleAltOutlinedIcon />,
+    subRoutes: [
+        {
+      path: "/Admin/Warehouse",
+      name: "Warehouse",
+      icon: <OtherHousesOutlinedIcon />,
+    },
+    {
+      path: "/Admin/Customesclearingagent",
+      name: "Customs Clearing Agent",
+      icon: <LocalShippingOutlinedIcon />,
+    },
+    {
+      path: "/Admin/freightForeward",
+      name: "Freight Forwarder",
+      icon: <Groups2OutlinedIcon />,
+    },
+    {
+      path: "/Admin/groupageWarehouse",
+      name: "Groupage Handler",
+      icon: <Groups2OutlinedIcon />,
+    },
+    {
+      path: "/Admin/RoadTransporter",
+      name: "Road Transport",
+      icon: <Groups2OutlinedIcon />,
+    },
+    ],
+  },
+  {
+    path: "/Admin/taskmanager",
+    name: "Task Manager",
+    icon: <LanguageOutlinedIcon />,
+  },
+
+ 
 ];
 const userControlRoutes = {
   path: "",
   name: "User Control",
   icon: <SecurityOutlinedIcon />,
   subRoutes: [
-    {
-      path: "/Admin/manage-staff",
-      name: "Manage Staff",
-      icon: <Groups2OutlinedIcon />,
-    },
-    // {
-    //   path: "/Admin/manage-roles",
-    //   name: "Manage Roles",
-    //   icon: <Rule />,
-    // },
-    // {
-    //   path: "/Admin/manage-roles-permission",
-    //   name: "Manage Permissions",
-    //   icon: <Rule />,
-    // },
-    {
-      path: "/Admin/Warehouse",
-      name: "Warehouse",
-      icon: <OtherHousesOutlinedIcon />,
-    },
-    {
-      path: "/Admin/manage-supplier",
-      name: "Manage Suppliers",
-      icon: <LocalShippingOutlinedIcon />,
-    },
-   
-    // {
-    //   path: "/Admin/Notificaionstorage",
-    //   name: "Files & Storage",
-    //   icon: <NotificationsActiveOutlinedIcon />,
-    // },
+    
+ 
+  
      {
       path: "/Admin/contactus",
       name: "Contact Us",
       icon: <OtherHousesOutlinedIcon />,
     },
+      {
+    path: "/Admin/countryoforigin",
+    name: "Country Of Origin",
+    icon: <LanguageOutlinedIcon />,
+  },
     {
       path: "/Admin/link",
       name: "Add Links",

@@ -8,6 +8,7 @@ export default function Shipmentdeailspage() {
   const navigate = useNavigate();
   const [datat1, setDatat1] = useState("");
   const [tabledata, setTabledata] = useState([]);
+  const [tabledata1, setTabledata1] = useState([]);
   const location = useLocation();
     const [documents, setDocuments] = useState({});
   const datat = location.state.data[0];
@@ -24,8 +25,10 @@ export default function Shipmentdeailspage() {
         shipment_id: location.state.data[0].id,
       })
       .then((response) => {
+        console.log(response.data)
         setDatat1(response.data.shipment);
         setTabledata(response.data.details);
+        setTabledata1(response.data.clearance);
       })
       .catch((error) => {
         console.log(error.response.data);
@@ -33,13 +36,10 @@ export default function Shipmentdeailspage() {
   };
   const GetFreightImages = () => {
       const data = { shipment_id: datat.id,uploaded_by:"1" };
-    
       axios
         .post(`${process.env.REACT_APP_BASE_URL}GetFreightImages`, data)
         .then((response) => {
           console.log(response.data.data);
-    
-          // Save all groups (Customs, Packing, Invoices, Licenses, etc.)
           setDocuments(response.data.data);
         })
         .catch((error) => {
@@ -461,6 +461,35 @@ export default function Shipmentdeailspage() {
                     ))}
                   </tbody>
                 </table>
+               <table className="table mt-4 table-striped tableICon">
+  <thead>
+    <tr>
+      <th>Sr.No.</th>
+      <th>Freight / Order No.</th>
+      <th>Client Name</th>
+      <th>Total Weight</th>
+      <th>Port of Loading</th>
+      <th>Port of Discharge</th>
+      <th>Nature of Goods</th>
+    </tr>
+  </thead>
+  <tbody>
+    {tabledata1
+      ?.filter(item => item?.clearance_id)   // ✅ ONLY clearance data
+      .map((item, index) => (
+        <tr key={index}>
+          <td>{index + 1}</td>
+          <td>{item?.clearance_number} </td>
+          <td>{item?.client_name}</td>
+          <td>{item?.total_weight}</td>
+          <td>{item?.port_of_loading}</td>
+          <td>{item?.port_of_discharge}</td>
+          <td>{item?.nature_of_goods}</td>
+        </tr>
+      ))}
+  </tbody>
+</table>
+
               </div>
             </div>
           </div>

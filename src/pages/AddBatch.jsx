@@ -64,7 +64,6 @@ const AddBatch = () => {
     Destination_registration_number: data123?.Destination_registration_number||"",
     comment:  data123?.comment||"",
   });
- 
   const [error, setError] = useState({});
   const [countries, setCountruies] = useState([]);
   const navigate = useNavigate();
@@ -216,7 +215,6 @@ const AddBatch = () => {
     const files = event.target.files;
     setFormData2({ ...formData2, licenses: files });
   };
-
   return (
     <>
       <div className="wpWrapper ">
@@ -253,7 +251,6 @@ const AddBatch = () => {
                       </div>
                       <div className="col-6">
                         <label>Date of First Received</label>
-
                         <input
                           type="date"
                           name="date_of_first_received"
@@ -263,7 +260,6 @@ const AddBatch = () => {
                       </div>
                     </div>
                     <div className="row">
-                       
                       <div className="col-12">
                         <label>Total Days in Storage</label>
                         <input

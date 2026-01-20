@@ -27,7 +27,7 @@ export default function Addshipment() {
     release_type: data123.release_type || "",
   });
 
-
+  const [clearanceOrder, setClearanceOrder] = useState([]);
  const [show1, setShow1] = useState(false);
       const [selectedDocs, setSelectedDocs] = useState([]);
     
@@ -81,8 +81,10 @@ export default function Addshipment() {
   const [batchOptions, setBatchOptions] = useState([]);
   const [countries, setCountries] = useState([]);
   const [filedata, setFiledata] = useState(null);
+  const [clearanceArray, setClearanceArray] = useState([]);
   const [aggregatedArray, setAggregatedArray] = useState([]);
   const [selectedOption, setSelectedOption] = useState(null);
+  const [selectedOption1, setSelectedOption1] = useState(null);
   const navigate = useNavigate();
   useEffect(() => {
     getCountries();
@@ -90,6 +92,7 @@ export default function Addshipment() {
   useEffect(() => {
     getFreightOptions(data);
     getBatchOptions(data);
+    GetClearanceOrder(data);
   }, [data?.des_country_id, data?.origin_country_id]);
   const getFreightOptions = async (data) => {
     try {
@@ -107,6 +110,23 @@ export default function Addshipment() {
       console.error("Error fetching freight options:", error.message);
     }
   };
+  const GetClearanceOrder = async (data) => {
+    try {
+      const payload = {
+        destination: data.des_country_id,
+        origin: data.origin_country_id,
+        freight: data.freight,
+      };
+      const response = await axios.post(
+        `${process.env.REACT_APP_BASE_URL}getClerance`,
+        payload
+      );
+      console.log(response.data.data)
+      setClearanceOrder(response.data.data);
+    } catch (error) {
+      console.error("Error fetching freight options:", error.message);
+    }
+  }
   const getBatchOptions = async (data) => {
     try {
       const payload = {
@@ -151,64 +171,7 @@ export default function Addshipment() {
     console.log(newValue)
     setSelectedOption(newValue);
   };
-  const handleDeleteShipmentDetail = (item) => {
-    setAggregatedArray(
-      aggregatedArray.filter((currentItem) => currentItem !== item)
-    );
-  };
-//   const addShipment = async () => {
-//     const payload = {
-//       ...data,
-//       details: aggregatedArray,
-//       waybill: data.waybill,
-//     };
-//     const formdata = new FormData();
-//     formdata.append("ATD", data.ATD);
-//     formdata.append("ETD", data.ETD);
-//     formdata.append("carrier", data.carrier);
-//     formdata.append("container", data.container);
-//     formdata.append("des_country_id", data.des_country_id);
-//     formdata.append("destination_agent", data.destination_agent);
-//     formdata.append("freight", data.freight);
-//     formdata.append("load", data.load);
-//     formdata.append("origin_agent", data.origin_agent);
-//     formdata.append("origin_country_id", data.origin_country_id);
-//     formdata.append("port_of_discharge", data.port_of_discharge);
-//     formdata.append("port_of_loading", data.port_of_loading);
-//     formdata.append("release_type", data.release_type);
-//     formdata.append("seal", data.seal);
-//     formdata.append("status", data.status);
-//     formdata.append("vessel", data.vessel);
-//     formdata.append("waybill", data.waybill);
-//     formdata.append("details", JSON.stringify(aggregatedArray));
-//     // formdata.append("document", filedata);
-//     formdata.append("date_of_dispatch", data.date_of_dispatch);
-//     formdata.append("documentName", data.documentName);
-//     console.log(formdata);
-
-//           selectedDocs.forEach(doc => {
-//   console.log("Doc Type:", doc.name);
-
-//   doc.files.forEach(file => {
-//     formdata.append(doc.name, file); // 👈 each file append
-//     console.log("File:", file.name, "| Size:", file.size, "bytes");
-//   });
-// });
-//     try {
-//       const response = await axios.post(
-//         `${process.env.REACT_APP_BASE_URL}AddShipment`,
-//         formdata
-//       );
-//       if (response.data.success) {
-//         toast.success(response.data.message);
-//         navigate("/Admin/manage-shipment");
-//       }
-//     } catch (error) {
-//       toast.error("Error adding shipment");
-//     }
-//   };
 const addShipment = async () => {
-  // REQUIRED FIELDS DECLARATION
   const requiredFields = {
     load: "Load",
     carrier: "Carrier",
@@ -218,18 +181,13 @@ const addShipment = async () => {
     port_of_loading: "Port of Loading",
     port_of_discharge: "Port of Discharge",
   };
-
-  // CHECK FOR MISSING VALUES
   const missingFields = Object.entries(requiredFields)
     .filter(([key]) => !data[key] || data[key].toString().trim() === "")
     .map(([_, label]) => label);
-
   if (missingFields.length > 0) {
     toast.error(`Please fill required fields: ${missingFields.join(", ")}`);
     return;
   }
-
-  // CREATE FORMDATA
   const formdata = new FormData();
   formdata.append("ATD", data.ATD);
   formdata.append("ETD", data.ETD);
@@ -251,21 +209,16 @@ const addShipment = async () => {
   formdata.append("details", JSON.stringify(aggregatedArray));
   formdata.append("date_of_dispatch", data.date_of_dispatch);
   formdata.append("documentName", data.documentName);
-
-  // FILES
   selectedDocs.forEach((doc) => {
     doc.files.forEach((file) => {
       formdata.append(doc.name, file);
     });
   });
-
-  // API CALL
   try {
     const response = await axios.post(
       `${process.env.REACT_APP_BASE_URL}AddShipment`,
       formdata
     );
-
     if (response.data.success) {
       toast.success(response.data.message);
       navigate("/Admin/manage-shipment");
@@ -275,50 +228,90 @@ const addShipment = async () => {
   }
 };
 
-
-
-
 const handleclickprintdate = async () => {
-    if (!selectedOption) {
-      toast.error("Please select an option before adding.");
-      return;
-    }
-    try {
-      const type = data1.shipment_waybill === "freight" ? "1" : "2";
-      const origin_country_id = data.origin_country_id;
-      const des_country_id = data.des_country_id;
-      const id =
-        data1.shipment_waybill === "freight"
-          ? selectedOption.order_id
-          : selectedOption.batch_id;
-      const payload = { type, id, origin_country_id, des_country_id };
-      console.log(payload);
+  const origin_country_id = data.origin_country_id;
+  const des_country_id = data.des_country_id;
+
+  try {
+    if (data1.shipment_waybill === "Assign Clearance") {
+      if (!selectedOption1) {
+        toast.error("Please select a clearance order.");
+        return;
+      }
+      const payload = {
+        type: "3",
+        id: selectedOption1.id,
+        origin_country_id,
+        des_country_id
+      };
       const response = await axios.post(
         `${process.env.REACT_APP_BASE_URL}getAssignShipmentList`,
         payload
       );
-      const newResponseData = response.data.data;
-      console.log(newResponseData);
-      setAggregatedArray((prevArray) => [...prevArray, ...newResponseData]);
-      toast.success("Data added successfully.");
-    } catch (error) {
-      console.error(
-        "Error fetching assigned shipment data:",
-        error.response?.data || error.message
-      );
-      toast.error(error.response.data.message);
+      setClearanceArray(prev => [
+        ...prev,
+        ...response.data.data
+      ]);
+      setAggregatedArray(prev => [
+        ...prev,
+        ...response.data.data
+      ]);
+      toast.success("Clearance added successfully.");
+      return;
     }
-  };
+    if (data1.shipment_waybill === "freight") {
+      if (!selectedOption) {
+        toast.error("Please select a freight order.");
+        return;
+      }
+      const payload = {
+        type: "1",
+        id: selectedOption.order_id,
+        origin_country_id,
+        des_country_id
+      };
+      const response = await axios.post(
+        `${process.env.REACT_APP_BASE_URL}getAssignShipmentList`,
+        payload
+      );
+      setAggregatedArray(prev => [
+        ...prev,
+        ...response.data.data
+      ]);
+      toast.success("Freight added successfully.");
+      return;
+    }
+    if (data1.shipment_waybill === "batch") {
+      if (!selectedOption) {
+        toast.error("Please select a batch.");
+        return;
+      }
+      const payload = {
+        type: "2",
+        id: selectedOption.batch_id,
+        origin_country_id,
+        des_country_id
+      };
+      const response = await axios.post(
+        `${process.env.REACT_APP_BASE_URL}getAssignShipmentList`,
+        payload
+      );
+      setAggregatedArray(prev => [
+        ...prev,
+        ...response.data.data
+      ]);
+      toast.success("Batch added successfully.");
+      return;
+    }
+  } catch (error) {
+    console.error(error);
+    toast.error(error.response?.data?.message || "Something went wrong");
+  }
+};
   const handleClick = (item) => {
     setAggregatedArray(
       aggregatedArray.filter((currentItem) => currentItem !== item)
     );
-  };
-  const handleInputChangewer = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      setFiledata(file);
-    }
   };
   return (
     <div className="wpWrapper">
@@ -756,28 +749,20 @@ const handleclickprintdate = async () => {
                         <label className="ware_label mt-3">Add Clearance</label>
                     <Box sx={{ width: 280 }}>
                       <Autocomplete
-                        options={
-                          data1.shipment_waybill === "freight"
-                            ? freightOptions
-                            : batchOptions
-                        }
-                        getOptionLabel={(option) =>
-                          data1.shipment_waybill === "freight"
-                            ? `${option.freight_number || "N/A"} / ${
-                                option.order_number || "N/A"
-                              }`
-                            : option.batch_number
-                        }
-                        value={selectedOption}
-                        onChange={handleOptionChange}
-                        renderInput={(params) => (
-                          <TextField
-                            {...params}
-                            placeholder="Search & Select"
-                            variant="outlined"
-                          />
-                        )}
-                      />
+        options={clearanceOrder || []}
+        getOptionLabel={(option) =>
+          `${option.clearance_number}`
+        }
+        value={selectedOption1}
+        onChange={(event, newValue) => setSelectedOption1(newValue)}
+        renderInput={(params) => (
+          <TextField
+            {...params}
+            placeholder="Search Clearance Number"
+            variant="outlined"
+          />
+        )}
+      />
                     </Box>
                     </>):""}
                   </div>
@@ -796,8 +781,9 @@ const handleclickprintdate = async () => {
             </div>
           </div>
 
-          <div className="table-responsive mt-2">
-            <table className="table mt-4 table-striped tableICon">
+          <div className="table-responsive mt-4">
+            <h4>Freight / Order Details</h4>
+            <table className="table  table-striped tableICon">
               <thead>
                 <tr>
                   <th>Sr.No.</th>
@@ -811,25 +797,69 @@ const handleclickprintdate = async () => {
                 </tr>
               </thead>
               <tbody>
-                {aggregatedArray?.map((item, index) => (
+               {aggregatedArray
+  ?.filter(item => !item.clearance_id)
+  .map((item, index) => (
+    <tr key={index}>
+      <td>{index + 1}</td>
+      <td>{item.freight_number} / {item.order_number}</td>
+      <td>{item.client_name}</td>
+      <td>{item.hawb}</td>
+      <td>{item.weight}</td>
+      <td>{item.dimensions}</td>
+      <td>{item.nature_of_goods}</td>
+      <td>
+        <DeleteIcon
+          style={{ cursor: "pointer" }}
+          onClick={() => handleClick(item)}
+        />
+      </td>
+    </tr>
+))}
+              </tbody>
+            </table>
+            {/* <button
+              className="mt-4 btn btn-secondary w-50"
+              onClick={addShipment}
+            >
+              Save Shipment
+            </button> */}
+          </div>
+          <div className="table-responsive mt-4">
+            <h4>Clearance Order Details</h4>
+            <table className="table  table-striped tableICon">
+              <thead>
+                <tr>
+                  <th>Sr.No.</th>
+                  <th>Clearance Order.</th>
+                  <th>Client Name</th>
+                  <th>Order Status</th>
+                  <th>Costumer ref.</th>
+                  <th>Total BOX</th>
+                  <th>Port of Discharge</th>
+                  {/* <th>Action</th> */}
+                </tr>
+              </thead>
+              <tbody>
+                {clearanceArray?.map((item, index) => (
                   <tr key={index}>
                     <td>{index + 1}</td>
                     <td>
-                      {item.freight_number} / {item.order_number}
+                      {item?.clearance_number} 
                     </td>
-                    <td>{item.client_name}</td>
-                    <td>{item.hawb}</td>
-                    <td>{item.weight}</td>
-                    <td>{item.dimensions}</td>
-                    <td>{item.nature_of_goods}</td>
-                    <td>
+                    <td>{item?.client_name}</td>
+                    <td>{item?.order_status}</td>
+                    <td>{item?.customer_ref}</td>
+                    <td>{item.total_box}</td>
+                    <td>{item.port_of_discharge}</td>
+                    {/* <td>
                       <DeleteIcon
                         style={{ cursor: "pointer" }}
                         onClick={() => {
                           handleClick(item);
                         }}
                       />
-                    </td>
+                    </td> */}
                   </tr>
                 ))}
               </tbody>

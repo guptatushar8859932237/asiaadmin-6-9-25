@@ -1,33 +1,32 @@
-import axios from 'axios';
-import React, { useEffect, useState } from 'react'
-import { useLocation, useNavigate } from 'react-router-dom';
-import { toast } from 'react-toastify';
-
+import axios from "axios";
+import React, { useEffect, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 export default function SupplierEstimation() {
-const [data,setData]=useState([])
-const [searchQuery, setSearchQuery] = useState("");
+  const [data, setData] = useState([]);
+  const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const pageSize = 10;
-  const navigate = useNavigate()
-const location = useLocation()
-console.log("location",location.state.data);
- const frightData = async () => {
-        try {
-          const response = await axios.post(
-            `${process.env.REACT_APP_BASE_URL}get-suppler-selected`,{ freight_id:  location.state.data}
-          );
-          console.log("frightDataresponse",response.data);
-          setData(response.data.data);
-        } catch (error) {
-          toast.error(error.response?.data?.message || "Something went wrong");
-        }
+  const navigate = useNavigate();
+  const location = useLocation();
+  console.log("location", location.state.data);
+  const frightData = async () => {
+    try {
+      const response = await axios.post(
+        `${process.env.REACT_APP_BASE_URL}get-suppler-selected`,
+        { freight_id: location.state.data }
+      );
+      console.log("frightDataresponse", response.data);
+      setData(response.data.data);
+    } catch (error) {
+      toast.error(error.response?.data?.message || "Something went wrong");
+    }
   };
   useEffect(() => {
     frightData();
   }, []);
 
-
-    const filterdata = data?.filter((item) => {
+  const filterdata = data?.filter((item) => {
     return (
       item?.email?.toLowerCase()?.includes(searchQuery?.toLowerCase()) ||
       item?.full_name?.toLowerCase()?.includes(searchQuery?.toLowerCase()) ||
@@ -38,95 +37,53 @@ console.log("location",location.state.data);
   const startIndex = (currentPage - 1) * pageSize;
   const endIndex = startIndex + pageSize;
   const currentData = filterdata.slice(startIndex, endIndex);
-  const handleclicknanvi =(item)=>{
-    navigate('/Admin/supplier-estimation-view',{state:{data:item,freight_id:location.state}})
-  }
+  const handleclicknanvi = (item) => {
+    navigate("/Admin/supplier-estimation-view", {
+      state: { data: item, freight_id: location.state },
+    });
+  };
   return (
-   <div className="wpWrapper ">
-        <div className="container-fluid">
-         <div className="table-responsive mt-3">
-                        <table className="table table-striped tableICon">
-                          <thead>
-                            <tr>
-                              <th scope="col">Sr.No.</th>
-                              <th scope="col">Full Name</th>
-                              <th scope="col">Email</th>
-                              <th scope="col">Phone No.</th>
-                              <th scope="col">Country</th>
-                              <th scope="col">View</th>
-                            </tr>
-                          </thead>
-                          <tbody style={{ border: "none" }}>
-                            {currentData &&
-                              currentData.length > 0 &&
-                              currentData.map((item, index) => {
-                                return (
-                                  <tr className="border-bottom" key={index}>
-                                    <th>{startIndex + index + 1}</th>
-                                    <td>{item?.name}</td>
-                                    <td>{item?.email}</td>
-                                    <td>{item?.phone_no}</td>
-                                    <td>{item?.country_name}</td>
-                                    <td>
-                                      <i className='fa fa-eye ' onClick={()=>{handleclicknanvi(item)}} style={{cursor:"pointer"}}></i>
-                                    </td>
-                                    {/* <td>
-                                      <fa
-                                        className="fa fa-eye"
-                                        style={{ cursor: "pointer" }}
-                                        onClick={() => {
-                                          handleclicknavigate(item);
-                                        }}
-                                      ></fa>
-                                    </td>
-                                    <td>
-                                      <div className="action_btn1 d-flex align-items-center">
-                                        <FaEdit
-                                          onClick={() => {
-                                            openModal2(item.id);
-                                          }}
-                                          style={{
-                                            color: "rgb(27 34 69)",
-                                            marginRight: "10px",
-                                            width: "20px",
-                                            height: "15px",
-                                            cursor: "pointer",
-                                          }}
-                                        />
-                                        <AiFillDelete
-                                          className="text-danger"
-                                          style={{ cursor: "pointer" }}
-                                          onClick={() => {
-                                            handledelete(item.id);
-                                          }}
-                                        />
-                                      </div>
-                                    </td> */}
-                                  </tr>
-                                );
-                              })}
-                          </tbody>
-                        </table>
-                        {/* <div className="text-center d-flex justify-content-end align-items-center">
-                          <button
-                            disabled={currentPage === 1}
-                            className="bg_page"
-                            onClick={() => handlePageChange(currentPage - 1)}
-                          >
-                            {" "}
-                            <i className="fi fi-rr-angle-small-left page_icon"></i>
-                          </button>
-                          <span className="mx-2">{`Page ${currentPage} of ${totalPages}`}</span>
-                          <button
-                            disabled={currentPage === totalPages}
-                            className="bg_page"
-                            onClick={() => handlePageChange(currentPage + 1)}
-                          >
-                            <i className="fi fi-rr-angle-small-right page_icon"></i>
-                          </button>
-                        </div> */}
-                      </div>
+    <div className="wpWrapper ">
+      <div className="container-fluid">
+        <div className="table-responsive mt-3">
+          <table className="table table-striped tableICon">
+            <thead>
+              <tr>
+                <th scope="col">Sr.No.</th>
+                <th scope="col">Full Name</th>
+                <th scope="col">Email</th>
+                <th scope="col">Phone No.</th>
+                <th scope="col">Country</th>
+                <th scope="col">View</th>
+              </tr>
+            </thead>
+            <tbody style={{ border: "none" }}>
+              {currentData &&
+                currentData.length > 0 &&
+                currentData.map((item, index) => {
+                  return (
+                    <tr className="border-bottom" key={index}>
+                      <th>{startIndex + index + 1}</th>
+                      <td>{item?.name}</td>
+                      <td>{item?.email}</td>
+                      <td>{item?.phone_no}</td>
+                      <td>{item?.country_name}</td>
+                      <td>
+                        <i
+                          className="fa fa-eye "
+                          onClick={() => {
+                            handleclicknanvi(item);
+                          }}
+                          style={{ cursor: "pointer" }}
+                        ></i>
+                      </td>
+                    </tr>
+                  );
+                })}
+            </tbody>
+          </table>
+        </div>
+      </div>
     </div>
-    </div>
-  )
+  );
 }

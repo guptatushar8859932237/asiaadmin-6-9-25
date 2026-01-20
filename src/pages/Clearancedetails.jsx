@@ -467,47 +467,46 @@ import { toast } from "react-toastify";
 export default function MAnageFreightDetails() {
   const infolocation = useLocation();
   const navigate = useNavigate();
-  const [document, setDocument] = useState([]);
-  const [document1, setDocument1] = useState([]);
-  const [packing, setPacking] = useState([]);
-  const [licenses, setLicenses] = useState([]);
+   const [documents, setDocuments] = useState({});
   const info = infolocation?.state.clearance_id;
   console.log(infolocation?.state);
   const data1 = new Date(info?.date).toLocaleDateString("en-GB");
   const handleclick = () => {
     navigate("/Admin/calculation-order");
   };
-  // const GetFreightImages = () => {
-  //   console.log(info)
-  //   const data = { freight_id: info.freight_id };
-  //   axios
-  //     .post(`${process.env.REACT_APP_BASE_URL}GetFreightImages`, data)
-  //     .then((response) => {
-  //       setDocument(response.data.data["Supplier Invoice"]);
-  //       setLicenses(response.data.data.Licenses);
-  //       setDocument1(response.data.data["Other Documents"]);
-  //       setPacking(response.data.data["Packing List"]);
-  //       console.log(response.data.data);
-  //     })
-  //     .catch((error) => {
-  //       console.log(error.response.data);
-  //     });
-  // };
-  // useEffect(() => {
-  //   GetFreightImages();
-  // }, []);
-  // const deleteapi =(id) =>{
-  //   console.log(id)
-  //   const data11={
-  //     doc_id:id
-  //   }
-  //   axios.post(`${process.env.REACT_APP_BASE_URL}DeleteDocument`,data11).then((response)=>{
-  //     GetFreightImages();
-  //     toast.success(response.data.message)
-  //   }).catch((error)=>{
-  //     console.log(error.response.data)
-  //   })
-  // }
+  useEffect(()=>{
+    GetFreightImages();
+  },[])
+
+   const GetFreightImages = () => {
+        const data = { clearance_id : info.id,uploaded_by:"1" };
+      
+        axios
+          .post(`${process.env.REACT_APP_BASE_URL}GetFreightImages`, data)
+          .then((response) => {
+            console.log(response.data.data);
+            setDocuments(response.data.data);
+          })
+          .catch((error) => {
+            console.log(error.response?.data);
+          });
+      };
+
+        const deleteapi = (id) => {
+          console.log(id);
+          const data11 = {
+            doc_id: id,
+          };
+          axios
+            .post(`${process.env.REACT_APP_BASE_URL}clearanceDocument`, data11)
+            .then((response) => {
+              GetFreightImages();
+              toast.success(response.data.message);
+            })
+            .catch((error) => {
+              console.log(error.response.data);
+            });
+        };
   return (
     <div className="wpWrapper">
       <div className="container-fluid">
@@ -1020,6 +1019,50 @@ export default function MAnageFreightDetails() {
                   </div>
                 </div>
               </div> */}
+                 <div className="col-md-4">
+                              <div className="card desti_card">
+                                <p>view Document</p>
+                                <div className="card-body mb-3">
+                                  {Object.keys(documents).map((groupName, groupIndex) => (
+                                    <div key={groupIndex} className="mb-2">
+                                      <label>{groupName} :</label>
+                                      {documents[groupName]?.map((item, index) => (
+                                        <div key={item.id} className="d-flex align-items-center">
+                                          <a
+                                            href={`${process.env.REACT_APP_BASE_URLdocument}${item?.document}`}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="view_docu ms-2"
+                                          >
+                                            View Document
+                                          </a>
+                                          <DeleteIcon
+                                            onClick={() => deleteapi(item.id)}
+                                            className="text-danger ms-2"
+                                            style={{ cursor: "pointer" }}
+                                          />
+                                        </div>
+                                      ))}
+                                    </div>
+                                  ))}
+                            
+                                  {/* Quotation (separate because it's not part of groups) */}
+                                  <div className="mb-2">
+                                    <label> :</label>
+                                    {info.attachment_Estimate && (
+                                      <a
+                                        href={`${process.env.REACT_APP_BASE_URLdocument}${info?.attachment_Estimate}`}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="view_docu ms-2"
+                                      >
+                                        View Document
+                                      </a>
+                                    )}
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
             </div>
           </div>
         </div>

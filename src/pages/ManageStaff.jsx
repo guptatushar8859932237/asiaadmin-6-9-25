@@ -1,21 +1,19 @@
 import OutlinedInput from "@mui/material/OutlinedInput";
-import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import ListItemText from "@mui/material/ListItemText";
 import Select from "@mui/material/Select";
+import { CgPerformance } from "react-icons/cg";
 import axios from "axios";
 import Checkbox from "@mui/material/Checkbox";
 import React, { useEffect, useState } from "react";
-import { AiFillDelete } from "react-icons/ai";
+import { AiFillDelete, AiFillMessage } from "react-icons/ai";
 import { toast, ToastContainer } from "react-toastify";
 import Swal from "sweetalert2";
 import { Box, Button, Modal } from "@mui/material";
 import { FaEdit } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import CloseIcon from "@mui/icons-material/Close";
-
-const pageSize = 10;
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
 const MenuProps = {
@@ -33,6 +31,8 @@ export default function ManageStaff() {
   const [error, setError] = useState({});
   const [loader, setLoader] = useState(false);
   const [selectedRoles, setSelectedRoles] = useState([]);
+  const [updatedata, setUpdatedata] = useState([]);
+  const [pagenationData, setPagenationData] = useState(1);
   const [isModalOpen2, setIsModalOpen2] = useState(false);
   const [input, setInput] = useState({
     staff_email: "",
@@ -50,17 +50,39 @@ export default function ManageStaff() {
       item?.staff_name?.toLowerCase()?.includes(searchQuery?.toLowerCase())
     );
   });
-  const totalPages = Math.ceil(filterdata.length / pageSize);
-  const startIndex = (currentPage - 1) * pageSize;
-  const endIndex = startIndex + pageSize;
+  const totalPages = Math.ceil(pagenationData.total / pagenationData.limit);
+  const startIndex = (currentPage - 1) * pagenationData.limit;
+  const endIndex = startIndex + pagenationData.limit;
   const currentData = filterdata.slice(startIndex, endIndex);
-  const getdata = () => {
+  const getdata = (pageSize) => {
     setLoader(true);
+    const payload = {
+      page: pageSize,
+    };
     axios
-      .get(`${process.env.REACT_APP_BASE_URL}staff-list`)
+      .post(`${process.env.REACT_APP_BASE_URL}new-staff-list`, payload)
       .then((response) => {
         setLoader(false);
         setData(response.data.data);
+        setPagenationData(response.data);
+      })
+      .catch((error) => {
+        setLoader(false);
+        console.log(error.response);
+      });
+  };
+
+  const getdata1 = (pageSize) => {
+    setLoader(true);
+    const payload = {
+      search: pageSize,
+    };
+    axios
+      .post(`${process.env.REACT_APP_BASE_URL}new-staff-list`, payload)
+      .then((response) => {
+        setLoader(false);
+        setData(response.data.data);
+        setPagenationData(response.data);
       })
       .catch((error) => {
         setLoader(false);
@@ -69,6 +91,7 @@ export default function ManageStaff() {
   };
   const handlePageChange = (page) => {
     setCurrentPage(page);
+    getdata(page);
   };
   useEffect(() => {
     getdata();
@@ -131,13 +154,8 @@ export default function ManageStaff() {
     { value: "7", label: "Warehousing" },
     { value: "8", label: "Accounts" },
   ];
-  // const handleRoleChange = (event) => {
-  //   setSelectedRoles(event.target.value);
-  // };
-
   const handleRoleChange = (event) => {
     const value = event.target.value;
-
     if (value.includes("all")) {
       const allSelected = selectedRoles.length === roleOptions.length;
       setSelectedRoles(allSelected ? [] : roleOptions.map((opt) => opt.value));
@@ -172,6 +190,7 @@ export default function ManageStaff() {
   const handleSearch = (e) => {
     setSearchQuery(e.target.value);
     setCurrentPage(1);
+    getdata1(e.target.value);
   };
   const handledelete = async (id) => {
     Swal.fire({
@@ -213,7 +232,7 @@ export default function ManageStaff() {
     const { name, value } = e.target;
     setInputdata({ ...inputdata, [name]: value });
     console.log(inputdata);
-    console.log(e.target)
+    console.log(e.target);
   };
   const openModal2 = (id) => {
     const userlog = data.find((item) => item.id === id);
@@ -261,204 +280,259 @@ export default function ManageStaff() {
   const handleclicknavigate = (item) => {
     navigate(`/Admin/staff-details`, { state: { data: item } });
   };
+  const querryinQuote = (item) => {
+    console.log("item", item);
+    navigate("/Admin/QuotationInFreight", { state: { data: item } });
+  };
+
+  const updatecountry = () => {
+    axios
+      .get(`${process.env.REACT_APP_BASE_URL}GetCountries`)
+      .then((response) => {
+        console.log(response.data.data);
+        setUpdatedata(response.data.data);
+      })
+      .catch((error) => {
+        console.group(error.response.data.message);
+      });
+  };
+  useEffect(() => {
+    updatecountry();
+  }, []);
+
+  const handleclickKPI= (item)=>{
+    // console.log(item)
+    navigate('/Admin/KPIDashboard')
+  }
   return (
     <>
-      {loader ? (
-        <div className="loader-container">
-          <div className="loader"></div>
-          <p className="loader-text">Updating... This may take some time</p>
-        </div>
-      ) : (
-        <>
-          <div className="wpWrapper">
-            <div className="container-fluid">
+      <>
+        <div className="wpWrapper">
+          <div className="container-fluid">
+            <div>
               <div>
-                <div>
-                  <div className="row manageFreight">
-                    <div className="col-12">
-                      <div className="d-flex justify-content-between align-items-center">
+                <div className="row manageFreight">
+                  <div className="col-12">
+                    <div className="d-flex justify-content-between align-items-center">
+                      <div className="">
+                        <h4 className="freight_hd">Add Staff</h4>
+                      </div>
+                      <div className="d-flex justify-content-end align-items-center">
                         <div className="">
-                          <h4 className="freight_hd">Add Staff</h4>
+                          <input
+                            className="px-2 py-1 rounded "
+                            type="text"
+                            placeholder="Search"
+                            value={searchQuery}
+                            onChange={handleSearch}
+                          ></input>
                         </div>
-                        <div className="d-flex justify-content-end align-items-center">
-                          <div className="">
-                            <input
-                              className="px-2 py-1 rounded "
-                              type="text"
-                              placeholder="Search"
-                              value={searchQuery}
-                              onChange={handleSearch}
-                            ></input>
-                          </div>
-                          <div className="ms-2">
-                            <button type="button" onClick={openModal}>
-                              Add
-                            </button>
-                          </div>
+                        <div className="ms-2">
+                          <button type="button" onClick={openModal}>
+                            Add
+                          </button>
+                        </div>
+                        <div className="ms-2">
+                          <button type="button" onClick={handleclickKPI}>
+                            Add
+                          </button>
                         </div>
                       </div>
                     </div>
                   </div>
-                  {isModalOpen && (
-                    <div className="custom-modal">
-                      <div className="custom-modal-content">
-                        <div className="custom-modal-header">
-                          <h5 className="custom-modal-title">Add Staff</h5>
-                          <button
-                            type="button"
-                            className="btn-close"
-                            onClick={closeModal}
+                </div>
+                {isModalOpen && (
+                  <div className="custom-modal">
+                    <div className="custom-modal-content">
+                      <div className="custom-modal-header">
+                        <h5 className="custom-modal-title">Add Staff</h5>
+                        <button
+                          type="button"
+                          className="btn-close"
+                          onClick={closeModal}
+                        >
+                          <CloseIcon />
+                        </button>
+                      </div>
+                      <div className="custom-modal-body">
+                        <div className="mb-3">
+                          <label
+                            htmlFor="exampleFormControlInput1"
+                            className="form-label mb-2 md_staff"
                           >
-                            <CloseIcon />
-                          </button>
+                            Email address
+                          </label>
+                          <input
+                            type="email"
+                            className="form-control"
+                            id="exampleFormControlInput1"
+                            placeholder="name@example.com"
+                            onChange={handlechange}
+                            name="staff_email"
+                          />
+                          <p className="text-danger">{error.staff_email}</p>
                         </div>
-                        <div className="custom-modal-body">
-                          <div className="mb-3">
-                            <label
-                              htmlFor="exampleFormControlInput1"
-                              className="form-label mb-2 md_staff"
-                            >
-                              Email address
-                            </label>
+                        <div className="mb-3">
+                          <label
+                            htmlFor="inputText"
+                            className="form-label mb-2 md_staff"
+                          >
+                            Full Name
+                          </label>
+                          <div className="col-sm-12">
                             <input
-                              type="email"
-                              className="form-control"
-                              id="exampleFormControlInput1"
-                              placeholder="name@example.com"
+                              type="text"
                               onChange={handlechange}
-                              name="staff_email"
+                              name="staff_name"
+                              className="form-control"
+                              id="inputText"
+                              placeholder="Enter your Name"
                             />
-                            <p className="text-danger">{error.staff_email}</p>
-                          </div>
-                          <div className="mb-3">
-                            <label
-                              htmlFor="inputText"
-                              className="form-label mb-2 md_staff"
-                            >
-                              Full Name
-                            </label>
-                            <div className="col-sm-12">
-                              <input
-                                type="text"
-                                onChange={handlechange}
-                                name="staff_name"
-                                className="form-control"
-                                id="inputText"
-                                placeholder="Enter your Name"
-                              />
-                              <p className="text-danger">{error.staff_name}</p>
-                            </div>
-                          </div>
-                         <div className="mb-3">
-  <label htmlFor="country" className="form-label mb-2 md_staff">
-    Country
-  </label>
-  <div className="col-sm-12">
-    <select
-      name="country"
-      id="country"
-      className="form-control"
-      onChange={handlechange}
-    >
-      <option value="">Select Country</option>
-        <option value="246">Zimbabwe</option>
-      <option value="245">Zambia</option>
-      <option value="202">South Africa</option>
-    </select>
-    <p className="text-danger">{error.country}</p>
-  </div>
-</div>
-
-                          <div className="mb-3">
-                            <label
-                              htmlFor="inputText"
-                              className="form-label mb-2 md_staff"
-                            >
-                              Assign Roles
-                            </label>
-                            <FormControl style={{ width: "100%" }}>
-                              <Select
-                                id="demo-multiple-checkbox"
-                                multiple
-                                value={selectedRoles}
-                                onChange={handleRoleChange}
-                                input={<OutlinedInput />}
-                                renderValue={(selected) =>
-                                  selected
-                                    .map(
-                                      (role) =>
-                                        roleOptions.find(
-                                          (option) => option.value === role
-                                        )?.label
-                                    )
-                                    .join(", ")
-                                }
-                                MenuProps={MenuProps}
-                                className="country_sel"
-                                placeholder="Assign Roles"
-                              >
-                                <MenuItem value="all">
-                                  <Checkbox
-                                    checked={isAllSelected}
-                                    indeterminate={
-                                      selectedRoles.length > 0 &&
-                                      selectedRoles.length < roleOptions.length
-                                    }
-                                  />
-                                  <ListItemText primary="Select All" />
-                                </MenuItem>
-                                {roleOptions.map((option) => (
-                                  <MenuItem
-                                    key={option.value}
-                                    value={option.value}
-                                  >
-                                    <Checkbox
-                                      checked={selectedRoles.includes(
-                                        option.value
-                                      )}
-                                    />
-                                    <ListItemText primary={option.label} />
-                                  </MenuItem>
-                                ))}
-                              </Select>
-                            </FormControl>
-                          </div>
-
-                          <div>
-                            <label
-                              htmlFor="inputPassword"
-                              className="form-label mb-2 md_staff"
-                            >
-                              New Password
-                            </label>
-                            <div className="col-sm-12">
-                              <input
-                                type="password"
-                                className="form-control"
-                                name="new_password"
-                                onChange={handlechange}
-                                id="inputPassword"
-                                placeholder="password"
-                              />
-                              <p className="text-danger mb-0">
-                                {error.new_password}
-                              </p>
-                            </div>
+                            <p className="text-danger">{error.staff_name}</p>
                           </div>
                         </div>
-                        <div className="custom-modal-footer">
-                          <button
-                            type="button"
-                            className="btn text-white"
-                            onClick={handleclick}
-                            style={{ backgroundColor: "#1b2245" }}
+                        <div className="col-12 d-flex">
+                          <div className="mb-3 col-md-4">
+                            <label>Country Code</label>
+                            <select
+                              name="country_code"
+                              id="country"
+                              onChange={handlechange}
+                              className="w-100 border p-2 rounded form-control"
+                            >
+                              <option>Select...</option>
+                              {updatedata &&
+                                updatedata.length > 0 &&
+                                updatedata.map((item, index) => {
+                                  return (
+                                    <>
+                                      <option key={item.id}>
+                                       +{item.phonecode} {item.shortname}
+                                      </option>
+                                    </>
+                                  );
+                                })}
+                            </select>
+                          </div>
+                          <div className="mb-3 col-md-8">
+                            <label>Country</label>
+                            <select
+                              name="country"
+                              id="country"
+                              onChange={handlechange}
+                              className="w-100 border p-2 rounded form-control"
+                            >
+                              <option>Select...</option>
+                              {updatedata &&
+                                updatedata.length > 0 &&
+                                updatedata.map((item, index) => {
+                                  return (
+                                    <>
+                                      <option key={item.id}>{item.name}</option>
+                                    </>
+                                  );
+                                })}
+                            </select>
+                          </div>
+                        </div>
+
+                        <div className="mb-3">
+                          <label
+                            htmlFor="inputText"
+                            className="form-label mb-2 md_staff"
                           >
-                            Add Member
-                          </button>
+                            Assign Roles
+                          </label>
+                          <FormControl style={{ width: "100%" }}>
+                            <Select
+                              id="demo-multiple-checkbox"
+                              multiple
+                              value={selectedRoles}
+                              onChange={handleRoleChange}
+                              input={<OutlinedInput />}
+                              renderValue={(selected) =>
+                                selected
+                                  .map(
+                                    (role) =>
+                                      roleOptions.find(
+                                        (option) => option.value === role
+                                      )?.label
+                                  )
+                                  .join(", ")
+                              }
+                              MenuProps={MenuProps}
+                              className="country_sel"
+                              placeholder="Assign Roles"
+                            >
+                              <MenuItem value="all">
+                                <Checkbox
+                                  checked={isAllSelected}
+                                  indeterminate={
+                                    selectedRoles.length > 0 &&
+                                    selectedRoles.length < roleOptions.length
+                                  }
+                                />
+                                <ListItemText primary="Select All" />
+                              </MenuItem>
+                              {roleOptions.map((option) => (
+                                <MenuItem
+                                  key={option.value}
+                                  value={option.value}
+                                >
+                                  <Checkbox
+                                    checked={selectedRoles.includes(
+                                      option.value
+                                    )}
+                                  />
+                                  <ListItemText primary={option.label} />
+                                </MenuItem>
+                              ))}
+                            </Select>
+                          </FormControl>
+                        </div>
+                        <div>
+                          <label
+                            htmlFor="inputPassword"
+                            className="form-label mb-2 md_staff"
+                          >
+                            New Password
+                          </label>
+                          <div className="col-sm-12">
+                            <input
+                              type="password"
+                              className="form-control"
+                              name="new_password"
+                              onChange={handlechange}
+                              id="inputPassword"
+                              placeholder="password"
+                            />
+                            <p className="text-danger mb-0">
+                              {error.new_password}
+                            </p>
+                          </div>
                         </div>
                       </div>
+                      <div className="custom-modal-footer">
+                        <button
+                          type="button"
+                          className="btn text-white"
+                          onClick={handleclick}
+                          style={{ backgroundColor: "#1b2245" }}
+                        >
+                          Add Member
+                        </button>
+                      </div>
                     </div>
-                  )}
+                  </div>
+                )}
+                {loader ? (
+                  <div className="loader-container">
+                    <div className="loader"></div>
+                    <p className="loader-text">
+                      Updating... This may take some time
+                    </p>
+                  </div>
+                ) : (
                   <div className="table-responsive mt-3">
                     <table className="table table-striped tableICon">
                       <thead>
@@ -473,9 +547,9 @@ export default function ManageStaff() {
                         </tr>
                       </thead>
                       <tbody style={{ border: "none" }}>
-                        {currentData &&
-                          currentData.length > 0 &&
-                          currentData.map((item, index) => {
+                        {data &&
+                          data.length > 0 &&
+                          data.map((item, index) => {
                             return (
                               <tr className="border-bottom" key={index}>
                                 <th>{startIndex + index + 1}</th>
@@ -532,6 +606,13 @@ export default function ManageStaff() {
                                 </td>
                                 <td>
                                   <div className="action_btn1 d-flex align-items-center">
+                                  {/* <CgPerformance    style={{
+                                        color: "rgb(27 34 69)",
+                                        marginRight: "10px",
+                                        width: "20px",
+                                        height: "15px",
+                                        cursor: "pointer",
+                                      }}   onClick={()=>{handleclickKPI(item)}}    /> */}
                                     <FaEdit
                                       onClick={() => {
                                         openModal2(item.id);
@@ -544,6 +625,15 @@ export default function ManageStaff() {
                                         cursor: "pointer",
                                       }}
                                     />
+                                    <div className="action_btn1 me-2">
+                                      <AiFillMessage
+                                        style={{ cursor: "pointer" }}
+                                        className="text-success"
+                                        onClick={() => {
+                                          querryinQuote(item);
+                                        }}
+                                      />
+                                    </div>
                                     <AiFillDelete
                                       className="text-danger"
                                       style={{ cursor: "pointer" }}
@@ -577,167 +667,223 @@ export default function ManageStaff() {
                       </button>
                     </div>
                   </div>
-                </div>
-                <Modal
-                  open={isModalOpen2}
-                  onClose={closeModal2}
-                  aria-labelledby="modal-modal-title"
-                  aria-describedby="modal-modal-description"
-                >
-                  <Box
-                    sx={{
-                      position: "absolute",
-                      top: "50%",
-                      left: "50%",
-                      transform: "translate(-50%, -50%)",
-                    }}
-                  >
-                    <div className="modal-header">
-                      <h2 id="modal-modal-title">Edit Staff</h2>
-                      <button className="btn btn-close" onClick={closeModal2}>
-                        <CloseIcon />
-                      </button>
-                    </div>
-                    <div className="newModalGap">
-                      <div className="row">
-                        <div className="col-12">
-                          <label
-                            htmlFor="exampleFormControlInput1"
-                            className="ware_label"
-                          >
-                            Email address
-                          </label>
-                          <input
-                            type="email"
-                            className="form-control mb-3"
-                            value={inputdata?.staff_email}
-                            id="exampleFormControlInput1"
-                            placeholder="name@example.com"
-                            onChange={handleupdateapi}
-                            name="staff_email"
-                          />
-                        </div>
-                      </div>
-                      <div className="row">
-                        <div className="col-12">
-                          <label htmlFor="inputText" className="ware_label">
-                            Full Name
-                          </label>
-                          <input
-                            type="text"
-                            onChange={handleupdateapi}
-                            name="staff_name"
-                            value={inputdata?.staff_name}
-                            className="form-control mb-3"
-                            id="inputText"
-                            placeholder="Enter your Name"
-                          />
-                        </div>
-                      </div>
-                             <div className="mb-3">
-  <label htmlFor="country" className="form-label mb-2 md_staff">
-    Country
-  </label>
-  <div className="col-sm-12">
-    <select
-      name="country"
-      id="country"
-      value={inputdata?.country}
-      className="form-control"
-      onChange={handleupdateapi}
-    >
-      <option value="">Select Country</option>
-        <option value="246">Zimbabwe</option>
-      <option value="245">Zambia</option>
-      <option value="202">South Africa</option>
-    </select>
-    <p className="text-danger">{error.country}</p>
-  </div>
-</div>
-                      <div className="row mb-3 ">
-                        <div className="col-12">
-                          <label
-                            htmlFor="multipleSelect"
-                            className="ware_label"
-                          >
-                            Assign Roles
-                          </label>
-                          <br />
-                          <FormControl className="w-100">
-                            <Select
-                              multiple
-                              value={selectedRoles}
-                              onChange={handleRoleChange}
-                              input={<OutlinedInput />} // Removed label from OutlinedInput
-                              renderValue={(selected) =>
-                                selected
-                                  .map(
-                                    (role) =>
-                                      roleOptions.find(
-                                        (option) => option.value === role
-                                      )?.label
-                                  )
-                                  .join(", ")
-                              }
-                              MenuProps={MenuProps}
-                              className="country_sel"
-                            >
-                              {roleOptions.map((option) => (
-                                <MenuItem
-                                  key={option.value}
-                                  value={option.value}
-                                >
-                                  <Checkbox
-                                    checked={
-                                      selectedRoles.indexOf(option.value) > -1
-                                    }
-                                  />
-                                  <ListItemText primary={option.label} />
-                                </MenuItem>
-                              ))}
-                            </Select>
-                          </FormControl>
-                          {error.roles && (
-                            <p className="text-danger mb-0">{error.roles}</p>
-                          )}
-                        </div>
-                      </div>
-                      <div className="row">
-                        <div className="col-12">
-                          <label htmlFor="inputPassword" className="ware_label">
-                            New Password
-                          </label>
-                          <input
-                            type="password"
-                            className="form-control mb-3"
-                            name="new_password"
-                            onChange={handleupdateapi}
-                            id="inputPassword"
-                            placeholder="password"
-                          />
-                          <p className="text-danger mb-0">
-                            {error.new_password}
-                          </p>
-                        </div>
-                      </div>
-                      <div className="text-center mt-2 unsetLt">
-                        <Button
-                          variant="contained"
-                          className="submit_btn"
-                          onClick={postData1234}
-                        >
-                          Submit
-                        </Button>
-                      </div>
-                    </div>
-                  </Box>
-                </Modal>
+                )}
               </div>
+              <Modal
+                open={isModalOpen2}
+                onClose={closeModal2}
+                aria-labelledby="modal-modal-title"
+                aria-describedby="modal-modal-description"
+              >
+                <Box
+                  sx={{
+                    position: "absolute",
+                    top: "50%",
+                    left: "50%",
+                    transform: "translate(-50%, -50%)",
+                  }}
+                >
+                  <div className="modal-header">
+                    <h2 id="modal-modal-title">Edit Staff</h2>
+                    <button className="btn btn-close" onClick={closeModal2}>
+                      <CloseIcon />
+                    </button>
+                  </div>
+                  <div className="newModalGap">
+                    <div className="row">
+                      <div className="col-12">
+                        <label
+                          htmlFor="exampleFormControlInput1"
+                          className="ware_label"
+                        >
+                          Email address
+                        </label>
+                        <input
+                          type="email"
+                          className="form-control mb-3"
+                          value={inputdata?.staff_email}
+                          id="exampleFormControlInput1"
+                          placeholder="name@example.com"
+                          onChange={handleupdateapi}
+                          name="staff_email"
+                        />
+                      </div>
+                    </div>
+                    <div className="row">
+                      <div className="col-12">
+                        <label htmlFor="inputText" className="ware_label">
+                          Full Name
+                        </label>
+                        <input
+                          type="text"
+                          onChange={handleupdateapi}
+                          name="staff_name"
+                          value={inputdata?.staff_name}
+                          className="form-control mb-3"
+                          id="inputText"
+                          placeholder="Enter your Name"
+                        />
+                      </div>
+                    </div>
+                    {/* <div className="mb-3">
+                      <label
+                        htmlFor="country"
+                        className="form-label mb-2 md_staff"
+                      >
+                        Country
+                      </label>
+                      <div className="col-sm-12">
+                        <select
+                          name="country"
+                          id="country"
+                          value={inputdata?.country}
+                          className="form-control"
+                          onChange={handleupdateapi}
+                        >
+                          <option value="">Select Country</option>
+                          <option value="246">Zimbabwe</option>
+                          <option value="245">Zambia</option>
+                          <option value="202">South Africa</option>
+                        </select>
+                        <p className="text-danger">{error.country}</p>
+                      </div>
+                    </div> */}
+                    <div className="d-flex col-12">
+ <div className="mb-3 col-md-4">
+                            <label>Country Code</label>
+                            <select
+                              name="country_code"
+                          id="country"
+                          value={inputdata?.country_code}
+                          className="form-control"
+                          onChange={handleupdateapi}
+                            >
+                              <option>Select...</option>
+                              {updatedata &&
+                                updatedata.length > 0 &&
+                                updatedata.map((item, index) => {
+                                  return (
+                                    <>
+                                      <option key={item.id}>+{item.phonecode} {item.shortname}</option>
+                                    </>
+                                  );
+                                })}
+                            </select>
+                          </div>
+                              <div className="col-8">
+                                <div className="col-12">
+                        <label htmlFor="inputText" className="ware_label">
+                          Phone Number
+                        </label>
+                        <input
+                          type="text"
+                          onChange={handleupdateapi}
+                          name="phone_no"
+                          value={inputdata?.phone_no}
+                          className="form-control mb-3"
+                          id="inputText"
+                          placeholder="98745658"
+                        />
+                      </div>
+                              </div>
+                          </div>
+
+                               <div className="mb-3 col-md-12">
+                            <label>Country</label>
+                            <select
+                              name="country"
+                          id="country"
+                          value={inputdata?.country}
+                          className="form-control"
+                          onChange={handleupdateapi}
+                            >
+                              <option>Select...</option>
+                              {updatedata &&
+                                updatedata.length > 0 &&
+                                updatedata.map((item, index) => {
+                                  return (
+                                    <>
+                                      <option key={item.id}>{item.name}</option>
+                                    </>
+                                  );
+                                })}
+                            </select>
+                          </div>
+                    <div className="row mb-3 ">
+                      <div className="col-12">
+                        <label htmlFor="multipleSelect" className="ware_label">
+                          Assign Roles
+                        </label>
+                        <br />
+                        <FormControl className="w-100">
+                          <Select
+                            multiple
+                            value={selectedRoles}
+                            onChange={handleRoleChange}
+                            input={<OutlinedInput />} // Removed label from OutlinedInput
+                            renderValue={(selected) =>
+                              selected
+                                .map(
+                                  (role) =>
+                                    roleOptions.find(
+                                      (option) => option.value === role
+                                    )?.label
+                                )
+                                .join(", ")
+                            }
+                            MenuProps={MenuProps}
+                            className="country_sel"
+                          >
+                            {roleOptions.map((option) => (
+                              <MenuItem key={option.value} value={option.value}>
+                                <Checkbox
+                                  checked={
+                                    selectedRoles.indexOf(option.value) > -1
+                                  }
+                                />
+                                <ListItemText primary={option.label} />
+                              </MenuItem>
+                            ))}
+                          </Select>
+                        </FormControl>
+                        {error.roles && (
+                          <p className="text-danger mb-0">{error.roles}</p>
+                        )}
+                      </div>
+                    </div>
+                    <div className="row">
+                      <div className="col-12">
+                        <label htmlFor="inputPassword" className="ware_label">
+                          New Password
+                        </label>
+                        <input
+                          type="password"
+                          className="form-control mb-3"
+                          name="new_password"
+                          onChange={handleupdateapi}
+                          id="inputPassword"
+                          placeholder="password"
+                        />
+                        <p className="text-danger mb-0">{error.new_password}</p>
+                      </div>
+                    </div>
+                    <div className="text-center mt-2 unsetLt">
+                      <Button
+                        variant="contained"
+                        className="submit_btn"
+                        onClick={postData1234}
+                      >
+                        Submit
+                      </Button>
+                    </div>
+                  </div>
+                </Box>
+              </Modal>
             </div>
           </div>
-          <ToastContainer />
-        </>
-      )}
+        </div>
+        <ToastContainer />
+      </>
     </>
   );
 }

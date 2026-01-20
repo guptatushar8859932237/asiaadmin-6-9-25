@@ -22,19 +22,16 @@ export default function MAnageFreightDetails() {
     licenses: [],
     packing_list: [],
   });
-  const handlechange = (e) => {
-    const { name, value } = e.target;
-    setData({ ...data, [name]: value });
-  };
-  const info = infolocation?.state?.data[0];
-  const [open, setOpen] = useState(false);
+
+  const info1 = infolocation?.state?.data[0];
+  const [info, setInfo] = useState([]);
   console.log(infolocation?.state?.data[0]);
-  const data1 = new Date(info?.date).toLocaleDateString("en-GB");
+  const data1 = new Date(info1?.date).toLocaleDateString("en-GB");
   const handleclick = () => {
     navigate("/Admin/managefreight");
   };
   const GetFreightImages = () => {
-    const data = { freight_id: info.freight_id, uploaded_by: "1" };
+    const data = { freight_id: info1.freight_id, uploaded_by: "1" };
     axios
       .post(`${process.env.REACT_APP_BASE_URL}GetFreightImages`, data)
       .then((response) => {
@@ -63,13 +60,30 @@ export default function MAnageFreightDetails() {
         console.log(error.response.data);
       });
   };
-  const handleFileChange = (e, fieldName) => {
-    const files = Array.from(e.target.files);
-    setFormFiles((prev) => ({
-      ...prev,
-      [fieldName]: files,
-    }));
+const getFreightDataById = async () => {
+  const payload = {
+    freight_id: info1?.freight_id,
   };
+
+  try {
+    const response = await axios.post(
+      `${process.env.REACT_APP_BASE_URL}freight-list-byId`,
+      payload
+    );
+
+    if (response?.data?.data?.length > 0) {
+      setInfo(response.data.data[0]);
+    }
+  } catch (error) {
+    console.error("Error fetching freight data by id:", error);
+  }
+};
+
+  
+
+  useEffect(()=>{
+    getFreightDataById()
+  },[])
   return (
     <div className="wpWrapper">
       <div className="container-fluid">
@@ -104,22 +118,22 @@ export default function MAnageFreightDetails() {
                         <i class="fi fi-rs-building build_icon"></i>
                         <div className="">
                           <p className="or_para">
-                            {info.shipment_ref === "consignee"
+                            {info?.shipment_ref === "consignee"
                               ? info.shipper_name
                               : info.client_name}
                           </p>
                           <p className="client_para">
-                            {info.shipment_ref === "consignee"
+                            {info?.shipment_ref === "consignee"
                               ? info.supplier_address
                               :  info?.address_1 +" " + info.address_2 + " "+ <br /> +info.province+ " " +<br />+ info.delivery_to_name}
                           </p>
                           <p className="client_para">
-                            {info.shipment_ref === "consignee"
+                            {info?.shipment_ref === "consignee"
                               ? info.telephone
                               :info.cellphone}
                           </p>
                           <p className="client_para">
-                            {info.shipment_ref === "consignee"
+                            {info?.shipment_ref === "consignee"
                               ? ""
                               :info.client_email }
                           </p>
@@ -144,7 +158,7 @@ export default function MAnageFreightDetails() {
                           <p className="or_para">{info.shipper_name}</p>
                           <p className="client_para">Export Code:{info.code}</p>
                           <p className="client_para">Vat Number:{
-                          info.shipment_ref==="shipper"?4740280377:""}</p>
+                          info?.shipment_ref==="shipper"?4740280377:""}</p>
                         </div>
                       </div>
                     </div>
@@ -175,22 +189,22 @@ export default function MAnageFreightDetails() {
                         <i class="fi fi-rs-building build_icon"></i>
                         <div className="">
                           <p className="or_para">
-                            {info.shipment_ref === "consignee"
+                            {info?.shipment_ref === "consignee"
                               ? info.client_name
                               : info.shipper_name}
                           </p>
                           <p className="client_para">
-                            {info.shipment_ref === "consignee"
+                            {info?.shipment_ref === "consignee"
                               ? info?.address_1 +" " + info.address_2 + " " +info.province+ " " + info.delivery_to_name
                               : info.supplier_address}
                           </p>
                           <p className="client_para">
-                            {info.shipment_ref === "consignee"
+                            {info?.shipment_ref === "consignee"
                               ? info.cellphone
                               : info.telephone}
                           </p>
                           <p className="client_para">
-                            {info.shipment_ref === "consignee"
+                            {info?.shipment_ref === "consignee"
                               ? info.client_email
                               : ""}
                           </p>
@@ -525,9 +539,7 @@ export default function MAnageFreightDetails() {
                               </td>
                               <td>
                                 <p class="client_para1">
-                                  {info.volumetric_weight.toLocaleString(
-                                    "en-US"
-                                  )}
+                                  {info?.volumetric_weight}
                                 </p>
                               </td>
                             </tr>

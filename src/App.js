@@ -74,6 +74,19 @@ import Clearenceorderdetailspage from "./pages/Clearenceorderdetailspage";
 import Contactus from "./components/Warehouse/Contactus";
 import SupplierEstimation from "./pages/SupplierEstimation";
 import Supplierestimationview from "./pages/Supplierestimationview";
+import Taskmanager from "./pages/Taskmanager";
+import Chat11 from "./pages/Chat11";
+import SocketTest from "./pages/Chat11";
+import ChatTest from "./pages/Chat11";
+import QuotationInFreight from "./pages/QuotationInFreight";
+import CustomesClearingAgent from "./components/Facilities Management/CustomesClearingAgent";
+import RoadTransporter from "./components/Facilities Management/RoadTransporter";
+import FreightForewarder from "./components/Facilities Management/FreightForewarder";
+import GroupageWarehouse from "./components/Facilities Management/GroupageWarehouse";
+import Downlaodestimate from "./components/shipping estimate/Downloadestimate";
+import Dashboard1 from "./components/KPI/Dashboard";
+import DownloadEstimation from "./pages/DownloadEstimation";
+import QuotationInFreightCostumer from "./components/Chatting/QuotationInFreightCostumer";
 const Dashboard = lazy(() => import("./pages/Dashboard"));
 const Users = lazy(() => import("./pages/Users"));
 const Messages = lazy(() => import("./pages/Messages"));
@@ -185,6 +198,11 @@ export default function App() {
                 />
                 <Route
                   index
+                  path="/Admin/KPIDashboard"
+                  element={<Dashboard1 />}
+                />
+                <Route
+                  index
                   path="/Admin/manage-customer"
                   element={<ManageCustomer />}
                 />
@@ -192,6 +210,11 @@ export default function App() {
                   index
                   path="/Admin/manage-staff"
                   element={<ManageStaff />}
+                />
+                <Route
+                  index
+                  path="/Admin/chat"
+                  element={<ChatTest     />}
                 />
                 <Route
                   index
@@ -208,11 +231,36 @@ export default function App() {
                   path="/Admin/viewdocument/:id"
                   element={<Viewdocument />}
                 />
+                <Route
+                  index
+                  path="/Admin/Customesclearingagent"
+                  element={<CustomesClearingAgent />}
+                />
+                <Route
+                  index
+                  path="/Admin/RoadTransporter"
+                  element={<RoadTransporter />}
+                />
+                <Route
+                  index
+                  path="/Admin/freightForeward"
+                  element={<FreightForewarder />}
+                />
+                <Route
+                  index
+                  path="/Admin/groupageWarehouse"
+                  element={<GroupageWarehouse />}
+                />
                 <Route index path="/Admin/query" element={<Query />} />
                 <Route
                   index
                   path="/Admin/manage-supplier"
                   element={<ManageSupplier />}
+                />
+                <Route
+                  index
+                  path="/Admin/taskmanager"
+                  element={<Taskmanager />}
                 />
                 <Route
                   index
@@ -238,6 +286,16 @@ export default function App() {
                   index
                   path="/Admin/privacy-policy"
                   element={<PrivacyPolicy />}
+                />
+                <Route
+                  index
+                  path="/Admin/QuotationInFreight"
+                  element={<QuotationInFreight />}
+                />
+                <Route
+                  index
+                  path="/Admin/QuotationInFreightCostumer"
+                  element={<QuotationInFreightCostumer />}
                 />
                 <Route
                   index
@@ -318,10 +376,20 @@ export default function App() {
                   path="/Admin/shipping-estimate"
                   element={<ShippingaddfreightEstimate />}
                 />
+                <Route
+                  index
+                  path="/Admin/Downloadestimate"
+                  element={<Downlaodestimate />}
+                />
                 <Route                                    
                   index
                   path="/Admin/supplier-estimation-view"
                   element={<Supplierestimationview />}
+                />
+                <Route                                    
+                  index
+                  path="/Admin/DownloadEstimate"
+                  element={<DownloadEstimation />}
                 />
                 <Route
                   index

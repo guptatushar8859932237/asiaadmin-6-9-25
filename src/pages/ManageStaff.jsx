@@ -3,7 +3,6 @@ import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import ListItemText from "@mui/material/ListItemText";
 import Select from "@mui/material/Select";
-import { CgPerformance } from "react-icons/cg";
 import axios from "axios";
 import Checkbox from "@mui/material/Checkbox";
 import React, { useEffect, useState } from "react";
@@ -299,9 +298,7 @@ export default function ManageStaff() {
   useEffect(() => {
     updatecountry();
   }, []);
-
   const handleclickKPI= (item)=>{
-    // console.log(item)
     navigate('/Admin/KPIDashboard')
   }
   return (
@@ -334,7 +331,7 @@ export default function ManageStaff() {
                         </div>
                         <div className="ms-2">
                           <button type="button" onClick={handleclickKPI}>
-                            Add
+                           Leave Request
                           </button>
                         </div>
                       </div>

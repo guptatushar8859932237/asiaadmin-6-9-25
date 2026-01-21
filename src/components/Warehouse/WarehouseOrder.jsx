@@ -50,8 +50,12 @@ export default function WarehouseOrder() {
   const [isModalOpen1, setIsModalOpen1] = useState(false);
   const [prodata, setProdata] = useState("");
   const [orderID, setOrderID] = useState("");
+  const [freightIdPass, setFreightIdPass] = useState("");
+  const [responseData, setResponseData] = useState("");
   const [clickdata, setClickdata] = useState({});
+  const [handlsupplier, setHandlsupplier] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [handleassignsupplier, setHandleassignsupplier] = useState(false);
   const [batchidsdsd, setBatchidsdsd] = useState();
   const [loader, setLoader] = useState(false);
   const [isModalOpen2, setIsModalOpen2] = useState(false);
@@ -206,6 +210,18 @@ export default function WarehouseOrder() {
     setSelectedData(selectedData);
     handleOpenModal();
   };
+  const handleEditClickAssign = (freight_ID,  order_id) => {
+    console.log(freight_ID,  order_id);
+    setOrderID(order_id);
+    setFreightIdPass(freight_ID);
+    const selectedData = data.find((item) => item.freight_ID === freight_ID);
+    console.log(selectedData);
+    setSelectedData(selectedData);
+    setHandleassignsupplier(true)
+  };
+  const handleclose=()=>{
+      setHandleassignsupplier(false)
+  }
   const handleEditClick12 = (
     warehouse_assign_order_id,
     order_id,
@@ -556,6 +572,95 @@ export default function WarehouseOrder() {
     }
   };
 
+  useEffect(()=>{
+    getSupplier()
+  },[])
+
+const getSupplier = async () => {
+  try {
+    const response = await axios.get(
+      `${process.env.REACT_APP_BASE_URL}supplier-list`
+    );
+
+    if (response.status === 200) {
+      setHandlsupplier(response.data.data);
+    } else {
+      console.error("Unexpected response:", response);
+    }
+  } catch (error) {
+    console.error(
+      "Error fetching supplier list:",
+      error.response?.data || error.message
+    );
+  }
+};
+
+const handleChangeSupplier=(e)=>{
+  setResponseData(e.target.value)
+}
+
+// const AssignSupplier = ()=>{
+//   const payload={
+//       supplier_id:responseData,
+//       freight_id:freightIdPass,
+//       order_id:orderID
+
+//     }
+//   console.log(payload)
+//   try {
+//     const response = axios.post(`${process.env.REACT_APP_BASE_URL}assignWarehouseSupplierToOrder`,payload)
+//     console.log(response)
+//   } catch (error) {
+//     console.log(error)
+//   }
+// }
+const AssignSupplier = async () => {
+  // 🔒 Basic frontend validation
+  if (!responseData) {
+    toast.error("Please select a supplier");
+    return;
+  }
+
+  const payload = {
+    supplier_id: parseInt(responseData, 10),
+    freight_id: freightIdPass,
+    order_id: orderID,
+  };
+
+  console.log("Payload:", payload);
+
+  try {
+    const response = await axios.post(
+      `${process.env.REACT_APP_BASE_URL}assignWarehouseOrderToSupplier`,
+      payload
+    );
+
+    toast.success(response.data?.message || "Supplier assigned successfully");
+    handleclose();
+
+  } catch (error) {
+    // 🔥 HANDLE ALL POSSIBLE ERRORS
+    if (error.response) {
+      // ✅ Server responded with error status (400, 401, 403, 404, 409, 500)
+      toast.error(
+        error.response.data?.message ||
+        `Request failed with status ${error.response.status}`
+      );
+
+    } else if (error.request) {
+      // ✅ Request sent but no response (server down / CORS / network issue)
+      toast.error("Server not responding. Please try again later.");
+
+    } else {
+      // ✅ Something else went wrong
+      toast.error(error.message || "Something went wrong");
+    }
+
+    console.error("AssignSupplier Error:", error);
+  }
+};
+
+
   return (
     <>
       <div className="wpWrapper">
@@ -745,6 +850,19 @@ export default function WarehouseOrder() {
                                             </div>
                                           </div>
                                           <div className="col-md-6 text-end">
+                                            <i 
+                                            class="fa fa-tasks me-2 mt-2"
+                                              onClick={() =>
+                                                handleEditClickAssign(
+                                                  item.freight_ID,
+                                                  item.order_id,
+                                                )
+                                              }
+                                              style={{
+                                                color: "#1d2044",
+                                                cursor: "pointer",
+                                              }}
+                                            />
                                             <FaEdit
                                               onClick={() =>
                                                 handleEditClick(
@@ -815,6 +933,51 @@ export default function WarehouseOrder() {
                         </button>
                       </div>
                       <ToastContainer />
+                      <Modal
+                        open={handleassignsupplier}
+                        onClose={handleclose}
+                        aria-labelledby="modal-modal-title"
+                        aria-describedby="modal-modal-description"
+                      >
+                        <Box
+                          sx={{
+                            position: "absolute",
+                            top: "50%",
+                            left: "50%",
+                            transform: "translate(-50%, -50%)",
+                            height: 300,
+                            width: 450,
+                            bgcolor: "background.paper",
+                            boxShadow: 24,
+                            p: 4,
+                          }}
+                        >
+                          <h4 id="modal-modal-title text-dark">Assign Supplier</h4>
+                        <select className="form-control" onChange={handleChangeSupplier} >
+                          <option>select</option>
+
+                          {
+                            handlsupplier && handlsupplier.length>0 && handlsupplier.map((item,index)=>{
+                              return(
+                                <>
+                              <option key={index} value={item.id}>{item.name}</option>
+                                </>
+                              )
+                            })
+                          }
+                        </select>
+                        <div className="d-flex  mt-3">
+
+                          <Button
+                            variant="contained"
+                            className="submit_btn"
+                            onClick={AssignSupplier}
+                          >
+                            Submit
+                          </Button>
+                        </div>
+                        </Box>
+                      </Modal>
                       <Modal
                         open={isModalOpen1}
                         onClose={closeModal1}

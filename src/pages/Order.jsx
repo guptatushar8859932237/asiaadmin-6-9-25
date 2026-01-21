@@ -997,22 +997,22 @@ const getSupplier= async ()=>{
                                     <div className="col-md-3 ps-0">
                                       <div className="">
                                         <p className="origin">
-                                          {item.product_desc}
+                                          {item.product_desc?item.product_desc:item.goods_description}
                                         </p>
                                       </div>
                                     </div>
                                     <div className="col-md-5">
                                       <div className="d-flex align-items-center justify-content-center">
                                         <p className="origin">
-                                          {item.collection_from_country}
+                                          {item.collection_from_country?item.collection_from_country:item.warouse_from_country}
                                         </p>
                                         <div className="arrow">
                                           <i className="fi fi-rr-arrow-right mx-2 arr_icon"></i>
                                         </div>
                                         <p className="origin">
-                                          {item.delivery_to_country}
+                                          {item.delivery_to_country?item.delivery_to_country:item.warouse_delivery_to}
                                           <span className="fright_type">
-                                            ({item?.freight})
+                                            ({item?.freight?item.freight:item.warehouse_freight_type})
                                           </span>
                                         </p>
                                       </div>
@@ -1039,7 +1039,8 @@ const getSupplier= async ()=>{
                                           <div className="dropdown-menu">
                                             <a className="dropdown-item det_page">
                                               <ul className="p-0 m-0">
-                                                <li
+                                                {
+                                                  item?.warehouse_freight_type?"":    <li
                                                   className="page_list"
                                                   style={{
                                                     cursor: "pointer",
@@ -1052,7 +1053,8 @@ const getSupplier= async ()=>{
                                                   <RemoveRedEyeIcon /> View
                                                   Details
                                                 </li>
-                                                <li
+                                                }
+                                                 <li
                                                   className="page_list"
                                                   style={{
                                                     cursor: "pointer",
@@ -1067,6 +1069,8 @@ const getSupplier= async ()=>{
                                                   <IntegrationInstructionsIcon />{" "}
                                                   Booking Instruction
                                                 </li>
+                                                 {
+                                                  item?.warehouse_freight_type?"": 
                                                 <li
                                                   className="page_list"
                                                   style={{
@@ -1080,6 +1084,8 @@ const getSupplier= async ()=>{
                                                   <IntegrationInstructionsIcon />{" "}
                                                   Edit Order
                                                 </li>
+                                                }
+                                               
                                                 <li
                                                   className="page_list"
                                                   style={{
@@ -1105,7 +1111,8 @@ const getSupplier= async ()=>{
                                                   <NotInterestedIcon /> Assign
                                                   Clearing
                                                 </li>
-
+                                                {
+                                                  item.warehouse_freight_type ?"":
                                                 <li
                                                   className="page_list"
                                                   style={{
@@ -1119,6 +1126,7 @@ const getSupplier= async ()=>{
                                                   <ContentCopyIcon /> Edit
                                                   Estimate
                                                 </li>
+                                                }
                                                 <li
                                                   className="page_list"
                                                   style={{
@@ -1331,7 +1339,6 @@ const getSupplier= async ()=>{
           </div>
         </div>
       )}
-
       <Modal
         open={isOpen}
         onClose={closeModalclose}

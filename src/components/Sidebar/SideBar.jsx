@@ -126,8 +126,6 @@ const routes = [
       
     ],
   },
- 
- 
   {
     path: "",
     name: "Warehouse",
@@ -138,6 +136,11 @@ const routes = [
         name: "Warehouse Order",
         icon: <ShoppingCartOutlinedIcon />,
       },
+      // {
+      //   path: "/Admin/SupplierWarehouse",
+      //   name: "Supplier Warehouse Order",
+      //   icon: <ShoppingCartOutlinedIcon />,
+      // },
        {
         path: "/Admin/Batches",
         name: "Batches",
@@ -216,17 +219,12 @@ const routes = [
     name: "Task Manager",
     icon: <LanguageOutlinedIcon />,
   },
-
- 
 ];
 const userControlRoutes = {
   path: "",
   name: "User Control",
   icon: <SecurityOutlinedIcon />,
   subRoutes: [
-    
- 
-  
      {
       path: "/Admin/contactus",
       name: "Contact Us",
@@ -263,7 +261,6 @@ const SideBar = ({ children }) => {
   if (usertype === "1") {
     filteredRoutes.push(userControlRoutes);
   }
-
   useEffect(() => {
     const savedState = localStorage.getItem("sidebarOpen");
     if (savedState !== null) {

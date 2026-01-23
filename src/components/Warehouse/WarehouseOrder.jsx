@@ -181,8 +181,8 @@ export default function WarehouseOrder() {
   const getAllBatch = (item) => {
     console.log(item);
     const payload = {
-      des_country_id: item.delivery_to,
-      origin_country_id: item.collection_from,
+      des_country_id: item.country_delivery_to,
+      origin_country_id: item.country_collection_form,
       freight: item.Freight,
     };
     axios

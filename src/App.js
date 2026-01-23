@@ -87,6 +87,7 @@ import Downlaodestimate from "./components/shipping estimate/Downloadestimate";
 import Dashboard1 from "./components/KPI/Dashboard";
 import DownloadEstimation from "./pages/DownloadEstimation";
 import QuotationInFreightCostumer from "./components/Chatting/QuotationInFreightCostumer";
+import SupplierWarehouse from "./components/Warehouse/SupplierWarehouse";
 const Dashboard = lazy(() => import("./pages/Dashboard"));
 const Users = lazy(() => import("./pages/Users"));
 const Messages = lazy(() => import("./pages/Messages"));
@@ -179,6 +180,11 @@ export default function App() {
                   index
                   path="/Admin/WarehouseOrder"
                   element={<WarehouseOrder />}
+                />
+                <Route
+                  index
+                  path="/Admin/SupplierWarehouse"
+                  element={<SupplierWarehouse />}
                 />
                 <Route
                   index

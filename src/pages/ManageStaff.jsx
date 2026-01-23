@@ -23,11 +23,18 @@ const MenuProps = {
     },
   },
 };
+const countries = [
+  { id: "202", name: "South Africa" },
+  { id: "246", name: "Zimbabwe" },
+  { id: "245", name: "Zambia" },
+];
 export default function ManageStaff() {
   const [isChecked, setIsChecked] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const [inputdata, setInputdata] = useState([]);
   const [error, setError] = useState({});
+  const [open, setOpen] = useState(false);
+  const [selectedCountries, setSelectedCountries] = useState([]);
   const [loader, setLoader] = useState(false);
   const [selectedRoles, setSelectedRoles] = useState([]);
   const [updatedata, setUpdatedata] = useState([]);
@@ -104,7 +111,7 @@ export default function ManageStaff() {
   };
   const handleToggle = (id) => {
     const updatedData = data.map((item) =>
-      item.id === id ? { ...item, status: 1 - item.status } : item
+      item.id === id ? { ...item, status: 1 - item.status } : item,
     );
     setData(updatedData);
   };
@@ -165,13 +172,19 @@ export default function ManageStaff() {
   const isAllSelected =
     roleOptions.length > 0 && selectedRoles.length === roleOptions.length;
   const handleapi = () => {
+    console.log(input);
+    console.log("a");
     const apivali = {
       staff_email: input.staff_email,
       staff_name: input.staff_name,
       roles: selectedRoles,
       new_password: input.new_password,
       country: input.country,
+      country_code: input.country_code,
+      phone_no: input.phone_no,
+      access_country: selectedCountries,
     };
+    console.log(apivali);
     axios
       .post(`${process.env.REACT_APP_BASE_URL}add-staff`, apivali)
       .then((response) => {
@@ -234,19 +247,43 @@ export default function ManageStaff() {
     console.log(e.target);
   };
   const openModal2 = (id) => {
-    const userlog = data.find((item) => item.id === id);
-    if (userlog) {
-      setInputdata({
-        staff_id: id,
-        staff_email: userlog.email,
-        staff_name: userlog.full_name,
-        roles: userlog.roles || [],
-        country: userlog.country,
-      });
-    }
-    console.log(userlog);
-    setIsModalOpen2(true);
-  };
+  const userlog = data.find((item) => item.id === id);
+
+  if (userlog) {
+    setInputdata({
+      staff_id: id,
+      staff_email: userlog.email,
+      staff_name: userlog.full_name,
+      country: userlog.country,
+      country_code: userlog.country_code,
+      phone_no: userlog.phone_no,
+      new_password: "",
+    });
+
+    // ✅ IMPORTANT
+    setSelectedRoles(userlog.roles || []);
+    setSelectedCountries(userlog.access_country || []);
+  }
+
+  setIsModalOpen2(true);
+};
+
+  // const openModal2 = (id) => {
+  //   const userlog = data.find((item) => item.id === id);
+  //   console.log(userlog)
+  //   if (userlog) {
+  //     setInputdata({
+  //       staff_id: id,
+  //       staff_email: userlog.email,
+  //       staff_name: userlog.full_name,
+  //       roles: userlog.roles || [],
+  //       country: userlog.country,
+  //       country_code: userlog.country_code,
+  //     });
+  //   }
+  //   console.log(userlog);
+  //   setIsModalOpen2(true);
+  // };
   const postData1234 = () => {
     console.log(inputdata);
     const apivali = {
@@ -254,6 +291,8 @@ export default function ManageStaff() {
       email: inputdata.staff_email,
       staff_name: inputdata.staff_name,
       roles: selectedRoles,
+      country_code: inputdata.country_code,
+      access_country: selectedCountries,
       password: inputdata.new_password,
       country: inputdata.country,
     };
@@ -298,9 +337,22 @@ export default function ManageStaff() {
   useEffect(() => {
     updatecountry();
   }, []);
-  const handleclickKPI= (item)=>{
-    navigate('/Admin/KPIDashboard')
-  }
+  const handleclickKPI = (item) => {
+    navigate("/Admin/KPIDashboard");
+  };
+  const toggleDropdown = () => {
+    setOpen(!open);
+  };
+
+  const handleCheckboxChange = (e) => {
+    const { value, checked } = e.target;
+    if (checked) {
+      setSelectedCountries([...selectedCountries, value]);
+    } else {
+      setSelectedCountries(selectedCountries.filter((id) => id !== value));
+    }
+  };
+
   return (
     <>
       <>
@@ -331,7 +383,7 @@ export default function ManageStaff() {
                         </div>
                         <div className="ms-2">
                           <button type="button" onClick={handleclickKPI}>
-                           Leave Request
+                            Leave Request
                           </button>
                         </div>
                       </div>
@@ -352,66 +404,48 @@ export default function ManageStaff() {
                         </button>
                       </div>
                       <div className="custom-modal-body">
-                        <div className="mb-3">
-                          <label
-                            htmlFor="exampleFormControlInput1"
-                            className="form-label mb-2 md_staff"
-                          >
-                            Email address
-                          </label>
-                          <input
-                            type="email"
-                            className="form-control"
-                            id="exampleFormControlInput1"
-                            placeholder="name@example.com"
-                            onChange={handlechange}
-                            name="staff_email"
-                          />
-                          <p className="text-danger">{error.staff_email}</p>
-                        </div>
-                        <div className="mb-3">
-                          <label
-                            htmlFor="inputText"
-                            className="form-label mb-2 md_staff"
-                          >
-                            Full Name
-                          </label>
-                          <div className="col-sm-12">
-                            <input
-                              type="text"
-                              onChange={handlechange}
-                              name="staff_name"
-                              className="form-control"
-                              id="inputText"
-                              placeholder="Enter your Name"
-                            />
-                            <p className="text-danger">{error.staff_name}</p>
-                          </div>
-                        </div>
-                        <div className="col-12 d-flex">
-                          <div className="mb-3 col-md-4">
-                            <label>Country Code</label>
-                            <select
-                              name="country_code"
-                              id="country"
-                              onChange={handlechange}
-                              className="w-100 border p-2 rounded form-control"
+                        <div className="row d-flex">
+                          <div className="mb-3 col-6">
+                            <label
+                              htmlFor="exampleFormControlInput1"
+                              className="form-label mb-2 md_staff"
                             >
-                              <option>Select...</option>
-                              {updatedata &&
-                                updatedata.length > 0 &&
-                                updatedata.map((item, index) => {
-                                  return (
-                                    <>
-                                      <option key={item.id}>
-                                       +{item.phonecode} {item.shortname}
-                                      </option>
-                                    </>
-                                  );
-                                })}
-                            </select>
+                              Email address
+                            </label>
+                            <div className="col-12">
+                              <input
+                                type="email"
+                                className="form-control"
+                                id="exampleFormControlInput1"
+                                placeholder="name@example.com"
+                                onChange={handlechange}
+                                name="staff_email"
+                              />
+                              <p className="text-danger">{error.staff_email}</p>
+                            </div>
                           </div>
-                          <div className="mb-3 col-md-8">
+                          <div className="mb-3 col-6">
+                            <label
+                              htmlFor="inputText"
+                              className="form-label mb-2 md_staff"
+                            >
+                              Full Name
+                            </label>
+                            <div className="col-sm-12">
+                              <input
+                                type="text"
+                                onChange={handlechange}
+                                name="staff_name"
+                                className="form-control"
+                                id="inputText"
+                                placeholder="Enter your Name"
+                              />
+                              <p className="text-danger">{error.staff_name}</p>
+                            </div>
+                          </div>
+                        </div>
+                        <div className="row">
+                          <div className="mb-3 col-6">
                             <label>Country</label>
                             <select
                               name="country"
@@ -425,87 +459,170 @@ export default function ManageStaff() {
                                 updatedata.map((item, index) => {
                                   return (
                                     <>
-                                      <option key={item.id}>{item.name}</option>
+                                      <option key={item.id} value={item.id}>
+                                        {item.name}
+                                      </option>
                                     </>
                                   );
                                 })}
                             </select>
                           </div>
+                          <div className="mb-3 col-6 position-relative">
+                            <label className="mb-1">Select Country Data</label>
+
+                            {/* Dropdown button */}
+                            <div
+                              className="form-control d-flex justify-content-between align-items-center"
+                              onClick={toggleDropdown}
+                              style={{ cursor: "pointer" }}
+                            >
+                              <span>
+                                {selectedCountries.length > 0
+                                  ? `${selectedCountries.length} selected`
+                                  : "Select countries"}
+                              </span>
+                              <span>▾</span>
+                            </div>
+
+                            {/* Dropdown menu */}
+                            {open && (
+                              <div
+                                className="border rounded mt-1 p-2 bg-white position-absolute w-100"
+                                style={{ zIndex: 1000 }}
+                              >
+                                {countries.map((country) => (
+                                  <div key={country.id} className="form-check">
+                                    <input
+                                      className="form-check-input"
+                                      type="checkbox"
+                                      value={country.id}
+                                      checked={selectedCountries.includes(
+                                        country.id,
+                                      )}
+                                      onChange={handleCheckboxChange}
+                                    />
+                                    <label className="form-check-label">
+                                      {country.name}
+                                    </label>
+                                  </div>
+                                ))}
+                              </div>
+                            )}
+                          </div>
                         </div>
 
-                        <div className="mb-3">
-                          <label
-                            htmlFor="inputText"
-                            className="form-label mb-2 md_staff"
-                          >
-                            Assign Roles
-                          </label>
-                          <FormControl style={{ width: "100%" }}>
-                            <Select
-                              id="demo-multiple-checkbox"
-                              multiple
-                              value={selectedRoles}
-                              onChange={handleRoleChange}
-                              input={<OutlinedInput />}
-                              renderValue={(selected) =>
-                                selected
-                                  .map(
-                                    (role) =>
-                                      roleOptions.find(
-                                        (option) => option.value === role
-                                      )?.label
-                                  )
-                                  .join(", ")
-                              }
-                              MenuProps={MenuProps}
-                              className="country_sel"
-                              placeholder="Assign Roles"
-                            >
-                              <MenuItem value="all">
-                                <Checkbox
-                                  checked={isAllSelected}
-                                  indeterminate={
-                                    selectedRoles.length > 0 &&
-                                    selectedRoles.length < roleOptions.length
-                                  }
-                                />
-                                <ListItemText primary="Select All" />
-                              </MenuItem>
-                              {roleOptions.map((option) => (
-                                <MenuItem
-                                  key={option.value}
-                                  value={option.value}
-                                >
-                                  <Checkbox
-                                    checked={selectedRoles.includes(
-                                      option.value
-                                    )}
-                                  />
-                                  <ListItemText primary={option.label} />
-                                </MenuItem>
-                              ))}
-                            </Select>
-                          </FormControl>
-                        </div>
-                        <div>
-                          <label
-                            htmlFor="inputPassword"
-                            className="form-label mb-2 md_staff"
-                          >
-                            New Password
-                          </label>
-                          <div className="col-sm-12">
-                            <input
-                              type="password"
-                              className="form-control"
-                              name="new_password"
+                        <div className="col-12 d-flex">
+                          <div className="mb-3 col-md-4">
+                            <label>Phone Code</label>
+                            <select
+                              name="country_code"
+                              id="country"
                               onChange={handlechange}
-                              id="inputPassword"
-                              placeholder="password"
+                              className="w-100 border p-2 rounded form-control"
+                            >
+                              <option>Select...</option>
+                              {updatedata &&
+                                updatedata.length > 0 &&
+                                updatedata.map((item, index) => {
+                                  return (
+                                    <>
+                                      <option
+                                        key={item.id}
+                                        value={item.phonecode}
+                                      >
+                                        +{item.phonecode} {item.shortname}
+                                      </option>
+                                    </>
+                                  );
+                                })}
+                            </select>
+                          </div>
+                          <div className="mb-3 col-md-8">
+                            <label>Phone Number</label>
+                            <input
+                              name="phone_no"
+                              id="country"
+                              onChange={handlechange}
+                              className="w-100 border p-2 rounded form-control"
                             />
-                            <p className="text-danger mb-0">
-                              {error.new_password}
-                            </p>
+                          </div>
+                        </div>
+
+                        <div className="row">
+                          <div className="mb-3 col-6">
+                            <label
+                              htmlFor="inputText"
+                              className="form-label mb-2 md_staff"
+                            >
+                              Assign Roles
+                            </label>
+                            <FormControl style={{ width: "100%" }}>
+                              <Select
+                                id="demo-multiple-checkbox"
+                                multiple
+                                value={selectedRoles}
+                                onChange={handleRoleChange}
+                                input={<OutlinedInput />}
+                                renderValue={(selected) =>
+                                  selected
+                                    .map(
+                                      (role) =>
+                                        roleOptions.find(
+                                          (option) => option.value === role,
+                                        )?.label,
+                                    )
+                                    .join(", ")
+                                }
+                                MenuProps={MenuProps}
+                                className="country_sel"
+                                placeholder="Assign Roles"
+                              >
+                                <MenuItem value="all">
+                                  <Checkbox
+                                    checked={isAllSelected}
+                                    indeterminate={
+                                      selectedRoles.length > 0 &&
+                                      selectedRoles.length < roleOptions.length
+                                    }
+                                  />
+                                  <ListItemText primary="Select All" />
+                                </MenuItem>
+                                {roleOptions.map((option) => (
+                                  <MenuItem
+                                    key={option.value}
+                                    value={option.value}
+                                  >
+                                    <Checkbox
+                                      checked={selectedRoles.includes(
+                                        option.value,
+                                      )}
+                                    />
+                                    <ListItemText primary={option.label} />
+                                  </MenuItem>
+                                ))}
+                              </Select>
+                            </FormControl>
+                          </div>
+                          <div className="col-6">
+                            <label
+                              htmlFor="inputPassword"
+                              className="form-label mb-2 md_staff"
+                            >
+                              New Password
+                            </label>
+                            <div className="col-sm-12">
+                              <input
+                                type="password"
+                                className="form-control"
+                                name="new_password"
+                                onChange={handlechange}
+                                id="inputPassword"
+                                placeholder="password"
+                              />
+                              <p className="text-danger mb-0">
+                                {error.new_password}
+                              </p>
+                            </div>
                           </div>
                         </div>
                       </div>
@@ -603,7 +720,7 @@ export default function ManageStaff() {
                                 </td>
                                 <td>
                                   <div className="action_btn1 d-flex align-items-center">
-                                  {/* <CgPerformance    style={{
+                                    {/* <CgPerformance    style={{
                                         color: "rgb(27 34 69)",
                                         marginRight: "10px",
                                         width: "20px",
@@ -688,7 +805,7 @@ export default function ManageStaff() {
                   </div>
                   <div className="newModalGap">
                     <div className="row">
-                      <div className="col-12">
+                      <div className="col-6">
                         <label
                           htmlFor="exampleFormControlInput1"
                           className="ware_label"
@@ -705,9 +822,8 @@ export default function ManageStaff() {
                           name="staff_email"
                         />
                       </div>
-                    </div>
-                    <div className="row">
-                      <div className="col-12">
+
+                        <div className="col-6">
                         <label htmlFor="inputText" className="ware_label">
                           Full Name
                         </label>
@@ -722,6 +838,7 @@ export default function ManageStaff() {
                         />
                       </div>
                     </div>
+                    
                     {/* <div className="mb-3">
                       <label
                         htmlFor="country"
@@ -746,68 +863,56 @@ export default function ManageStaff() {
                       </div>
                     </div> */}
                     <div className="d-flex col-12">
- <div className="mb-3 col-md-4">
-                            <label>Country Code</label>
-                            <select
-                              name="country_code"
+                      <div className="mb-3 col-md-4">
+                        <label>Country Code</label>
+                        <input
+                          name="country_code"
                           id="country"
                           value={inputdata?.country_code}
                           className="form-control"
                           onChange={handleupdateapi}
-                            >
-                              <option>Select...</option>
-                              {updatedata &&
-                                updatedata.length > 0 &&
-                                updatedata.map((item, index) => {
-                                  return (
-                                    <>
-                                      <option key={item.id}>+{item.phonecode} {item.shortname}</option>
-                                    </>
-                                  );
-                                })}
-                            </select>
-                          </div>
-                              <div className="col-8">
-                                <div className="col-12">
-                        <label htmlFor="inputText" className="ware_label">
-                          Phone Number
-                        </label>
-                        <input
-                          type="text"
-                          onChange={handleupdateapi}
-                          name="phone_no"
-                          value={inputdata?.phone_no}
-                          className="form-control mb-3"
-                          id="inputText"
-                          placeholder="98745658"
                         />
                       </div>
-                              </div>
-                          </div>
-
-                               <div className="mb-3 col-md-12">
-                            <label>Country</label>
-                            <select
-                              name="country"
-                          id="country"
-                          value={inputdata?.country}
-                          className="form-control"
-                          onChange={handleupdateapi}
-                            >
-                              <option>Select...</option>
-                              {updatedata &&
-                                updatedata.length > 0 &&
-                                updatedata.map((item, index) => {
-                                  return (
-                                    <>
-                                      <option key={item.id}>{item.name}</option>
-                                    </>
-                                  );
-                                })}
-                            </select>
-                          </div>
-                    <div className="row mb-3 ">
-                      <div className="col-12">
+                      <div className="col-8">
+                        <div className="col-12">
+                          <label htmlFor="inputText" className="ware_label">
+                            Phone Number
+                          </label>
+                          <input
+                            type="text"
+                            onChange={handleupdateapi}
+                            name="phone_no"
+                            value={inputdata?.phone_no}
+                            className="form-control mb-3"
+                            id="inputText"
+                            placeholder="98745658"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                      <div className="row">
+                    <div className="mb-3 col-md-6">
+                      <label>Country</label>
+                      <select
+                        name="country"
+                        id="country"
+                        value={inputdata?.country}
+                        className="form-control"
+                        onChange={handleupdateapi}
+                      >
+                        <option>Select...</option>
+                        {updatedata &&
+                          updatedata.length > 0 &&
+                          updatedata.map((item, index) => {
+                            return (
+                              <>
+                                <option key={item.id} value={item.id}>{item.name}</option>
+                              </>
+                            );
+                          })}
+                      </select>
+                    </div>
+                      <div className="col-6">
                         <label htmlFor="multipleSelect" className="ware_label">
                           Assign Roles
                         </label>
@@ -823,8 +928,8 @@ export default function ManageStaff() {
                                 .map(
                                   (role) =>
                                     roleOptions.find(
-                                      (option) => option.value === role
-                                    )?.label
+                                      (option) => option.value === role,
+                                    )?.label,
                                 )
                                 .join(", ")
                             }
@@ -847,9 +952,9 @@ export default function ManageStaff() {
                           <p className="text-danger mb-0">{error.roles}</p>
                         )}
                       </div>
-                    </div>
+                      </div>
                     <div className="row">
-                      <div className="col-12">
+                      <div className="col-6">
                         <label htmlFor="inputPassword" className="ware_label">
                           New Password
                         </label>
@@ -863,6 +968,48 @@ export default function ManageStaff() {
                         />
                         <p className="text-danger mb-0">{error.new_password}</p>
                       </div>
+                      <div className="mb-3 col-6 position-relative">
+                            <label className="mb-1">Select Country Data</label>
+
+                            {/* Dropdown button */}
+                            <div
+                              className="form-control d-flex justify-content-between align-items-center"
+                              onClick={toggleDropdown}
+                              style={{ cursor: "pointer" }}
+                            >
+                              <span>
+                                {selectedCountries.length > 0
+                                  ? `${selectedCountries.length} selected`
+                                  : "Select countries"}
+                              </span>
+                              <span>▾</span>
+                            </div>
+
+                            {/* Dropdown menu */}
+                            {open && (
+                              <div
+                                className="border rounded mt-1 p-2 bg-white position-absolute w-100"
+                                style={{ zIndex: 1000 }}
+                              >
+                                {countries.map((country) => (
+                                  <div key={country.id} className="form-check">
+                                    <input
+                                      className="form-check-input"
+                                      type="checkbox"
+                                      value={country.id}
+                                      checked={selectedCountries.includes(
+                                        country.id,
+                                      )}
+                                      onChange={handleCheckboxChange}
+                                    />
+                                    <label className="form-check-label">
+                                      {country.name}
+                                    </label>
+                                  </div>
+                                ))}
+                              </div>
+                            )}
+                          </div>
                     </div>
                     <div className="text-center mt-2 unsetLt">
                       <Button

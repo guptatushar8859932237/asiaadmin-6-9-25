@@ -35,7 +35,6 @@ export default function WarehouseDetails() {
 
     const GetFreightImages = () => {
         const data = { freight_id: info.freight_id, uploaded_by: "1" };
-      
         axios
           .post(`${process.env.REACT_APP_BASE_URL}GetFreightImages`, data)
           .then((response) => {
@@ -197,7 +196,7 @@ export default function WarehouseDetails() {
                               </td>
                               <td>
                                 <p className="client_para1">
-                                  {info.warehouse_cost}
+                                  {info.order_warehouse_cost}
                                 </p>
                               </td>
                             </tr>
@@ -210,7 +209,7 @@ export default function WarehouseDetails() {
                               </td>
                               <td>
                                 <p className="client_para1 ">
-                                  {info.costs_to_collect}
+                                  {info.order_costs_to_collect}
                                 </p>
                               </td>
                             </tr>
@@ -264,7 +263,7 @@ export default function WarehouseDetails() {
                               </td>
                               <td>
                                 <p className="client_para1">
-                                  {info.total_warehouse_weight}
+                                  {info.weight}
                                 </p>
                               </td>
                             </tr>
@@ -275,7 +274,7 @@ export default function WarehouseDetails() {
                               </td>
                               <td>
                                 <p className="client_para1">
-                                 {info.total_warehouse_dimension}
+                                 {info?.dimensions}
                                 </p>
                               </td>
                             </tr>

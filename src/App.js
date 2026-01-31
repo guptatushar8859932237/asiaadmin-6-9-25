@@ -113,7 +113,7 @@ const Uniovwersalpage = lazy(() => import("./components/Uniovwersalpage"));
 export default function App() {
   const [text, setText] = useState("");
   const [permission, setPermission] = useState("");
-  console.log("21-1");
+  console.log("29test -1");
   return (
     <MyContext1.Provider value={{ text, setText }}>
       <MyContext2.Provider value={{ permission, setPermission }}>
@@ -182,7 +182,7 @@ export default function App() {
                   element={<WarehouseOrder />}
                 />
                 <Route
-                  index
+                  index       
                   path="/Admin/SupplierWarehouse"
                   element={<SupplierWarehouse />}
                 />

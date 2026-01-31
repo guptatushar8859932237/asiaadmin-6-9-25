@@ -34,7 +34,7 @@ const menuItemAnimation = {
 };
 const SidebarMenu = ({ route, showAnimation, isOpen, setIsOpen }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const location = useLocation(); // Get the current route
+  const location = useLocation(); // Get the current route           uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuk
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
     setIsOpen(true);

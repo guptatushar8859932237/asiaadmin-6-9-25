@@ -136,11 +136,11 @@ const routes = [
         name: "Warehouse Order",
         icon: <ShoppingCartOutlinedIcon />,
       },
-      // {
-      //   path: "/Admin/SupplierWarehouse",
-      //   name: "Supplier Warehouse Order",
-      //   icon: <ShoppingCartOutlinedIcon />,
-      // },
+      {
+        path: "/Admin/SupplierWarehouse",
+        name: "Supplier Warehouse Order",
+        icon: <ShoppingCartOutlinedIcon />,
+      },
        {
         path: "/Admin/Batches",
         name: "Batches",
@@ -329,7 +329,6 @@ const SideBar = ({ children }) => {
             />
           </div>):(   <BiRightArrowCircle size={30}  onClick={toggle}  color="blue" />)
           }
-         
         </div>
         <div className="text-center">
           <div>

@@ -175,13 +175,11 @@ export default function Managefreight() {
   }, []);
   const userid = JSON.parse(localStorage.getItem("data123"))?.id;
   const usertype = JSON.parse(localStorage.getItem("data123"))?.user_type;
-
   const getFreightWithoutpermission = async (page) => {
     const payload =    { user_id: userid, user_type: usertype, page: page }
       try {
           const response = await axios.post(
             `${process.env.REACT_APP_BASE_URL}freight-list`,payload);
-          // setLoader(false);
           console.log("frightDataresponse", response.data);
           setPagenationdata(response.data);
           setData(response.data.data);
@@ -190,7 +188,6 @@ export default function Managefreight() {
           toast.error(error.response?.data?.message || "Something went wrong");
         }
   }
-
   const frightData = async (page) => {
     try {
       const postdata = {

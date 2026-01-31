@@ -7,49 +7,24 @@ import { toast } from "react-toastify";
 export default function Freightbyuserdetail() {
   const infolocation = useLocation();
   const navigate = useNavigate();
-  const [document, setDocument] = useState([]);
-  const [document1, setDocument1] = useState([]);
-  const [packing, setPacking] = useState([]);
   const [documents, setDocuments] = useState({});
-  const [licenses, setLicenses] = useState([]);
   const info = infolocation?.state?.data[0];
   console.log(infolocation?.state?.data[0]);
   const handleclicknav = () => {
     navigate("/Admin/freight");
   };
-
-     const GetFreightImages = () => {
-      const data = { freight_id: info.freight_id,uploaded_by:"1" };
-    
-      axios
-        .post(`${process.env.REACT_APP_BASE_URL}GetFreightImages`, data)
-        .then((response) => {
-          console.log(response.data.data);
-    
-          // Save all groups (Customs, Packing, Invoices, Licenses, etc.)
-          setDocuments(response.data.data);
-        })
-        .catch((error) => {
-          console.log(error.response?.data);
-        });
-    };
-  // const GetFreightImages = () => {
-  //   console.log(info);
-  //   const data = { freight_id: info.freight_id };
-  //   axios
-  //     .post(`${process.env.REACT_APP_BASE_URL}GetFreightImages`, data)
-  //     .then((response) => {
-  //       console.log(response.data);
-  //       setDocument(response.data.data["Supplier Invoice"]);
-  //       setLicenses(response.data.data.Licenses);
-  //       setDocument1(response.data.data["Other Documents"]);
-  //       setPacking(response.data.data["Packing List"]);
-  //       console.log(response.data.data["Supplier Invoice"]);
-  //     })
-  //     .catch((error) => {
-  //       console.log(error.response.data);
-  //     });
-  // };
+  const GetFreightImages = () => {
+    const data = { freight_id: info.freight_id, uploaded_by: "1" };
+    axios
+      .post(`${process.env.REACT_APP_BASE_URL}GetFreightImages`, data)
+      .then((response) => {
+        console.log(response.data.data);
+        setDocuments(response.data.data);
+      })
+      .catch((error) => {
+        console.log(error.response?.data);
+      });
+  };
   useEffect(() => {
     GetFreightImages();
   }, []);
@@ -114,7 +89,6 @@ export default function Freightbyuserdetail() {
                               ? info.client_address_1
                               : "    Unit 4 Villa Valencia2 Anemoon Road Glen Marais 1619 South Africa"}
                           </p>
-                          {/* <p className='client_para'>{info.cellphone}</p> */}
                           <p className="client_para">
                             {info.shipment_ref === "shipper"
                               ? info.client_cellphone
@@ -344,14 +318,6 @@ export default function Freightbyuserdetail() {
                               <p class="client_para1">{info.fcl_lcl}</p>
                             </td>
                           </tr>
-                          {/* <tr>
-                            <td><p class="client_para1">Insurance:</p></td>
-                            <td><p class="client_para1">Yes</p></td>
-                          </tr> */}
-                          {/* <tr>
-                            <td><p class="client_para1 mb-3">Warehouse:</p></td>
-                            <td><p class="client_para1 mb-3">xxxxxxxxxx</p></td>
-                          </tr> */}
                           <tr>
                             <td>
                               <p className="ship_hd">POD Information</p>
@@ -501,49 +467,50 @@ export default function Freightbyuserdetail() {
                   </div>
                 </div>
               </div>
-               <div className="col-md-4">
-  <div className="card desti_card">
-    <div className="card-body mb-3">
-      {Object.keys(documents).map((groupName, groupIndex) => (
-        <div key={groupIndex} className="mb-2">
-          <label>{groupName} :</label>
-          {documents[groupName]?.map((item, index) => (
-            <div key={item.id} className="d-flex align-items-center">
-              <a
-                href={`${process.env.REACT_APP_BASE_URLdocument}${item?.document}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="view_docu ms-2"
-              >
-                View Document
-              </a>
-              <DeleteIcon
-                onClick={() => deleteapi(item.id)}
-                className="text-danger ms-2"
-                style={{ cursor: "pointer" }}
-              />
-            </div>
-          ))}
-        </div>
-      ))}
-
-      {/* Quotation (separate because it's not part of groups) */}
-      <div className="mb-2">
-        <label>Attach Quotation :</label>
-        {info.attachment_Estimate && (
-          <a
-            href={`${process.env.REACT_APP_BASE_URLdocument}${info?.attachment_Estimate}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="view_docu ms-2"
-          >
-            View Document
-          </a>
-        )}
-      </div>
-    </div>
-  </div>
-</div>
+              <div className="col-md-4">
+                <div className="card desti_card">
+                  <div className="card-body mb-3">
+                    {Object.keys(documents).map((groupName, groupIndex) => (
+                      <div key={groupIndex} className="mb-2">
+                        <label>{groupName} :</label>
+                        {documents[groupName]?.map((item, index) => (
+                          <div
+                            key={item.id}
+                            className="d-flex align-items-center"
+                          >
+                            <a
+                              href={`${process.env.REACT_APP_BASE_URLdocument}${item?.document}`}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="view_docu ms-2"
+                            >
+                              View Document
+                            </a>
+                            <DeleteIcon
+                              onClick={() => deleteapi(item.id)}
+                              className="text-danger ms-2"
+                              style={{ cursor: "pointer" }}
+                            />
+                          </div>
+                        ))}
+                      </div>
+                    ))}
+                    <div className="mb-2">
+                      <label>Attach Quotation :</label>
+                      {info.attachment_Estimate && (
+                        <a
+                          href={`${process.env.REACT_APP_BASE_URLdocument}${info?.attachment_Estimate}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="view_docu ms-2"
+                        >
+                          View Document
+                        </a>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>

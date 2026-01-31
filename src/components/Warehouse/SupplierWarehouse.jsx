@@ -69,10 +69,8 @@ export default function SupplierWarehouse() {
     freightType: "",
     freightSpeed: "",
   });
-
   const [show1, setShow1] = useState(false);
   const [selectedDocs, setSelectedDocs] = useState([]);
-
   const docOptions = [
     { id: "Warehouse Entry Docs", label: "Shipper Docs" },
     { id: "Warehouse Entry Docs", label: "Warehouse Docs" },
@@ -111,11 +109,9 @@ export default function SupplierWarehouse() {
     setIsModalOpen(false);
     handleOpenModal3();
   };
-
   const handleCloseModalpopup = () => {
     setIsModalOpen(false);
   };
-
   const handleOpenModal2 = () => setIsModalOpen2(true);
   const handleOpenModal3 = () => setIsModalOpen3(true);
   const handleCloseModal2 = () => setIsModalOpen2(false);
@@ -123,10 +119,8 @@ export default function SupplierWarehouse() {
   useEffect(() => {
     getData();
   }, []);
-
   const userid = JSON.parse(localStorage.getItem("data123"))?.id;
   const usertype = JSON.parse(localStorage.getItem("data123"))?.user_type;
-
   const getData = async (page) => {
     try {
       const datapost = {
@@ -175,7 +169,6 @@ export default function SupplierWarehouse() {
       }
     }
   };
-
   const getAllBatch = (item) => {
     console.log(item);
     const payload = {
@@ -272,7 +265,7 @@ export default function SupplierWarehouse() {
         toast.error(error.response.data.message);
       });
   };
-
+console.log(pagenationData,pagenationData.limit,pagenationData.total)
   const totalPage = Math.ceil(pagenationData.total / pagenationData.limit);
   const handleInputChange = (e) => {
     const { name, value } = e.target;

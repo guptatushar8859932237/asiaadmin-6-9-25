@@ -297,8 +297,8 @@ export default function WarehouseOrder() {
     formdata1.append("no_of_packages", selectedData.no_of_packages);
     formdata1.append("total_dimension", selectedData.total_dimension);
     formdata1.append("weight", selectedData.weight);
-    formdata1.append("costs_to_collect", selectedData.costs_to_collect);
-    formdata1.append("warehouse_cost", selectedData.warehouse_cost);
+    formdata1.append("costs_to_collect", selectedData.order_costs_to_collect);
+    formdata1.append("warehouse_cost", selectedData.order_warehouse_cost);
     formdata1.append("warehouse_dispatch", selectedData.warehouse_dispatch);
     formdata1.append("cost_to_dispatch", selectedData.cost_to_dispatch);
     formdata1.append("documentName", selectedData.documentName);
@@ -309,7 +309,6 @@ export default function WarehouseOrder() {
     // Append files (with static key "document")
     selectedDocs.forEach((doc) => {
       console.log("Doc Type:", doc.name);
-
       doc.files.forEach((file) => {
         formdata1.append(doc.name, file); // 👈 each file append
         console.log("File:", file.name, "| Size:", file.size, "bytes");
@@ -366,6 +365,7 @@ export default function WarehouseOrder() {
   };
 
   const handleclicknavi = async (item) => {
+   console.log(item)
     try {
       const datapost = {
         staff_id: userid,
@@ -599,23 +599,7 @@ const handleChangeSupplier=(e)=>{
   setResponseData(e.target.value)
 }
 
-// const AssignSupplier = ()=>{
-//   const payload={
-//       supplier_id:responseData,
-//       freight_id:freightIdPass,
-//       order_id:orderID
-
-//     }
-//   console.log(payload)
-//   try {
-//     const response = axios.post(`${process.env.REACT_APP_BASE_URL}assignWarehouseSupplierToOrder`,payload)
-//     console.log(response)
-//   } catch (error) {
-//     console.log(error)
-//   }
-// }
 const AssignSupplier = async () => {
-  // 🔒 Basic frontend validation
   if (!responseData) {
     toast.error("Please select a supplier");
     return;
@@ -1302,9 +1286,9 @@ const AssignSupplier = async () => {
                                       fullWidth
                                       label="Costs to collect"
                                       variant="outlined"
-                                      name="costs_to_collect"
+                                      name="order_costs_to_collect"
                                       value={
-                                        selectedData.costs_to_collect || ""
+                                        selectedData.order_costs_to_collect || ""
                                       }
                                       onChange={handleInputChange}
                                     />
@@ -1314,8 +1298,8 @@ const AssignSupplier = async () => {
                                       fullWidth
                                       label="Warehouse Cost"
                                       variant="outlined"
-                                      name="warehouse_cost"
-                                      value={selectedData.warehouse_cost || ""}
+                                      name="order_warehouse_cost"
+                                      value={selectedData.order_warehouse_cost || ""}
                                       onChange={handleInputChange}
                                     />
                                   </Grid>

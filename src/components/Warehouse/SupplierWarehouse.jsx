@@ -134,9 +134,13 @@ export default function SupplierWarehouse() {
       );
       if (permission.data.success === true) {
         setLoader(true);
+        const payload = {
+          user_id: userid,
+        }
         try {
           const response = await axios.get(
             `${process.env.REACT_APP_BASE_URL}GetSupplierCreatedWarehouseOrders`,
+            { params: payload }
           );
           setLoader(false);
           if (response.data && response.data.data) {
@@ -293,26 +297,17 @@ console.log(pagenationData,pagenationData.limit,pagenationData.total)
     formdata1.append("warehouse_dispatch", selectedData.warehouse_dispatch);
     formdata1.append("cost_to_dispatch", selectedData.cost_to_dispatch);
     formdata1.append("documentName", selectedData.documentName);
-
-    // If packages is an object or array, stringify it
     formdata1.append("packages", JSON.stringify(selectedData.packages));
-
-    // Append files (with static key "document")
     selectedDocs.forEach((doc) => {
       console.log("Doc Type:", doc.name);
-
       doc.files.forEach((file) => {
-        formdata1.append(doc.name, file); // 👈 each file append
+        formdata1.append(doc.name, file); 
         console.log("File:", file.name, "| Size:", file.size, "bytes");
       });
     });
-
-    // Optional: Debug log of FormData contents
     for (let [key, value] of formdata1.entries()) {
       console.log(`${key}:`, value);
     }
-
-    // Submit the data via axios
     axios
       .post(`${process.env.REACT_APP_BASE_URL}editWarehouseDetails`, formdata1)
       .then((response) => {
@@ -326,7 +321,6 @@ console.log(pagenationData,pagenationData.limit,pagenationData.total)
         toast.error("Error updating warehouse order");
       });
   };
-
   const closeModal1 = () => {
     setIsModalOpen1(false);
   };

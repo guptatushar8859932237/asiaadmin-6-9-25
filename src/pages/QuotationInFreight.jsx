@@ -18,7 +18,7 @@ export default function QuotationInFreight() {
     JSON.parse(localStorage.getItem("activeChat"));
     
   const RECEIVER_ID =
-    activeChat?.id || activeChat?.receiver_id;
+    activeChat?.id || activeChat?.receiver_id || activeChat?.sender_id;
 
   const [conversationId, setConversationId] = useState(
     activeChat?.conversation_id || null
@@ -101,7 +101,7 @@ export default function QuotationInFreight() {
     if (!message.trim() || !conversationId) return;
     const payload = {
       sender_id: LOGGED_IN_USER_ID,
-      receiver_id: RECEIVER_ID,
+      // receiver_id: RECEIVER_ID,
       conversation_id: conversationId,
       message,
     };

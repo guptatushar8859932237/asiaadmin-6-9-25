@@ -27,6 +27,7 @@ const Header = () => {
   const fetchNotifications = async () => {
     try {
       const response = await axios.post(`${process.env.REACT_APP_BASE_URL}notification-users`, { user_id: userId });
+      console.log(response.data.data)
       setNotifications(response.data.data || []);
       setCount(response.data.unseenCount || 0);
     } catch (error) {
@@ -105,6 +106,7 @@ const Header = () => {
         >
           <MenuItem onClick={() => { navigate('/Admin/profile'); setAnchorEl(null); }}>Profile</MenuItem>
           <MenuItem onClick={() => { navigate('/Admin/changepassword'); setAnchorEl(null); }}>Change Password</MenuItem>
+          <MenuItem onClick={() => { navigate('/Admin/User'); setAnchorEl(null); }}>Chatting</MenuItem>
           <MenuItem onClick={() => { handleLogout(); setAnchorEl(null); }}>Logout</MenuItem>
         </Menu>
       </div>

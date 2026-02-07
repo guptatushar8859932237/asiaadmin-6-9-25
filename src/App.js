@@ -88,6 +88,7 @@ import Dashboard1 from "./components/KPI/Dashboard";
 import DownloadEstimation from "./pages/DownloadEstimation";
 import QuotationInFreightCostumer from "./components/Chatting/QuotationInFreightCostumer";
 import SupplierWarehouse from "./components/Warehouse/SupplierWarehouse";
+import User from "./components/Chatting/User";
 const Dashboard = lazy(() => import("./pages/Dashboard"));
 const Users = lazy(() => import("./pages/Users"));
 const Messages = lazy(() => import("./pages/Messages"));
@@ -155,6 +156,7 @@ export default function App() {
                   element={<Billofladding />}
                 />
                 <Route index path="/Admin/messages" element={<Messages />} />
+                <Route index path="/Admin/user" element={<User />} />
                 <Route index path="/Admin/analytics" element={<Analytics />} />
                 <Route index path="/Admin/SupplierEstimation" element={<SupplierEstimation />} />
                 <Route

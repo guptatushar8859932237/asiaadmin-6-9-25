@@ -158,7 +158,7 @@ export default function Editpdfclearance() {
     }));
     try {
       const response = await axios.post(
-        `${process.env.REACT_APP_BASE_URL}calculate-clearance`,
+       `${process.env.REACT_APP_BASE_URL}calculate-clearance`,
         {
           data: reqdata,
         }

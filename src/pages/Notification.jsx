@@ -6,8 +6,9 @@ import Swal from "sweetalert2";
 import Select from "react-select";
 import CloseIcon from "@mui/icons-material/Close";
 import { Modal } from "bootstrap";
+import { CKEditor } from "@ckeditor/ckeditor5-react";
+import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
 const pageSize = 10;
-
 const Notification = () => {
   const [data, setData] = useState([]);
   const [inpdata, setInpdata] = useState({
@@ -15,37 +16,34 @@ const Notification = () => {
     user_id: "",
     title: "",
     description: "",
+     WhatsApp: false, // ✅ ADD THIS
   });
-
   const [showContent, setShowContent] = useState(false);
   const [showContent1, setShowContent1] = useState(false);
   const [showMultiUser, setShowMultiUser] = useState(false);
   const [showBatchUser, setShowBatchUser] = useState(false);
   const [batchId, setBatchId] = useState("");
-
   const [clientlist, setClientlist] = useState([]);
   const [stafflist, setStafflist] = useState([]);
   const [batchlist1, setBatchlist1] = useState([]);
   const [batchUserList, setBatchUserList] = useState([]);
   const [selectedUsers, setSelectedUsers] = useState([]);
-
   const [currentPage, setCurrentPage] = useState(1);
   const [error, setError] = useState({});
-
-  const emailRef = useRef();
-    const titleRef = useRef();
+  const titleRef = useRef();
   const messageRef = useRef();
-  const selectRef = useRef();
-
-
-  const showdata = () => {
-    axios
-      .post(`${process.env.REACT_APP_BASE_URL}notification-list`)
-      .then((response) => {
-        setData(response.data.data);
-      });
+  const documentRef = useRef();
+  const showdata = async () => {
+    try {
+      const response = await axios.post(
+        `${process.env.REACT_APP_BASE_URL}notification-list`,
+      );
+      setData(response?.data?.data || []);
+    } catch (err) {
+      console.error(err);
+      setError("Failed to load notifications");
+    }
   };
-
   const handledelete = (id) => {
     Swal.fire({
       title: "Are you sure?",
@@ -71,17 +69,14 @@ const Notification = () => {
       }
     });
   };
-
   const handlechange = (e) => {
     const { name, value } = e.target;
     setInpdata({ ...inpdata, [name]: value });
-
     if (name === "send_to") {
       setShowContent(value === "4");
       setShowContent1(value === "3");
       setShowMultiUser(value === "5");
       setShowBatchUser(value === "6");
-
       if (value === "3" || value === "5" || value === "6") {
         axios
           .get(`${process.env.REACT_APP_BASE_URL}clientlist`)
@@ -105,11 +100,13 @@ const Notification = () => {
       }
     }
   };
-
+  const handlechangeFile = (e) => {
+    const { name, files } = e.target;
+    setInpdata({ ...inpdata, [name]: files[0] });
+  };
   const handleBatchChange = (e) => {
     const id = e.target.value;
     setBatchId(id);
-
     if (id) {
       axios
         .post(`${process.env.REACT_APP_BASE_URL}getClientByBatchId`, {
@@ -121,15 +118,13 @@ const Notification = () => {
           setInpdata({ ...inpdata, user_id: userIds });
         })
         .catch((error) => {
-      console.log("i")
-          // toast.error("Failed to fetch users for the batch.");
+          console.log("i");
         });
     } else {
       setBatchUserList([]);
       setInpdata({ ...inpdata, user_id: "" });
     }
   };
-
   const handelvalidate = (value) => {
     let error = {};
     if (!value.title) error.title = "Title is required";
@@ -139,42 +134,52 @@ const Notification = () => {
     }
     setError(error);
   };
-
   const postdata = () => {
     handelvalidate(inpdata);
   };
-
   const apihit = () => {
-    const inpdata1 = {
-      send_to: inpdata.send_to,
-      batch_id: parseInt(batchId),
-      user_id: inpdata.user_id,
-      title: inpdata.title,
-      description: inpdata.description,
-    };
-
+    const inpdata1 = new FormData();
+    inpdata1.append("send_to", inpdata.send_to);
+    inpdata1.append("batch_id", parseInt(batchId));
+    inpdata1.append("user_id", inpdata.user_id);
+    inpdata1.append("title", inpdata.title);
+    inpdata1.append("description", inpdata.description);
+    inpdata1.append("WhatsApp", inpdata.WhatsApp ? "1" : "0");
+    if (documentRef.current && documentRef.current.files.length > 0) {
+      Array.from(documentRef.current.files).forEach((file) => {
+        inpdata1.append("document", file);
+      });
+    }
     axios
       .post(`${process.env.REACT_APP_BASE_URL}send-notification`, inpdata1)
       .then((response) => {
-        toast.success(response.data.message);
-         const modalEl = document.getElementById("exampleModal");
-const modalInstance = Modal.getOrCreateInstance(modalEl);
-modalInstance.hide();
-
-// Clean up leftover backdrop manually
-setTimeout(() => {
-  document.querySelectorAll(".modal-backdrop").forEach((el) => el.remove());
-  document.body.classList.remove("modal-open");
-  document.body.style = "";
-}, 300); // wait for animation
-          if (titleRef.current) titleRef.current.value = "";
-    if (messageRef.current) messageRef.current.value = "";
+        if (response.data?.success === false) {
+          toast.error(response.data.message || "Operation failed");
+          return;
+        }
+        toast.success(
+          response.data?.message || "Notification sent successfully",
+        );
+        const modalEl = document.getElementById("exampleModal");
+        const modalInstance = Modal.getOrCreateInstance(modalEl);
+        modalInstance.hide();
+        setTimeout(() => {
+          document
+            .querySelectorAll(".modal-backdrop")
+            .forEach((el) => el.remove());
+          document.body.classList.remove("modal-open");
+          document.body.style = "";
+        }, 300);
+        if (titleRef.current) titleRef.current.value = "";
+        if (messageRef.current) messageRef.current.value = "";
+        if (documentRef.current) documentRef.current.value = "";
         setInpdata({
-          send_to: "",
-          user_id: "",
-          title: "",
-          description: "",
-        });
+  send_to: "",
+  user_id: "",
+  title: "",
+  description: "",
+  WhatsApp: false, // ✅ reset checkbox
+});
         setSelectedUsers([]);
         setShowContent(false);
         setShowContent1(false);
@@ -183,152 +188,227 @@ setTimeout(() => {
         setBatchId("");
         setBatchUserList([]);
         showdata();
-          if (selectRef.current) selectRef.current.value = "";
       })
       .catch((error) => {
-        if (error.response) {
-          toast.error(`Error: ${error.response.data.message || "Server error"}`);
-        } else {
-          toast.error("Network or request error.");
-        }
+        const errorMessage =
+          error?.response?.data?.message || error?.message || "Server error";
+        toast.error(errorMessage);
       });
   };
-
   const handlePageChange = (page) => {
     setCurrentPage(page);
   };
-
   useEffect(() => {
     showdata();
-    axios.get(`${process.env.REACT_APP_BASE_URL}getAllBatch`).then((response) => {
-      if (response.data.success) {
-        setBatchlist1(response.data.data);
-      }
-    });
   }, []);
-
   const totalPage = Math.ceil(data.length / pageSize);
   const startIndex = (currentPage - 1) * pageSize;
   const currentdata = data.slice(startIndex, startIndex + pageSize);
   return (
     <>
-     <div className="wpWrapper">
+      <div className="wpWrapper">
         <div className="container-fluid">
-        <div className="d-flex justify-content-between align-items-center mb-3">
-          <h4>Notification</h4>
-          <button data-bs-toggle="modal" data-bs-target="#exampleModal" className="btn btn-primary">
-            Send Notification
-          </button>
-        </div>
-
-        <div className="modal fade" id="exampleModal" tabIndex="-1">
-          <div className="modal-dialog modal-dialog-centered">
-            <div className="modal-content">
-              <div className="modal-header">
-                <h5 className="modal-title">Add Notification</h5>
-                <button className="btn-close" data-bs-dismiss="modal">
-                  <CloseIcon />
-                </button>
-              </div>
-              <div className="modal-body">
-                <div className="d-flex flex-wrap gap-3 mb-3">
-                  {[
-                    { label: "All User", value: "2" },
-                    { label: "All Staff", value: "1" },
-                    { label: "Particular User", value: "3" },
-                    { label: "Particular Staff", value: "4" },
-                    { label: "Multiple Users", value: "5" },
-                    { label: "Users by Batch", value: "6" },
-                  ].map((opt) => (
-                    <label key={opt.value}>
-                      <input type="radio" value={opt.value} name="send_to" onChange={handlechange} /> {opt.label}
-                    </label>
-                  ))}
+          <div className="d-flex justify-content-between align-items-center mb-3">
+            <h4>Notification</h4>
+            <button
+              data-bs-toggle="modal"
+              data-bs-target="#exampleModal"
+              className="btn btn-primary"
+            >
+              Send Notification
+            </button>
+          </div>
+          <div className="modal fade" id="exampleModal" tabIndex="-1">
+            <div className="modal-dialog modal-dialog-centered">
+              <div className="modal-content">
+                <div className="modal-header">
+                  <h5 className="modal-title">Add Notification</h5>
+                  <button className="btn-close" data-bs-dismiss="modal">
+                    <CloseIcon />
+                  </button>
                 </div>
-
-                {showContent1 && (
-                  <div className="mb-3">
-                    <label>Particular User</label>
-                    <select name="user_id" className="form-control" onChange={handlechange}>
-                      <option value="">Select...</option>
-                      {clientlist.map((item) => (
-                        <option key={item.id} value={item.id}>{item.client_name}</option>
-                      ))}
-                    </select>
+                <div className="modal-body">
+                  <div className="d-flex flex-wrap gap-3 mb-3">
+                    {[
+                      { label: "All User", value: "2" },
+                      { label: "All Staff", value: "1" },
+                      { label: "Particular User", value: "3" },
+                      { label: "Particular Staff", value: "4" },
+                      { label: "Multiple Users", value: "5" },
+                      { label: "Users by Batch", value: "6" },
+                      { label: "All Supplier", value: "7" },
+                    ].map((opt) => (
+                      <label key={opt.value}>
+                        <input
+                          type="radio"
+                          value={opt.value}
+                          name="send_to"
+                          onChange={handlechange}
+                        />{" "}
+                        {opt.label}
+                      </label>
+                    ))}
                   </div>
-                )}
-
-                {showContent && (
-                  <div className="mb-3">
-                    <label>Particular Staff</label>
-                    <select name="user_id" className="form-control" onChange={handlechange}>
-                      <option value="">Select...</option>
-                      {stafflist.map((item) => (
-                        <option key={item.id} value={item.id}>{item.full_name}</option>
-                      ))}
-                    </select>
-                  </div>
-                )}
-
-                {showMultiUser && (
-                  <div className="mb-3">
-                    <label>Multiple Users</label>
-                    <Select
-                      isMulti
-                      options={clientlist.map((item) => ({
-                        value: item.id,
-                        label: item.client_name,
-                      }))}
-                      classNamePrefix="select"
-                      onChange={(selectedOptions) => {
-                        const ids = selectedOptions.map((opt) => opt.value);
-                        setSelectedUsers(ids);
-                        setInpdata({ ...inpdata, user_id: ids.join(",") });
-                      }}
-                      value={clientlist
-                        .filter((item) => selectedUsers.includes(item.id))
-                        .map((item) => ({ value: item.id, label: item.client_name }))}
-                    />
-                  </div>
-                )}
-
-                {showBatchUser && (
-                  <>
+                  {showContent1 && (
                     <div className="mb-3">
-                      <label>Select Batch</label>
-                      <select className="form-control" onChange={handleBatchChange}>
-                        <option value="">Select Batch</option>
-                        {batchlist1.map((batch) => (
-                          <option key={batch.id} value={batch.id}>{batch.batch_number}</option>
+                      <label>Particular User</label>
+                      <select
+                        name="user_id"
+                        className="form-control"
+                        onChange={handlechange}
+                      >
+                        <option value="">Select...</option>
+                        {clientlist.map((item) => (
+                          <option key={item.id} value={item.id}>
+                            {item.client_name}
+                          </option>
                         ))}
                       </select>
                     </div>
-                  </>
-                )}
+                  )}
+                  {showContent && (
+                    <div className="mb-3">
+                      <label>Particular Staff</label>
+                      <select
+                        name="user_id"
+                        className="form-control"
+                        onChange={handlechange}
+                      >
+                        <option value="">Select...</option>
+                        {stafflist.map((item) => (
+                          <option key={item.id} value={item.id}>
+                            {item.full_name}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                  )}
 
-                <div className="mb-3">
-                  <label>Title</label>
-                  <input type="text" name="title" className="form-control" onChange={handlechange} ref={titleRef} />
-                  <p className="text-danger">{error.title}</p>
-                </div>
+                  {showMultiUser && (
+                    <div className="mb-3">
+                      <label>Multiple Users</label>
+                      <Select
+                        isMulti
+                        options={clientlist.map((item) => ({
+                          value: item.id,
+                          label: item.client_name,
+                        }))}
+                        classNamePrefix="select"
+                        onChange={(selectedOptions) => {
+                          const ids = selectedOptions.map((opt) => opt.value);
+                          setSelectedUsers(ids);
+                          setInpdata({ ...inpdata, user_id: ids.join(",") });
+                        }}
+                        value={clientlist
+                          .filter((item) => selectedUsers.includes(item.id))
+                          .map((item) => ({
+                            value: item.id,
+                            label: item.client_name,
+                          }))}
+                      />
+                    </div>
+                  )}
 
-                <div className="mb-3">
-                  <label>Message</label>
-                  <textarea name="description" className="form-control" onChange={handlechange} ref={messageRef} />
-                  <p className="text-danger">{error.description}</p>
+                  {showBatchUser && (
+                    <>
+                      <div className="mb-3">
+                        <label>Select Batch</label>
+                        <select
+                          className="form-control"
+                          onChange={handleBatchChange}
+                        >
+                          <option value="">Select Batch</option>
+                          {batchlist1.map((batch) => (
+                            <option key={batch.id} value={batch.id}>
+                              {batch.batch_number}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                    </>
+                  )}
+
+                  <div className="mb-3">
+                     <input type="checkbox" id="whatsapp" name="WhatApp" value="whatsapp" checked />
+  <label for="whatsapp ms-2">WhatApp</label>
+                  </div>
+
+                  <div className="mb-3">
+                    <label>Title</label>
+                    <input
+                      type="text"
+                      name="title"
+                      className="form-control"
+                      onChange={handlechange}
+                      ref={titleRef}
+                    />
+                    <p className="text-danger">{error.title}</p>
+                  </div>
+
+                  <div className="mb-3">
+                    <label>Attach Document</label>
+                    <input
+                      type="file"
+                      multiple
+                      name="document"
+                      className="form-control"
+                      ref={documentRef}
+                    />
+                  </div>
+                  <div className="mb-3">
+                    <label>Message</label>
+                    {/* <textarea
+                      name="description"
+                      className="form-control"
+                      onChange={handlechange}
+                      ref={messageRef}
+                    /> */}
+                    <CKEditor
+                      editor={ClassicEditor}
+                      data={inpdata.description}
+                      onChange={(event, editor) => {
+                        const data = editor.getData();
+                        setInpdata({ ...inpdata, description: data });
+                      }}
+                      config={{
+                        toolbar: [
+                          "heading",
+                          "|",
+                          "bold",
+                          "italic",
+                          "underline",
+                          "strikethrough",
+                          "|",
+                          "fontSize",
+                          "fontFamily",
+                          "fontColor",
+                          "fontBackgroundColor",
+                          "|",
+                          "bulletedList",
+                          "numberedList",
+                          "|",
+                          "alignment",
+                          "|",
+                          "link",
+                          "undo",
+                          "redo",
+                        ],
+                      }}
+                    />
+                    <p className="text-danger">{error.description}</p>
+                  </div>
                 </div>
-              </div>
-              <div className="modal-footer">
-                <button onClick={postdata} className="btn btn-primary">
-                  Send Notification
-                </button>
+                <div className="modal-footer">
+                  <button onClick={postdata} className="btn btn-primary">
+                    Send Notification
+                  </button>
+                </div>
               </div>
             </div>
           </div>
-        </div>
 
-        {/* Table */}
-        <div className="table-responsive mt-2">
+          {/* Table */}
+          <div className="table-responsive mt-2">
             <table className="table table-striped">
               <thead>
                 <tr>
@@ -336,6 +416,7 @@ setTimeout(() => {
                   <th>Title</th>
                   <th>Message</th>
                   <th>Date</th>
+                  <th>Documents</th>
                   <th>Action</th>
                 </tr>
               </thead>
@@ -351,8 +432,27 @@ setTimeout(() => {
                     <tr key={item.id}>
                       <td>{startIndex + index + 1}</td>
                       <td>{item.title}</td>
-                      <td>{item.description}</td>
+                      <td
+                        dangerouslySetInnerHTML={{
+                          __html: item.description,
+                        }}
+                      ></td>
                       <td>{formattedDate}</td>
+                      <td>
+                        {Array.isArray(item.document) &&
+                          item.document.map((doc, index) => (
+                            <a
+                              key={index}
+                              href={`${process.env.REACT_APP_BASE_URLdocument}${doc}`}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              style={{ display: "block" }}
+                            >
+                              View Document {index + 1}
+                            </a>
+                          ))}
+                      </td>
+
                       <td>
                         <AiFillDelete
                           className="text-danger"
@@ -366,8 +466,8 @@ setTimeout(() => {
               </tbody>
             </table>
 
-          {/* Pagination */}
-           <div className="d-flex justify-content-end align-items-center">
+            {/* Pagination */}
+            <div className="d-flex justify-content-end align-items-center">
               <button
                 disabled={currentPage === 1}
                 onClick={() => handlePageChange(currentPage - 1)}
@@ -384,10 +484,10 @@ setTimeout(() => {
                 &gt;
               </button>
             </div>
+          </div>
         </div>
-      </div>
 
-      <ToastContainer />
+        <ToastContainer />
       </div>
     </>
   );

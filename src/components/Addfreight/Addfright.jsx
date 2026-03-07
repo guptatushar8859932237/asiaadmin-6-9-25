@@ -11,7 +11,7 @@ const Addfright = () => {
   const [refane, setRefane] = useState({});
   const [reemail, setReemail] = useState({});
   const [modalOpen, setModalOpen] = useState(false);
-  const handleChange = (selectedOption) => {
+  const     handleChange = (selectedOption) => {
     setSelectedOption(selectedOption);
     setReemail(selectedOption);
     setRefane(selectedOption);

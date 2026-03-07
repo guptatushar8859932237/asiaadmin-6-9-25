@@ -600,52 +600,37 @@ const handleChangeSupplier=(e)=>{
 //   }
 // }
 const AssignSupplier = async () => {
-  // 🔒 Basic frontend validation
   if (!responseData) {
     toast.error("Please select a supplier");
     return;
   }
-
   const payload = {
     supplier_id: parseInt(responseData, 10),
     freight_id: freightIdPass,
     order_id: orderID,
   };
-
   console.log("Payload:", payload);
-
   try {
     const response = await axios.post(
       `${process.env.REACT_APP_BASE_URL}assignWarehouseOrderToSupplier`,
       payload
     );
-
     toast.success(response.data?.message || "Supplier assigned successfully");
     handleclose();
-
   } catch (error) {
-    // 🔥 HANDLE ALL POSSIBLE ERRORS
     if (error.response) {
-      // ✅ Server responded with error status (400, 401, 403, 404, 409, 500)
       toast.error(
         error.response.data?.message ||
         `Request failed with status ${error.response.status}`
       );
-
     } else if (error.request) {
-      // ✅ Request sent but no response (server down / CORS / network issue)
       toast.error("Server not responding. Please try again later.");
-
     } else {
-      // ✅ Something else went wrong
       toast.error(error.message || "Something went wrong");
     }
-
     console.error("AssignSupplier Error:", error);
   }
 };
-
-
   return (
     <>
       <div className="wpWrapper">

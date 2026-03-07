@@ -1,2 +1,0 @@
-"use strict";(self.webpackChunkasia_direct=self.webpackChunkasia_direct||[]).push([[444],{6063:(e,a,s)=>{s.r(a),s.d(a,{default:()=>i});var c=s(579);const i=()=>(0,c.jsx)("div",{className:"title",children:" Saved"})}}]);
-//# sourceMappingURL=444.4d7c7da2.chunk.js.map

@@ -89,6 +89,7 @@ import DownloadEstimation from "./pages/DownloadEstimation";
 import QuotationInFreightCostumer from "./components/Chatting/QuotationInFreightCostumer";
 import SupplierWarehouse from "./components/Warehouse/SupplierWarehouse";
 import User from "./components/Chatting/User";
+import USerEstimateQuote from "./components/shipping estimate/USerEstimateQuote";
 const Dashboard = lazy(() => import("./pages/Dashboard"));
 const Users = lazy(() => import("./pages/Users"));
 const Messages = lazy(() => import("./pages/Messages"));
@@ -383,6 +384,11 @@ export default function App() {
                   index
                   path="/Admin/shipping-estimate"
                   element={<ShippingaddfreightEstimate />}
+                />
+                <Route
+                  index
+                  path="/Admin/user-shipping-estimate"
+                  element={<USerEstimateQuote />}
                 />
                 <Route
                   index

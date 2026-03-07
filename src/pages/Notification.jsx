@@ -16,7 +16,7 @@ const Notification = () => {
     user_id: "",
     title: "",
     description: "",
-     WhatsApp: false, // ✅ ADD THIS
+    send_whatsapp: false, // ✅ ADD THIS
   });
   const [showContent, setShowContent] = useState(false);
   const [showContent1, setShowContent1] = useState(false);
@@ -144,7 +144,7 @@ const Notification = () => {
     inpdata1.append("user_id", inpdata.user_id);
     inpdata1.append("title", inpdata.title);
     inpdata1.append("description", inpdata.description);
-    inpdata1.append("WhatsApp", inpdata.WhatsApp ? "1" : "0");
+    inpdata1.append("send_whatsapp", inpdata.send_whatsapp ? "1" : "0");
     if (documentRef.current && documentRef.current.files.length > 0) {
       Array.from(documentRef.current.files).forEach((file) => {
         inpdata1.append("document", file);
@@ -174,12 +174,12 @@ const Notification = () => {
         if (messageRef.current) messageRef.current.value = "";
         if (documentRef.current) documentRef.current.value = "";
         setInpdata({
-  send_to: "",
-  user_id: "",
-  title: "",
-  description: "",
-  WhatsApp: false, // ✅ reset checkbox
-});
+          send_to: "",
+          user_id: "",
+          title: "",
+          description: "",
+          send_whatsapp: false, // ✅ reset checkbox
+        });
         setSelectedUsers([]);
         setShowContent(false);
         setShowContent1(false);
@@ -204,6 +204,11 @@ const Notification = () => {
   const totalPage = Math.ceil(data.length / pageSize);
   const startIndex = (currentPage - 1) * pageSize;
   const currentdata = data.slice(startIndex, startIndex + pageSize);
+
+  const handleCheckboxChange = (e) => {
+    const { name, checked } = e.target;
+    setInpdata({ ...inpdata, [name]: checked });
+  };
   return (
     <>
       <div className="wpWrapper">
@@ -283,7 +288,6 @@ const Notification = () => {
                       </select>
                     </div>
                   )}
-
                   {showMultiUser && (
                     <div className="mb-3">
                       <label>Multiple Users</label>
@@ -308,7 +312,6 @@ const Notification = () => {
                       />
                     </div>
                   )}
-
                   {showBatchUser && (
                     <>
                       <div className="mb-3">
@@ -327,12 +330,20 @@ const Notification = () => {
                       </div>
                     </>
                   )}
-
                   <div className="mb-3">
-                     <input type="checkbox" id="whatsapp" name="WhatApp" value="whatsapp" checked />
-  <label for="whatsapp ms-2">WhatApp</label>
+                    <div className="mb-3">
+                      <input
+                        type="checkbox"
+                        id="send_whatsapp"
+                        name="send_whatsapp" 
+                        checked={inpdata.send_whatsapp || false} 
+                        onChange={handleCheckboxChange}
+                      />
+                      <label htmlFor="whatsapp" className="ms-2">
+                        WhatsApp
+                      </label>
+                    </div>
                   </div>
-
                   <div className="mb-3">
                     <label>Title</label>
                     <input
@@ -344,7 +355,6 @@ const Notification = () => {
                     />
                     <p className="text-danger">{error.title}</p>
                   </div>
-
                   <div className="mb-3">
                     <label>Attach Document</label>
                     <input
@@ -357,12 +367,6 @@ const Notification = () => {
                   </div>
                   <div className="mb-3">
                     <label>Message</label>
-                    {/* <textarea
-                      name="description"
-                      className="form-control"
-                      onChange={handlechange}
-                      ref={messageRef}
-                    /> */}
                     <CKEditor
                       editor={ClassicEditor}
                       data={inpdata.description}
@@ -406,8 +410,6 @@ const Notification = () => {
               </div>
             </div>
           </div>
-
-          {/* Table */}
           <div className="table-responsive mt-2">
             <table className="table table-striped">
               <thead>
@@ -452,7 +454,6 @@ const Notification = () => {
                             </a>
                           ))}
                       </td>
-
                       <td>
                         <AiFillDelete
                           className="text-danger"
@@ -465,8 +466,6 @@ const Notification = () => {
                 })}
               </tbody>
             </table>
-
-            {/* Pagination */}
             <div className="d-flex justify-content-end align-items-center">
               <button
                 disabled={currentPage === 1}

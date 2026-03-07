@@ -8536,11 +8536,11 @@ export default function Downlaodestimate() {
                       </tr>
                     </tbody>
                   </table>
-                  <div className="text-center mt-3">
+                  {/* <div className="text-center mt-3">
                     <button className="ship_btn" onClick={estimateCalculate}>
                       Get Quote
                     </button>
-                  </div>
+                  </div> */}
                 </div>
               </section>
             </div>

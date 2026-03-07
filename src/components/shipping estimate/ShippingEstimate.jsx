@@ -8,6 +8,8 @@ import logo from "../../Assests/logo.png";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import CloseIcon from "@mui/icons-material/Close";
 import html2pdf from "html2pdf.js";
+import { RiFolderUserFill } from "react-icons/ri";
+import { MdArrowOutward } from "react-icons/md";
 import { useRef } from "react";
 export default function ShippingEstimate() {
   const [update, setUpdate] = useState([0]);
@@ -27,27 +29,29 @@ export default function ShippingEstimate() {
   const navigate = useNavigate();
   const getdata122 = location?.state?.data[0];
   console.log(getdata122);
-  useEffect(()=>{
-getFreightDataById()
-  },[])
+  useEffect(() => {
+    getFreightDataById();
+  }, []);
+  const localFreigtId = localStorage.getItem("freightid");
+  console.log("Stored:", localStorage.getItem("freightid"));
   const getFreightDataById = async () => {
-  const payload = {
-    freight_id: getdata122.freight_id,
-  };
+    const payload = {
+      freight_id: localFreigtId,
+    };
 
-  try {
-    const response = await axios.post(
-      `${process.env.REACT_APP_BASE_URL}freight-list-byId`,
-      payload
-    );
+    try {
+      const response = await axios.post(
+        `${process.env.REACT_APP_BASE_URL}freight-list-byId`,
+        payload,
+      );
 
-    if (response?.data?.data?.length > 0) {
-      setGetdata(response.data.data[0]);
+      if (response?.data?.data?.length > 0) {
+        setGetdata(response.data.data[0]);
+      }
+    } catch (error) {
+      console.error("Error fetching freight data by id:", error);
     }
-  } catch (error) {
-    console.error("Error fetching freight data by id:", error);
-  }
-};
+  };
   const andlemodaloen = () => {
     setOpenmodal(true);
   };
@@ -103,7 +107,7 @@ getFreightDataById()
   const oricfs1 = parseFloat(freight.origin_pick_up_cfs_cost) || 0;
   // const oricfs2 = parseFloat(freight.origin_pick_up_cfs_fees) || 0;
   const oricfs2 = parseFloat(
-    freight.origin_pick_up_fuel_unitType === "1" ? 1 : freight.chargable_rate
+    freight.origin_pick_up_fuel_unitType === "1" ? 1 : freight.chargable_rate,
   );
   const oricfs3 = parseFloat(freight.origin_pickup_vfs_gp) || 0;
   const oricfs4 = freight.origin_pick_up_fuel_unitType
@@ -121,7 +125,7 @@ getFreightDataById()
   const oridoc2 = parseFloat(
     freight.origin_pick_up_documantation_unitType === "1"
       ? 1
-      : freight.chargable_rate
+      : freight.chargable_rate,
   );
   const oridoc3 = parseFloat(freight.origin_pick_documantation_cost_gp) || 0;
   const oridoc4 = freight.origin_pick_up_documantation_unitType
@@ -143,7 +147,7 @@ getFreightDataById()
   const oriforewarding2 = parseFloat(
     freight.origin_pick_up_forewarding_unitType === "1"
       ? 1
-      : freight.chargable_rate
+      : freight.chargable_rate,
   );
   // const oriforewarding2 =
   //   parseFloat(freight.origin_pick_up_forewarding_fees) || 0;
@@ -169,7 +173,9 @@ getFreightDataById()
   const oricustome1 = parseFloat(freight.origin_pick_up_custome_cost) || 0;
   // const oricustome2 = parseFloat(freight.origin_pick_up_custome_clearance) || 0;
   const oricustome2 = parseFloat(
-    freight.origin_pick_up_custome_unitType === "1" ? 1 : freight.chargable_rate
+    freight.origin_pick_up_custome_unitType === "1"
+      ? 1
+      : freight.chargable_rate,
   );
   const oricustome3 = parseFloat(freight.origin_pickup_custome_gp) || 0;
   const oricustome4 = freight.origin_pick_up_custome_unitType
@@ -213,7 +219,7 @@ getFreightDataById()
   const orifreight2 = parseFloat(
     freight.freight_charge_currency_unitType === "1"
       ? 1
-      : freight.chargable_rate
+      : freight.chargable_rate,
   );
   const orifreight3 = parseFloat(freight.freight_charge_currency_gp) || 0;
   const orifreight4 = freight.freight_charge_currency_unitType
@@ -235,7 +241,7 @@ getFreightDataById()
   const oriindsurance2 = parseFloat(
     freight.freight_currency_insurance_unittype === "1"
       ? 1
-      : freight.chargable_rate
+      : freight.chargable_rate,
   );
   // const oriindsurance2 =
   //   parseFloat(freight.freight_currency_insurance_unit) || 0;
@@ -274,7 +280,7 @@ getFreightDataById()
   const oritransit1 = parseFloat(freight.Transit_currency_Cost) || 0;
   // const oritransit2 = parseFloat(freight.Transit_currency_unit) || 0;
   const oritransit2 = parseFloat(
-    freight.Transit_currency_unitTpe === "1" ? 1 : freight.chargable_rate
+    freight.Transit_currency_unitTpe === "1" ? 1 : freight.chargable_rate,
   );
   const oritransit3 = parseFloat(freight.Transit_currency_gp) || 0;
   const oritransit4 = freight.Transit_currency_unitTpe
@@ -294,7 +300,7 @@ getFreightDataById()
   const oriThc1 = parseFloat(freight.transit_currency_THC_cost) || 0;
   // const oriThc2 = parseFloat(freight.transit_currency_THC_init) || 0;
   const oriThc2 = parseFloat(
-    freight.transit_currency_THC_initType === "1" ? 1 : freight.chargable_rate
+    freight.transit_currency_THC_initType === "1" ? 1 : freight.chargable_rate,
   );
   const oriThc3 = parseFloat(freight.transit_currency_THC_gp) || 0;
   const oriThc4 = freight.transit_currency_THC_initType
@@ -311,7 +317,7 @@ getFreightDataById()
   const oriunpack2 = parseFloat(
     freight.Transit_currency_unpack_unitType === "1"
       ? 1
-      : freight.chargable_rate
+      : freight.chargable_rate,
   );
   // const oriunpack2 = parseFloat(freight.Transit_currency_unpack_unit) || 0;
   const oriunpack3 = parseFloat(freight.Transit_currency_unpack_gp) || 0;
@@ -331,7 +337,7 @@ getFreightDataById()
   const ori3rdparty1 = parseFloat(freight.transit_3rd_party_cost) || 0;
   // const ori3rdparty2 = parseFloat(freight.transit_3rd_party_unit) || 0;
   const ori3rdparty2 = parseFloat(
-    freight.transit_3rd_party_unittype === "1" ? 1 : freight.chargable_rate
+    freight.transit_3rd_party_unittype === "1" ? 1 : freight.chargable_rate,
   );
   const ori3rdparty3 = parseFloat(freight.transit_3rd_party_gp) || 0;
   const ori3rdparty4 = freight.transit_3rd_party_unittype
@@ -350,7 +356,7 @@ getFreightDataById()
   const ori3rdAdmin1 = parseFloat(freight.transit_admin_change) || 0;
   // const ori3rdAdmin2 = parseFloat(freight.transit_admin_unit) || 0;
   const ori3rdAdmin2 = parseFloat(
-    freight.transit_admin_unittype === "1" ? 1 : freight.chargable_rate
+    freight.transit_admin_unittype === "1" ? 1 : freight.chargable_rate,
   );
   const ori3rdAdmin3 = parseFloat(freight.transit_admin_gp) || 0;
   const ori3rdAdmin4 = freight.transit_admin_unittype
@@ -368,7 +374,7 @@ getFreightDataById()
 
   const ori3rdport1 = parseFloat(freight.transit_currency_port) || 0;
   const ori3rdport2 = parseFloat(
-    freight.transit_currency_port_unitType === "1" ? 1 : freight.chargable_rate
+    freight.transit_currency_port_unitType === "1" ? 1 : freight.chargable_rate,
   );
   const ori3rdport3 = parseFloat(freight.transit_currency_port_gp) || 0;
   const ori3rdport4 = freight.transit_currency_port_unitType
@@ -386,7 +392,7 @@ getFreightDataById()
   const oriadv1 = parseFloat(freight.Transit_advanced_load) || 0;
   // const oriadv2 = parseFloat(freight.Transit_advanced_unit) || 0;
   const oriadv2 = parseFloat(
-    freight.Transit_advanced_unitType === "1" ? 1 : freight.chargable_rate
+    freight.Transit_advanced_unitType === "1" ? 1 : freight.chargable_rate,
   );
   const oriadv3 = parseFloat(freight.Transit_advanced_gp) || 0;
   const oriadv4 = freight.Transit_advanced_unitType
@@ -407,7 +413,7 @@ getFreightDataById()
   const oridocumentation2 = parseFloat(
     freight.transit_change_Documentation_unitType === "1"
       ? 1
-      : freight.chargable_rate
+      : freight.chargable_rate,
   );
   const oridocumentation3 =
     parseFloat(freight.transit_change_Documentation_gp) || 0;
@@ -457,7 +463,7 @@ getFreightDataById()
   const destinationdocumentation2 = parseFloat(
     freight.Destination_freight_currency_unitType === "1"
       ? 1
-      : freight.chargable_rate
+      : freight.chargable_rate,
   );
   const destinationdocumentation3 =
     parseFloat(freight.Destination_freight_currency_gp) || 0;
@@ -485,7 +491,7 @@ getFreightDataById()
   const destinationTHCdocumentation2 = parseFloat(
     freight.Destination_THC_currency_unitType === "1"
       ? 1
-      : freight.chargable_rate
+      : freight.chargable_rate,
   );
   const destinationTHCdocumentation3 =
     parseFloat(freight.Destination_THC_currency_gp) || 0;
@@ -512,7 +518,7 @@ getFreightDataById()
   const destinationUnpackdocumentation2 = parseFloat(
     freight.Destination_Unpack_currency_unitType === "1"
       ? 1
-      : freight.chargable_rate
+      : freight.chargable_rate,
   );
   const destinationUnpackdocumentation3 =
     parseFloat(freight.Destination_Unpack_currency_gp) || 0;
@@ -542,7 +548,7 @@ getFreightDataById()
   const destinationfuelsurchargedocumentation2 = parseFloat(
     freight.Destination_fuelsurcharge_currency_typeUnit === "1"
       ? 1
-      : freight.chargable_rate
+      : freight.chargable_rate,
   );
   const destinationfuelsurchargedocumentation3 =
     parseFloat(freight.Destination_fuelsurcharge_currency_gp) || 0;
@@ -559,7 +565,7 @@ getFreightDataById()
       (1 + destinationfuelsurchargedocumentation3 / 100);
   }
   const final3rfuelsurchargedestination1 = isNaN(
-    finalValueFulesurchargedestanion
+    finalValueFulesurchargedestanion,
   )
     ? "0.00"
     : finalValueFulesurchargedestanion.toFixed(2);
@@ -572,7 +578,7 @@ getFreightDataById()
   const destinatiadminsurcharge2 = parseFloat(
     freight.Destination_adminsurcharge_currency_unitType === "1"
       ? 1
-      : freight.chargable_rate
+      : freight.chargable_rate,
   );
   // const destinatiadminsurcharge2 =
   //   parseFloat(freight.Destination_adminsurcharge_currency_unit) || 0;
@@ -601,7 +607,7 @@ getFreightDataById()
   const destinatiportcargo2 = parseFloat(
     freight.Destination_portcargo_currency_unitType === "1"
       ? 1
-      : freight.chargable_rate
+      : freight.chargable_rate,
   );
   // const destinatiportcargo2 =
   //   parseFloat(freight.Destination_portcargo_currency_unit) || 0;
@@ -630,7 +636,7 @@ getFreightDataById()
   const destinatiAdvancedLoad2 = parseFloat(
     freight.Destination_AdvancedLoad_currency_unitType === "1"
       ? 1
-      : freight.chargable_rate
+      : freight.chargable_rate,
   );
   const destinatiAdvancedLoad3 =
     parseFloat(freight.Destination_AdvancedLoad_currency_gp) || 0;
@@ -656,7 +662,7 @@ getFreightDataById()
     parseFloat(
       freight.Destination_3rdpartyDesc_currency_unitType === "1"
         ? 1
-        : freight.chargable_rate
+        : freight.chargable_rate,
     );
   const destinati3rdpartyDesc3 =
     parseFloat(freight.Destination_3rdpartyDesc_currency_gp) || 0;
@@ -685,7 +691,7 @@ getFreightDataById()
     parseFloat(
       freight.Destination_delivery_currency_unitType === "1"
         ? 1
-        : freight.chargable_rate
+        : freight.chargable_rate,
     );
 
   const destindeliveryyDesc3 =
@@ -714,7 +720,7 @@ getFreightDataById()
     parseFloat(
       freight.Destination_fuelcharge_currency_unitType === "1"
         ? 1
-        : freight.chargable_rate
+        : freight.chargable_rate,
     );
   const destindfuelchangerDesc3 =
     parseFloat(freight.Destination_fuelcharge_currency_gp) || 0;
@@ -770,7 +776,7 @@ getFreightDataById()
     parseFloat(
       freight.Destination_AdminAgrncy_currency_unitType === "1"
         ? 1
-        : freight.chargable_rate
+        : freight.chargable_rate,
     );
   const deadminAgencyesc3 =
     parseFloat(freight.Destination_AdminAgrncy_currency_gp) || 0;
@@ -797,7 +803,7 @@ getFreightDataById()
     parseFloat(
       freight.Destination_AdminAgrncy_currency_unitType === "1"
         ? 1
-        : freight.chargable_rate
+        : freight.chargable_rate,
     );
   const deaddisbursemantc3 =
     parseFloat(freight.Destination_disbursemant_currency_gp) || 0;
@@ -821,7 +827,7 @@ getFreightDataById()
   const deadoctc2 = parseFloat(
     freight.Destination_doc_currency_unittype === "1"
       ? 1
-      : freight.chargable_rate
+      : freight.chargable_rate,
   );
   // const deadoctc2 = parseFloat(freight.Destination_doc_currency_unit) || 0;
   const deadoctc3 = parseFloat(freight.Destination_doc_currency_gp) || 0;
@@ -1261,7 +1267,7 @@ getFreightDataById()
       };
       const response = await axios.post(
         `${process.env.REACT_APP_BASE_URL}addEstimateShippingQuote`,
-        payload
+        payload,
       );
       if (response.data.success === true) {
         toast.success(response.data.message);
@@ -1276,7 +1282,7 @@ getFreightDataById()
   const supplier = () => {
     axios
       .post(`${process.env.REACT_APP_BASE_URL}get-suppler-selected`, {
-        freight_id: getdata122.id,
+        freight_id: getdata122?.id,
       })
       .then((response) => {
         // console.log(response);
@@ -1303,7 +1309,7 @@ getFreightDataById()
     try {
       const response = await axios.post(
         `${process.env.REACT_APP_BASE_URL}get-suppler-selected`,
-        { freight_id: getdata122.freight_id }
+        { freight_id: localFreigtId },
       );
       // console.log(response);
       if (response?.data?.data) {
@@ -1365,8 +1371,7 @@ getFreightDataById()
         console.log(error.response.data);
       });
   };
-    // asiadirect pr fieight list mai add edit 
-
+  // asiadirect pr fieight list mai add edit
 
   const getNewDataapi = async () => {
     // console.log(getdata);
@@ -1374,13 +1379,13 @@ getFreightDataById()
       quote_estimate_id: getdata122?.quote_estimate_id
         ? getdata122?.quote_estimate_id
         : getdata122?.quote_estimate_id,
-      freight_id: getdata122?.freight_id,
+      freight_id: parseInt(localFreigtId),
     };
     // console.log(data123456);
     await axios
       .post(
         `${process.env.REACT_APP_BASE_URL}GetQuoteShipEstimateById`,
-        data123456
+        data123456,
       )
       .then((response) => {
         console.log(response.data.data);
@@ -1423,7 +1428,7 @@ getFreightDataById()
     }
     const response = await axios.post(
       `${process.env.REACT_APP_BASE_URL}/freight/assign-Suppliers`,
-      { freight_id: getdata122.freight_id, supplier_ids: selected }
+      { freight_id: localFreigtId, supplier_ids: selected },
     );
     if (response.data.success) {
       toast.success(response.data.message);
@@ -1436,14 +1441,14 @@ getFreightDataById()
   //      downloadPDF1();
   // };
   const downloadPDF = () => {
-  setShowData(false); // PDF ke liye limited UI
-  // downloadPDF1()
-  navigate('/Admin/Downloadestimate',{state:{data:getdata122}})
-};
+    setShowData(false); // PDF ke liye limited UI
+    // downloadPDF1()
+    navigate("/Admin/Downloadestimate", { state: { data: getdata122 } });
+  };
   const downloadPDF1 = () => {
-    console.log(showData)
+    console.log(showData);
     // setShowData(true)
-    console.log(showData)
+    console.log(showData);
     const element = pdfRef.current;
     const contentWidth = element.scrollWidth;
     const contentHeight = element.scrollHeight;
@@ -1463,7 +1468,7 @@ getFreightDataById()
 
     html2pdf().from(element).set(options).save();
     setShowData(false);
-    console.log(showData)
+    console.log(showData);
   };
 
   return (
@@ -1566,11 +1571,19 @@ getFreightDataById()
                     <button onClick={andlemodaloen} className="btn btn-success">
                       Assign Supplier
                     </button>
-                    <MdDownloadForOffline
-                      onClick={() => downloadPDF()}
-                      className="fs-2"
-                      style={{ color: "#1b2245", cursor: "pointer" }}
-                    />
+                    
+                    <div>
+                      <MdDownloadForOffline
+                        onClick={() => downloadPDF1()}
+                        className="fs-2"
+                        style={{ color: "#1b2245", cursor: "pointer" }}
+                      />
+                      <RiFolderUserFill
+                        onClick={() => downloadPDF()}
+                        className="fs-2 mx-2"
+                        style={{ color: "#1b2245", cursor: "pointer" }}
+                      />
+                    </div>
                   </div>
                 </div>
               </div>
@@ -1620,12 +1633,9 @@ getFreightDataById()
                                 marginTop: 10,
                               }}
                             >
-                            
-
                               Asia Direct, Unit 4 Villa Valencia 2 Anemoon Road
                               Glen Marais 1619 South Africa Mauritania
                               www.asiaDirect.africa{" "}
-                            
                             </p>
                             <p>
                               <span>VAT Number: 4740280377</span>
@@ -2100,7 +2110,7 @@ getFreightDataById()
                                     }}
                                   >
                                     {new Date(getdata?.date).toLocaleDateString(
-                                      "en-GB"
+                                      "en-GB",
                                     )}
                                   </td>
                                 </tr>
@@ -2306,7 +2316,7 @@ getFreightDataById()
                                         }}
                                       >
                                         {new Date(
-                                          getdata?.date
+                                          getdata?.date,
                                         ).toLocaleDateString("en-GB")}
                                       </p>
                                     </div>
@@ -2378,7 +2388,7 @@ getFreightDataById()
 
                     <tbody>
                       {/* origin charges */}
-                      
+
                       <tr>
                         <td>Origin Charges</td>
                         <td>Pick-Up Fee</td>
@@ -2477,7 +2487,6 @@ getFreightDataById()
                             type="text"
                             onKeyPress={handlepresss}
                             className="supplier_form"
-                            disabled
                             onChange={handlechangecalc}
                             // value={freight?.origin_pick_up_fees}
                             value={
@@ -4043,7 +4052,7 @@ getFreightDataById()
                         <td>
                           {" "}
                           {totalChangeRoeOriginaftercalcuinsurance.toFixed(
-                            2
+                            2,
                           )}{" "}
                         </td>
                       </tr>
@@ -4108,6 +4117,7 @@ getFreightDataById()
                             onKeyPress={handlepresss}
                             className="supplier_form"
                             onChange={handlechangecalc}
+                            
                             value={freight?.Transit_currency_Cost}
                             name="Transit_currency_Cost"
                             id="floatingInput"
@@ -8456,9 +8466,9 @@ getFreightDataById()
                     </tbody>
                   </table>
                   <div className="text-center mt-3">
-                    <button className="ship_btn" onClick={estimateCalculate}>
-                      Get Quote
-                    </button>
+                        <button className="ship_btn" onClick={estimateCalculate}>
+                        Get Quote
+                      </button>
                   </div>
                 </div>
               </section>

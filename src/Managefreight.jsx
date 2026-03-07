@@ -192,6 +192,7 @@ export default function Managefreight() {
     try {
       const postdata = {
         staff_id: userid,
+     
         route_url: "/freight-list",
         user_type: usertype,
       };
@@ -204,7 +205,7 @@ export default function Managefreight() {
         try {
           const response = await axios.post(
             `${process.env.REACT_APP_BASE_URL}freight-list`,
-            { user_id: userid, user_type: usertype, page: page }
+            { user_id: userid, user_type: usertype, page: page,   search: searchQuery,  }
           );
           setLoader(false);
           console.log("frightDataresponse", response.data);
@@ -362,7 +363,7 @@ export default function Managefreight() {
     console.log(inputdata.client_ref);
     const formdata = new FormData();
     formdata.append("date", formattedDate);
-    formdata.append("id", inputdata.freight_id);
+    formdata.append("id", inputdata?.freight_id);
     formdata.append("client_ref", inputdata.client_ref);
     formdata.append("type", inputdata.type);
     formdata.append("freight", inputdata.freight);
@@ -462,7 +463,7 @@ export default function Managefreight() {
   ////////////////////////////////////////////////////////update///////////////////////////////////////////////////
   const handlelcickseedata = (freight_id) => {
     const alldtaaa = data.filter((item) => {
-      return item.freight_id === freight_id;
+      return item?.freight_id === freight_id;
     });
     navigate("/Admin/MAnageFreightDetails", { state: { data: alldtaaa } });
   };
@@ -479,7 +480,7 @@ export default function Managefreight() {
 
     if (permission.data.success === true) {
       const payload = {
-        freight_id: item.freight_id,
+        freight_id: item?.freight_id,
       };
       axios
         .post(
@@ -498,6 +499,8 @@ export default function Managefreight() {
     }
   };
   const hanldeclicknavi = async (freight_id) => {
+    console.log(freight_id)
+    JSON.stringify(localStorage.setItem("freightid", freight_id));
     try {
       // Filter the relevant data
       const alldata = data.filter((item) => item.freight_id === freight_id);
@@ -514,6 +517,7 @@ export default function Managefreight() {
       );
       console.log("Permission Response:", permission.data);
       if (permission.data.success === true) {
+        console.log(alldata);
         navigate("/Admin/shipping-estimate", { state: { data: alldata } });
       } else {
         toast.error("You don't have permission to access this page");
@@ -524,7 +528,8 @@ export default function Managefreight() {
     }
   };
   const hanldeclicknavi11 = async (freight_id) => {
-    // console.log(freight_id)
+    console.log(freight_id)
+      JSON.stringify(localStorage.setItem("freightid", freight_id));
     navigate("/Admin/SupplierEstimation", { state: { data: freight_id } });
   };
 
@@ -574,7 +579,7 @@ export default function Managefreight() {
     if (permission.data.success === true) {
       axios
         .post(`${process.env.REACT_APP_BASE_URL}MoveToOrder`, {
-          freight_id: item.freight_id,
+          freight_id: item?.freight_id,
           client_id: item.client_ref,
         })
         .then((response) => {
@@ -681,15 +686,26 @@ export default function Managefreight() {
         console.log(error.response.data);
       });
   };
+const handleSearch = (e) => {
+  const value = e.target.value;
+  setSearchQuery(value);
+  setCurrentPage(1);
+};
+useEffect(() => {
+  const timer = setTimeout(() => {
+    freightData1(searchQuery);
+  }, 500);
 
-  const handleSearch = (e) => {
-    const value = e.target.value;
+  return () => clearTimeout(timer);
+}, [searchQuery]);
+  // const handleSearch = (e) => {
+  //   const value = e.target.value;
 
-    setSearchQuery(value);
-    setCurrentPage(1);
+  //   setSearchQuery(value);
+  //   setCurrentPage(1);
 
-    throttledSearch(value); // ✅ throttled call
-  };
+  //   throttledSearch(value); // ✅ throttled call
+  // };
 
   const throttle = (func, delay) => {
     let lastCall = 0;
@@ -857,11 +873,12 @@ export default function Managefreight() {
   const AssignFreightToSupplier = async () => {
     const payload = {
       freight_id: freightIdAssignTask,
-      supplier_id: supplierName,
+      staff_id: supplierName,
     };
+    console.log(payload)
     try {
       const response = await axios.post(
-        `${process.env.REACT_APP_BASE_URL}assignFreightToSupplier`,
+        `${process.env.REACT_APP_BASE_URL}assignFreightToStaff`,
         payload
       );
       console.log(response.data);
@@ -903,15 +920,9 @@ export default function Managefreight() {
         toast.error("Error fetching suppliers");
       });
   };
-
   useEffect(() => {
     getSupplierdata();
   }, []);
-
-  // const querryinQuote =(item)=>{
-  //   console.log("item",item)
-  //   navigate("/Admin/QuotationInFreight", { state: { data: item } });
-  // }
  const querryinQuote = (item) => {
     console.log("item", item);
     navigate("/Admin/QuotationInFreightCostumer", { state: { data: item } });
@@ -944,7 +955,6 @@ export default function Managefreight() {
               <CloseIcon />
             </button>
           </div>
-
           <div className="newModalGap">
             <div className="row my-3  "></div>
             <div className="col-12 ">
@@ -970,12 +980,11 @@ export default function Managefreight() {
               className="text-center"
               onClick={AssignFreightToSupplier}
             >
-              Add Supplier
+              Add Staff
             </Button>
           </div>
         </Box>
       </Modal>
-
       <div className="wpWrapper ">
         <div className="container-fluid">
           <div className="row manageFreight">
@@ -994,7 +1003,6 @@ export default function Managefreight() {
                       placeholder="Search"
                     ></input>
                   </div>
-
                   <div className="dropdown">
                     <button
                       className="dropdown-toggle me-2"
@@ -1415,7 +1423,7 @@ export default function Managefreight() {
                                       </div>
                                       <div className="d-flex">
                                         <div className="me-2">
-                                          {item.assigned_supplier_name}
+                                          {item?.staff_name}
                                         </div>
                                         <div>
                                           {" "}

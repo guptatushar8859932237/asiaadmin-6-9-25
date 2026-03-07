@@ -7,7 +7,7 @@ import { toast } from "react-toastify";
 const LOGGED_IN_USER_ID = JSON.parse(
   localStorage.getItem("data123")
 )?.id;
-
+console.log(LOGGED_IN_USER_ID)
 export default function QuotationInFreight() {
   const location = useLocation();
   const socketRef = useRef(null);
@@ -79,24 +79,34 @@ export default function QuotationInFreight() {
     }
   }, [RECEIVER_ID]);
   useEffect(() => {
-    if (!conversationId) return;
-    axios
-      .get(
-        `${process.env.REACT_APP_BASE_URL}chat/getMessages/${conversationId}`
-      )
-      .then((res) => {
-        setMessages(
-          res.data.map((m) => ({
-            key: `db-${m.id}`,
-            text: m.message,
-            sender:
-              m.sender_id === LOGGED_IN_USER_ID
-                ? "me"
-                : "other",
-          }))
-        );
-      });
-  }, [conversationId]);
+  if (!conversationId || !RECEIVER_ID) return;
+
+  const payload = {
+    receiver_id: RECEIVER_ID,
+    conversation_id: conversationId,
+  };
+
+  axios
+    .post(
+      `${process.env.REACT_APP_BASE_URL}chat/getMessages`,
+      payload
+    )
+    .then((res) => {
+      setMessages(
+        res.data.messages.map((m) => ({
+          key: `db-${m.id}`,
+          text: m.message,
+          sender:
+            m.sender_id === LOGGED_IN_USER_ID
+              ? "me"
+              : "other",
+        }))
+      );
+    })
+    .catch((err) => {
+      console.log("Get Messages Error:", err);
+    });
+}, [conversationId, RECEIVER_ID]);
   const sendMessage = async () => {
     if (!message.trim() || !conversationId) return;
     const payload = {

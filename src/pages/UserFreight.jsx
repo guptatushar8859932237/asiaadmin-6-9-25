@@ -766,11 +766,11 @@ export default function UserFreight() {
   const AssignFreightToSupplier = async () => {
     const payload = {
       freight_id: freightIdAssignTask,
-      supplier_id: supplierName,
+      staff_id: supplierName,
     };
     try {
       const response = await axios.post(
-        `${process.env.REACT_APP_BASE_URL}assignFreightToSupplier`,
+        `${process.env.REACT_APP_BASE_URL}assignFreightToStaff`,
         payload
       );
       console.log(response.data);
@@ -783,7 +783,7 @@ export default function UserFreight() {
   };
   const getSupplierdata = () => {
     axios
-      .get(`${process.env.REACT_APP_BASE_URL}supplier-list`)
+      .get(`${process.env.REACT_APP_BASE_URL}staff-list`)
       .then((response) => {
         setSupplierData(response.data.data);
       })
@@ -799,6 +799,18 @@ export default function UserFreight() {
   const querryinQuote = (item) => {
     console.log("item", item);
     navigate("/Admin/QuotationInFreightCostumer", { state: { data: item } });
+  };
+
+
+   const hanldeclicknavi = async (freight_id) => {
+    console.log(freight_id);
+        const alldata = data.filter((item) => item.freight_id === freight_id);
+        console.log(alldata)
+          navigate("/Admin/user-shipping-estimate", { state: { data: alldata } });
+    };
+
+    const hanldeclicknavi11 = async (freight_id) => {
+    navigate("/Admin/SupplierEstimation", { state: { data: freight_id } });
   };
   return (
     <>
@@ -833,7 +845,7 @@ export default function UserFreight() {
             <div className="newModalGap">
               <div className="row my-3  "></div>
               <div className="col-12 ">
-                <label>Assign Supplier</label>
+                <label>Assign Staff</label>
                 <select
                   className="form-cuntrol col-12 border px-3 py-2 mb-2"
                   value={supplierName}
@@ -845,7 +857,7 @@ export default function UserFreight() {
                   <option>Select</option>
                   {supplierData.map((item, index) => (
                     <option key={index} value={item.id}>
-                      {item.name}
+                      {item.full_name}
                     </option>
                   ))}
                 </select>
@@ -855,7 +867,7 @@ export default function UserFreight() {
                 className="text-center"
                 onClick={AssignFreightToSupplier}
               >
-                Add Supplier
+                Add Staff
               </Button>
             </div>
           </Box>
@@ -1018,6 +1030,38 @@ export default function UserFreight() {
                                                   }}
                                                 />
                                                 View
+                                              </a>
+                                              <a
+                                                className="dropdown-item li_icon"
+                                                onClick={() => {
+                                                  hanldeclicknavi11(item.freight_id);
+                                                }}
+                                              >
+                                                <SupportAgentSharpIcon
+                                                  style={{
+                                                    color: "rgb(27 34 69)",
+                                                    cursor: "pointer",
+                                                    marginRight: "10px",
+                                                    width: "20px",
+                                                  }}
+                                                />
+                                           Supplier Estimation
+                                              </a>
+                                              <a
+                                                className="dropdown-item li_icon"
+                                                onClick={() => {
+                                                  hanldeclicknavi(item.freight_id);
+                                                }}
+                                              >
+                                                <SupportAgentSharpIcon
+                                                  style={{
+                                                    color: "rgb(27 34 69)",
+                                                    cursor: "pointer",
+                                                    marginRight: "10px",
+                                                    width: "20px",
+                                                  }}
+                                                />
+                                            Estimate Quote
                                               </a>
                                               <a
                                                 className="dropdown-item li_icon"
@@ -1280,7 +1324,7 @@ export default function UserFreight() {
                                       </label>
                                     </div>
                                     <div>
-                                      <div>{item?.assigned_supplier_name}</div>
+                                      <div>{item?.staff_name}</div>
                                     </div>
                                   </div>
                                 </td>

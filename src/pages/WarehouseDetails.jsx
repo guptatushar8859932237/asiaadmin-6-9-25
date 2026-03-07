@@ -13,7 +13,7 @@ export default function WarehouseDetails() {
   const [apidata, setApidata] = useState([]);
   const postassiandata = () => {
     const data = {
-      warehouse_assign_order_id: info.warehouse_assign_order_id,
+      warehouse_assign_order_id: info.warehouse_assign_order_id || info.warehouse_id,
     };
     axios
       .post(`${process.env.REACT_APP_BASE_URL}getWarehouseOrderProduct`, data)

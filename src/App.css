@@ -46,6 +46,9 @@ th {
 &::-webkit-scrollbar-thumb {
   background-color: white;
 }
+.newModalGap2{
+  width: 600px;
+}
 
 .loader-text {
   margin-top: 20px;

@@ -178,7 +178,7 @@ export default function SupplierWarehouse() {
     const payload = {
       des_country_id: item.delivery_to,
       origin_country_id: item.collection_from,
-      freight: item.Freight,
+      freight: item.freight_type,
     };
     axios
       .post(`${process.env.REACT_APP_BASE_URL}AllBatchNumbers`, payload)
@@ -703,7 +703,7 @@ const AssignSupplier = async () => {
                                           <div className="">
                                             <p className="port_date">
                                               {new Date(
-                                                item.date,
+                                                item.created_at,
                                               ).toLocaleDateString("en-GB")}
                                             </p>
                                           </div>

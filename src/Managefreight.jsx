@@ -50,7 +50,7 @@ export default function Managefreight() {
   const [updatedata, setUpdatedata] = useState([]);
   const [supplierName, setSupplierName] = useState([]);
   const [apidata, setApidata] = useState([]);
-  const [getUSer,setGetUSer]=useState([])
+  const [getUSer, setGetUSer] = useState([]);
   const [staff, SetStaff] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [openmodal, setOpenmodal] = useState(false);
@@ -123,7 +123,7 @@ export default function Managefreight() {
   const handleFileChangefil = (e, docName) => {
     const files = Array.from(e.target.files);
     setSelectedDocs((prev) =>
-      prev.map((doc) => (doc.name === docName ? { ...doc, files } : doc))
+      prev.map((doc) => (doc.name === docName ? { ...doc, files } : doc)),
     );
   };
   const handleSave = () => {
@@ -176,36 +176,43 @@ export default function Managefreight() {
   const userid = JSON.parse(localStorage.getItem("data123"))?.id;
   const usertype = JSON.parse(localStorage.getItem("data123"))?.user_type;
   const getFreightWithoutpermission = async (page) => {
-    const payload =    { user_id: userid, user_type: usertype, page: page }
-      try {
-          const response = await axios.post(
-            `${process.env.REACT_APP_BASE_URL}freight-list`,payload);
-          console.log("frightDataresponse", response.data);
-          setPagenationdata(response.data);
-          setData(response.data.data);
-        } catch (error) {
-          setLoader(false);
-          toast.error(error.response?.data?.message || "Something went wrong");
-        }
-  }
+    const payload = { user_id: userid, user_type: usertype, page: page };
+    try {
+      const response = await axios.post(
+        `${process.env.REACT_APP_BASE_URL}freight-list`,
+        payload,
+      );
+      console.log("frightDataresponse", response.data);
+      setPagenationdata(response.data);
+      setData(response.data.data);
+    } catch (error) {
+      setLoader(false);
+      toast.error(error.response?.data?.message || "Something went wrong");
+    }
+  };
   const frightData = async (page) => {
     try {
       const postdata = {
         staff_id: userid,
-     
+
         route_url: "/freight-list",
         user_type: usertype,
       };
       const permission = await axios.post(
         `${process.env.REACT_APP_BASE_URL}CheckPermission`,
-        postdata
+        postdata,
       );
       console.log(permission);
       if (permission.data.success) {
         try {
           const response = await axios.post(
             `${process.env.REACT_APP_BASE_URL}freight-list`,
-            { user_id: userid, user_type: usertype, page: page,   search: searchQuery,  }
+            {
+              user_id: userid,
+              user_type: usertype,
+              page: page,
+              search: searchQuery,
+            },
           );
           setLoader(false);
           console.log("frightDataresponse", response.data);
@@ -224,12 +231,12 @@ export default function Managefreight() {
   useEffect(() => {
     frightData();
   }, []);
- 
+
   useEffect(() => {
     const fetchData = async () => {
       try {
         const response = await axios.get(
-          `${process.env.REACT_APP_BASE_URL}supplier-list`
+          `${process.env.REACT_APP_BASE_URL}supplier-list`,
         );
         setOptions(response.data.data);
       } catch (error) {
@@ -247,7 +254,7 @@ export default function Managefreight() {
     };
     const permission = await axios.post(
       `${process.env.REACT_APP_BASE_URL}CheckPermission`,
-      datapost
+      datapost,
     );
     if (permission.data.success === true) {
       Swal.fire({
@@ -283,24 +290,24 @@ export default function Managefreight() {
     }
   };
   /////////////////////////////////////////update freight///////////////////////////////////////////
-  const handleupdate =async (freight_id) => {
-    const payload={
-      freight_id:freight_id
-    }
-     try {
-    const response = await axios.post(
-      `${process.env.REACT_APP_BASE_URL}freight-list-byId`,
-      payload
-    );
+  const handleupdate = async (freight_id) => {
+    const payload = {
+      freight_id: freight_id,
+    };
+    try {
+      const response = await axios.post(
+        `${process.env.REACT_APP_BASE_URL}freight-list-byId`,
+        payload,
+      );
 
-    if (response?.data?.data?.length > 0) {
-      console.log(response.data.data[0])
-      // setGetUSer(response.data.data[0]);
-      setInputdata(response.data.data[0]);
+      if (response?.data?.data?.length > 0) {
+        console.log(response.data.data[0]);
+        // setGetUSer(response.data.data[0]);
+        setInputdata(response.data.data[0]);
+      }
+    } catch (error) {
+      console.error("Error fetching freight data by id:", error);
     }
-  } catch (error) {
-    console.error("Error fetching freight data by id:", error);
-  }
     // const setUSer = data.filter((item) => item.freight_id === freight_id);
     // const getUSer = setUSer[0];
     // console.log(getUSer);
@@ -394,7 +401,7 @@ export default function Managefreight() {
       "volumetric_weight",
       inputdata.dimension
         ? 167 * inputdata.dimension
-        : inputdata.volumetric_weight
+        : inputdata.volumetric_weight,
     );
     formdata.append("assign_for_estimate", inputdata.assign_for_estimate);
     formdata.append("add_attachments", inputdata.add_attachments);
@@ -425,7 +432,7 @@ export default function Managefreight() {
         console.log(response.data.message);
         if (response.data.success === true) {
           setLoader(false);
-        getFreightWithoutpermission();
+          getFreightWithoutpermission();
           toast.success(response.data.message);
         }
         return 0;
@@ -475,7 +482,7 @@ export default function Managefreight() {
     };
     const permission = await axios.post(
       `${process.env.REACT_APP_BASE_URL}CheckPermission`,
-      datapost
+      datapost,
     );
 
     if (permission.data.success === true) {
@@ -485,7 +492,7 @@ export default function Managefreight() {
       axios
         .post(
           `${process.env.REACT_APP_BASE_URL}AssignFreightToClearing`,
-          payload
+          payload,
         )
         .then((response) => {
           console.log(response.data);
@@ -499,7 +506,7 @@ export default function Managefreight() {
     }
   };
   const hanldeclicknavi = async (freight_id) => {
-    console.log(freight_id)
+    console.log(freight_id);
     JSON.stringify(localStorage.setItem("freightid", freight_id));
     try {
       // Filter the relevant data
@@ -513,7 +520,7 @@ export default function Managefreight() {
 
       const permission = await axios.post(
         `${process.env.REACT_APP_BASE_URL}CheckPermission`,
-        datapost
+        datapost,
       );
       console.log("Permission Response:", permission.data);
       if (permission.data.success === true) {
@@ -528,8 +535,8 @@ export default function Managefreight() {
     }
   };
   const hanldeclicknavi11 = async (freight_id) => {
-    console.log(freight_id)
-      JSON.stringify(localStorage.setItem("freightid", freight_id));
+    console.log(freight_id);
+    JSON.stringify(localStorage.setItem("freightid", freight_id));
     navigate("/Admin/SupplierEstimation", { state: { data: freight_id } });
   };
 
@@ -574,7 +581,7 @@ export default function Managefreight() {
     };
     const permission = await axios.post(
       `${process.env.REACT_APP_BASE_URL}CheckPermission`,
-      datapost
+      datapost,
     );
     if (permission.data.success === true) {
       axios
@@ -670,7 +677,7 @@ export default function Managefreight() {
       .then((response) => {
         if (response.data.success === true) {
           closeModal();
-       setPagenationdata(response.data);
+          setPagenationdata(response.data);
           setData(response.data.data);
         }
       })
@@ -686,18 +693,18 @@ export default function Managefreight() {
         console.log(error.response.data);
       });
   };
-const handleSearch = (e) => {
-  const value = e.target.value;
-  setSearchQuery(value);
-  setCurrentPage(1);
-};
-useEffect(() => {
-  const timer = setTimeout(() => {
-    freightData1(searchQuery);
-  }, 500);
+  const handleSearch = (e) => {
+    const value = e.target.value;
+    setSearchQuery(value);
+    setCurrentPage(1);
+  };
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      freightData1(searchQuery);
+    }, 500);
 
-  return () => clearTimeout(timer);
-}, [searchQuery]);
+    return () => clearTimeout(timer);
+  }, [searchQuery]);
   // const handleSearch = (e) => {
   //   const value = e.target.value;
 
@@ -721,7 +728,7 @@ useEffect(() => {
   const throttledSearch = useRef(
     throttle((value) => {
       freightData1(value);
-    }, 1000)
+    }, 1000),
   ).current;
 
   const freightData1 = (searchTerm) => {
@@ -836,7 +843,7 @@ useEffect(() => {
       };
       const permission = await axios.post(
         `${process.env.REACT_APP_BASE_URL}CheckPermission`,
-        datapost
+        datapost,
       );
       console.log(permission);
       if (permission.data.success === true) {
@@ -857,7 +864,7 @@ useEffect(() => {
       axios
         .post(
           `${process.env.REACT_APP_BASE_URL}AttachedShippingEstimate`,
-          formdata
+          formdata,
         )
         .then((response) => {
           if (response.data.success === true) {
@@ -875,11 +882,11 @@ useEffect(() => {
       freight_id: freightIdAssignTask,
       staff_id: supplierName,
     };
-    console.log(payload)
+    console.log(payload);
     try {
       const response = await axios.post(
         `${process.env.REACT_APP_BASE_URL}assignFreightToStaff`,
-        payload
+        payload,
       );
       console.log(response.data);
       toast.success(response.data.message);
@@ -895,7 +902,7 @@ useEffect(() => {
   const getstaff = async () => {
     try {
       const response = await axios.get(
-        `${process.env.REACT_APP_BASE_URL}staff-list`
+        `${process.env.REACT_APP_BASE_URL}staff-list`,
       );
       console.log(response.data.data);
       setStaffdata(response.data.data);
@@ -923,7 +930,7 @@ useEffect(() => {
   useEffect(() => {
     getSupplierdata();
   }, []);
- const querryinQuote = (item) => {
+  const querryinQuote = (item) => {
     console.log("item", item);
     navigate("/Admin/QuotationInFreightCostumer", { state: { data: item } });
   };
@@ -1084,7 +1091,7 @@ useEffect(() => {
                           data.map((item, index) => {
                             // console.log(item);
                             const daaaa = new Date(
-                              item?.freight_created_at
+                              item?.freight_created_at,
                             ).toLocaleDateString("en-GB");
                             return (
                               <>
@@ -1153,7 +1160,7 @@ useEffect(() => {
                                                   className="dropdown-item li_icon"
                                                   onClick={() => {
                                                     handlelcickseedata(
-                                                      item.freight_id
+                                                      item.freight_id,
                                                     );
                                                   }}
                                                 >
@@ -1172,7 +1179,7 @@ useEffect(() => {
                                                   className="dropdown-item li_icon"
                                                   onClick={() => {
                                                     handlelcickseedata1212(
-                                                      item
+                                                      item,
                                                     );
                                                   }}
                                                 >
@@ -1193,7 +1200,7 @@ useEffect(() => {
                                                   style={{ cursor: "pointer" }}
                                                   onClick={() => {
                                                     handleupdate(
-                                                      item.freight_id
+                                                      item.freight_id,
                                                     );
                                                   }}
                                                 >
@@ -1212,7 +1219,7 @@ useEffect(() => {
                                                   className="dropdown-item li_icon"
                                                   onClick={() => {
                                                     handledelete(
-                                                      item.freight_id
+                                                      item.freight_id,
                                                     );
                                                   }}
                                                 >
@@ -1230,7 +1237,7 @@ useEffect(() => {
                                                   className="dropdown-item li_icon"
                                                   onClick={() => {
                                                     handlestatus(
-                                                      item.freight_id
+                                                      item.freight_id,
                                                     );
                                                   }}
                                                 >
@@ -1247,7 +1254,7 @@ useEffect(() => {
                                                   className="dropdown-item li_icon"
                                                   onClick={() => {
                                                     hanldeclicknavi(
-                                                      item.freight_id
+                                                      item.freight_id,
                                                     );
                                                   }}
                                                 >
@@ -1274,7 +1281,7 @@ useEffect(() => {
                                                   className="dropdown-item li_icon"
                                                   onClick={() => {
                                                     hanldeclicknavi11(
-                                                      item.freight_id
+                                                      item.freight_id,
                                                     );
                                                   }}
                                                 >
@@ -1330,7 +1337,7 @@ useEffect(() => {
                                                         width: "20px",
                                                       }}
                                                     />
-                                                   Chat
+                                                    Chat
                                                   </div>
                                                 </a>
                                                 <a
@@ -1427,9 +1434,10 @@ useEffect(() => {
                                         </div>
                                         <div>
                                           {" "}
-                                          {item?.sales_name == "undefined"
-                                            ? ""
-                                            : item?.sales_name}{" "}
+                                          {item?.supplier_name === "null" ||
+                                          !item?.supplier_name
+                                            ? "None"
+                                            : item?.supplier_name}{" "}
                                         </div>
                                       </div>
                                     </div>
@@ -1507,7 +1515,7 @@ useEffect(() => {
                                                                 </option>
                                                               </>
                                                             );
-                                                          }
+                                                          },
                                                         )}
                                                     </select>
                                                   </div>
@@ -1683,7 +1691,7 @@ useEffect(() => {
                                                             >
                                                               {item.name}
                                                             </option>
-                                                          )
+                                                          ),
                                                         )}
                                                     </select>
                                                   </div>
@@ -1719,7 +1727,7 @@ useEffect(() => {
                                                                 </option>
                                                               </>
                                                             );
-                                                          }
+                                                          },
                                                         )}
                                                     </select>
                                                   </div>
@@ -2037,7 +2045,7 @@ useEffect(() => {
                                                                 </option>
                                                               </>
                                                             );
-                                                          }
+                                                          },
                                                         )}
                                                     </select>
                                                   </div>
@@ -2157,7 +2165,7 @@ useEffect(() => {
                                                                         option.label
                                                                       }
                                                                     </MenuItem>
-                                                                  )
+                                                                  ),
                                                                 )}
                                                               </Select>
                                                             </FormControl>
@@ -2167,7 +2175,7 @@ useEffect(() => {
                                                               {selectedDocs.map(
                                                                 (
                                                                   doc,
-                                                                  index
+                                                                  index,
                                                                 ) => (
                                                                   <div
                                                                     key={index}
@@ -2182,16 +2190,16 @@ useEffect(() => {
                                                                       multiple
                                                                       accept="image/*,application/pdf"
                                                                       onChange={(
-                                                                        e
+                                                                        e,
                                                                       ) =>
                                                                         handleFileChangefil(
                                                                           e,
-                                                                          doc.name
+                                                                          doc.name,
                                                                         )
                                                                       }
                                                                     />
                                                                   </div>
-                                                                )
+                                                                ),
                                                               )}
                                                             </div>
 
@@ -2247,12 +2255,12 @@ useEffect(() => {
                                                             onChange={(e) =>
                                                               handleFileChangefil(
                                                                 e,
-                                                                doc.name
+                                                                doc.name,
                                                               )
                                                             }
                                                           />
                                                         </div>
-                                                      )
+                                                      ),
                                                     )}
                                                   </div>
 
@@ -2595,7 +2603,7 @@ useEffect(() => {
                                             type="button"
                                             onClick={() => {
                                               handleupdateapipost(
-                                                item.freight_id
+                                                item.freight_id,
                                               );
                                             }}
                                             className="btn"
@@ -2701,153 +2709,153 @@ useEffect(() => {
                 </p>
               </div>
             ) : ( */}
-              <Modal
-                open={isModalOpen}
-                onClose={closeModal}
-                aria-labelledby="modal-modal-title"
-                aria-describedby="modal-modal-description"
-                className="newModal"
+            <Modal
+              open={isModalOpen}
+              onClose={closeModal}
+              aria-labelledby="modal-modal-title"
+              aria-describedby="modal-modal-description"
+              className="newModal"
+            >
+              <Box
+                sx={{
+                  position: "absolute",
+                  top: "50%",
+                  left: "50%",
+                  transform: "translate(-50%, -50%)",
+                  bgcolor: "background.paper",
+                  boxShadow: 24,
+                }}
               >
-                <Box
-                  sx={{
-                    position: "absolute",
-                    top: "50%",
-                    left: "50%",
-                    transform: "translate(-50%, -50%)",
-                    bgcolor: "background.paper",
-                    boxShadow: 24,
-                  }}
-                >
-                  <div className="modal-header">
-                    <h2 id="modal-modal-title">Filter</h2>
-                    <button className="btn btn-close" onClick={closeModal}>
-                      <CloseIcon />{" "}
-                    </button>
-                  </div>
-                  {/*header end */}
+                <div className="modal-header">
+                  <h2 id="modal-modal-title">Filter</h2>
+                  <button className="btn btn-close" onClick={closeModal}>
+                    <CloseIcon />{" "}
+                  </button>
+                </div>
+                {/*header end */}
 
-                  <div className="newModalGap noFormaControl">
-                    <div className="row my-3  ">
-                      <div className="col-6">
-                        <label>Delivery Type</label>
-                        <select name="type" onChange={handlechange}>
-                          <option value="">Select</option>
-                          <option value="express">Express</option>
-                          <option value="normal">Consolidation</option>
-                        </select>
-                      </div>
-                      <div className="col-6">
-                        <label>Priority </label>
-                        <div className="shipRefer1 d-flex">
-                          <div>
-                            <input
-                              type="radio"
-                              id="shipper"
-                              name="priority"
-                              style={{ cursor: "pointer" }}
-                              value="High"
-                              onChange={handlechange}
-                            />
-                            <label htmlFor="shipper">High</label>
-                          </div>
-                          <div>
-                            <input
-                              type="radio"
-                              id="shipper2"
-                              style={{ cursor: "pointer" }}
-                              name="priority"
-                              value="Medium"
-                              onChange={handlechange}
-                            />
-                            <label htmlFor="consignee">Medium</label>
-                          </div>
-                          <div>
-                            <input
-                              type="radio"
-                              id="shipper3"
-                              name="priority"
-                              style={{ cursor: "pointer" }}
-                              value="Low"
-                              onChange={handlechange}
-                            />
-                            <label htmlFor="mediumPr">Low</label>
-                          </div>
+                <div className="newModalGap noFormaControl">
+                  <div className="row my-3  ">
+                    <div className="col-6">
+                      <label>Delivery Type</label>
+                      <select name="type" onChange={handlechange}>
+                        <option value="">Select</option>
+                        <option value="express">Express</option>
+                        <option value="normal">Consolidation</option>
+                      </select>
+                    </div>
+                    <div className="col-6">
+                      <label>Priority </label>
+                      <div className="shipRefer1 d-flex">
+                        <div>
+                          <input
+                            type="radio"
+                            id="shipper"
+                            name="priority"
+                            style={{ cursor: "pointer" }}
+                            value="High"
+                            onChange={handlechange}
+                          />
+                          <label htmlFor="shipper">High</label>
+                        </div>
+                        <div>
+                          <input
+                            type="radio"
+                            id="shipper2"
+                            style={{ cursor: "pointer" }}
+                            name="priority"
+                            value="Medium"
+                            onChange={handlechange}
+                          />
+                          <label htmlFor="consignee">Medium</label>
+                        </div>
+                        <div>
+                          <input
+                            type="radio"
+                            id="shipper3"
+                            name="priority"
+                            style={{ cursor: "pointer" }}
+                            value="Low"
+                            onChange={handlechange}
+                          />
+                          <label htmlFor="mediumPr">Low</label>
                         </div>
                       </div>
                     </div>
-                    <div className="row mb-3">
-                      <div className="col-6">
-                        <label>Country of Origin</label>
-                        <select name="origin" onChange={handlechange}>
-                          <option value="">Select</option>
-                          {updatedata &&
-                            updatedata.length > 0 &&
-                            updatedata.map((item, index) => {
-                              return (
-                                <>
-                                  <option value={item.id}>{item.name}</option>
-                                </>
-                              );
-                            })}
-                        </select>
-                      </div>
-                      <div className="col-6">
-                        <label>Delivery to Country </label>
-                        <select name="destination" onChange={handlechange}>
-                          <option value="">Select</option>
-                          {updatedata &&
-                            updatedata.length > 0 &&
-                            updatedata.map((item, index) => {
-                              return (
-                                <>
-                                  <option value={item.id}>{item.name}</option>
-                                </>
-                              );
-                            })}
-                        </select>
-                      </div>
-                    </div>
-                    <div className="row mb-3">
-                      <div className="col-6">
-                        <label>Start Date</label>
-                        <input
-                          type="date"
-                          id="shipper3"
-                          name="startDate"
-                          style={{ cursor: "pointer" }}
-                          className="form-control"
-                          onChange={handlechange}
-                        />
-                      </div>
-                      <div className="col-6">
-                        <label>End Date </label>
-                        <input
-                          type="date"
-                          id="shipper3"
-                          name="endDate"
-                          style={{ cursor: "pointer" }}
-                          className="form-control"
-                          onChange={handlechange}
-                        />
-                      </div>
-                    </div>
-                    <div className="row mb-3">
-                      <div className="col-12">
-                        <label>Freight</label>
-                        <select name="freight" onChange={handlechange}>
-                          <option value="">Select...</option>
-                          <option value="Sea">Sea</option>
-                          <option value="Air">Air</option>
-                          <option value="Road">Road</option>
-                        </select>
-                      </div>
-                    </div>
-                    <Button variant="contained" onClick={postData}>
-                      Apply
-                    </Button>
                   </div>
-                </Box>
-              </Modal>
+                  <div className="row mb-3">
+                    <div className="col-6">
+                      <label>Country of Origin</label>
+                      <select name="origin" onChange={handlechange}>
+                        <option value="">Select</option>
+                        {updatedata &&
+                          updatedata.length > 0 &&
+                          updatedata.map((item, index) => {
+                            return (
+                              <>
+                                <option value={item.id}>{item.name}</option>
+                              </>
+                            );
+                          })}
+                      </select>
+                    </div>
+                    <div className="col-6">
+                      <label>Delivery to Country </label>
+                      <select name="destination" onChange={handlechange}>
+                        <option value="">Select</option>
+                        {updatedata &&
+                          updatedata.length > 0 &&
+                          updatedata.map((item, index) => {
+                            return (
+                              <>
+                                <option value={item.id}>{item.name}</option>
+                              </>
+                            );
+                          })}
+                      </select>
+                    </div>
+                  </div>
+                  <div className="row mb-3">
+                    <div className="col-6">
+                      <label>Start Date</label>
+                      <input
+                        type="date"
+                        id="shipper3"
+                        name="startDate"
+                        style={{ cursor: "pointer" }}
+                        className="form-control"
+                        onChange={handlechange}
+                      />
+                    </div>
+                    <div className="col-6">
+                      <label>End Date </label>
+                      <input
+                        type="date"
+                        id="shipper3"
+                        name="endDate"
+                        style={{ cursor: "pointer" }}
+                        className="form-control"
+                        onChange={handlechange}
+                      />
+                    </div>
+                  </div>
+                  <div className="row mb-3">
+                    <div className="col-12">
+                      <label>Freight</label>
+                      <select name="freight" onChange={handlechange}>
+                        <option value="">Select...</option>
+                        <option value="Sea">Sea</option>
+                        <option value="Air">Air</option>
+                        <option value="Road">Road</option>
+                      </select>
+                    </div>
+                  </div>
+                  <Button variant="contained" onClick={postData}>
+                    Apply
+                  </Button>
+                </div>
+              </Box>
+            </Modal>
             {/* )} */}
             <ToastContainer />
           </div>

@@ -77,7 +77,7 @@ export default function Supplierestimationview() {
       });
   };
   const handleclicknav = () => {
-    navigate("/Admin/SupplierEstimation", { state: { data: data2 } });
+    navigate("/Admin/SupplierEstimation", { state: { data: data2.id } });
   };
   const closemodal = () => {
     setOpenmodal(false);

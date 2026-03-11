@@ -11,7 +11,7 @@ const Addfright = () => {
   const [refane, setRefane] = useState({});
   const [reemail, setReemail] = useState({});
   const [modalOpen, setModalOpen] = useState(false);
-  const     handleChange = (selectedOption) => {
+  const handleChange = (selectedOption) => {
     setSelectedOption(selectedOption);
     setReemail(selectedOption);
     setRefane(selectedOption);
@@ -104,7 +104,7 @@ const Addfright = () => {
       .catch((error) => {
         console.log(error.response.data.data);
       });
-  };           
+  };
   const handleclick = () => {
     handlevalidate(data);
   };
@@ -249,7 +249,7 @@ const Addfright = () => {
     formdata.append("user_id", useridsales.id);
     formdata.append(
       "client_email",
-      reemail?.clientemail === undefined ? reemail : reemail.clientemail
+      reemail?.clientemail === undefined ? reemail : reemail.clientemail,
     );
     formdata.append("nature_of_hazard", data.nature_of_hazard);
     formdata.append("Product_Description", data.Product_Description);
@@ -266,23 +266,23 @@ const Addfright = () => {
     formdata.append("insurance", data.insurance);
     formdata.append("shipment_ref", data.shipment_ref);
     formdata.append("fcl_lcl", data.fcl_lcl);
-   selectedDocs.forEach(doc => {
-  console.log("Doc Type:", doc.name);
-  doc.files.forEach(file => {
-    formdata.append(doc.name, file); 
-    console.log("File:", file.name, "| Size:", file.size, "bytes");
-  });
-});
+    selectedDocs.forEach((doc) => {
+      console.log("Doc Type:", doc.name);
+      doc.files.forEach((file) => {
+        formdata.append(doc.name, file);
+        console.log("File:", file.name, "| Size:", file.size, "bytes");
+      });
+    });
     formdata.append(
       "client_ref_name",
-      refane == "[object Object]" ? selectedOption.clientemail : refane
+      refane == "[object Object]" ? selectedOption.clientemail : refane,
     );
-    const keybane = data.documentName
-   Object.values(formFiles).forEach((files) => {
-  files.forEach((file) => {
-    formdata.append("document", file); 
-  });
-});
+    const keybane = data.documentName;
+    Object.values(formFiles).forEach((files) => {
+      files.forEach((file) => {
+        formdata.append("document", file);
+      });
+    });
     console.log(formdata);
     axios
       .post(`${process.env.REACT_APP_BASE_URL}add-freight`, formdata)
@@ -401,7 +401,7 @@ const Addfright = () => {
   const getstaff = async () => {
     try {
       const response = await axios.get(
-        `${process.env.REACT_APP_BASE_URL}staff-list`
+        `${process.env.REACT_APP_BASE_URL}staff-list`,
       );
       console.log(response.data.data);
       setStaffdata(response.data.data);
@@ -411,17 +411,17 @@ const Addfright = () => {
   };
   const [show, setShow] = useState(false);
   const [selectedDocs, setSelectedDocs] = useState([]);
- const docOptions = [
-  { id: "Customs Documents", label: "Customs docs" },
-  { id: "Supporting Documents", label: "Supporting docs" },
-  { id: "Invoice, Packing List", label: "Invoice / Packing " },
-  { id: "Product Literature", label: "Product Literature" },
-  { id: "Letters of authority", label: "Letters of authority" },
-  { id: "Waybills", label: "Freight Docs" },
-  { id: "Waybills", label: "Shipping instruction" },
-  { id: "AD_Quotations", label: "Attach Quote" },
-  { id: "Supplier Invoices", label: "Supplier Invoices" }
-];
+  const docOptions = [
+    { id: "Customs Documents", label: "Customs docs" },
+    { id: "Supporting Documents", label: "Supporting docs" },
+    { id: "Invoice, Packing List", label: "Invoice / Packing " },
+    { id: "Product Literature", label: "Product Literature" },
+    { id: "Letters of authority", label: "Letters of authority" },
+    { id: "Waybills", label: "Freight Docs" },
+    { id: "Waybills", label: "Shipping instruction" },
+    { id: "AD_Quotations", label: "Attach Quote" },
+    { id: "Supplier Invoices", label: "Supplier Invoices" },
+  ];
   const handleShow = () => setShow(true);
   const handleClose = () => setShow(false);
   const handleSelect = (e) => {
@@ -433,21 +433,19 @@ const Addfright = () => {
   const handleFileChangefil = (e, docName) => {
     const files = Array.from(e.target.files);
     setSelectedDocs((prev) =>
-      prev.map((doc) =>
-        doc.name === docName ? { ...doc, files } : doc
-      )
+      prev.map((doc) => (doc.name === docName ? { ...doc, files } : doc)),
     );
   };
-const handleSave = () => {
-  console.log("Uploaded Documents:", selectedDocs);
-  selectedDocs.forEach(doc => {
-    console.log("Doc Type:", doc);
-    doc.files.forEach(file => {
-      console.log("File:", file.name, "| Size:", file.size, "bytes");
+  const handleSave = () => {
+    console.log("Uploaded Documents:", selectedDocs);
+    selectedDocs.forEach((doc) => {
+      console.log("Doc Type:", doc);
+      doc.files.forEach((file) => {
+        console.log("File:", file.name, "| Size:", file.size, "bytes");
+      });
     });
-  });
-  handleClose();
-};
+    handleClose();
+  };
   return (
     <>
       {loader ? (
@@ -659,9 +657,6 @@ const handleSave = () => {
                           </div>
                           <p className="text-danger mb-0">{error.priority}</p>
                         </div>
-                        <div className="col-6">
-                          
-                        </div>
                       </div>
                     </div>
                   </div>
@@ -773,8 +768,7 @@ const handleSave = () => {
                           </p>
                         </div>
                       </div>
-                      <div className="row">
-                      </div>
+                      <div className="row"></div>
                     </div>
                   </div>
                 </div>
@@ -1344,7 +1338,7 @@ const handleSave = () => {
                           />
                         </div>
                       </div>
-  {/* <div className="row">
+                      {/* <div className="row">
                         <div className="col-6 mt-3">
                           <label>Select Document </label>
                           <select name="documentName" onChange={handlechange}>
@@ -1361,7 +1355,7 @@ const handleSave = () => {
                           </select>
                         </div>
                         </div> */}
-                        {/* <div className="col-6 mt-3">
+                      {/* <div className="col-6 mt-3">
                           <label>Upload Document</label>
                           <input
                             type="file"
@@ -1374,8 +1368,6 @@ const handleSave = () => {
                         </div>
                       </div> 
  */}
-
-
 
                       {/* {/* <div className="row">
                         <div className="col-6 mt-3">
@@ -1449,59 +1441,66 @@ const handleSave = () => {
                           />
                         </div>
                       </div> */}
-                       <div className="row mb-3 mt-4">
-                  <div className="col-9 mt-3">
-                    <h4 className="freight_hd">Document Section</h4>
-                    <span class="line"></span>
-                  </div>
-                  <div className="col-3">
-<Button variant="primary" onClick={handleShow}>
-          Upload Documents
-        </Button>
-                  </div>
-                </div>
-                 <Modal show={show} onHide={handleClose} size="lg" centered>
-        <Modal.Header closeButton>
-          <Modal.Title>Upload Documents</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          {/* Dropdown for selecting document type */}
-          <Form.Select onChange={handleSelect} defaultValue="">
-            <option value="" disabled>
-              Select Document Type
-            </option>
-           {docOptions.map((option) => (
-  <option key={option.id} value={option.id}>
-    {option.label}
-  </option>
-))}
-          </Form.Select>
+                      <div className="row mb-3 mt-4">
+                        <div className="col-9 mt-3">
+                          <h4 className="freight_hd">Document Section</h4>
+                          <span class="line"></span>
+                        </div>
+                        <div className="col-3">
+                          <Button variant="primary" onClick={handleShow}>
+                            Upload Documents
+                          </Button>
+                        </div>
+                      </div>
+                      <Modal
+                        show={show}
+                        onHide={handleClose}
+                        size="lg"
+                        centered
+                      >
+                        <Modal.Header closeButton>
+                          <Modal.Title>Upload Documents</Modal.Title>
+                        </Modal.Header>
+                        <Modal.Body>
+                          {/* Dropdown for selecting document type */}
+                          <Form.Select onChange={handleSelect} defaultValue="">
+                            <option value="" disabled>
+                              Select Document Type
+                            </option>
+                            {docOptions.map((option) => (
+                              <option key={option.id} value={option.id}>
+                                {option.label}
+                              </option>
+                            ))}
+                          </Form.Select>
 
-          {/* Render file inputs dynamically */}
-          <div className="mt-3">
-            {selectedDocs.map((doc, index) => (
-              <div key={index} className="mb-3">
-                <label className="fw-bold">{doc.name}</label>
-                <input
-                  type="file"
-                  className="form-control"
-                  multiple
-                  accept="image/*,application/pdf"
-                  onChange={(e) => handleFileChangefil(e, doc.name)}
-                />
-              </div>
-            ))}
-          </div>
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={handleClose}>
-            Cancel
-          </Button>
-          <Button variant="success" onClick={handleSave}>
-            Save Documents
-          </Button>
-        </Modal.Footer>
-      </Modal>
+                          {/* Render file inputs dynamically */}
+                          <div className="mt-3">
+                            {selectedDocs.map((doc, index) => (
+                              <div key={index} className="mb-3">
+                                <label className="fw-bold">{doc.name}</label>
+                                <input
+                                  type="file"
+                                  className="form-control"
+                                  multiple
+                                  accept="image/*,application/pdf"
+                                  onChange={(e) =>
+                                    handleFileChangefil(e, doc.name)
+                                  }
+                                />
+                              </div>
+                            ))}
+                          </div>
+                        </Modal.Body>
+                        <Modal.Footer>
+                          <Button variant="secondary" onClick={handleClose}>
+                            Cancel
+                          </Button>
+                          <Button variant="success" onClick={handleSave}>
+                            Save Documents
+                          </Button>
+                        </Modal.Footer>
+                      </Modal>
                       <div className="row">
                         <div className="col-12">
                           <label>Comment</label>

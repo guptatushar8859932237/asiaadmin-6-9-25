@@ -1,5 +1,7 @@
+import { Box, Button, Modal } from "@mui/material";
 import axios from "axios";
 import React, { useEffect, useState } from "react";
+import CloseIcon from "@mui/icons-material/Close";
 import { toast, ToastContainer } from "react-toastify";
 const pageSize = 10;
 export default function Taskmanager() {
@@ -7,14 +9,20 @@ export default function Taskmanager() {
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [loader, setLoader] = useState(false);
+  const [openPopup, setOpenPopup] = useState(false);
   const [assignedData, setAssignedData] = useState([]);
   const [clearanceData, setClearanceData] = useState([]);
+  const [staffList, setStaffList] = useState([]);
+  const [supplier, setSupplier] = useState([]);
+  const [formData, setFormData] = useState({
+    Assign_Person_Name: "",
+  });
   /* ================= FETCH APIS ================= */
   const fetchAssigned = async () => {
     setLoader(true);
     try {
       const res = await axios.post(
-        `${process.env.REACT_APP_BASE_URL}getAllAssignedFreightsForAdmin`
+        `${process.env.REACT_APP_BASE_URL}getAllAssignedFreightsForAdmin`,
       );
       setAssignedData(res.data?.data || []);
     } catch (error) {
@@ -27,7 +35,7 @@ export default function Taskmanager() {
     setLoader(true);
     try {
       const res = await axios.post(
-        `${process.env.REACT_APP_BASE_URL}GetAllAssignedClearances`
+        `${process.env.REACT_APP_BASE_URL}GetAllAssignedClearances`,
       );
       setClearanceData(res.data?.data || []);
     } catch (error) {
@@ -47,8 +55,12 @@ export default function Taskmanager() {
     if (!searchQuery) return true;
     if (activeTab === "assigned") {
       return (
-        item?.freight_number?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        item?.supplier_name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        item?.freight_number
+          ?.toLowerCase()
+          .includes(searchQuery.toLowerCase()) ||
+        item?.supplier_name
+          ?.toLowerCase()
+          .includes(searchQuery.toLowerCase()) ||
         item?.supplier_email?.toLowerCase().includes(searchQuery.toLowerCase())
       );
     }
@@ -84,7 +96,7 @@ export default function Taskmanager() {
     try {
       const res = await axios.post(
         `${process.env.REACT_APP_BASE_URL}updateSupplierStatusOfFreight`,
-        payload
+        payload,
       );
       if (res?.data?.success) {
         toast.success("Freight status updated ✅");
@@ -105,7 +117,7 @@ export default function Taskmanager() {
     try {
       const res = await axios.post(
         `${process.env.REACT_APP_BASE_URL}updateSupplierStatusOfClearance`,
-        payload
+        payload,
       );
       if (res?.data?.success) {
         toast.success("Clearance status updated ✅");
@@ -128,6 +140,67 @@ export default function Taskmanager() {
       toast.error("Something went wrong ❌");
     }
   };
+
+  const handleclickassigntask = () => {
+    setOpenPopup(true);
+  };
+
+  const closeModal = () => {
+    setOpenPopup(false);
+  };
+
+  const postData = () => {
+    setLoader(true);
+    const payload = {
+      title: formData.Title,
+      description: formData.Description,
+      priority: formData.Priority,
+      task_for: formData.TaskFor,
+    };
+    axios
+      .post(`${process.env.REACT_APP_BASE_URL}addCustomTask`, payload)
+      .then((res) => {
+        if (res.data.success) {
+          toast.success("Task added successfully ✅");
+          closeModal();
+          activeTab === "assigned" ? fetchAssigned() : fetchClearance();
+        } else {
+          toast.warning(res.data.message || "Failed to add task ❌");
+        }
+        setLoader(false);
+      })
+      .catch((error) => {
+        console.error(error);
+        toast.error("Failed to add task ❌");
+        setLoader(false);
+      });
+  };
+
+  const handlechange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  useEffect(()=>{
+    getStaff()
+getSupplierList()
+  },[])
+  const getSupplierList = async()=>{
+    try {
+      const res = await axios.get(`${process.env.REACT_APP_BASE_URL}supplier-list`);  
+      setSupplier(res.data.data)
+    } catch (error) {
+      console.error("Failed to fetch staff list", error);
+    }
+  }
+  const getStaff = async()=>{
+    try {
+      const res = await axios.get(`${process.env.REACT_APP_BASE_URL}staff-list`);  
+      setStaffList(res.data.data)
+    } catch (error) {
+      console.error("Failed to fetch staff list", error);
+    }
+  }
+
   return (
     <>
       {loader ? (
@@ -173,9 +246,7 @@ export default function Taskmanager() {
               </button>
               <button
                 className={`btn ${
-                  activeTab === "Custom"
-                    ? "btn-primary"
-                    : "btn-outline-primary"
+                  activeTab === "Custom" ? "btn-primary" : "btn-outline-primary"
                 }`}
                 onClick={() => setActiveTab("Custom")}
               >
@@ -217,9 +288,7 @@ export default function Taskmanager() {
                             <select
                               className="form-select"
                               value={item.assign_supplier_status ?? ""}
-                              onChange={(e) =>
-                                handleChangeStatus(e, item)
-                              }
+                              onChange={(e) => handleChangeStatus(e, item)}
                             >
                               <option value="0">Pending</option>
                               <option value="1">Accepted</option>
@@ -274,9 +343,7 @@ export default function Taskmanager() {
                             <select
                               className="form-select"
                               value={item.assign_supplier_status ?? ""}
-                              onChange={(e) =>
-                                handleChangeStatus(e, item)
-                              }
+                              onChange={(e) => handleChangeStatus(e, item)}
                             >
                               <option value="0">Pending</option>
                               <option value="1">Accepted</option>
@@ -299,62 +366,67 @@ export default function Taskmanager() {
             {activeTab === "Custom" && (
               <div>
                 <div className="d-flex justify-content-end mb-2">
-                <button className="btn btn-primary">Add Task</button>
+                  <button
+                    className="btn btn-primary"
+                    onClick={() => {
+                      handleclickassigntask();
+                    }}
+                  >
+                    Add Task
+                  </button>
                 </div>
-              <div className="table-responsive">
-                <table className="table table-striped">
-                  <thead>
-                    <tr>
-                      <th>#</th>
-                      <th>Custom No</th>
-                      <th>Custom</th>
-                      <th>Client Name</th>
-                      <th>Nature of Goods</th>
-                      <th>Assigned Supplier</th>
-                      <th>Created Date</th>
-                      <th>Status</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {currentData.length ? (
-                      currentData.map((item, index) => (
-                        <tr key={item.id}>
-                          <td>{startIndex + index + 1}</td>
-                          <td>{item.clearance_number}</td>
-                          <td>{item.freight}</td>
-                          <td>{item.client_name}</td>
-                          <td>{item.nature_of_goods}</td>
-                          <td>{item.assigned_supplier_name}</td>
-                          <td>
-                            {item.created_at
-                              ? new Date(item.created_at).toLocaleDateString()
-                              : "-"}
-                          </td>
-                          <td>
-                            <select
-                              className="form-select"
-                              value={item.assign_supplier_status ?? ""}
-                              onChange={(e) =>
-                                handleChangeStatus(e, item)
-                              }
-                            >
-                              <option value="0">Pending</option>
-                              <option value="1">Accepted</option>
-                              <option value="2">Reject</option>
-                            </select>
+                <div className="table-responsive">
+                  <table className="table table-striped">
+                    <thead>
+                      <tr>
+                        <th>#</th>
+                        <th>Custom No</th>
+                        <th>Custom</th>
+                        <th>Client Name</th>
+                        <th>Nature of Goods</th>
+                        <th>Assigned Supplier</th>
+                        <th>Created Date</th>
+                        <th>Status</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {currentData.length ? (
+                        currentData.map((item, index) => (
+                          <tr key={item.id}>
+                            <td>{startIndex + index + 1}</td>
+                            <td>{item.clearance_number}</td>
+                            <td>{item.freight}</td>
+                            <td>{item.client_name}</td>
+                            <td>{item.nature_of_goods}</td>
+                            <td>{item.assigned_supplier_name}</td>
+                            <td>
+                              {item.created_at
+                                ? new Date(item.created_at).toLocaleDateString()
+                                : "-"}
+                            </td>
+                            <td>
+                              <select
+                                className="form-select"
+                                value={item.assign_supplier_status ?? ""}
+                                onChange={(e) => handleChangeStatus(e, item)}
+                              >
+                                <option value="0">Pending</option>
+                                <option value="1">Accepted</option>
+                                <option value="2">Reject</option>
+                              </select>
+                            </td>
+                          </tr>
+                        ))
+                      ) : (
+                        <tr>
+                          <td colSpan="8" className="text-center">
+                            No Clearance Data Found
                           </td>
                         </tr>
-                      ))
-                    ) : (
-                      <tr>
-                        <td colSpan="8" className="text-center">
-                          No Clearance Data Found
-                        </td>
-                      </tr>
-                    )}
-                  </tbody>
-                </table>
-              </div>
+                      )}
+                    </tbody>
+                  </table>
+                </div>
               </div>
             )}
             {/* ================= PAGINATION ================= */}
@@ -376,6 +448,132 @@ export default function Taskmanager() {
               </button>
             </div>
           </div>
+          <Modal
+            open={openPopup}
+            onClose={closeModal}
+            aria-labelledby="modal-modal-title"
+            aria-describedby="modal-modal-description"
+            className="newModal"
+          >
+            <Box
+              sx={{
+                position: "absolute",
+                top: "50%",
+                left: "50%",
+                transform: "translate(-50%, -50%)",
+                bgcolor: "background.paper",
+                boxShadow: 24,
+              }}
+            >
+              <div className="modal-header">
+                <h2 id="modal-modal-title">Add Task</h2>
+                <button className="btn btn-close" onClick={closeModal}>
+                  <CloseIcon />{" "}
+                </button>
+              </div>
+              <div className="newModalGap noFormaControl newModalGap2">
+                <div className="row my-3  ">
+                  <div className="col-6">
+                    <label>Title</label>
+                    <input
+                      type="text"
+                      id="shipper3"
+                      name="Title"
+                      style={{ cursor: "pointer" }}
+                      className="form-control"
+                      onChange={handlechange}
+                    />
+                  </div>
+                  <div className="col-6">
+                    <label>Description</label>
+                    <input
+                      type="text"
+                      id="shipper3"
+                      name="Description"
+                      style={{ cursor: "pointer" }}
+                      className="form-control"
+                      onChange={handlechange}
+                    />
+                  </div>
+                  <div className="col-6">
+                    <label>Priority</label>
+                    <select
+                      type="text"
+                      id="shipper3"
+                      name="Priority"
+                      style={{ cursor: "pointer" }}
+                      className="form-control"
+                      onChange={handlechange}
+                    >
+                      <option >Select</option>
+                      <option value="High">High</option>
+                      <option value="Medium">Medium</option>
+                      <option value="Low">Low</option>
+                    </select>
+                  </div>
+                  <div className="col-6">
+                    <label>Task For</label>
+                    <select
+                      type="text"
+                      id="shipper3"
+                      name="TaskFor"
+                      style={{ cursor: "pointer" }}
+                      className="form-control"
+                      onChange={handlechange}
+                    >
+                      <option >Select</option>
+                      <option value="Self">Self</option>
+                      <option value="Supplier">Supplier</option>
+                      <option value="Staff">Staff</option>
+                    </select>
+                  </div>
+                  {
+                    formData.TaskFor === "Supplier" && (
+                     <div className="col-6">
+                    <label>Supplier List</label>
+                    <select
+                      type="text"
+                      id="shipper3"
+                      name="TaskFor"
+                      style={{ cursor: "pointer" }}
+                      className="form-control"
+                      onChange={handlechange}
+                    >
+                      <option >Select</option>
+                     {
+                         supplier.map((staff)=><option value={staff.id}>{staff.name}</option>)
+                     }
+                    </select>
+                  </div>
+                    )
+                  }
+                 {
+                    formData.TaskFor === "Staff" && (
+                      <div className="col-6">
+                    <label>Staff List</label>
+                    <select
+                      type="text"
+                      id="shipper3"
+                      name="Staffid"
+                      style={{ cursor: "pointer" }}
+                      className="form-control"
+                      onChange={handlechange}
+                    >
+                      <option >Select</option>
+                     {
+                      staffList.map((staff)=><option value={staff.id}>{staff.full_name}</option>)
+                     }
+                    </select>
+                  </div>
+                    )
+                 }
+                </div>
+                <Button variant="contained" onClick={postData}>
+                  Apply
+                </Button>
+              </div>
+            </Box>
+          </Modal>
         </div>
       )}
       <ToastContainer />

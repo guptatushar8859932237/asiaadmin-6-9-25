@@ -11,12 +11,10 @@ export default function WarehouseDetails() {
    const [documents, setDocuments] = useState({});
   const navigate = useNavigate();
   const [apidata, setApidata] = useState([]);
-  const postassiandata = () => {
-    const data = {
-      warehouse_assign_order_id: info.warehouse_assign_order_id || info.warehouse_id,
-    };
-    axios
-      .post(`${process.env.REACT_APP_BASE_URL}getWarehouseOrderProduct`, data)
+  const postassiandata =async () => {
+    try {
+       await  axios
+      .get(`${process.env.REACT_APP_BASE_URL}getSupplierWarehouseProducts?supplier_warehouse_id=${info.warehouse_assign_order_id || info.id}`)
       .then((response) => {
         console.log(response.data.data);
         setApidata(response.data.data);
@@ -24,15 +22,16 @@ export default function WarehouseDetails() {
       .catch((error) => {
         console.log(error.response.data);
       });
+    } catch (error) {
+      console.log(error)
+    }
   };
-
   useEffect(() => {
     postassiandata();
   }, []);
   const handleclicknav = () => {
     navigate("/Admin/WarehouseOrder");
   };
-
     const GetFreightImages = () => {
         const data = { freight_id: info.freight_id, uploaded_by: "1" };
         axios
@@ -48,7 +47,6 @@ export default function WarehouseDetails() {
     useEffect(() => {
       GetFreightImages();
     }, []);
-
      const deleteapi = (id) => {
         console.log(id);
         const data11 = {
@@ -113,7 +111,7 @@ export default function WarehouseDetails() {
                               </td>
                               <td>
                                 <p className="client_para1">
-                                  {new Date(info.date).toLocaleDateString(
+                                  {new Date(info.created_at).toLocaleDateString(
                                     "en-GB"
                                   )}
                                 </p>
@@ -135,7 +133,7 @@ export default function WarehouseDetails() {
                               </td>
                               <td>
                                 <p className="client_para1">
-                                  {info.client_ref_name}
+                                  {info.customer_ref}
                                 </p>
                               </td>
                             </tr>
@@ -145,7 +143,7 @@ export default function WarehouseDetails() {
                               </td>
                               <td>
                                 <p className="client_para1">
-                                  {info.batch_number}
+                                  {info?.order_id}
                                 </p>
                               </td>
                             </tr>
@@ -196,7 +194,7 @@ export default function WarehouseDetails() {
                               </td>
                               <td>
                                 <p className="client_para1">
-                                  {info.order_warehouse_cost}
+                                  {info.warehouse_cost}
                                 </p>
                               </td>
                             </tr>
@@ -209,7 +207,7 @@ export default function WarehouseDetails() {
                               </td>
                               <td>
                                 <p className="client_para1 ">
-                                  {info.order_costs_to_collect}
+                                  {info.costs_to_collect}
                                 </p>
                               </td>
                             </tr>
@@ -263,18 +261,17 @@ export default function WarehouseDetails() {
                               </td>
                               <td>
                                 <p className="client_para1">
-                                  {info.weight}
+                                  {info.total_weight}
                                 </p>
                               </td>
                             </tr>
                             <tr>
-
                               <td>
                                 <p className="client_para1">Dimensions:</p>
                               </td>
                               <td>
                                 <p className="client_para1">
-                                 {info?.dimensions}
+                                 {info?.total_cbm}
                                 </p>
                               </td>
                             </tr>
@@ -284,11 +281,11 @@ export default function WarehouseDetails() {
                               </td>
                               <td>
                                 <p className="client_para1">
-                                  {info.total_warehouse_noOfPackages}
+                                  {info.total_packages}
                                 </p>
                               </td>
                             </tr>
-                            <tr>
+                            {/* <tr>
                               <td>
                                 <p className="client_para1">Orders:</p>
                               </td>
@@ -297,7 +294,7 @@ export default function WarehouseDetails() {
                                   
                                 </p>
                               </td>
-                            </tr>
+                            </tr> */}
                           </tbody>
                         </table>
                       </div>
@@ -332,7 +329,6 @@ export default function WarehouseDetails() {
                     ))}
                   </div>
                 ))}
-          
                 {/* Quotation (separate because it's not part of groups) */}
                 <div className="mb-2">
                   <label>Attach Quotation :</label>

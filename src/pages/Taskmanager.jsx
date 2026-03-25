@@ -15,7 +15,12 @@ export default function Taskmanager() {
   const [staffList, setStaffList] = useState([]);
   const [supplier, setSupplier] = useState([]);
   const [formData, setFormData] = useState({
-    Assign_Person_Name: "",
+    Title: "",
+  Description: "",
+  Priority: "",
+  TaskFor: "",
+  SupplierId: "",
+  Staffid: ""
   });
   /* ================= FETCH APIS ================= */
   const fetchAssigned = async () => {
@@ -149,36 +154,103 @@ export default function Taskmanager() {
     setOpenPopup(false);
   };
 
-  const postData = () => {
-    setLoader(true);
-    const payload = {
-      title: formData.Title,
-      description: formData.Description,
-      priority: formData.Priority,
-      task_for: formData.TaskFor,
-    };
-    axios
-      .post(`${process.env.REACT_APP_BASE_URL}addCustomTask`, payload)
-      .then((res) => {
-        if (res.data.success) {
-          toast.success("Task added successfully ✅");
-          closeModal();
-          activeTab === "assigned" ? fetchAssigned() : fetchClearance();
-        } else {
-          toast.warning(res.data.message || "Failed to add task ❌");
-        }
-        setLoader(false);
-      })
-      .catch((error) => {
-        console.error(error);
-        toast.error("Failed to add task ❌");
-        setLoader(false);
-      });
+//   const postData = () => {
+//     const userid = JSON.parse(localStorage.getItem("data123"))?.id;
+//     const postData = () => {
+//   setLoader(true);
+
+//   let payload = {
+//     title: formData.Title,
+//     description: formData.Description,
+//     priority: formData.Priority,
+//     task_for_type: formData.TaskFor?.toLowerCase(),
+//     created_by: userid,
+//   };
+
+//   if (formData.TaskFor === "Supplier") {
+//     payload.task_for_id = formData.id;
+//   }
+
+//   if (formData.TaskFor === "Staff") {
+//     payload.task_for_id = formData.id;
+//   }
+//   axios
+//     .post(`${process.env.REACT_APP_BASE_URL}add-task`, payload)
+//     .then((res) => {
+//       if (res.data.success) {
+//         toast.success("Task added successfully ✅");
+//         closeModal();
+//       } else {
+//         toast.warning(res.data.message || "Failed to add task ❌");
+//       }
+//       setLoader(false);
+//     })
+//     .catch((error) => {
+//       console.error(error);
+//       toast.error("Failed to add task ❌");
+//       setLoader(false);
+//     });
+// };
+  
+//   };
+const postData = () => {
+
+  const userid = JSON.parse(localStorage.getItem("data123"))?.id;
+
+  setLoader(true);
+
+  let payload = {
+    title: formData.Title,
+    description: formData.Description,
+    priority: formData.Priority,
+    task_for_type: formData.TaskFor?.toLowerCase(),
+    created_by: userid
   };
 
-  const handlechange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
+  if (formData.TaskFor === "Supplier") {
+    payload.task_for_id = formData.SupplierId;
+  }
+
+  if (formData.TaskFor === "Staff") {
+    payload.task_for_id = formData.Staffid;
+  }
+
+  axios
+    .post(`${process.env.REACT_APP_BASE_URL}add-task`, payload)
+    .then((res) => {
+      if (res.data.success) {
+        toast.success("Task added successfully ✅");
+        closeModal();
+
+        setFormData({
+          Title: "",
+          Description: "",
+          Priority: "",
+          TaskFor: "",
+          SupplierId: "",
+          Staffid: ""
+        });
+
+      } else {
+        toast.warning(res.data.message || "Failed to add task ❌");
+      }
+
+      setLoader(false);
+    })
+    .catch((error) => {
+      console.error(error);
+      toast.error("Failed to add task ❌");
+      setLoader(false);
+    });
+};
+ const handlechange = (e) => {
+  const { name, value } = e.target;
+
+  setFormData({
+    ...formData,
+    [name]: value
+  });
+};
 
   useEffect(()=>{
     getStaff()
@@ -532,38 +604,42 @@ getSupplierList()
                      <div className="col-6">
                     <label>Supplier List</label>
                     <select
-                      type="text"
-                      id="shipper3"
-                      name="TaskFor"
-                      style={{ cursor: "pointer" }}
-                      className="form-control"
-                      onChange={handlechange}
-                    >
-                      <option >Select</option>
-                     {
-                         supplier.map((staff)=><option value={staff.id}>{staff.name}</option>)
-                     }
-                    </select>
+name="SupplierId"
+className="form-control"
+onChange={handlechange}
+>
+<option>Select</option>
+
+{supplier.map((item) => (
+<option key={item.id} value={item.id}>
+{item.name}
+</option>
+))}
+
+</select>
                   </div>
                     )
                   }
                  {
                     formData.TaskFor === "Staff" && (
                       <div className="col-6">
+
                     <label>Staff List</label>
-                    <select
-                      type="text"
-                      id="shipper3"
-                      name="Staffid"
-                      style={{ cursor: "pointer" }}
-                      className="form-control"
-                      onChange={handlechange}
-                    >
-                      <option >Select</option>
-                     {
-                      staffList.map((staff)=><option value={staff.id}>{staff.full_name}</option>)
-                     }
-                    </select>
+                   <select
+name="Staffid"
+className="form-control"
+onChange={handlechange}
+>
+
+<option>Select</option>
+
+{staffList.map((item) => (
+<option key={item.id} value={item.id}>
+{item.full_name}
+</option>
+))}
+
+</select>
                   </div>
                     )
                  }

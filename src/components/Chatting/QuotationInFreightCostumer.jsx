@@ -3,24 +3,18 @@ import { useLocation } from "react-router-dom";
 import axios from "axios";
 import { io } from "socket.io-client";
 import { toast } from "react-toastify";
-
 const LOGGED_IN_USER_ID = JSON.parse(localStorage.getItem("data123"))?.id;
-
 export default function QuotationInFreightCostumer() {
   const location = useLocation();
   const socketRef = useRef(null);
   const messagesEndRef = useRef(null);
-
   const [socketConnected, setSocketConnected] = useState(false);
   const [conversationId, setConversationId] = useState(null);
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState([]);
-
   const activeChat =
     location.state?.data || JSON.parse(localStorage.getItem("activeChat"));
-
   const RECEIVER_ID = activeChat?.client_id || activeChat?.freight_client_id;
-
   /* ================= SOCKET CONNECT ================= */
   useEffect(() => {
     if (!LOGGED_IN_USER_ID) return;
@@ -33,25 +27,20 @@ export default function QuotationInFreightCostumer() {
   transports: ["websocket"],
   reconnection: true,
 });
-
     socketRef.current.on("connect", () => {
       console.log("✅ Socket connected");
       setSocketConnected(true);
-
       // Join user room
       socketRef.current.emit("joinUser", LOGGED_IN_USER_ID);
     });
-
     socketRef.current.on("disconnect", (reason) => {
       console.log("❌ Socket disconnected:", reason);
       setSocketConnected(false);
     });
-
     socketRef.current.on("connect_error", (err) => {
       console.log("⚠️ Socket error:", err.message);
       setSocketConnected(false);    
     });
-
     socketRef.current.on("receiveMessage", (data) => {
       setMessages((prev) => [
         ...prev,
@@ -62,12 +51,10 @@ export default function QuotationInFreightCostumer() {
         },
       ]);
     });
-
     return () => {
       socketRef.current.disconnect();
     };
   }, []);
-
   /* ================= CREATE CONVERSATION ================= */
 //   const createConversation = async () => {
 //     try {
@@ -93,15 +80,15 @@ export default function QuotationInFreightCostumer() {
 const createConversation = async () => {
   try {
     if (!LOGGED_IN_USER_ID || !RECEIVER_ID) return;
-
     const res = await axios.post(
       `${process.env.REACT_APP_BASE_URL}chat/createConversation`,
       {
+        sender_type: "user",
+        receiver_type: "user",
         sender_id: LOGGED_IN_USER_ID,
         receiver_id: RECEIVER_ID,
       }
     );
-
     const conversationId = res?.data?.conversation_id;
 if(res.status===200){
     console.log(res.data)
@@ -113,7 +100,6 @@ if(res.status===200){
     }
 if(res.data.success===true){
     setConversationId(conversationId);
-
 }
   } catch (error) {
     toast.error(
@@ -121,17 +107,14 @@ if(res.data.success===true){
     );
   }
 };
-
   useEffect(() => {
     if (!conversationId && RECEIVER_ID) {
       createConversation();
     }
   }, [RECEIVER_ID]);
-
   /* ================= JOIN CONVERSATION ROOM ================= */
   useEffect(() => {
     if (!conversationId || !socketConnected) return;
-
     console.log("📥 Joining conversation:", conversationId);
     socketRef.current.emit("joinConversation", conversationId);
 
@@ -139,7 +122,6 @@ if(res.data.success===true){
       socketRef.current.emit("leaveConversation", conversationId);
     };
   }, [conversationId, socketConnected]);
-
   /* ================= LOAD MESSAGES ================= */
   useEffect(() => {
     if (!conversationId) return;
@@ -162,18 +144,15 @@ if(res.data.success===true){
         );
       });
   }, [conversationId]);
-
   /* ================= SEND MESSAGE ================= */
   const sendMessage = async () => {
     console.log("A")
- 
     const payload = {
       sender_id: LOGGED_IN_USER_ID,
       receiver_id: RECEIVER_ID,
       conversation_id: conversationId,
       message,
     };
-
     // Optimistic UI
     setMessages((prev) => [
       ...prev,
@@ -188,22 +167,17 @@ console.log(payload)
       `${process.env.REACT_APP_BASE_URL}chat/sendMessage`,
       payload
     );
-
     socketRef.current.emit("sendMessage", {
       ...payload,
       id: res.data.id,
     });
-
     setMessage("");
   };
-
   /* ================= AUTO SCROLL ================= */
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
-
   if (!activeChat) return <div>Select chat</div>;
-
   return (
     <div style={{ height: "100vh" }}>
       {!socketConnected && (
@@ -211,7 +185,6 @@ console.log(payload)
           ⚠️ Chat disconnected. Reconnecting...
         </div>
       )}
-
       <div className="d-flex flex-column h-100">
         <div style={{ flex: 1, overflowY: "auto", padding: 12 }}>
           {messages.map((msg) => (
@@ -237,7 +210,6 @@ console.log(payload)
           ))}
           <div ref={messagesEndRef} />
         </div>
-
         <div className="p-2 d-flex gap-2">
           <input
             className="form-control"

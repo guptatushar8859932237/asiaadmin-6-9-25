@@ -37,6 +37,9 @@ export default function SupplierWarehouse() {
   const [currentPage, setCurrentPage] = useState(1);
   const [data, setData] = useState([]);
   const [batch, setBatch] = useState([]);
+  const [countries, setCountries] = useState([]);
+  const [nameData, setNameData] = useState("");
+  const [clientData, setClientData] = useState([]);
   const [file, setFile] = useState(null);
   const [formFiles, setFormFiles] = useState({
     supplier_invoice: [],
@@ -136,11 +139,11 @@ export default function SupplierWarehouse() {
         setLoader(true);
         const payload = {
           user_id: userid,
-        }
+        };
         try {
           const response = await axios.get(
             `${process.env.REACT_APP_BASE_URL}GetSupplierCreatedWarehouseOrders`,
-            { params: payload }
+            // { params: payload }
           );
           setLoader(false);
           if (response.data && response.data.data) {
@@ -205,18 +208,18 @@ export default function SupplierWarehouse() {
     setSelectedData(selectedData);
     handleOpenModal();
   };
-  const handleEditClickAssign = (freight_ID,  order_id) => {
-    console.log(freight_ID,  order_id);
+  const handleEditClickAssign = (freight_ID, order_id) => {
+    console.log(freight_ID, order_id);
     setOrderID(order_id);
     setFreightIdPass(freight_ID);
     const selectedData = data.find((item) => item.freight_ID === freight_ID);
     console.log(selectedData);
     setSelectedData(selectedData);
-    setHandleassignsupplier(true)
+    setHandleassignsupplier(true);
   };
-  const handleclose=()=>{
-      setHandleassignsupplier(false)
-  }
+  const handleclose = () => {
+    setHandleassignsupplier(false);
+  };
   const handleEditClick12 = (
     warehouse_assign_order_id,
     order_id,
@@ -269,7 +272,7 @@ export default function SupplierWarehouse() {
         toast.error(error.response.data.message);
       });
   };
-console.log(pagenationData,pagenationData.limit,pagenationData.total)
+  console.log(pagenationData, pagenationData.limit, pagenationData.total);
   const totalPage = Math.ceil(pagenationData.total / pagenationData.limit);
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -301,7 +304,7 @@ console.log(pagenationData,pagenationData.limit,pagenationData.total)
     selectedDocs.forEach((doc) => {
       console.log("Doc Type:", doc.name);
       doc.files.forEach((file) => {
-        formdata1.append(doc.name, file); 
+        formdata1.append(doc.name, file);
         console.log("File:", file.name, "| Size:", file.size, "bytes");
       });
     });
@@ -348,6 +351,19 @@ console.log(pagenationData,pagenationData.limit,pagenationData.total)
     } else {
       console.log("No file selected");
     }
+  };
+  useEffect(() => {
+    getcountry();
+  }, []);
+  const getcountry = () => {
+    axios
+      .get(`${process.env.REACT_APP_BASE_URL}GetCountries`)
+      .then((response) => {
+        setCountries(response.data.data);
+      })
+      .catch((error) => {
+        console.log(error.response.data.data);
+      });
   };
 
   const handleclicknavi = async (item) => {
@@ -557,80 +573,100 @@ console.log(pagenationData,pagenationData.limit,pagenationData.total)
     }
   };
 
-  useEffect(()=>{
-    getSupplier()
-  },[])
+  useEffect(() => {
+    getSupplier();
+  }, []);
 
-const getSupplier = async () => {
-  try {
-    const response = await axios.get(
-      `${process.env.REACT_APP_BASE_URL}supplier-list`
-    );
-
-    if (response.status === 200) {
-      setHandlsupplier(response.data.data);
-    } else {
-      console.error("Unexpected response:", response);
-    }
-  } catch (error) {
-    console.error(
-      "Error fetching supplier list:",
-      error.response?.data || error.message
-    );
-  }
-};
-
-const handleChangeSupplier=(e)=>{
-  setResponseData(e.target.value)
-}
-
-// const AssignSupplier = ()=>{
-//   const payload={
-//       supplier_id:responseData,
-//       freight_id:freightIdPass,
-//       order_id:orderID
-
-//     }
-//   console.log(payload)
-//   try {
-//     const response = axios.post(`${process.env.REACT_APP_BASE_URL}assignWarehouseSupplierToOrder`,payload)
-//     console.log(response)
-//   } catch (error) {
-//     console.log(error)
-//   }
-// }
-const AssignSupplier = async () => {
-  if (!responseData) {
-    toast.error("Please select a supplier");
-    return;
-  }
-  const payload = {
-    supplier_id: parseInt(responseData, 10),
-    freight_id: freightIdPass,
-    order_id: orderID,
-  };
-  console.log("Payload:", payload);
-  try {
-    const response = await axios.post(
-      `${process.env.REACT_APP_BASE_URL}assignWarehouseOrderToSupplier`,
-      payload
-    );
-    toast.success(response.data?.message || "Supplier assigned successfully");
-    handleclose();
-  } catch (error) {
-    if (error.response) {
-      toast.error(
-        error.response.data?.message ||
-        `Request failed with status ${error.response.status}`
+  const getSupplier = async () => {
+    try {
+      const response = await axios.get(
+        `${process.env.REACT_APP_BASE_URL}supplier-list`,
       );
-    } else if (error.request) {
-      toast.error("Server not responding. Please try again later.");
-    } else {
-      toast.error(error.message || "Something went wrong");
+
+      if (response.status === 200) {
+        setHandlsupplier(response.data.data);
+      } else {
+        console.error("Unexpected response:", response);
+      }
+    } catch (error) {
+      console.error(
+        "Error fetching supplier list:",
+        error.response?.data || error.message,
+      );
     }
-    console.error("AssignSupplier Error:", error);
-  }
-};
+  };
+
+  const handleChangeSupplier = (e) => {
+    setResponseData(e.target.value);
+  };
+
+  // const AssignSupplier = ()=>{
+  //   const payload={
+  //       supplier_id:responseData,
+  //       freight_id:freightIdPass,
+  //       order_id:orderID
+
+  //     }
+  //   console.log(payload)
+  //   try {
+  //     const response = axios.post(`${process.env.REACT_APP_BASE_URL}assignWarehouseSupplierToOrder`,payload)
+  //     console.log(response)
+  //   } catch (error) {
+  //     console.log(error)
+  //   }
+  // }
+  const AssignSupplier = async () => {
+    if (!responseData) {
+      toast.error("Please select a supplier");
+      return;
+    }
+    const payload = {
+      supplier_id: parseInt(responseData, 10),
+      freight_id: freightIdPass,
+      order_id: orderID,
+    };
+    console.log("Payload:", payload);
+    try {
+      const response = await axios.post(
+        `${process.env.REACT_APP_BASE_URL}assignWarehouseOrderToSupplier`,
+        payload,
+      );
+      toast.success(response.data?.message || "Supplier assigned successfully");
+      handleclose();
+    } catch (error) {
+      if (error.response) {
+        toast.error(
+          error.response.data?.message ||
+            `Request failed with status ${error.response.status}`,
+        );
+      } else if (error.request) {
+        toast.error("Server not responding. Please try again later.");
+      } else {
+        toast.error(error.message || "Something went wrong");
+      }
+      console.error("AssignSupplier Error:", error);
+    }
+  };
+
+  const handlechangewarehouse = (e) => {
+    const { name, value } = e.target;
+    setNameData({ ...nameData, [name]: value });
+  };
+  useEffect(() => {
+    getclientdata();
+  }, []);
+  const getclientdata = async () => {
+    try {
+      const response = await axios.get(
+        `${process.env.REACT_APP_BASE_URL}client-list`,
+      );
+      if (response.data.success) {
+        setClientData(response.data.data);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
   return (
     <>
       <div className="wpWrapper">
@@ -639,7 +675,7 @@ const AssignSupplier = async () => {
             <div className="col-md-12">
               <div className="d-flex justify-content-between align-items-center">
                 <div>
-                  <h4 className="freight_hd">Warehouse Order List</h4>
+                  <h4 className="freight_hd">Supplier Warehouse </h4>
                 </div>
                 <div className="d-flex justify-content-end align-items-center">
                   <div className="">
@@ -691,7 +727,8 @@ const AssignSupplier = async () => {
                                               className="client_nm"
                                               style={{ fontSize: "18px" }}
                                             >
-                                              {item.client_name} / OR000{item?.order_id}
+                                              {item.client_name} / OR000
+                                              {item?.order_id}
                                             </p>
                                             <p
                                               className="fright_no mx-2"
@@ -820,8 +857,8 @@ const AssignSupplier = async () => {
                                             </div>
                                           </div>
                                           <div className="col-md-6 text-end">
-                                            <i 
-                                            class="fa fa-tasks me-2 mt-2"
+                                            <i
+                                              class="fa fa-tasks me-2 mt-2"
                                               onClick={() =>
                                                 handleEditClickAssign(
                                                   item.freight_ID,
@@ -922,30 +959,36 @@ const AssignSupplier = async () => {
                             p: 4,
                           }}
                         >
-                          <h4 id="modal-modal-title text-dark">Assign Supplier</h4>
-                        <select className="form-control" onChange={handleChangeSupplier} >
-                          <option>select</option>
-
-                          {
-                            handlsupplier && handlsupplier.length>0 && handlsupplier.map((item,index)=>{
-                              return(
-                                <>
-                              <option key={index} value={item.id}>{item.name}</option>
-                                </>
-                              )
-                            })
-                          }
-                        </select>
-                        <div className="d-flex  mt-3">
-
-                          <Button
-                            variant="contained"
-                            className="submit_btn"
-                            onClick={AssignSupplier}
+                          <h4 id="modal-modal-title text-dark">
+                            Assign Supplier
+                          </h4>
+                          <select
+                            className="form-control"
+                            onChange={handleChangeSupplier}
                           >
-                            Submit
-                          </Button>
-                        </div>
+                            <option>select</option>
+
+                            {handlsupplier &&
+                              handlsupplier.length > 0 &&
+                              handlsupplier.map((item, index) => {
+                                return (
+                                  <>
+                                    <option key={index} value={item.id}>
+                                      {item.name}
+                                    </option>
+                                  </>
+                                );
+                              })}
+                          </select>
+                          <div className="d-flex  mt-3">
+                            <Button
+                              variant="contained"
+                              className="submit_btn"
+                              onClick={AssignSupplier}
+                            >
+                              Submit
+                            </Button>
+                          </div>
                         </Box>
                       </Modal>
                       <Modal
@@ -1156,7 +1199,7 @@ const AssignSupplier = async () => {
                           <div className="newModalGap">
                             <div className="text-center">
                               <div className="d-flex justify-content-between">
-                                <div
+                                {/* <div
                                   className="fs-3 border rounded-circle px-2 bg-dark text-white"
                                   style={{
                                     cursor: "pointer",
@@ -1168,13 +1211,13 @@ const AssignSupplier = async () => {
                                   onClick={handleCloseModal}
                                 >
                                   +
-                                </div>
+                                </div> */}
                               </div>
                             </div>
                             {selectedData && (
-                              <form onSubmit={handleSubmit} className="pt-3">
+                              <form onSubmit={handleSubmit} className="p-3">
                                 <Grid container spacing={2}>
-                                  <Grid
+                                  {/* <Grid
                                     item
                                     xs={12}
                                     sm={6}
@@ -1365,7 +1408,7 @@ const AssignSupplier = async () => {
                                             <h2>Upload Documents</h2>
 
                                             {/* Dropdown */}
-                                            <FormControl
+                                  {/* <FormControl
                                               fullWidth
                                               sx={{ mt: 2 }}
                                             >
@@ -1389,7 +1432,7 @@ const AssignSupplier = async () => {
                                             </FormControl>
 
                                             {/* Dynamic file inputs */}
-                                            <div className="mt-3">
+                                  {/* <div className="mt-3">
                                               {selectedDocs.map(
                                                 (doc, index) => (
                                                   <div
@@ -1417,7 +1460,7 @@ const AssignSupplier = async () => {
                                             </div>
 
                                             {/* Footer buttons */}
-                                            <Box
+                                  {/* <Box
                                               sx={{
                                                 display: "flex",
                                                 justifyContent: "flex-end",
@@ -1441,6 +1484,601 @@ const AssignSupplier = async () => {
                                       ) : (
                                         ""
                                       )}
+                                    </div>
+                                  </div> */}
+
+                                  <div className="row">
+                                    <h5>client Details</h5>
+                                    <div className="col-md-6">
+                                      <label>Customer name</label>
+                                      <select
+                                        className="form-control"
+                                        name="client_id"
+                                        onChange={handlechangewarehouse}
+                                      >
+                                        <option>Select</option>
+                                        {clientData.map((item, index) => {
+                                          return (
+                                            <>
+                                              <option>{item.full_name}</option>
+                                            </>
+                                          );
+                                        })}
+                                      </select>
+                                    </div>
+                                    <div className="col-md-6">
+                                      <label>Customer Ref</label>
+                                      <input
+                                        type="text"
+                                        className="form-control"
+                                        name="customer_ref"
+                                        onChange={handlechangewarehouse}
+                                      />
+                                    </div>
+                                    <div className="col-md-6">
+                                      <label>Create new Freight Order</label>
+                                      <select
+                                        className="form-control"
+                                        name="order_action"
+                                        onChange={handlechangewarehouse}
+                                      >
+                                        <option>Select</option>
+                                        <option value="Yes">Yes</option>
+                                        <option value="No">No</option>
+                                      </select>
+                                    </div>
+                                    {nameData.order_action === "No" ? (
+                                      <div className="col-md-6">
+                                        <label>Freight Number</label>
+                                        <input
+                                          type="text"
+                                          className="form-control"
+                                          name="order_id"
+                                          onChange={handlechangewarehouse}
+                                        />
+                                      </div>
+                                    ) : (
+                                      ""
+                                    )}
+                                    <div className="col-md-6">
+                                      <label>Groupage #</label>
+                                      <select
+                                        className="form-control"
+                                        name="batch_id"
+                                        onChange={handlechangewarehouse}
+                                      >
+                                        <option>Select</option>
+                                      </select>
+                                    </div>
+                                    <div className="row g-2">
+                                      <div className="col-md-6">
+                                        <label>Date</label>
+                                        <input
+                                          type="date"
+                                          className="form-control"
+                                          disabled
+                                          value={
+                                            selectedData.date_received
+                                              ? selectedData.date_received.split(
+                                                  "T",
+                                                )[0]
+                                              : ""
+                                          }
+                                          name="date_received"
+                                          onChange={handlechangewarehouse}
+                                        />
+                                      </div>
+
+                                      <div className="col-md-6">
+                                        <label>Warehouse Order Id</label>
+                                        <input
+                                          type="type"
+                                          className="form-control"
+                                          disabled
+                                          disabled
+                                          value={
+                                            selectedData.warehouse_order_id
+                                          }
+                                          name="warehouse_order_id"
+                                          onChange={handlechangewarehouse}
+                                          placeholder=""
+                                        ></input>
+                                      </div>
+                                      <div className="col-md-6">
+                                        <label>Courier waybill_ref</label>
+                                        <input
+                                          type="type"
+                                          className="form-control"
+                                          disabled
+                                          value={
+                                            selectedData.courier_waybill_ref
+                                          }
+                                          name="courier_waybill_ref"
+                                          onChange={handlechangewarehouse}
+                                          placeholder=""
+                                        ></input>
+                                      </div>
+                                      <div className="col-md-6">
+                                        <label>Dispatch Date</label>
+                                        {/* <input
+                                  type="date"
+                                  className="form-control"
+                                  disabled
+                                  name="dispatched_date"
+                                  onChange={handlechangewarehouse}
+                                  placeholder=""
+                                ></input> */}
+                                        <input
+                                          type="date"
+                                          className="form-control"
+                                          disabled
+                                          value={
+                                            selectedData.dispatch_date
+                                              ? selectedData.dispatch_date.split(
+                                                  "T",
+                                                )[0]
+                                              : ""
+                                          }
+                                          name="dispatch_date"
+                                          onChange={handlechangewarehouse}
+                                        />
+                                      </div>
+                                    </div>
+                                    <h5 className="mt-3 mb-2">
+                                      Package Information
+                                    </h5>
+                                    <div className="row g-2">
+                                      <div className="col-md-6">
+                                        <label>Customer Name</label>
+                                        <input
+                                          className="form-control"
+                                          disabled
+                                          value={selectedData.customer_name}
+                                          name="customer_name"
+                                          onChange={handlechangewarehouse}
+                                          placeholder="customer name"
+                                        ></input>
+                                      </div>
+                                      <div className="col-md-6">
+                                        <label>Customer ref</label>
+                                        <input
+                                          className="form-control"
+                                          disabled
+                                          value={selectedData.customer_ref}
+                                          name="customer_ref"
+                                          onChange={handlechangewarehouse}
+                                          placeholder="customer name"
+                                        ></input>
+                                      </div>
+
+                                      <div className="col-md-6">
+                                        <label>Country of Origin</label>
+                                        <select
+                                          name="collection_from"
+                                          disabled
+                                          value={selectedData.collection_from}
+                                          onChange={handlechangewarehouse}
+                                          className="form-select"
+                                        >
+                                          <option>Select</option>
+                                          {countries &&
+                                            countries.length > 0 &&
+                                            countries.map((item, index) => {
+                                              return (
+                                                <>
+                                                  <option
+                                                    key={index}
+                                                    value={item.id}
+                                                  >
+                                                    {item.name}
+                                                  </option>
+                                                </>
+                                              );
+                                            })}
+                                        </select>
+                                      </div>
+                                      <div className="col-md-6">
+                                        <label> Destination Country</label>
+                                        <select
+                                          name="destination_country"
+                                          disabled
+                                          value={
+                                            selectedData.destination_country
+                                          }
+                                          onChange={handlechangewarehouse}
+                                          className="form-select"
+                                        >
+                                          <option>Select</option>
+                                          {countries &&
+                                            countries.length > 0 &&
+                                            countries.map((item, index) => {
+                                              return (
+                                                <>
+                                                  <option
+                                                    key={index}
+                                                    value={item.id}
+                                                  >
+                                                    {item.name}
+                                                  </option>
+                                                </>
+                                              );
+                                            })}
+                                        </select>
+                                      </div>
+
+                                      <div className="col-md-6">
+                                        <label>Box Marking</label>
+                                        <input
+                                          className="form-control"
+                                          disabled
+                                          name="box_marking"
+                                          value={selectedData.box_marking}
+                                          onChange={handlechangewarehouse}
+                                        ></input>
+                                      </div>
+                                      <div className="col-md-6">
+                                        <label>Good Description</label>
+                                        <input
+                                          type="Good Description"
+                                          className="form-control"
+                                          disabled
+                                          value={selectedData.goods_description}
+                                          name="goods_description"
+                                          onChange={handlechangewarehouse}
+                                          placeholder=""
+                                        ></input>
+                                      </div>
+                                      <div className="col-md-6">
+                                        <label>Packing Type</label>
+                                        <select
+                                          className="form-select"
+                                          value={selectedData.package_type}
+                                          name="package_type"
+                                          disabled
+                                          onChange={handlechangewarehouse}
+                                          placeholder=""
+                                        >
+                                          <option value="">Select</option>
+                                          <option value="carte">carte</option>
+                                          <option value="pallet">pallet</option>
+                                          <option value="Box">Box</option>
+                                          <option value="Bag">Bag</option>
+                                        </select>
+                                      </div>
+                                      <div className="col-md-6">
+                                        <label>Hazardous </label>
+                                        <select
+                                          className="form-select"
+                                          value={selectedData.hazardous}
+                                          name="hazardous"
+                                          disabled
+                                          onChange={handlechangewarehouse}
+                                          placeholder=""
+                                        >
+                                          <option value="">Select</option>
+                                          <option value="Yes">Yes</option>
+                                          <option value="No">No</option>
+                                        </select>
+                                      </div>
+                                      {selectedData.hazardous === "Yes" ? (
+                                        <div className="col-md-6">
+                                          <label>
+                                            Description of Hazardous{" "}
+                                          </label>
+                                          <input
+                                            type="type"
+                                            className="form-control"
+                                            disabled
+                                            value={
+                                              selectedData.hazard_description
+                                            }
+                                            name="hazard_description"
+                                            onChange={handlechangewarehouse}
+                                            placeholder=""
+                                          ></input>
+                                        </div>
+                                      ) : (
+                                        ""
+                                      )}
+
+                                      <div className="col-md-6">
+                                        <label>Total cbm</label>
+                                        <input
+                                          type="text"
+                                          className="form-control"
+                                          disabled
+                                          value={selectedData.total_cbm}
+                                          name="total_cbm"
+                                          onChange={handlechangewarehouse}
+                                          placeholder=""
+                                        ></input>
+                                      </div>
+                                      <div className="col-md-6">
+                                        <label>Total Package</label>
+                                        <input
+                                          type="text"
+                                          className="form-control"
+                                          disabled
+                                          value={selectedData.total_packages}
+                                          name="total_packages"
+                                          onChange={handlechangewarehouse}
+                                          placeholder=""
+                                        ></input>
+                                      </div>
+
+                                      <div className="col-md-6">
+                                        <label>Total Dimension </label>
+                                        <input
+                                          type="text"
+                                          className="form-control"
+                                          disabled
+                                          value={selectedData.total_cbm}
+                                          name="total_cbm"
+                                          onChange={handlechangewarehouse}
+                                          placeholder=""
+                                        ></input>
+                                      </div>
+                                      <div className="col-lg-12">
+                                        <label>Comment on Packages</label>
+                                        <textarea
+                                          className="w-100 form-control"
+                                          name="package_comment"
+                                          disabled
+                                          value={selectedData.package_comment}
+                                          placeholder="Other Information"
+                                        ></textarea>
+                                      </div>
+                                    </div>
+                                    <h5 className="mt-3 mb-2">Damaged Goods</h5>
+                                    <div className="row g-2">
+                                      <div className="col-md-6">
+                                        <label>Damaged Goods</label>
+                                        <select
+                                          type="text"
+                                          className="form-select"
+                                          disabled
+                                          value={selectedData.damaged_goods}
+                                          name="damaged_goods"
+                                          onChange={handlechangewarehouse}
+                                          placeholder=""
+                                        >
+                                          <option value="">Select</option>
+                                          <option value="Yes">Yes</option>
+                                          <option value="No">No</option>
+                                        </select>
+                                      </div>
+                                      <div className="col-md-6">
+                                        <label>Damaged Packed (qty)</label>
+                                        <input
+                                          type="text"
+                                          className="form-control"
+                                          disabled
+                                          value={selectedData.damaged_pkg_qty}
+                                          name="damaged_pkg_qty"
+                                          onChange={handlechangewarehouse}
+                                        ></input>
+                                      </div>
+                                      <div className="col-md-12">
+                                        <label>Attach File</label>
+                                        <input
+                                          type="file"
+                                          className="form-control"
+                                          disabled
+                                          name="attach_file"
+                                          onChange={handlechangewarehouse}
+                                        ></input>
+                                      </div>
+
+                                      <div className="col-md-12">
+                                        <label>Comment on Damaged</label>
+
+                                        <textarea
+                                          className="w-100 form-control"
+                                          name="damage_comment"
+                                          disabled
+                                          onChange={handlechangewarehouse}
+                                          value={selectedData.damage_comment}
+                                        ></textarea>
+                                      </div>
+                                    </div>
+                                    <h5 className="mt-3 mb-2">
+                                      Supplier Information
+                                    </h5>
+                                    <div className="row g-2">
+                                      <div className="col-md-6">
+                                        <label>Supplier Name (Company)</label>
+                                        <input
+                                          type="text"
+                                          className="form-control"
+                                          disabled
+                                          value={selectedData.supplier_company}
+                                          name="supplier_company"
+                                          onChange={handlechangewarehouse}
+                                        ></input>
+                                      </div>
+                                      <div className="col-md-6">
+                                        <label>Supplier Name (Person)</label>
+                                        <input
+                                          type="text"
+                                          className="form-control"
+                                          disabled
+                                          value={selectedData.supplier_person}
+                                          name="supplier_person"
+                                          onChange={handlechangewarehouse}
+                                        ></input>
+                                      </div>
+                                      <div className="col-md-6">
+                                        <label>Supplier Address</label>
+                                        <input
+                                          type="text"
+                                          className="form-control"
+                                          disabled
+                                          value={selectedData.supplier_address}
+                                          name="supplier_address"
+                                          onChange={handlechangewarehouse}
+                                        ></input>
+                                      </div>
+                                      <div className="col-md-6">
+                                        <label>Supplier Contact</label>
+                                        <input
+                                          type="text"
+                                          className="form-control"
+                                          disabled
+                                          value={selectedData.supplier_contact}
+                                          name="supplier_contact"
+                                          onChange={handlechangewarehouse}
+                                          placeholder=""
+                                        ></input>
+                                      </div>
+                                    </div>
+                                    <h5 className="mt-3 mb-2">
+                                      Cargo Handeling
+                                    </h5>
+                                    <div className="row g-2">
+                                      <div className="col-md-6">
+                                        <label>Warehouse Collect</label>
+                                        <select
+                                          className="form-select"
+                                          value={selectedData.warehouse_collect}
+                                          name="warehouse_collect"
+                                          disabled
+                                          onChange={handlechangewarehouse}
+                                          placeholder="customer name"
+                                        >
+                                          <option value="">Select</option>
+                                          <option value="Yes">Yes</option>
+                                          <option value="No">No</option>
+                                        </select>
+                                      </div>
+                                      <div className="col-md-6">
+                                        <label>Cost To Collect</label>
+                                        <input
+                                          type="text"
+                                          className="form-control"
+                                          disabled
+                                          value={selectedData.costs_to_collect}
+                                          name="costs_to_collect"
+                                          onChange={handlechangewarehouse}
+                                        ></input>
+                                      </div>
+                                      <div className="col-md-6">
+                                        <label>Warehouse Storage</label>
+                                        <select
+                                          className="form-select"
+                                          value={selectedData.warehouse_storage}
+                                          name="warehouse_storage"
+                                          disabled
+                                          onChange={handlechangewarehouse}
+                                          placeholder="customer name"
+                                        >
+                                          <option value="">Select</option>
+                                          <option value="Yes">Yes</option>
+                                          <option value="No">No</option>
+                                        </select>
+                                      </div>
+                                      <div className="col-md-6">
+                                        <label>Warehouse Cost</label>
+                                        <input
+                                          type="text"
+                                          className="form-control"
+                                          disabled
+                                          value={selectedData.warehouse_cost}
+                                          name="warehouse_cost"
+                                          disabled
+                                          onChange={handlechangewarehouse}
+                                          placeholder=""
+                                        ></input>
+                                      </div>
+                                      <div className="col-md-6">
+                                        <label>Handeling Required</label>
+                                        <select
+                                          type="text"
+                                          className="form-select"
+                                          value={selectedData.handling_required}
+                                          name="handling_required"
+                                          disabled
+                                          onChange={handlechangewarehouse}
+                                          placeholder=""
+                                        >
+                                          <option value="">Select</option>
+                                          <option value="Yes">Yes</option>
+                                          <option value="No">No</option>
+                                        </select>
+                                      </div>
+                                      <div className="col-md-6">
+                                        <label>Handeling cost</label>
+                                        <input
+                                          type="text"
+                                          className="form-control"
+                                          disabled
+                                          value={selectedData.handling_cost}
+                                          name="handling_cost"
+                                          onChange={handlechangewarehouse}
+                                          placeholder=""
+                                        ></input>
+                                      </div>
+                                      <div className="col-md-6">
+                                        <label>Warehouse Dispatch</label>
+                                        <select
+                                          className="form-select"
+                                          value={
+                                            selectedData.warehouse_dispatch
+                                          }
+                                          name="warehouse_dispatch"
+                                         disabled
+                                          onChange={handlechangewarehouse}
+                                          placeholder=""
+                                        >
+                                          <option value="">Select</option>
+                                          <option value="Yes">Yes</option>
+                                          <option value="No">No</option>
+                                        </select>
+                                      </div>
+                                      <div className="col-md-6">
+                                        <label>cost to dispatch</label>
+                                        <input
+                                          type="text"
+                                          className="form-control"
+                                          disabled
+                                          value={selectedData.cost_to_dispatch}
+                                          name="cost_to_dispatch"
+                                          onChange={handlechangewarehouse}
+                                          placeholder=""
+                                        ></input>
+                                      </div>
+                                      <div className="col-md-12">
+                                        <label>Attach Product Image</label>
+                                        <input
+                                          type="file"
+                                          className="form-control"
+                                          disabled
+                                          name="Attach_Product_Image"
+                                          onChange={handlechangewarehouse}
+                                          placeholder=""
+                                        ></input>
+                                      </div>
+                                      <div className="col-md-12">
+                                        <label>Attach Other</label>
+                                        <input
+                                          type="file"
+                                          className="form-control"
+                                          disabled
+                                          name="attach_other"
+                                          onChange={handlechangewarehouse}
+                                          placeholder=""
+                                        ></input>
+                                      </div>
+                                      <div className="col-md-12">
+                                        <label>Warehouse Comment</label>
+                                        <textarea
+                                          className="form-control"
+                                          disabled
+                                          value={selectedData.warehouse_comment}
+                                          name="warehouse_comment"
+                                          onChange={handlechangewarehouse}
+                                          placeholder=""
+                                        ></textarea>
+                                      </div>
                                     </div>
                                   </div>
                                 </Grid>

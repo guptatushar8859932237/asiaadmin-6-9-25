@@ -513,7 +513,6 @@ const Addfright = () => {
               <div className=" add_fre_cd">
                 <div className="row">
                   <div className="col-12">
-                    {/* <h4 className="freight_hd mt-0">Shipment details</h4> */}
                     <span class="line"></span>
                   </div>
                 </div>
@@ -1338,109 +1337,6 @@ const Addfright = () => {
                           />
                         </div>
                       </div>
-                      {/* <div className="row">
-                        <div className="col-6 mt-3">
-                          <label>Select Document </label>
-                          <select name="documentName" onChange={handlechange}>
-                            <option value="">Select...</option>
-                            <option value="Customs Documents">Customs docs</option>
-                            <option value="Supporting Documents">Supporting docs</option>
-                            <option value="Invoice, Packing List">Invoice / Packing L</option>
-                            <option value="Product Literature">Product Literature</option>
-                            <option value="Letters of authority">LOA</option>
-                            <option value="Waybills">Freight Docs</option>
-                            <option value="Waybills">Shipping instruction</option>
-                            <option value="Supplier Invoices">Freight Invoices </option>
-                            <option value="AD_Quotations">Attach Quote</option>
-                          </select>
-                        </div>
-                        </div> */}
-                      {/* <div className="col-6 mt-3">
-                          <label>Upload Document</label>
-                          <input
-                            type="file"
-                            multiple
-                            className="w-100 mb-3 rounded"
-                            onChange={(e) =>
-                              handleFileChange(e, "other_documents")
-                            }
-                          />
-                        </div>
-                      </div> 
- */}
-
-                      {/* {/* <div className="row">
-                        <div className="col-6 mt-3">
-                          <label>Add attachments</label>
-                          <input
-                            type="file"
-                            multiple
-                            className="w-100 mb-3 rounded"
-                            onChange={(e) =>
-                              handleFileChange(e, "supplier_invoice")
-                            }
-                          />
-                        </div>
-                        <div className="col-6 mt-3">
-                          <label>Packing List</label>
-                         
-                          <input
-                            type="file"
-                            multiple
-                            className="w-100 mb-3 rounded"
-                            onChange={(e) =>
-                              handleFileChange(e, "packing_list")
-                            }
-                          />
-                        </div>
-                      </div> */}
-                      {/* <div className="row">
-                        <div className="col-6 mt-3">
-                          <label>Add attachments</label>
-                          <input
-                            type="file"
-                            multiple
-                            className="w-100 mb-3 rounded"
-                            onChange={(e) =>
-                              handleFileChange(e, "supplier_invoice")
-                            }
-                          />
-                        </div>
-                        <div className="col-6 mt-3">
-                          <label>Packing List</label>
-                         
-                          <input
-                            type="file"
-                            multiple
-                            className="w-100 mb-3 rounded"
-                            onChange={(e) =>
-                              handleFileChange(e, "packing_list")
-                            }
-                          />
-                        </div>
-                      </div>
-                      <div className="row">
-                        <div className="col-6 mt-3">
-                          <label>licenses</label>
-                          <input
-                            type="file"
-                            multiple
-                            className="w-100 mb-3 rounded"
-                            onChange={(e) => handleFileChange(e, "licenses")}
-                          />
-                        </div>
-                        <div className="col-6 mt-3">
-                          <label>Other Documents</label>
-                          <input
-                            type="file"
-                            multiple
-                            className="w-100 mb-3 rounded"
-                            onChange={(e) =>
-                              handleFileChange(e, "other_documents")
-                            }
-                          />
-                        </div>
-                      </div> */}
                       <div className="row mb-3 mt-4">
                         <div className="col-9 mt-3">
                           <h4 className="freight_hd">Document Section</h4>
@@ -1462,7 +1358,6 @@ const Addfright = () => {
                           <Modal.Title>Upload Documents</Modal.Title>
                         </Modal.Header>
                         <Modal.Body>
-                          {/* Dropdown for selecting document type */}
                           <Form.Select onChange={handleSelect} defaultValue="">
                             <option value="" disabled>
                               Select Document Type
@@ -1473,8 +1368,6 @@ const Addfright = () => {
                               </option>
                             ))}
                           </Form.Select>
-
-                          {/* Render file inputs dynamically */}
                           <div className="mt-3">
                             {selectedDocs.map((doc, index) => (
                               <div key={index} className="mb-3">

@@ -698,13 +698,13 @@ export default function Managefreight() {
     setSearchQuery(value);
     setCurrentPage(1);
   };
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      freightData1(searchQuery);
-    }, 500);
+  // useEffect(() => {
+  //   const timer = setTimeout(() => {
+  //     freightData1(searchQuery);
+  //   }, 500);
 
-    return () => clearTimeout(timer);
-  }, [searchQuery]);
+  //   return () => clearTimeout(timer);
+  // }, [searchQuery]);
   // const handleSearch = (e) => {
   //   const value = e.target.value;
 
@@ -934,6 +934,11 @@ export default function Managefreight() {
     console.log("item", item);
     navigate("/Admin/QuotationInFreightCostumer", { state: { data: item } });
   };
+  const querryinQChat = (item) => {
+    console.log("item", item);
+    navigate("/Admin/QuotationInFreightSupplier", { state: { data: item } });
+  };
+
   return (
     <>
       <Modal
@@ -1010,6 +1015,12 @@ export default function Managefreight() {
                       placeholder="Search"
                     ></input>
                   </div>
+                  <button
+  className="me-2"
+  onClick={() => freightData1(searchQuery)}
+>
+  Search
+</button>
                   <div className="dropdown">
                     <button
                       className="dropdown-toggle me-2"
@@ -1322,7 +1333,8 @@ export default function Managefreight() {
                                                     Attach Quote
                                                   </div>
                                                 </a>
-                                                <a
+                                               
+                                                  <a
                                                   className="dropdown-item li_icon"
                                                   onClick={() => {
                                                     querryinQuote(item);
@@ -1337,9 +1349,29 @@ export default function Managefreight() {
                                                         width: "20px",
                                                       }}
                                                     />
-                                                    Chat
+                                                    Chat Client
                                                   </div>
                                                 </a>
+                                                {
+                                                  item.supplier_name ? <a
+                                                  className="dropdown-item li_icon"
+                                                  onClick={() => {
+                                                    querryinQChat(item);
+                                                  }}
+                                                >
+                                                  <div className="">
+                                                    <AiFillMessage
+                                                      className="text-success"
+                                                      style={{
+                                                        color: "rgb(27 34 69)",
+                                                        marginRight: "10px",
+                                                        width: "20px",
+                                                      }}
+                                                    />
+                                                    Chat Supplier
+                                                  </div>
+                                                </a>:""
+                                                }
                                                 <a
                                                   className="dropdown-item li_icon"
                                                   onClick={() => {
@@ -1436,7 +1468,7 @@ export default function Managefreight() {
                                           {" "}
                                           {item?.supplier_name === "null" ||
                                           !item?.supplier_name
-                                            ? "None"
+                                            ? ""
                                             : item?.supplier_name}{" "}
                                         </div>
                                       </div>
@@ -2676,7 +2708,6 @@ export default function Managefreight() {
                   <CloseIcon />
                 </button>
               </div>
-
               <div className="newModalGap">
                 <div className="row my-3  ">
                   <div className="col-12 ">
@@ -2689,7 +2720,6 @@ export default function Managefreight() {
                     ></input>
                   </div>
                 </div>
-
                 <Button
                   variant="contained"
                   className="text-center"
@@ -2701,14 +2731,6 @@ export default function Managefreight() {
             </Box>
           </Modal>
           <div className="row">
-            {/* {loader ? (
-              <div class="loader-container">
-                <div class="loader"></div>
-                <p className="text-danger">
-                  Updating... This may take some time
-                </p>
-              </div>
-            ) : ( */}
             <Modal
               open={isModalOpen}
               onClose={closeModal}
@@ -2733,7 +2755,6 @@ export default function Managefreight() {
                   </button>
                 </div>
                 {/*header end */}
-
                 <div className="newModalGap noFormaControl">
                   <div className="row my-3  ">
                     <div className="col-6">

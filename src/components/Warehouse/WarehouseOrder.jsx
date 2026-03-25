@@ -411,7 +411,6 @@ export default function WarehouseOrder() {
     const { name, value } = e.target;
     setProdata({ ...prodata, [name]: value });
   };
-
   const handpechangepro = () => {
     console.log(erd);
     const formdata = new FormData();
@@ -448,11 +447,9 @@ export default function WarehouseOrder() {
     formdata.append("cost_to_dispatch", prodata.cost_to_dispatch);
     formdata.append("waybill_ref", prodata.waybill_ref);
     formdata.append("documentName", prodata.documentName);
-
     // Append files with static key "document"
     selectedDocs.forEach((doc) => {
       console.log("Doc Type:", doc.name);
-
       doc.files.forEach((file) => {
         formdata.append(doc.name, file); // 👈 each file append
         console.log("File:", file.name, "| Size:", file.size, "bytes");
@@ -462,7 +459,6 @@ export default function WarehouseOrder() {
     for (let [key, value] of formdata.entries()) {
       console.log(`${key}:`, value);
     }
-
     axios
       .post(`${process.env.REACT_APP_BASE_URL}addWarehouseProduct`, formdata)
       .then((response) => {
@@ -475,7 +471,6 @@ export default function WarehouseOrder() {
         toast.error("Error adding warehouse product");
       });
   };
-
   console.log(selectedData);
   const handlekey = (e) => {
     if (e.charCode < 48 || e.charCode > 57) {
@@ -520,14 +515,12 @@ export default function WarehouseOrder() {
         toast.error(error.response.data.message);
       });
   };
-
   const handleSearch = (e) => {
     const value = e.target.value;
     setSearchQuery(value);
     setCurrentPage(1);
     throttledSearch(value); // ✅ throttled call
   };
-
   const throttle = (func, delay) => {
     let lastCall = 0;
     return (...args) => {
@@ -538,7 +531,6 @@ export default function WarehouseOrder() {
       }
     };
   };
-
   const throttledSearch = useRef(
     throttle((value) => {
       getdata11(value);

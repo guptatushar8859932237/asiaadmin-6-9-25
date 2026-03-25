@@ -90,6 +90,8 @@ import QuotationInFreightCostumer from "./components/Chatting/QuotationInFreight
 import SupplierWarehouse from "./components/Warehouse/SupplierWarehouse";
 import User from "./components/Chatting/User";
 import USerEstimateQuote from "./components/shipping estimate/USerEstimateQuote";
+import SupplierChat from "./pages/SupplierChat";
+import Warehouseview from "./components/Warehouse/Warehouseview";
 const Dashboard = lazy(() => import("./pages/Dashboard"));
 const Users = lazy(() => import("./pages/Users"));
 const Messages = lazy(() => import("./pages/Messages"));
@@ -174,6 +176,7 @@ export default function App() {
                 />
                 <Route index path="/Admin/saved" element={<Saved />} />
                 <Route index path="/Admin/Warehouse" element={<Warehosue />} />
+                <Route index path="/Admin/warehouse-view" element={<Warehouseview />} />
                 <Route
                   index
                   path="/Admin/customesClearings"
@@ -305,6 +308,11 @@ export default function App() {
                   index
                   path="/Admin/QuotationInFreightCostumer"
                   element={<QuotationInFreightCostumer />}
+                />
+                <Route
+                  index
+                  path="/Admin/QuotationInFreightSupplier"
+                  element={<SupplierChat />}
                 />
                 <Route
                   index

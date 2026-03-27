@@ -12,9 +12,12 @@ export default function WarehouseDetails() {
   const navigate = useNavigate();
   const [apidata, setApidata] = useState([]);
   const postassiandata =async () => {
+    const payloca={
+warehouse_assign_order_id:info.warehouse_assign_order_id || info.id
+    }
     try {
        await  axios
-      .get(`${process.env.REACT_APP_BASE_URL}getSupplierWarehouseProducts?supplier_warehouse_id=${info.warehouse_assign_order_id || info.id}`)
+      .post(`${process.env.REACT_APP_BASE_URL}getWarehouseOrderProduct`,payloca)
       .then((response) => {
         console.log(response.data.data);
         setApidata(response.data.data);

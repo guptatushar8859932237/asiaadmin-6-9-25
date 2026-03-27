@@ -19,8 +19,11 @@ import {
   Select,
   MenuItem,
 } from "@mui/material";
+import { Autocomplete } from "@mui/material";
 import PictureAsPdfIcon from "@mui/icons-material/PictureAsPdf";
 import CloseIcon from "@mui/icons-material/Close";
+import Swal from "sweetalert2";
+// import Select from "react-select";
 const pageSize = 10;
 const style1 = {
   position: "absolute",
@@ -56,6 +59,8 @@ export default function SupplierWarehouse() {
   const [responseData, setResponseData] = useState("");
   const [clickdata, setClickdata] = useState({});
   const [handlsupplier, setHandlsupplier] = useState([]);
+  const [handlebatches, setHandlebatches] = useState([]);
+  const [orderDatap, setOrderDatap] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [handleassignsupplier, setHandleassignsupplier] = useState(false);
   const [batchidsdsd, setBatchidsdsd] = useState();
@@ -108,6 +113,7 @@ export default function SupplierWarehouse() {
   const [selectedData, setSelectedData] = useState(null);
   const navigate = useNavigate();
   const handleOpenModal = () => setIsModalOpen(true);
+
   const handleCloseModal = () => {
     setIsModalOpen(false);
     handleOpenModal3();
@@ -199,24 +205,64 @@ export default function SupplierWarehouse() {
     setCurrentPage(page);
     getData(page);
   };
-  const handleEditClick = (freight_ID, warehouse_assign_order_id, order_id) => {
-    console.log(freight_ID, warehouse_assign_order_id, order_id);
-    setOrderID(order_id);
-    setErd(warehouse_assign_order_id);
-    const selectedData = data.find((item) => item.freight_ID === freight_ID);
+  const handleEditClick = ( order_id) => {
+    const selectedData = data.find((item) => item.id === order_id);
     console.log(selectedData);
     setSelectedData(selectedData);
     handleOpenModal();
   };
-  const handleEditClickAssign = (freight_ID, order_id) => {
-    console.log(freight_ID, order_id);
-    setOrderID(order_id);
-    setFreightIdPass(freight_ID);
-    const selectedData = data.find((item) => item.freight_ID === freight_ID);
-    console.log(selectedData);
-    setSelectedData(selectedData);
-    setHandleassignsupplier(true);
-  };
+  const userData = JSON.parse(localStorage.getItem("data123"))
+ const handleEditClickAssign = async (item) => {
+  console.log(item)
+  const result = await Swal.fire({
+    title: "Are you sure?",
+    text: "Do you want to move this product to the order?",
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonText: "Yes, Move it!",
+    cancelButtonText: "Cancel",
+  });
+
+  if (result.isConfirmed) {
+    try {
+      const payload = {
+        supplier_warehouse_id:item.id,
+        user_id:userData.id
+      };
+
+      const response = await axios.post(
+        `${process.env.REACT_APP_BASE_URL}MoveSupplierWarehouseOrder`, // 🔥 change API if needed
+        payload,
+       
+      );
+
+      if (response?.data?.success) {
+        await Swal.fire({
+          icon: "success",
+          title: "Success",
+          text: "Product moved to order successfully!",
+        });
+
+        // 🔄 refresh data if needed
+        getData(); 
+      } else {
+        Swal.fire({
+          icon: "error",
+          title: "Failed",
+          text: response?.data?.message || "Something went wrong",
+        });
+      }
+    } catch (error) {
+      Swal.fire({
+        icon: "error",
+        title: "Error",
+        text:
+          error?.response?.data?.message ||
+          "Something went wrong. Please try again.",
+      });
+    }
+  }
+};
   const handleclose = () => {
     setHandleassignsupplier(false);
   };
@@ -240,6 +286,15 @@ export default function SupplierWarehouse() {
         console.log(error.response.data);
       });
   };
+
+  const handlechangewarehouse2 = (e) => {
+  const { name, value } = e.target;
+
+  setProdata((prev) => ({
+    ...prev,
+    [name]: value,
+  }));
+};
   const handleBatchChange = (e, item) => {
     const batchId = e.target.value;
     setBatchidsdsd(e.target.value);
@@ -278,52 +333,121 @@ export default function SupplierWarehouse() {
     const { name, value } = e.target;
     setSelectedData({ ...selectedData, [name]: value });
   };
-  const handleSubmit = () => {
-    const formdata1 = new FormData();
-    formdata1.append(
-      "warehouse_assign_id",
-      selectedData.warehouse_assign_order_id,
-    );
-    formdata1.append("order_id", selectedData.order_id);
-    formdata1.append("freight_id", selectedData.freight_id);
-    formdata1.append("ware_receipt_no", selectedData.ware_receipt_no);
-    formdata1.append("tracking_number", selectedData.tracking_number);
-    formdata1.append("warehouse_status", selectedData.warehouse_status);
-    formdata1.append("warehouse_collect", selectedData.warehouse_collect);
-    formdata1.append("date_received", selectedData.date_received);
-    formdata1.append("package_type", selectedData.package_type);
-    formdata1.append("no_of_packages", selectedData.no_of_packages);
-    formdata1.append("total_dimension", selectedData.total_dimension);
-    formdata1.append("weight", selectedData.weight);
-    formdata1.append("costs_to_collect", selectedData.costs_to_collect);
-    formdata1.append("warehouse_cost", selectedData.warehouse_cost);
-    formdata1.append("warehouse_dispatch", selectedData.warehouse_dispatch);
-    formdata1.append("cost_to_dispatch", selectedData.cost_to_dispatch);
-    formdata1.append("documentName", selectedData.documentName);
-    formdata1.append("packages", JSON.stringify(selectedData.packages));
-    selectedDocs.forEach((doc) => {
-      console.log("Doc Type:", doc.name);
-      doc.files.forEach((file) => {
-        formdata1.append(doc.name, file);
-        console.log("File:", file.name, "| Size:", file.size, "bytes");
-      });
-    });
-    for (let [key, value] of formdata1.entries()) {
-      console.log(`${key}:`, value);
-    }
-    axios
-      .post(`${process.env.REACT_APP_BASE_URL}editWarehouseDetails`, formdata1)
-      .then((response) => {
-        setSelectedDocs([]);
-        toast.success("Warehouse order updated successfully");
-        getData();
-        handleCloseModal();
-      })
-      .catch((error) => {
-        console.error(error.response?.data || error.message);
-        toast.error("Error updating warehouse order");
-      });
+  const handleSubmit = async () => {
+  console.log(prodata);
+  console.log(nameData);
+
+  const payload = {
+    supplier_warehouse_id: selectedData?.id,
+    client_id: nameData?.client_id,
+    customer_ref: nameData?.customer_ref,
+    order_action: nameData?.order_action,
+    order_id: nameData?.order_id,
+    batch_id: nameData?.batch_id,
   };
+
+  try {
+    const response = await axios.post(
+      `${process.env.REACT_APP_BASE_URL}adminUpdateSupplierWarehouse`,
+      payload
+    );
+
+    if (response?.data?.success) {
+      handleCloseModalpopup()
+      setNameData("")
+      await Swal.fire({
+        icon: "success",
+        title: "Success",
+        text: "Warehouse updated successfully!",
+      });
+
+    } else {
+      Swal.fire({
+        icon: "error",
+        title: "Failed",
+        text: response?.data?.message || "Update failed",
+      });
+    }
+  } catch (error) {
+    console.log(error);
+
+    Swal.fire({
+      icon: "error",
+      title: "Error",
+      text:
+        error?.response?.data?.message ||
+        "Something went wrong. Please try again.",
+    });
+  }
+};
+//   const handleSubmit =()=>{
+// console.log(prodata)
+// console.log(nameData)
+// // console.log(supplier_warehouse_id)
+//         const payload={
+//    supplier_warehouse_id:selectedData.id,
+//     client_id:nameData.client_id,
+//      customer_ref:nameData.customer_ref,
+//       order_action:nameData.order_action, 
+//       order_id:nameData.order_id,
+// batch_id:nameData.batch_id
+//     }
+//     try {
+//         const response = axios.post(`${process.env.REACT_APP_BASE_URL}adminUpdateSupplierWarehouse`,payload)
+//         if(response.data.success){
+//           Swal.meesaeg
+//           handleCloseModalpopup()
+//         }
+//     } catch (error) {
+//       console.log(error)
+//     }
+//   }
+  // const handleSubmit = () => {
+  //   const formdata1 = new FormData();
+  //   formdata1.append(
+  //     "warehouse_assign_id",
+  //     selectedData.warehouse_assign_order_id,
+  //   );
+  //   formdata1.append("order_id", selectedData.order_id);
+  //   formdata1.append("freight_id", selectedData.freight_id);
+  //   formdata1.append("ware_receipt_no", selectedData.ware_receipt_no);
+  //   formdata1.append("tracking_number", selectedData.tracking_number);
+  //   formdata1.append("warehouse_status", selectedData.warehouse_status);
+  //   formdata1.append("warehouse_collect", selectedData.warehouse_collect);
+  //   formdata1.append("date_received", selectedData.date_received);
+  //   formdata1.append("package_type", selectedData.package_type);
+  //   formdata1.append("no_of_packages", selectedData.no_of_packages);
+  //   formdata1.append("total_dimension", selectedData.total_dimension);
+  //   formdata1.append("weight", selectedData.weight);
+  //   formdata1.append("costs_to_collect", selectedData.costs_to_collect);
+  //   formdata1.append("warehouse_cost", selectedData.warehouse_cost);
+  //   formdata1.append("warehouse_dispatch", selectedData.warehouse_dispatch);
+  //   formdata1.append("cost_to_dispatch", selectedData.cost_to_dispatch);
+  //   formdata1.append("documentName", selectedData.documentName);
+  //   formdata1.append("packages", JSON.stringify(selectedData.packages));
+  //   selectedDocs.forEach((doc) => {
+  //     console.log("Doc Type:", doc.name);
+  //     doc.files.forEach((file) => {
+  //       formdata1.append(doc.name, file);
+  //       console.log("File:", file.name, "| Size:", file.size, "bytes");
+  //     });
+  //   });
+  //   for (let [key, value] of formdata1.entries()) {
+  //     console.log(`${key}:`, value);
+  //   }
+  //   axios
+  //     .post(`${process.env.REACT_APP_BASE_URL}editWarehouseDetails`, formdata1)
+  //     .then((response) => {
+  //       setSelectedDocs([]);
+  //       toast.success("Warehouse order updated successfully");
+  //       getData();
+  //       handleCloseModal();
+  //     })
+  //     .catch((error) => {
+  //       console.error(error.response?.data || error.message);
+  //       toast.error("Error updating warehouse order");
+  //     });
+  // };
   const closeModal1 = () => {
     setIsModalOpen1(false);
   };
@@ -354,6 +478,7 @@ export default function SupplierWarehouse() {
   };
   useEffect(() => {
     getcountry();
+    allOrder()
   }, []);
   const getcountry = () => {
     axios
@@ -412,7 +537,16 @@ export default function SupplierWarehouse() {
     const { name, value } = e.target;
     setProdata({ ...prodata, [name]: value });
   };
-
+ const allOrder=async()=>{
+    try {
+      const response = await axios.get(`${process.env.REACT_APP_BASE_URL}AllOrderNumbers`)
+      if(response.data.success){
+        setOrderDatap(response.data.data)
+      }
+    } catch (error) {
+      console.log(error)
+    }
+  }
   const handpechangepro = () => {
     console.log(erd);
     const formdata = new FormData();
@@ -575,8 +709,27 @@ export default function SupplierWarehouse() {
 
   useEffect(() => {
     getSupplier();
+    getBatches();
   }, []);
 
+  const getBatches = async () => {
+    try {
+      const response = await axios.get(
+        `${process.env.REACT_APP_BASE_URL}AllWarehouseBatchNumbers`,
+      );
+
+      if (response.status === 200) {
+        setHandlebatches(response.data.data);
+      } else {
+        console.error("Unexpected response:", response);
+      }
+    } catch (error) {
+      console.error(
+        "Error fetching supplier list:",
+        error.response?.data || error.message,
+      );
+    }
+  };
   const getSupplier = async () => {
     try {
       const response = await axios.get(
@@ -599,22 +752,6 @@ export default function SupplierWarehouse() {
   const handleChangeSupplier = (e) => {
     setResponseData(e.target.value);
   };
-
-  // const AssignSupplier = ()=>{
-  //   const payload={
-  //       supplier_id:responseData,
-  //       freight_id:freightIdPass,
-  //       order_id:orderID
-
-  //     }
-  //   console.log(payload)
-  //   try {
-  //     const response = axios.post(`${process.env.REACT_APP_BASE_URL}assignWarehouseSupplierToOrder`,payload)
-  //     console.log(response)
-  //   } catch (error) {
-  //     console.log(error)
-  //   }
-  // }
   const AssignSupplier = async () => {
     if (!responseData) {
       toast.error("Please select a supplier");
@@ -648,6 +785,13 @@ export default function SupplierWarehouse() {
     }
   };
 
+  const handlechangewarehouse1 = (e) => {
+  setProdata({
+    ...prodata,
+    [e.target.name]: e.target.value,
+  });
+};
+
   const handlechangewarehouse = (e) => {
     const { name, value } = e.target;
     setNameData({ ...nameData, [name]: value });
@@ -667,6 +811,11 @@ export default function SupplierWarehouse() {
       console.log(error);
     }
   };
+
+  const options = orderDatap.map((item) => ({
+  value: item.order_number,
+  label: item.order_number,
+}));
   return (
     <>
       <div className="wpWrapper">
@@ -727,8 +876,8 @@ export default function SupplierWarehouse() {
                                               className="client_nm"
                                               style={{ fontSize: "18px" }}
                                             >
-                                              {item.client_name} / OR000
-                                              {item?.order_id}
+                                              {item.client_name} 
+                                              
                                             </p>
                                             <p
                                               className="fright_no mx-2"
@@ -765,14 +914,14 @@ export default function SupplierWarehouse() {
                                                 <i className="fi fi-rr-arrow-right mx-2 arr_icon"></i>
                                               </div>
                                               <p className="origin">
-                                                {item.delivery_to_name}
-                                                <span className="fright_type">
+                                                {item.destination_country_name}
+                                                {/* <span className="fright_type">
                                                   (
                                                   {item.Freight
                                                     ? item.Freight
                                                     : item.freight_type}
                                                   )
-                                                </span>
+                                                </span> */}
                                               </p>
                                             </div>
                                           </div>
@@ -783,7 +932,7 @@ export default function SupplierWarehouse() {
                                               </p>
                                             </div>
                                           </div>
-                                          <div className="col-md-2">
+                                          {/* <div className="col-md-2">
                                             <div className="text-end">
                                               <div className="dropdown">
                                                 <select
@@ -824,11 +973,11 @@ export default function SupplierWarehouse() {
                                                 </select>
                                               </div>
                                             </div>
-                                          </div>
+                                          </div> */}
                                         </div>
                                         <div className="row">
                                           <div className="col-md-6">
-                                            <div className="d-flex align-items-center">
+                                            {/* <div className="d-flex align-items-center">
                                               <p
                                                 type="radio"
                                                 className="input_user mb-0"
@@ -854,15 +1003,14 @@ export default function SupplierWarehouse() {
                                                   </p>
                                                 </div>
                                               )}
-                                            </div>
+                                            </div> */}
                                           </div>
                                           <div className="col-md-6 text-end">
                                             <i
                                               class="fa fa-tasks me-2 mt-2"
                                               onClick={() =>
                                                 handleEditClickAssign(
-                                                  item.freight_ID,
-                                                  item.order_id,
+                                                  item
                                                 )
                                               }
                                               style={{
@@ -870,20 +1018,21 @@ export default function SupplierWarehouse() {
                                                 cursor: "pointer",
                                               }}
                                             />
-                                            <FaEdit
+                                        {
+                                          item.move_to_adminWarhouse===0? <FaEdit
                                               onClick={() =>
                                                 handleEditClick(
-                                                  item.freight_ID,
-                                                  item.warehouse_assign_order_id,
-                                                  item.order_id,
+                                                  item.id,
                                                 )
                                               }
                                               style={{
                                                 color: "#1d2044",
                                                 cursor: "pointer",
                                               }}
-                                            />
-                                            <DeleteIcon
+                                            />:""
+                                        }  
+                                         
+                                            {/* <DeleteIcon
                                               onClick={() =>
                                                 handleEditClick12(
                                                   item.warehouse_assign_order_id,
@@ -895,7 +1044,7 @@ export default function SupplierWarehouse() {
                                                 color: "#1d2044",
                                                 cursor: "pointer",
                                               }}
-                                            />
+                                            /> */}
                                             <VisibilityIcon
                                               onClick={() =>
                                                 handleclicknavi(item)
@@ -906,12 +1055,12 @@ export default function SupplierWarehouse() {
                                                 width: "20px",
                                               }}
                                             />
-                                            <PictureAsPdfIcon
+                                            {/* <PictureAsPdfIcon
                                               style={{ cursor: "pointer" }}
                                               onClick={() => {
                                                 handleclickrevert123(item);
                                               }}
-                                            />
+                                            /> */}
                                           </div>{" "}
                                         </div>
                                       </div>
@@ -1217,308 +1366,79 @@ export default function SupplierWarehouse() {
                             {selectedData && (
                               <form onSubmit={handleSubmit} className="p-3">
                                 <Grid container spacing={2}>
-                                  {/* <Grid
-                                    item
-                                    xs={12}
-                                    sm={6}
-                                    className="warehouse_ord"
-                                  >
-                                    <TextField
-                                      fullWidth
-                                      label="Warehouse Receipt No"
-                                      variant="outlined"
-                                      name="ware_receipt_no"
-                                      value={selectedData.ware_receipt_no || ""}
-                                      onChange={handleInputChange}
-                                    />
-                                  </Grid>
-                                  <Grid item xs={12} sm={6}>
-                                    <TextField
-                                      fullWidth
-                                      label="Waybill"
-                                      variant="outlined"
-                                      name="tracking_number"
-                                      value={selectedData.tracking_number || ""}
-                                      onChange={handleInputChange}
-                                    />
-                                  </Grid>
-                                  <Grid item xs={12} sm={6}>
-                                    <TextField
-                                      fullWidth
-                                      label="Warehouse Status"
-                                      variant="outlined"
-                                      name="warehouse_status"
-                                      value={
-                                        selectedData.warehouse_status || ""
-                                      }
-                                      onChange={handleInputChange}
-                                    />
-                                  </Grid>
-                                  <Grid item xs={12} sm={6}>
-                                    <TextField
-                                      fullWidth
-                                      label="Warehouse Collect"
-                                      variant="outlined"
-                                      name="warehouse_collect"
-                                      value={
-                                        selectedData.warehouse_collect || ""
-                                      }
-                                      onChange={handleInputChange}
-                                    />
-                                  </Grid>
-                                  <Grid item xs={12} sm={6}>
-                                    <TextField
-                                      fullWidth
-                                      label="Date Received"
-                                      type="date"
-                                      variant="outlined"
-                                      name="date_received"
-                                      InputLabelProps={{
-                                        shrink: true,
-                                      }}
-                                      value={selectedData.date_received || ""}
-                                      onChange={handleInputChange}
-                                    />
-                                  </Grid>
-                                  <Grid item xs={12} sm={6}>
-                                    <TextField
-                                      fullWidth
-                                      label="Package Type"
-                                      variant="outlined"
-                                      name="package_type"
-                                      value={selectedData.package_type || ""}
-                                      onChange={handleInputChange}
-                                    />
-                                  </Grid>
-                                  <Grid item xs={12} sm={6}>
-                                    <TextField
-                                      fullWidth
-                                      label="Total Packages"
-                                      variant="outlined"
-                                      name="no_of_packages"
-                                      value={selectedData.no_of_packages || ""}
-                                      onChange={handleInputChange}
-                                    />
-                                  </Grid>
-                                  <Grid item xs={12} sm={6}>
-                                    <TextField
-                                      fullWidth
-                                      label="Dimension"
-                                      variant="outlined"
-                                      name="total_dimension"
-                                      value={selectedData.total_dimension || ""}
-                                      onChange={handleInputChange}
-                                    />
-                                  </Grid>
-                                  <Grid item xs={12} sm={6}>
-                                    <TextField
-                                      fullWidth
-                                      label="Costs to collect"
-                                      variant="outlined"
-                                      name="costs_to_collect"
-                                      value={
-                                        selectedData.costs_to_collect || ""
-                                      }
-                                      onChange={handleInputChange}
-                                    />
-                                  </Grid>
-                                  <Grid item xs={12} sm={6}>
-                                    <TextField
-                                      fullWidth
-                                      label="Warehouse Cost"
-                                      variant="outlined"
-                                      name="warehouse_cost"
-                                      value={selectedData.warehouse_cost || ""}
-                                      onChange={handleInputChange}
-                                    />
-                                  </Grid>
-                                  <Grid item xs={12} sm={6}>
-                                    <TextField
-                                      fullWidth
-                                      label="Warehouse Dispatch"
-                                      variant="outlined"
-                                      name="warehouse_dispatch"
-                                      value={
-                                        selectedData.warehouse_dispatch || ""
-                                      }
-                                      onChange={handleInputChange}
-                                    />
-                                  </Grid>
-                                  <Grid item xs={12} sm={6}>
-                                    <TextField
-                                      fullWidth
-                                      label="Cost to Dispatch"
-                                      variant="outlined"
-                                      name="cost_to_dispatch"
-                                      value={
-                                        selectedData.cost_to_dispatch || ""
-                                      }
-                                      onChange={handleInputChange}
-                                    />
-                                  </Grid>
-                                  <Grid item xs={12} sm={6}>
-                                    <TextField
-                                      fullWidth
-                                      label="Weight"
-                                      variant="outlined"
-                                      name="weight"
-                                      value={selectedData.weight || ""}
-                                      onChange={handleInputChange}
-                                    />
-                                  </Grid>
-
-                                  <div className="row mb-3 mt-4">
-                                    <div className="col-9 mt-3">
-                                      <h4 className="freight_hd">
-                                        Document Section
-                                      </h4>
-                                      <span class="line"></span>
-                                    </div>
-                                    <div className="col-3">
-                                      <Button
-                                        className="btn  btn-primary"
-                                        onClick={handleShow}
-                                      >
-                                        Upload Documents
-                                      </Button>
-
-                                      {show1 ? (
-                                        <Modal
-                                          open={show1}
-                                          onClose={handleClose}
-                                          slotProps={{
-                                            backdrop: {
-                                              sx: {
-                                                backgroundColor:
-                                                  "rgba(0,0,0,0.2)",
-                                              }, // lighter background
-                                            },
-                                          }}
-                                        >
-                                          <Box
-                                            sx={{
-                                              p: 3,
-                                              bgcolor: "background.paper",
-                                              borderRadius: 2,
-                                              width: 500,
-                                              mx: "auto",
-                                              mt: 10,
-                                            }}
-                                          >
-                                            <h2>Upload Documents</h2>
-
-                                            {/* Dropdown */}
-                                  {/* <FormControl
-                                              fullWidth
-                                              sx={{ mt: 2 }}
-                                            >
-                                              <InputLabel id="doc-select-label">
-                                                Select Document Type
-                                              </InputLabel>
-                                              <Select
-                                                labelId="doc-select-label"
-                                                // value={selected}
-                                                onChange={handleSelect}
-                                              >
-                                                {docOptions.map((option) => (
-                                                  <MenuItem
-                                                    key={option.id}
-                                                    value={option.id}
-                                                  >
-                                                    {option.label}
-                                                  </MenuItem>
-                                                ))}
-                                              </Select>
-                                            </FormControl>
-
-                                            {/* Dynamic file inputs */}
-                                  {/* <div className="mt-3">
-                                              {selectedDocs.map(
-                                                (doc, index) => (
-                                                  <div
-                                                    key={index}
-                                                    className="mb-3"
-                                                  >
-                                                    <label className="fw-bold">
-                                                      {doc.name}
-                                                    </label>
-                                                    <input
-                                                      type="file"
-                                                      className="form-control"
-                                                      multiple
-                                                      accept="image/*,application/pdf"
-                                                      onChange={(e) =>
-                                                        handleFileChangefil(
-                                                          e,
-                                                          doc.name,
-                                                        )
-                                                      }
-                                                    />
-                                                  </div>
-                                                ),
-                                              )}
-                                            </div>
-
-                                            {/* Footer buttons */}
-                                  {/* <Box
-                                              sx={{
-                                                display: "flex",
-                                                justifyContent: "flex-end",
-                                                gap: 2,
-                                                mt: 3,
-                                              }}
-                                            >
-                                              <Button onClick={handleClose}>
-                                                Cancel
-                                              </Button>
-                                              <Button
-                                                variant="contained"
-                                                color="success"
-                                                onClick={handleSave}
-                                              >
-                                                Save Documents
-                                              </Button>
-                                            </Box>
-                                          </Box>
-                                        </Modal>
-                                      ) : (
-                                        ""
-                                      )}
-                                    </div>
-                                  </div> */}
-
                                   <div className="row">
                                     <h5>client Details</h5>
                                     <div className="col-md-6">
                                       <label>Customer name</label>
-                                      <select
-                                        className="form-control"
-                                        name="client_id"
-                                        onChange={handlechangewarehouse}
-                                      >
-                                        <option>Select</option>
-                                        {clientData.map((item, index) => {
-                                          return (
-                                            <>
-                                              <option>{item.full_name}</option>
-                                            </>
-                                          );
-                                        })}
-                                      </select>
+                                {/* <Autocomplete
+  options={clientData || []}
+  getOptionLabel={(option) => option.full_name || ""}
+
+  value={
+    clientData.find(
+      (item) => item.id === prodata.id
+    ) || null
+  }
+
+  onChange={(event, newValue) => {
+    handlechangewarehouse({
+      target: {
+        name: "client_id",
+        value: newValue ? newValue.id : "", // ✅ store ID
+      },
+    });
+  }}
+
+  isOptionEqualToValue={(option, value) =>
+    option.id === value.id
+  }
+
+  renderInput={(params) => (
+    <TextField {...params} label="Select Client" />
+  )}
+/> */}
+  <Autocomplete
+  options={clientData || []}
+  getOptionLabel={(option) => option.full_name || ""}
+
+  value={
+    clientData.find(
+      (item) => item.id === nameData.client_id   // ✅ use stored ID
+    ) || null
+  }
+
+  onChange={(event, newValue) => {
+    handlechangewarehouse({
+      target: {
+        name: "client_id",
+        value: newValue ? newValue.id : "",
+      },
+    });
+  }}
+
+  isOptionEqualToValue={(option, value) =>
+    option.id === value.id
+  }
+
+  renderInput={(params) => (
+    <TextField {...params} label="Select Client" />
+  )}
+/>
                                     </div>
                                     <div className="col-md-6">
                                       <label>Customer Ref</label>
                                       <input
                                         type="text"
-                                        className="form-control"
+                                        className="form-control py-3"
                                         name="customer_ref"
+                                        placeholder="Customer Ref"
                                         onChange={handlechangewarehouse}
                                       />
                                     </div>
                                     <div className="col-md-6">
                                       <label>Create new Freight Order</label>
                                       <select
-                                        className="form-control"
+                                        className="form-control py-3"
                                         name="order_action"
                                         onChange={handlechangewarehouse}
                                       >
@@ -1529,27 +1449,69 @@ export default function SupplierWarehouse() {
                                     </div>
                                     {nameData.order_action === "No" ? (
                                       <div className="col-md-6">
-                                        <label>Freight Number</label>
-                                        <input
-                                          type="text"
-                                          className="form-control"
-                                          name="order_id"
-                                          onChange={handlechangewarehouse}
-                                        />
+                                        <label>Order Number</label>
+                                  <Autocomplete
+  options={orderDatap || []}
+  getOptionLabel={(option) => option.order_number || ""}
+
+  value={
+    orderDatap.find(
+      (item) => item.order_id === nameData.order_id
+    ) || null
+  }
+
+  onChange={(event, newValue) => {
+    handlechangewarehouse({
+      target: {
+        name: "order_id",
+        value: newValue ? newValue.order_id : "", // ✅ store ID
+      },
+    });
+  }}
+
+  isOptionEqualToValue={(option, value) =>
+    option.order_id === value.order_id
+  }
+
+  renderInput={(params) => (
+    <TextField {...params} label="Select Order" />
+  )}
+/>
                                       </div>
                                     ) : (
                                       ""
                                     )}
                                     <div className="col-md-6">
-                                      <label>Groupage #</label>
-                                      <select
-                                        className="form-control"
-                                        name="batch_id"
-                                        onChange={handlechangewarehouse}
-                                      >
-                                        <option>Select</option>
-                                      </select>
-                                    </div>
+  <label>Groupage #</label>
+
+ <Autocomplete
+  options={handlebatches || []}
+  getOptionLabel={(option) => option.batch_number || ""}
+
+  value={
+    handlebatches.find(
+      (item) => item.batch_id === nameData.batch_id   // ✅ use state
+    ) || null
+  }
+
+  onChange={(e, value) => {
+    handlechangewarehouse({
+      target: {
+        name: "batch_id",
+        value: value ? value.batch_id : "",
+      },
+    });
+  }}
+
+  isOptionEqualToValue={(option, value) =>
+    option.batch_id === value.batch_id
+  }
+
+  renderInput={(params) => (
+    <TextField {...params} label="Select Groupage" />
+  )}
+/>
+</div>
                                     <div className="row g-2">
                                       <div className="col-md-6">
                                         <label>Date</label>
@@ -1575,7 +1537,7 @@ export default function SupplierWarehouse() {
                                           type="type"
                                           className="form-control"
                                           disabled
-                                          disabled
+                                        
                                           value={
                                             selectedData.warehouse_order_id
                                           }

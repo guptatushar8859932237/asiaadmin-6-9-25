@@ -504,7 +504,7 @@ export default function SupplierWarehouse() {
       );
       if (permission.data.success === true) {
         console.log(item);
-        navigate("/Admin/warehousedetails", { state: { data: item } });
+        navigate("/Admin/warehousesupplierproduct", { state: { data: item } });
       } else {
         toast.error("Permission Denied: You don’t have access to this page");
       }

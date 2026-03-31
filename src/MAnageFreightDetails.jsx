@@ -119,23 +119,23 @@ const getFreightDataById = async () => {
                         <div className="">
                           <p className="or_para">
                             {info?.shipment_ref === "consignee"
-                              ? info.shipper_name
-                              : info.client_name}
+                              ? info?.shipper_name
+                              : info?.client_name}
                           </p>
                           <p className="client_para">
                             {info?.shipment_ref === "consignee"
-                              ? info.supplier_address
-                              :  info?.address_1 +" " + info.address_2 + " "+ <br /> +info.province+ " " +<br />+ info.delivery_to_name}
+                              ? info?.supplier_address
+                              :  info?.address_1 +" " + info?.address_2 + " "+ <br /> +info?.province+ " " +<br />+ info?.delivery_to_name}
                           </p>
                           <p className="client_para">
                             {info?.shipment_ref === "consignee"
-                              ? info.telephone
-                              :info.cellphone}
+                              ? info?.telephone
+                              :info?.cellphone}
                           </p>
                           <p className="client_para">
                             {info?.shipment_ref === "consignee"
                               ? ""
-                              :info.client_email }
+                              :info?.client_email }
                           </p>
                         </div>
                       </div>
@@ -145,8 +145,8 @@ const getFreightDataById = async () => {
                       <div className="d-flex align-items-start">
                         <div className=""></div>
                         <div className="">
-                          <p className="or_para">{info.collection_from_name}</p>
-                          <p className="client_para">{info.port_of_loading}</p>
+                          <p className="or_para">{info?.collection_from_name}</p>
+                          <p className="client_para">{info?.port_of_loading}</p>
                         </div>
                       </div>
                     </div>
@@ -155,14 +155,14 @@ const getFreightDataById = async () => {
                       <div className="d-flex align-items-start">
                         <i class="fi fi-rs-building build_icon"></i>
                         <div className="">
-                          <p className="or_para">{info.shipper_name}</p>
-                          <p className="client_para">Export Code:{info.code}</p>
+                          <p className="or_para">{info?.shipper_name}</p>
+                          <p className="client_para">Export Code:{info?.code}</p>
                           <p className="client_para">Vat Number:{
                           info?.shipment_ref==="shipper"?4740280377:""}</p>
                         </div>
                       </div>
                     </div>
-                    <div className="">
+                    <div className="">  
                       <div className="d-flex align-items-start">
                         <i class="fi fi-rr-marker build_icon"></i>
                         <div className="">
@@ -236,7 +236,6 @@ const getFreightDataById = async () => {
                               info.shipment_ref ==="consignee"?
                               4740280377:""
                             }
-                          
                           </p>
                         </div>
                       </div>

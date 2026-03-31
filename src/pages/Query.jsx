@@ -227,6 +227,7 @@ const handleclickapi1 = async () => {
                       </th>
                       <th scope="col">Message</th>
                       <th scope="col">Subject</th>
+                      <th scope="col">Outcome</th>
                       <th scope="col">Action</th>
                     </tr>
                   </thead>
@@ -246,6 +247,9 @@ const handleclickapi1 = async () => {
                               <td>{item?.message}</td>
                               <td>
                                 <p>{item.subject}</p>
+                              </td>
+                              <td>
+                                <p>{item.outcome}</p>
                               </td>
                               <td>
                                 <div className="d-flex align-items-center">

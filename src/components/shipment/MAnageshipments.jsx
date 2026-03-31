@@ -362,9 +362,9 @@ const handleFileChange12 = (e) => {
       assign_shipment_id: "",
       clearance_id: "",
     });
-    setTindexdata([]);
-    setTindexdClearance([]);
-    return;
+    // setTindexdata([]);
+    // setTindexdClearance([]);
+    // return;
   }
   setData1((prev) => ({
     ...prev,
@@ -404,9 +404,9 @@ const addbuttonclick = async () => {
 
     // REPLACE DATA — NOT APPEND
     if (data1.assign_shipment === "3") {
-      setTindexdClearance(response.data.data);
+     setTindexdClearance((prev) => [...prev, ...response.data.data]);
     } else {
-      setTindexdata(response.data.data);
+     setTindexdata((prev) => [...prev, ...response.data.data]);
     }
   } catch (error) {
     toast.error(error.response?.data?.message || "Something went wrong");

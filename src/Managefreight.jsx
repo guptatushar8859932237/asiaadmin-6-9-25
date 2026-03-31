@@ -1447,7 +1447,7 @@ export default function Managefreight() {
                                               <span className="dot bg-info me-2"></span>
                                               <p className="text-info mb-0">
                                                 Estimated :
-                                                {item?.estimate_count}
+                                                {item?.quote_count}
                                               </p>
                                             </>
                                           ) : (

@@ -43,6 +43,7 @@ export default function Supplierestimationview() {
   useEffect(() => {
     getdataapi();
   }, []);
+  console.log(location.state, "location");
   const data1 = location?.state?.data?.id;
   const data2 = location?.state?.freight_id;
   const getsupplier = () => {
@@ -60,7 +61,7 @@ export default function Supplierestimationview() {
     console.log(getdata);
     const data123456 = {
       supplier_id: data1,
-      freight_id: data2.id,
+      freight_id: data2.data,
     };
     console.log(data123456);
     await axios
@@ -77,7 +78,7 @@ export default function Supplierestimationview() {
       });
   };
   const handleclicknav = () => {
-    navigate("/Admin/SupplierEstimation", { state: { data: data2.id } });
+    navigate("/Admin/SupplierEstimation", { state: { data: data2.data } });
   };
   const closemodal = () => {
     setOpenmodal(false);
@@ -897,6 +898,7 @@ export default function Supplierestimationview() {
     totalChangeRoeOrigin;
 
   const estimateCalculate = async () => {
+     console.log(data1,data2)
     const payload = {
       // freight_id: getdata.freight_id,
       // client_id: getdata.client_ref,
@@ -911,8 +913,8 @@ export default function Supplierestimationview() {
       // incoterm: getdata.incoterm,
       // dimension: getdata.dimension,
       // supplier_id: freight.supplier_id,
-
-      freight_id: getdata.freight_id,
+    
+      freight_id:  data2.data,
       client_id: getdata.client_ref,
       client_name: getdata.client_name,
       serial_number: freight.serial_number,
@@ -2851,11 +2853,7 @@ export default function Supplierestimationview() {
                             onChange={handlechangecalc}
                             // value={freight?.origin_pick_up_fees}
                             value={
-                              freight.origin_pick_up_unitType
-                                ? oripick2
-                                  ? oripick2
-                                  : 0
-                                : 0
+                              freight.origin_pick_up_unitType ? oripick2 : 0
                             }
                             name="origin_pick_up_fees"
                             id="floatingInput"

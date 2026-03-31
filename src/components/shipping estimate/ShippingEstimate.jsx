@@ -38,7 +38,7 @@ export default function ShippingEstimate() {
     const payload = {
       freight_id: localFreigtId,
     };
-
+console.log(payload, "payload");
     try {
       const response = await axios.post(
         `${process.env.REACT_APP_BASE_URL}freight-list-byId`,
@@ -1306,6 +1306,7 @@ export default function ShippingEstimate() {
   // ////////////////////////////////////////////////////supplier selected
 
   const supplierSelected = async () => {
+    console.log(localFreigtId);
     try {
       const response = await axios.post(
         `${process.env.REACT_APP_BASE_URL}get-suppler-selected`,

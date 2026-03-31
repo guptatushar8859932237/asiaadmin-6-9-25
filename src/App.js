@@ -92,6 +92,7 @@ import User from "./components/Chatting/User";
 import USerEstimateQuote from "./components/shipping estimate/USerEstimateQuote";
 import SupplierChat from "./pages/SupplierChat";
 import Warehouseview from "./components/Warehouse/Warehouseview";
+import Supplierwarhousproduct from "./pages/Supplierwarhousproduct";
 const Dashboard = lazy(() => import("./pages/Dashboard"));
 const Users = lazy(() => import("./pages/Users"));
 const Messages = lazy(() => import("./pages/Messages"));
@@ -323,6 +324,11 @@ export default function App() {
                   index
                   path="/Admin/Addfreight"
                   element={<Addfreight />}
+                />
+                <Route
+                  index
+                  path="/Admin/warehousesupplierproduct"
+                  element={<Supplierwarhousproduct />}
                 />
                 <Route
                   index

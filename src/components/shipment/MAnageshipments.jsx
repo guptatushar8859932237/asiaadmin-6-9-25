@@ -166,6 +166,17 @@ const payload = {
     const { name, value } = e.target;
     setInputdata({ ...inputdata, [name]: value });
   };
+
+  const combinedDetails = [
+  ...tindexdata.map((item) => ({
+    ...item,
+    type: "freight", // or batch
+  })),
+  ...tindexdClearance.map((item) => ({
+    ...item,
+    type: "clearance",
+  })),
+];
   const apiupdatepost = async () => {
     try {
       const datapost = {
@@ -198,7 +209,8 @@ const payload = {
         formdata.append("release_type", inputdata.release_type);
         formdata.append("container", inputdata.container);
         formdata.append("seal", inputdata.seal);
-        formdata.append("details", JSON.stringify(tindexdata));
+        formdata.append("details", JSON.stringify(combinedDetails));
+        // formdata.append("clearance", JSON.stringify(tindexdClearance));
         formdata.append("des_country_id", inputdata.des_country_id);
         formdata.append("origin_country_id", inputdata.origin_country_id);
         formdata.append("documentName", inputdata.documentName);
@@ -356,21 +368,82 @@ const payload = {
   };
 const handleFileChange12 = (e) => {
   const { name, value } = e.target;
+
   if (name === "assign_shipment") {
     setData1({
       assign_shipment: value,
       assign_shipment_id: "",
       clearance_id: "",
     });
-    // setTindexdata([]);
-    // setTindexdClearance([]);
-    // return;
+
+    // ❌ DO NOT CLEAR OLD DATA
+    return;
   }
+
   setData1((prev) => ({
     ...prev,
     [name]: value,
   }));
 };
+
+// const handleFileChange12 = (e) => {
+//   const { name, value } = e.target;
+//   if (name === "assign_shipment") {
+//     setData1({
+//       assign_shipment: value,
+//       assign_shipment_id: "",
+//       clearance_id: "",
+//     });
+//     // setTindexdata([]);
+//     // setTindexdClearance([]);
+//     // return;
+//   }
+//   setData1((prev) => ({
+//     ...prev,
+//     [name]: value,
+//   }));
+// };
+// const addbuttonclick = async () => {
+//   try {
+//     if (!data1.assign_shipment) {
+//       toast.error("Please select assign shipment type");
+//       return;
+//     }
+
+//     let payload = {
+//       type: data1.assign_shipment,
+//       origin_country_id: inputdata.origin_country_id,
+//       des_country_id: inputdata.des_country_id,
+//     };
+
+//     // TYPE BASED ID
+//     if (data1.assign_shipment === "1" || data1.assign_shipment === "2") {
+//       payload.id = parseInt(data1.assign_shipment_id);
+//     }
+
+//     if (data1.assign_shipment === "3") {
+//       payload.id = parseInt(data1.clearance_id);
+//     }
+
+//     console.log("FINAL PAYLOAD 👉", payload);
+
+//     const response = await axios.post(
+//       `${process.env.REACT_APP_BASE_URL}getAssignShipmentList`,
+//       payload
+//     );
+
+//     toast.success(response.data.message);
+
+//     // REPLACE DATA — NOT APPEND
+//     if (data1.assign_shipment === "3") {
+//      setTindexdClearance((prev) => [...prev, ...response.data.data]);
+//     } else {
+//      setTindexdata((prev) => [...prev, ...response.data.data]);
+//     }
+//   } catch (error) {
+//     toast.error(error.response?.data?.message || "Something went wrong");
+//   }
+// };
 const addbuttonclick = async () => {
   try {
     if (!data1.assign_shipment) {
@@ -400,19 +473,45 @@ const addbuttonclick = async () => {
       payload
     );
 
+    const newData = response.data.data || [];
+
     toast.success(response.data.message);
 
-    // REPLACE DATA — NOT APPEND
+    // ✅ CLEARANCE CASE
     if (data1.assign_shipment === "3") {
-     setTindexdClearance((prev) => [...prev, ...response.data.data]);
+      setTindexdClearance((prev) => {
+        const merged = [...prev, ...newData];
+
+        const unique = merged.filter(
+          (item, index, self) =>
+            index ===
+            self.findIndex(
+              (t) => t.clearance_id === item.clearance_id
+            )
+        );
+
+        return unique;
+      });
     } else {
-     setTindexdata((prev) => [...prev, ...response.data.data]);
+      // ✅ FREIGHT / BATCH CASE
+      setTindexdata((prev) => {
+        const merged = [...prev, ...newData];
+
+        const unique = merged.filter(
+          (item, index, self) =>
+            index ===
+            self.findIndex(
+              (t) => t.shipment_details_id === item.shipment_details_id
+            )
+        );
+
+        return unique;
+      });
     }
   } catch (error) {
     toast.error(error.response?.data?.message || "Something went wrong");
   }
 };
-
   const handleclickdelete = async (item, id) => {
     console.log(item);
     const payload = {

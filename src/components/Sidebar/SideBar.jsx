@@ -215,7 +215,7 @@ const routes = [
     ],
   },
   {
-    path: "/Admin/taskmanager",
+    path: "/Admin/TaskManagerstaff",
     name: "Task Manager",
     icon: <LanguageOutlinedIcon />,
   },
@@ -225,7 +225,12 @@ const userControlRoutes = {
   name: "User Control",
   icon: <SecurityOutlinedIcon />,
   subRoutes: [
-     {
+ {
+    path: "/Admin/taskmanager",
+    name: "Task Manager",
+    icon: <LanguageOutlinedIcon />,
+  }
+    , {
       path: "/Admin/contactus",
       name: "Contact Us",
       icon: <OtherHousesOutlinedIcon />,
@@ -257,10 +262,17 @@ const SideBar = ({ children }) => {
   const [isOpen, setIsOpen] = useState(true);
   const [openDropdown, setOpenDropdown] = useState(null); 
   const usertype = JSON.parse(localStorage.getItem("data123")).user_type;
-  const filteredRoutes = [...routes];
-  if (usertype === "1") {
-    filteredRoutes.push(userControlRoutes);
+let filteredRoutes = routes.filter((route) => {
+  if (route.path === "/Admin/TaskManagerstaff") {
+    return usertype !== "1";
   }
+  return true;
+});
+
+// ✅ yaha add karo userControlRoutes
+if (usertype === "1") {
+  filteredRoutes.push(userControlRoutes);
+}
   useEffect(() => {
     const savedState = localStorage.getItem("sidebarOpen");
     if (savedState !== null) {

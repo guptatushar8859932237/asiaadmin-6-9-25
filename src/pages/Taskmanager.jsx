@@ -3,6 +3,7 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 import CloseIcon from "@mui/icons-material/Close";
 import { toast, ToastContainer } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 const pageSize = 10;
 export default function Taskmanager() {
   const [activeTab, setActiveTab] = useState("assigned");
@@ -14,20 +15,36 @@ export default function Taskmanager() {
   const [clearanceData, setClearanceData] = useState([]);
   const [staffList, setStaffList] = useState([]);
   const [supplier, setSupplier] = useState([]);
+  const [customData, setCustomData] = useState([]);
   const [formData, setFormData] = useState({
     Title: "",
-  Description: "",
-  Priority: "",
-  TaskFor: "",
-  SupplierId: "",
-  Staffid: ""
+    Description: "",
+    Priority: "",
+    TaskFor: "",
+    SupplierId: "",
+    Staffid: "",
   });
+  const navigate = useNavigate();
+  const fetchCustomTasks = async () => {
+    setLoader(true);
+    try {
+      const res = await axios.get(
+        `${process.env.REACT_APP_BASE_URL}getAllCustomTasks`,
+      );
+      console.log(res.data.data);
+      setCustomData(res.data?.data || []);
+    } catch (error) {
+      toast.error("Failed to load custom tasks ❌");
+    } finally {
+      setLoader(false);
+    }
+  };
   /* ================= FETCH APIS ================= */
   const fetchAssigned = async () => {
     setLoader(true);
     try {
-      const res = await axios.post(
-        `${process.env.REACT_APP_BASE_URL}getAllAssignedFreightsForAdmin`,
+      const res = await axios.get(
+        `${process.env.REACT_APP_BASE_URL}getAllAssignedFreightsSatff`,
       );
       setAssignedData(res.data?.data || []);
     } catch (error) {
@@ -39,8 +56,8 @@ export default function Taskmanager() {
   const fetchClearance = async () => {
     setLoader(true);
     try {
-      const res = await axios.post(
-        `${process.env.REACT_APP_BASE_URL}GetAllAssignedClearances`,
+      const res = await axios.get(
+        `${process.env.REACT_APP_BASE_URL}getAllAssignedClearanceSatff`,
       );
       setClearanceData(res.data?.data || []);
     } catch (error) {
@@ -52,10 +69,22 @@ export default function Taskmanager() {
   useEffect(() => {
     setCurrentPage(1);
     setSearchQuery("");
-    activeTab === "assigned" ? fetchAssigned() : fetchClearance();
+
+    if (activeTab === "assigned") {
+      fetchAssigned();
+    } else if (activeTab === "clearance") {
+      fetchClearance();
+    } else if (activeTab === "Custom") {
+      fetchCustomTasks(); // ✅ yaha call hogi
+    }
   }, [activeTab]);
   /* ================= FILTER ================= */
-  const tableData = activeTab === "assigned" ? assignedData : clearanceData;
+  const tableData =
+    activeTab === "assigned"
+      ? assignedData
+      : activeTab === "clearance"
+        ? clearanceData
+        : customData; // ✅ add this
   const filteredData = tableData.filter((item) => {
     if (!searchQuery) return true;
     if (activeTab === "assigned") {
@@ -86,13 +115,42 @@ export default function Taskmanager() {
   /* ================= STATUS CHANGE ================= */
   const handleChangeStatus = (e, item) => {
     const statusValue = e.target.value;
+    console.log(activeTab);
     if (activeTab === "assigned") {
       updateFreightStatus(item.id, statusValue);
-    } else {
+    }
+    if (activeTab === "clearance") {
       updateClearanceStatus(item.id, statusValue);
     }
+    if (activeTab === "Custom") {
+      updateCustomTaskStatus(item, statusValue);
+    }
   };
-  /* ================= UPDATE FREIGHT ================= */
+
+  const updateCustomTaskStatus = async (item, statusValue) => {
+    console.log(item, statusValue);
+    const payload = {
+      task_id: item.task_id,
+      task_status: statusValue,
+      notes: item.notes,
+      // freight_id: freightId,
+      // assign_supplier_status: statusValue,
+    };
+    try {
+      const res = await axios.get(
+        `${process.env.REACT_APP_BASE_URL}getAllCustomTasks`,
+        payload,
+      );
+      if (res?.data?.success) {
+        toast.success("Freight status updated ✅");
+        fetchAssigned();
+      } else {
+        toast.warning(res?.data?.message || "Update failed");
+      }
+    } catch (error) {
+      handleApiError(error);
+    }
+  };
   const updateFreightStatus = async (freightId, statusValue) => {
     const payload = {
       freight_id: freightId,
@@ -154,123 +212,117 @@ export default function Taskmanager() {
     setOpenPopup(false);
   };
 
-//   const postData = () => {
-//     const userid = JSON.parse(localStorage.getItem("data123"))?.id;
-//     const postData = () => {
-//   setLoader(true);
+  //   const postData = () => {
+  //     const userid = JSON.parse(localStorage.getItem("data123"))?.id;
+  //     const postData = () => {
+  //   setLoader(true);
 
-//   let payload = {
-//     title: formData.Title,
-//     description: formData.Description,
-//     priority: formData.Priority,
-//     task_for_type: formData.TaskFor?.toLowerCase(),
-//     created_by: userid,
-//   };
+  //   let payload = {
+  //     title: formData.Title,
+  //     description: formData.Description,
+  //     priority: formData.Priority,
+  //     task_for_type: formData.TaskFor?.toLowerCase(),
+  //     created_by: userid,
+  //   };
 
-//   if (formData.TaskFor === "Supplier") {
-//     payload.task_for_id = formData.id;
-//   }
+  //   if (formData.TaskFor === "Supplier") {
+  //     payload.task_for_id = formData.id;
+  //   }
 
-//   if (formData.TaskFor === "Staff") {
-//     payload.task_for_id = formData.id;
-//   }
-//   axios
-//     .post(`${process.env.REACT_APP_BASE_URL}add-task`, payload)
-//     .then((res) => {
-//       if (res.data.success) {
-//         toast.success("Task added successfully ✅");
-//         closeModal();
-//       } else {
-//         toast.warning(res.data.message || "Failed to add task ❌");
-//       }
-//       setLoader(false);
-//     })
-//     .catch((error) => {
-//       console.error(error);
-//       toast.error("Failed to add task ❌");
-//       setLoader(false);
-//     });
-// };
-  
-//   };
-const postData = () => {
+  //   if (formData.TaskFor === "Staff") {
+  //     payload.task_for_id = formData.id;
+  //   }
+  //   axios
+  //     .post(`${process.env.REACT_APP_BASE_URL}add-task`, payload)
+  //     .then((res) => {
+  //       if (res.data.success) {
+  //         toast.success("Task added successfully ✅");
+  //         closeModal();
+  //       } else {
+  //         toast.warning(res.data.message || "Failed to add task ❌");
+  //       }
+  //       setLoader(false);
+  //     })
+  //     .catch((error) => {
+  //       console.error(error);
+  //       toast.error("Failed to add task ❌");
+  //       setLoader(false);
+  //     });
+  // };
 
-  const userid = JSON.parse(localStorage.getItem("data123"))?.id;
+  //   };
+  const postData = () => {
+    const userid = JSON.parse(localStorage.getItem("data123"))?.id;
 
-  setLoader(true);
+    setLoader(true);
 
-  let payload = {
-    title: formData.Title,
-    description: formData.Description,
-    priority: formData.Priority,
-    task_for_type: formData.TaskFor?.toLowerCase(),
-    created_by: userid
+    let payload = {
+      task_title: formData.Title,
+      description: formData.Description,
+      staff_id: formData.Staffid,
+      priority: formData.TaskFor,
+    };
+
+    axios
+      .post(`${process.env.REACT_APP_BASE_URL}createCustomTask`, payload)
+      .then((res) => {
+        if (res.data.success) {
+          toast.success("Task added successfully ✅");
+          closeModal();
+          fetchCustomTasks();
+          setFormData({
+            Title: "",
+            Description: "",
+            Priority: "",
+            TaskFor: "",
+            SupplierId: "",
+            Staffid: "",
+          });
+        } else {
+          toast.warning(res.data.message || "Failed to add task ❌");
+        }
+        setLoader(false);
+      })
+      .catch((error) => {
+        console.error(error);
+        toast.error("Failed to add task ❌");
+        setLoader(false);
+      });
+  };
+  const handlechange = (e) => {
+    const { name, value } = e.target;
+    setFormData({
+      ...formData,
+      [name]: value,
+    });
+  };
+  useEffect(() => {
+    getStaff();
+    getSupplierList();
+  }, []);
+  const getSupplierList = async () => {
+    try {
+      const res = await axios.get(
+        `${process.env.REACT_APP_BASE_URL}supplier-list`,
+      );
+      setSupplier(res.data.data);
+    } catch (error) {
+      console.error("Failed to fetch staff list", error);
+    }
+  };
+  const getStaff = async () => {
+    try {
+      const res = await axios.get(
+        `${process.env.REACT_APP_BASE_URL}staff-list`,
+      );
+      setStaffList(res.data.data);
+    } catch (error) {
+      console.error("Failed to fetch staff list", error);
+    }
   };
 
-  if (formData.TaskFor === "Supplier") {
-    payload.task_for_id = formData.SupplierId;
-  }
-
-  if (formData.TaskFor === "Staff") {
-    payload.task_for_id = formData.Staffid;
-  }
-
-  axios
-    .post(`${process.env.REACT_APP_BASE_URL}add-task`, payload)
-    .then((res) => {
-      if (res.data.success) {
-        toast.success("Task added successfully ✅");
-        closeModal();
-
-        setFormData({
-          Title: "",
-          Description: "",
-          Priority: "",
-          TaskFor: "",
-          SupplierId: "",
-          Staffid: ""
-        });
-
-      } else {
-        toast.warning(res.data.message || "Failed to add task ❌");
-      }
-
-      setLoader(false);
-    })
-    .catch((error) => {
-      console.error(error);
-      toast.error("Failed to add task ❌");
-      setLoader(false);
-    });
-};
- const handlechange = (e) => {
-  const { name, value } = e.target;
-
-  setFormData({
-    ...formData,
-    [name]: value
-  });
-};
-
-  useEffect(()=>{
-    getStaff()
-getSupplierList()
-  },[])
-  const getSupplierList = async()=>{
-    try {
-      const res = await axios.get(`${process.env.REACT_APP_BASE_URL}supplier-list`);  
-      setSupplier(res.data.data)
-    } catch (error) {
-      console.error("Failed to fetch staff list", error);
-    }
-  }
-  const getStaff = async()=>{
-    try {
-      const res = await axios.get(`${process.env.REACT_APP_BASE_URL}staff-list`);  
-      setStaffList(res.data.data)
-    } catch (error) {
-      console.error("Failed to fetch staff list", error);
-    }
+  const handleViewComments =(taskId)=>{
+    navigate(`/Admin/task/${taskId}`);
   }
 
   return (
@@ -304,7 +356,7 @@ getSupplierList()
                 }`}
                 onClick={() => setActiveTab("assigned")}
               >
-                Assigned Tasks
+                Freight Tasks
               </button>
               <button
                 className={`btn ${
@@ -335,10 +387,8 @@ getSupplierList()
                       <th>Freight No</th>
                       <th>Freight</th>
                       <th>Priority</th>
-                      <th>Supplier Name</th>
-                      <th>Supplier Email</th>
-                      <th>Created Date</th>
                       <th>Status</th>
+                      <th>Action</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -349,24 +399,19 @@ getSupplierList()
                           <td>{item.freight_number}</td>
                           <td>{item.freight}</td>
                           <td>{item.priority}</td>
-                          <td>{item.supplier_name}</td>
-                          <td>{item.supplier_email}</td>
-                          <td>
-                            {item.created_at
-                              ? new Date(item.created_at).toLocaleDateString()
-                              : "-"}
-                          </td>
                           <td>
                             <select
                               className="form-select"
                               value={item.assign_supplier_status ?? ""}
                               onChange={(e) => handleChangeStatus(e, item)}
-                            >
-                              <option value="0">Pending</option>
-                              <option value="1">Accepted</option>
-                              <option value="2">Reject</option>
+                              >
+                              <option value="pending">Pending</option>
+                              <option value="in_progress">In Progress</option>
+                              <option value="completed">Completed</option>
+                              <option value="cancelled">Cancelled</option>
                             </select>
                           </td>
+                              <td><button className="btn btn-primary">Add Comment</button></td>
                         </tr>
                       ))
                     ) : (
@@ -389,10 +434,6 @@ getSupplierList()
                       <th>#</th>
                       <th>Clearance No</th>
                       <th>Freight</th>
-                      <th>Client Name</th>
-                      <th>Nature of Goods</th>
-                      <th>Assigned Supplier</th>
-                      <th>Created Date</th>
                       <th>Status</th>
                     </tr>
                   </thead>
@@ -403,23 +444,16 @@ getSupplierList()
                           <td>{startIndex + index + 1}</td>
                           <td>{item.clearance_number}</td>
                           <td>{item.freight}</td>
-                          <td>{item.client_name}</td>
-                          <td>{item.nature_of_goods}</td>
-                          <td>{item.assigned_supplier_name}</td>
-                          <td>
-                            {item.created_at
-                              ? new Date(item.created_at).toLocaleDateString()
-                              : "-"}
-                          </td>
                           <td>
                             <select
                               className="form-select"
                               value={item.assign_supplier_status ?? ""}
                               onChange={(e) => handleChangeStatus(e, item)}
                             >
-                              <option value="0">Pending</option>
-                              <option value="1">Accepted</option>
-                              <option value="2">Reject</option>
+                              <option value="pending">Pending</option>
+                              <option value="in_progress">In Progress</option>
+                              <option value="completed">Completed</option>
+                              <option value="cancelled">Cancelled</option>
                             </select>
                           </td>
                         </tr>
@@ -452,13 +486,10 @@ getSupplierList()
                     <thead>
                       <tr>
                         <th>#</th>
-                        <th>Custom No</th>
-                        <th>Custom</th>
-                        <th>Client Name</th>
-                        <th>Nature of Goods</th>
-                        <th>Assigned Supplier</th>
-                        <th>Created Date</th>
+                        <th>Task Title</th>
+                        <th>Description</th>
                         <th>Status</th>
+                        <th>Action</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -466,26 +497,27 @@ getSupplierList()
                         currentData.map((item, index) => (
                           <tr key={item.id}>
                             <td>{startIndex + index + 1}</td>
-                            <td>{item.clearance_number}</td>
-                            <td>{item.freight}</td>
-                            <td>{item.client_name}</td>
-                            <td>{item.nature_of_goods}</td>
-                            <td>{item.assigned_supplier_name}</td>
-                            <td>
-                              {item.created_at
-                                ? new Date(item.created_at).toLocaleDateString()
-                                : "-"}
-                            </td>
+                            <td>{item.task_title}</td>
+                            <td>{item.description}</td>
                             <td>
                               <select
                                 className="form-select"
-                                value={item.assign_supplier_status ?? ""}
+                                value={item.task_status ?? ""}
                                 onChange={(e) => handleChangeStatus(e, item)}
                               >
-                                <option value="0">Pending</option>
-                                <option value="1">Accepted</option>
-                                <option value="2">Reject</option>
+                                <option value="pending">Pending</option>
+                                <option value="in_progress">In Progress</option>
+                                <option value="completed">Completed</option>
+                                <option value="cancelled">Cancelled</option>
                               </select>
+                            </td>
+                            <td>
+                              <button 
+                                className="btn btn-info"
+                                onClick={() => handleViewComments(item.task_id)}
+                              >
+                                View Comments
+                              </button>
                             </td>
                           </tr>
                         ))
@@ -567,24 +599,9 @@ getSupplierList()
                       onChange={handlechange}
                     />
                   </div>
+
                   <div className="col-6">
                     <label>Priority</label>
-                    <select
-                      type="text"
-                      id="shipper3"
-                      name="Priority"
-                      style={{ cursor: "pointer" }}
-                      className="form-control"
-                      onChange={handlechange}
-                    >
-                      <option >Select</option>
-                      <option value="High">High</option>
-                      <option value="Medium">Medium</option>
-                      <option value="Low">Low</option>
-                    </select>
-                  </div>
-                  <div className="col-6">
-                    <label>Task For</label>
                     <select
                       type="text"
                       id="shipper3"
@@ -593,56 +610,29 @@ getSupplierList()
                       className="form-control"
                       onChange={handlechange}
                     >
-                      <option >Select</option>
-                      <option value="Self">Self</option>
-                      <option value="Supplier">Supplier</option>
-                      <option value="Staff">Staff</option>
+                      <option>Select</option>
+                      <option value="high">High</option>
+                      <option value="medium">Medium</option>
+                      <option value="low">Low</option>
                     </select>
                   </div>
-                  {
-                    formData.TaskFor === "Supplier" && (
-                     <div className="col-6">
-                    <label>Supplier List</label>
-                    <select
-name="SupplierId"
-className="form-control"
-onChange={handlechange}
->
-<option>Select</option>
 
-{supplier.map((item) => (
-<option key={item.id} value={item.id}>
-{item.name}
-</option>
-))}
-
-</select>
-                  </div>
-                    )
-                  }
-                 {
-                    formData.TaskFor === "Staff" && (
-                      <div className="col-6">
-
+                  <div className="col-6">
                     <label>Staff List</label>
-                   <select
-name="Staffid"
-className="form-control"
-onChange={handlechange}
->
+                    <select
+                      name="Staffid"
+                      className="form-control"
+                      onChange={handlechange}
+                    >
+                      <option>Select</option>
 
-<option>Select</option>
-
-{staffList.map((item) => (
-<option key={item.id} value={item.id}>
-{item.full_name}
-</option>
-))}
-
-</select>
+                      {staffList.map((item) => (
+                        <option key={item.id} value={item.id}>
+                          {item.full_name}
+                        </option>
+                      ))}
+                    </select>
                   </div>
-                    )
-                 }
                 </div>
                 <Button variant="contained" onClick={postData}>
                   Apply

@@ -20,7 +20,7 @@ console.log(location.state.data)
   const activeChat =
     location.state?.data || JSON.parse(localStorage.getItem("activeChat"));
 
-  const RECEIVER_ID = activeChat?.supplier_id || activeChat?.supplier_id;
+  const RECEIVER_ID = activeChat?.supplier_id || activeChat?.supplier_id || activeChat?.id;
 
   /* ================= SOCKET CONNECT ================= */
   useEffect(() => {
@@ -91,6 +91,38 @@ console.log(location.state.data)
 //       toast.error("Failed to create conversation");
 //     }
 //   };
+// const createConversation = async () => {
+//   try {
+//     if (!LOGGED_IN_USER_ID || !RECEIVER_ID) return;
+
+//     const res = await axios.post(
+//       `${process.env.REACT_APP_BASE_URL}chat/createConversation`,
+//       {
+//         sender_type:"user", receiver_type:"supplier",
+//         sender_id: LOGGED_IN_USER_ID,
+//         receiver_id: RECEIVER_ID,
+//       }
+//     );
+
+//     const conversationId = res?.data?.conversation_id;
+// if(res.status===200){
+//     console.log(res.data)
+//       setConversationId(conversationId);
+// }
+//     if (!conversationId) {
+//       toast.error("Conversation ID not received");
+//       return;
+//     }
+// if(res.data.success===true){
+//     setConversationId(conversationId);
+
+// }
+//   } catch (error) {
+//     toast.error(
+//       error?.response?.data?.message || "Failed to create conversation"
+//     );
+//   }
+// };
 const createConversation = async () => {
   try {
     if (!LOGGED_IN_USER_ID || !RECEIVER_ID) return;
@@ -98,25 +130,26 @@ const createConversation = async () => {
     const res = await axios.post(
       `${process.env.REACT_APP_BASE_URL}chat/createConversation`,
       {
-        sender_type:"user", receiver_type:"supplier",
+        sender_type: "user",
+        receiver_type: "supplier",
         sender_id: LOGGED_IN_USER_ID,
         receiver_id: RECEIVER_ID,
       }
     );
 
     const conversationId = res?.data?.conversation_id;
-if(res.status===200){
-    console.log(res.data)
-      setConversationId(conversationId);
-}
+
+    // ❗ First validate response
     if (!conversationId) {
       toast.error("Conversation ID not received");
       return;
     }
-if(res.data.success===true){
+
+    // ✅ Single clean state update
     setConversationId(conversationId);
 
-}
+    console.log("Conversation created:", conversationId);
+
   } catch (error) {
     toast.error(
       error?.response?.data?.message || "Failed to create conversation"
@@ -195,25 +228,40 @@ console.log(payload)
       ...payload,
       id: res.data.id,
     });
-
     setMessage("");
   };
-
   /* ================= AUTO SCROLL ================= */
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
-
   if (!activeChat) return <div>Select chat</div>;
-
   return (
-    <div style={{ height: "100vh" }}>
+    <div style={{ height: "88vh" }}>
       {!socketConnected && (
         <div className="text-center bg-warning p-1">
           ⚠️ Chat disconnected. Reconnecting...
         </div>
       )}
+<div className="d-flex align-items-center gap-2 px-3 py-2 border-bottom bg-white">
+  {/* Profile Image */}
+  <img
+    src={`${process.env.REACT_APP_BASE_URL_image}${activeChat?.profile}`}
+    alt="profile"
+    style={{
+      width: "40px",
+      height: "40px",
+      borderRadius: "50%",
+      objectFit: "cover",
+    }}
+  />
+  <div>
+    <h6 className="mb-0 fw-bold">
+      {activeChat?.name || "Unknown"}
+    </h6>
+    {/* <small className="text-muted">Online</small> */}
+  </div>
 
+</div>
       <div className="d-flex flex-column h-100">
         <div style={{ flex: 1, overflowY: "auto", padding: 12 }}>
           {messages.map((msg) => (

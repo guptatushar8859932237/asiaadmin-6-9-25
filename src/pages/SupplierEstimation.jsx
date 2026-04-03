@@ -42,6 +42,12 @@ export default function SupplierEstimation() {
       state: { data: item, freight_id: location.state },
     });
   };
+
+
+   const querryinQChat = (item) => {
+    console.log("item", item);
+    navigate("/Admin/QuotationInFreightSupplier", { state: { data: item } });
+  };
   return (
     <div className="wpWrapper ">
       <div className="container-fluid">
@@ -54,7 +60,7 @@ export default function SupplierEstimation() {
                 <th scope="col">Email</th>
                 <th scope="col">Phone No.</th>
                 <th scope="col">Country</th>
-                <th scope="col">View</th>
+                <th scope="col">Action</th>
               </tr>
             </thead>
             <tbody style={{ border: "none" }}>
@@ -73,6 +79,13 @@ export default function SupplierEstimation() {
                           className="fa fa-eye "
                           onClick={() => {
                             handleclicknanvi(item);
+                          }}
+                          style={{ cursor: "pointer" }}
+                        ></i>
+                        <i
+                          className="fa fa-comment "
+                          onClick={() => {
+                            querryinQChat(item);
                           }}
                           style={{ cursor: "pointer" }}
                         ></i>

@@ -32,6 +32,7 @@ export default function ShippingEstimate() {
   useEffect(() => {
     getFreightDataById();
   }, []);
+  const user = JSON.parse(localStorage.getItem("data123"));
   const localFreigtId = localStorage.getItem("freightid");
   console.log("Stored:", localStorage.getItem("freightid"));
   const getFreightDataById = async () => {
@@ -77,7 +78,7 @@ console.log(payload, "payload");
   // const oripick19 = parseFloat(freight.freight_charge_currencyQTY) || 0;
   // const oripick2 = parseFloat(freight.origin_pick_up_fees) || 0;
   const oripick2 =
-    freight.origin_pick_up_unitType === "1" ? 1 : freight.chargable_rate;
+    freight.origin_pick_up_unitType == "1" ? 1 : freight.chargable_rate;
   const oripick3 = parseFloat(freight.origin_pickup_fee_gpcalc) || 0;
   const oripick4 = freight.origin_pick_up_unitType
     ? oripick1 * oripick2 * freight.freight_charge_currencyQTY
@@ -107,10 +108,10 @@ console.log(payload, "payload");
   const oricfs1 = parseFloat(freight.origin_pick_up_cfs_cost) || 0;
   // const oricfs2 = parseFloat(freight.origin_pick_up_cfs_fees) || 0;
   const oricfs2 = parseFloat(
-    freight.origin_pick_up_fuel_unitType === "1" ? 1 : freight.chargable_rate,
+    freight.origin_pick_up_cfs_unitType === "1" ? 1 : freight.chargable_rate,
   );
   const oricfs3 = parseFloat(freight.origin_pickup_vfs_gp) || 0;
-  const oricfs4 = freight.origin_pick_up_fuel_unitType
+  const oricfs4 = freight.origin_pick_up_cfs_unitType
     ? oricfs1 * oricfs2 * freight.origin_pick_up_cfs_unitTypeQTY
     : 0.0;
   let finalValuecfs = 0;
@@ -879,7 +880,7 @@ console.log(payload, "payload");
         product_desc: getdata.product_desc,
         type: getdata.type,
         freight: getdata.freight,
-
+user_type: user?.user_type,
         incoterm: getdata.incoterm,
         dimension: getdata.dimension,
         supplier_id: freight.supplier_id,
@@ -894,6 +895,11 @@ console.log(payload, "payload");
         origin_pick_up_fuel_cost: freight.origin_pick_up_fuel_cost,
         origin_pick_up_fuel_fees: freight.origin_pick_up_fuel_fees,
         origin_pick_fuelGP: freight.origin_pick_fuelGP,
+           pickup_freight_currency: freight.pickup_freight_currency,
+      freight_charge_currency: freight.freight_charge_currency,
+      Transit_currency: freight.Transit_currency,
+      Destination_freight_currency: freight.Destination_freight_currency,
+      admin_currency_charge: freight.admin_currency_charge,
         chargable_rate: freight.chargable_rate,
         orifuel4: orifuel4,
         finalfuel1: finalfuel1,
@@ -1566,7 +1572,7 @@ console.log(payload, "payload");
                         />
                       </div>
                       <div>
-                        <h4 className="freight_hd mt-0 ms-3">Supplier Form</h4>
+                        <h4 className="freight_hd mt-0 ms-3">Admin Estimate Form</h4>
                       </div>
                     </div>
                     <button onClick={andlemodaloen} className="btn btn-success">
@@ -3668,7 +3674,7 @@ console.log(payload, "payload");
                               border: 0,
                             }}
                             onChange={handlechangecalc}
-                            name="freight_currency"
+                            name="freight_charge_currency"
                             value={freight?.freight_charge_currency}
                           >
                             <option>Select</option>
@@ -3872,8 +3878,8 @@ console.log(payload, "payload");
                               border: 0,
                             }}
                             onChange={handlechangecalc}
-                            name="freight_currency_insurance"
-                            value={freight?.freight_currency_insurance}
+                            name="freight_charge_currency"
+                            value={freight?.freight_charge_currency}
                           >
                             <option>Select</option>
                             <option value="RAND">RAND</option>
@@ -5731,7 +5737,7 @@ console.log(payload, "payload");
                               border: 0,
                             }}
                             onChange={handlechangecalc}
-                            name="freight_currency"
+                            name="Destination_freight_currency"
                             value={freight?.Destination_freight_currency}
                           >
                             <option>Select</option>
@@ -8283,8 +8289,8 @@ console.log(payload, "payload");
                               border: 0,
                             }}
                             onChange={handlechangecalc}
-                            name="freight_currency"
-                            value={freight?.freight_currency}
+                            name="admin_currency_charge"
+                            value={freight?.admin_currency_charge}
                           >
                             <option>Select</option>
                             <option value="RAND">RAND</option>

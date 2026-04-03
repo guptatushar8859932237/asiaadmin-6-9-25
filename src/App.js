@@ -93,6 +93,8 @@ import USerEstimateQuote from "./components/shipping estimate/USerEstimateQuote"
 import SupplierChat from "./pages/SupplierChat";
 import Warehouseview from "./components/Warehouse/Warehouseview";
 import Supplierwarhousproduct from "./pages/Supplierwarhousproduct";
+import TaskManagerstaff from "./pages/TaskManagerstaff";
+import TaskDetails from "./pages/TaskDetails";
 const Dashboard = lazy(() => import("./pages/Dashboard"));
 const Users = lazy(() => import("./pages/Users"));
 const Messages = lazy(() => import("./pages/Messages"));
@@ -178,6 +180,7 @@ export default function App() {
                 <Route index path="/Admin/saved" element={<Saved />} />
                 <Route index path="/Admin/Warehouse" element={<Warehosue />} />
                 <Route index path="/Admin/warehouse-view" element={<Warehouseview />} />
+                <Route index path="/Admin/task/:id" element={<TaskDetails />} />
                 <Route
                   index
                   path="/Admin/customesClearings"
@@ -398,6 +401,11 @@ export default function App() {
                   index
                   path="/Admin/shipping-estimate"
                   element={<ShippingaddfreightEstimate />}
+                />
+                <Route
+                  index
+                  path="/Admin/TaskManagerstaff"
+                  element={<TaskManagerstaff />}
                 />
                 <Route
                   index

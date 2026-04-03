@@ -22,7 +22,11 @@ const pageSize = 10;
 export default function MAnageshipments() {
   const [currentPage, setCurrentPage] = useState(1);
   const [data, setData] = useState([]);
-  const [data1, setData1] = useState([]);
+const [data1, setData1] = useState({
+  assign_shipment: "",
+  assign_shipment_id: "",
+  clearance_id: "",
+});
   const [data1222, setData1222] = useState([]);
   const [countries, setcountries] = useState([]);
   const [inputdata, setInputdata] = useState([]);
@@ -72,7 +76,9 @@ export default function MAnageshipments() {
   const closeModal = () => {
     setIsModalOpen(false);
   };
-  const totalPage = Math.ceil(pagenatedData.total / pagenatedData.limit);
+ const totalPage = Math.ceil(
+  (pagenatedData?.total || 0) / (pagenatedData?.limit || 1)
+);
   const handlePageChange = (page) => {
     setCurrentPage(page);
     getwarehouse(page);
@@ -116,27 +122,28 @@ export default function MAnageshipments() {
       });
   };
   useEffect(() => {
-    getwarehouse();
-  }, []);
-  const getwarehouse = (page) => {
-    console.log(page)
-    setLoader(true);
-const payload = {
-  user_id: userid,  
-  page:page
-}
-    axios
-      .post(`${process.env.REACT_APP_BASE_URL}getShipment`,payload)
-      .then((response) => {
-        setLoader(false);
-        setData(response.data.data);
-        setPagenatedData(response.data);
-      })
-      .catch((error) => {
-        setLoader(false);
-        console.log(error.response.data.message);
-      });
+  getwarehouse(1);
+}, []);
+ const getwarehouse = (page = 1) => {
+  setLoader(true);
+
+  const payload = {
+    user_id: userid,
+    page: page,
   };
+
+  axios
+    .post(`${process.env.REACT_APP_BASE_URL}getShipment`, payload)
+    .then((response) => {
+      setLoader(false);
+      setData(response.data.data || []);
+      setPagenatedData(response.data || {});
+    })
+    .catch((error) => {
+      setLoader(false);
+      console.log(error?.response?.data?.message);
+    });
+};
   const openModal2 = (id) => {
     setShipmentID(id);
     const postshipmentpost = {
@@ -162,20 +169,17 @@ const payload = {
   const closeModal2 = () => {
     setIsModalOpen2(false);
   };
-  const handleFileChange1 = (e) => {
-    const { name, value } = e.target;
-    setInputdata({ ...inputdata, [name]: value });
-  };
+ const handleFileChange1 = (e) => {
+  const { name, value } = e.target;
+  setInputdata((prev) => ({
+    ...prev,
+    [name]: value,
+  }));
+};
 
-  const combinedDetails = [
-  ...tindexdata.map((item) => ({
-    ...item,
-    type: "freight", // or batch
-  })),
-  ...tindexdClearance.map((item) => ({
-    ...item,
-    type: "clearance",
-  })),
+const combinedDetails = [
+  ...tindexdata.map(i => ({ ...i, type: "freight" })),
+  ...tindexdClearance.map(i => ({ ...i, type: "clearance" })),
 ];
   const apiupdatepost = async () => {
     try {
@@ -366,7 +370,8 @@ const payload = {
     });
     navigate("/Admin/addshipment", { state: { id: dataget[0] } });
   };
-const handleFileChange12 = (e) => {
+
+  const handleFileChange12 = (e) => {
   const { name, value } = e.target;
 
   if (name === "assign_shipment") {
@@ -375,8 +380,6 @@ const handleFileChange12 = (e) => {
       assign_shipment_id: "",
       clearance_id: "",
     });
-
-    // ❌ DO NOT CLEAR OLD DATA
     return;
   }
 
@@ -385,6 +388,26 @@ const handleFileChange12 = (e) => {
     [name]: value,
   }));
 };
+
+// const handleFileChange12 = (e) => {
+//   const { name, value } = e.target;
+
+//   if (name === "assign_shipment") {
+//     setData1({
+//       assign_shipment: value,
+//       assign_shipment_id: "",
+//       clearance_id: "",
+//     });
+
+//     // ❌ DO NOT CLEAR OLD DATA
+//     return;
+//   }
+
+//   setData1((prev) => ({
+//     ...prev,
+//     [name]: value,
+//   }));
+// };
 
 // const handleFileChange12 = (e) => {
 //   const { name, value } = e.target;
@@ -444,6 +467,75 @@ const handleFileChange12 = (e) => {
 //     toast.error(error.response?.data?.message || "Something went wrong");
 //   }
 // };
+// const addbuttonclick = async () => {
+//   try {
+//     if (!data1.assign_shipment) {
+//       toast.error("Please select assign shipment type");
+//       return;
+//     }
+
+//     let payload = {
+//       type: data1.assign_shipment,
+//       origin_country_id: inputdata.origin_country_id,
+//       des_country_id: inputdata.des_country_id,
+//     };
+
+//     // TYPE BASED ID
+//     if (data1.assign_shipment === "1" || data1.assign_shipment === "2") {
+//       payload.id = parseInt(data1.assign_shipment_id);
+//     }
+
+//     if (data1.assign_shipment === "3") {
+//       payload.id = parseInt(data1.clearance_id);
+//     }
+
+//     console.log("FINAL PAYLOAD 👉", payload);
+
+//     const response = await axios.post(
+//       `${process.env.REACT_APP_BASE_URL}getAssignShipmentList`,
+//       payload
+//     );
+
+//     const newData = response.data.data || [];
+
+//     toast.success(response.data.message);
+
+//     // ✅ CLEARANCE CASE
+//     if (data1.assign_shipment === "3") {
+//       setTindexdClearance((prev) => {
+//         const merged = [...prev, ...newData];
+
+//         const unique = merged.filter(
+//           (item, index, self) =>
+//             index ===
+//             self.findIndex(
+//               (t) => t.clearance_id === item.clearance_id
+//             )
+//         );
+
+//         return unique;
+//       });
+//     } else {
+//       // ✅ FREIGHT / BATCH CASE
+//       setTindexdata((prev) => {
+//         const merged = [...prev, ...newData];
+
+//         const unique = merged.filter(
+//           (item, index, self) =>
+//             index ===
+//             self.findIndex(
+//               (t) => t.shipment_details_id === item.shipment_details_id
+//             )
+//         );
+
+//         return unique;
+//       });
+//     }
+//   } catch (error) {
+//     toast.error(error.response?.data?.message || "Something went wrong");
+//   }
+// };
+
 const addbuttonclick = async () => {
   try {
     if (!data1.assign_shipment) {
@@ -457,16 +549,21 @@ const addbuttonclick = async () => {
       des_country_id: inputdata.des_country_id,
     };
 
-    // TYPE BASED ID
     if (data1.assign_shipment === "1" || data1.assign_shipment === "2") {
-      payload.id = parseInt(data1.assign_shipment_id);
+      if (!data1.assign_shipment_id) {
+        toast.error("Please select freight/batch");
+        return;
+      }
+      payload.id = Number(data1.assign_shipment_id);
     }
 
     if (data1.assign_shipment === "3") {
-      payload.id = parseInt(data1.clearance_id);
+      if (!data1.clearance_id) {
+        toast.error("Please select clearance");
+        return;
+      }
+      payload.id = Number(data1.clearance_id);
     }
-
-    console.log("FINAL PAYLOAD 👉", payload);
 
     const response = await axios.post(
       `${process.env.REACT_APP_BASE_URL}getAssignShipmentList`,
@@ -475,95 +572,114 @@ const addbuttonclick = async () => {
 
     const newData = response.data.data || [];
 
-    toast.success(response.data.message);
-
-    // ✅ CLEARANCE CASE
     if (data1.assign_shipment === "3") {
       setTindexdClearance((prev) => {
         const merged = [...prev, ...newData];
 
-        const unique = merged.filter(
+        return merged.filter(
           (item, index, self) =>
             index ===
             self.findIndex(
               (t) => t.clearance_id === item.clearance_id
             )
         );
-
-        return unique;
       });
     } else {
-      // ✅ FREIGHT / BATCH CASE
       setTindexdata((prev) => {
         const merged = [...prev, ...newData];
 
-        const unique = merged.filter(
+        return merged.filter(
           (item, index, self) =>
             index ===
             self.findIndex(
               (t) => t.shipment_details_id === item.shipment_details_id
             )
         );
-
-        return unique;
       });
     }
+
+    toast.success(response.data.message);
+
   } catch (error) {
     toast.error(error.response?.data?.message || "Something went wrong");
   }
 };
-  const handleclickdelete = async (item, id) => {
-    console.log(item);
+ const handleclickdelete = async (item) => {
+  try {
     const payload = {
       shipment_detail_id: item.shipment_details_id,
       orderId: item.order_id,
     };
-    console.log(payload);
-    try {
-      console.log(tindexdata);
-      const response = await axios.post(
-        `${process.env.REACT_APP_BASE_URL}DeleteShipmentDetails`,
-        payload
-      );
-      toast.success(response.data.message);
-     const updatedData = tindexdata.filter(
-  (row) => row.shipment_details_id !== item.shipment_details_id
-);
-setTindexdata(updatedData);
-      getwarehouse();
-    } catch (error) {
-      console.error(
-        "Error deleting shipment details:",
-        error.response?.data || error.message
-      );
-    }
-  };
-  const handleclickdeleteClearence = async (item, id) => {
-    console.log(item);
+
+    const response = await axios.post(
+      `${process.env.REACT_APP_BASE_URL}DeleteShipmentDetails`,
+      payload
+    );
+
+    toast.success(response.data.message);
+
+    // ✅ remove only from freight list
+    setTindexdata((prev) =>
+      prev.filter(
+        (row) =>
+          row.shipment_details_id !== item.shipment_details_id
+      )
+    );
+  } catch (error) {
+    console.error(error.response?.data || error.message);
+  }
+};
+
+ const handleclickdeleteClearence = async (item) => {
+  try {
     const payload = {
       shipment_detail_id: shipmentID,
       clearance_id: item.clearance_id,
     };
-    console.log(payload);
-    try {
-      console.log(tindexdata);
-      const response = await axios.post(
-        `${process.env.REACT_APP_BASE_URL}DeleteShipmentDetailsByClearance`,
-        payload
-      );
-      toast.success(response.data.message);
-      const updatedData = tindexdClearance.filter(
-        (item) => item.shipment_details_id !== item.shipment_details_id
-      );
-      setTindexdClearance(updatedData);
-      getwarehouse();
-    } catch (error) {
-      console.error(
-        "Error deleting shipment details:",
-        error.response?.data || error.message
-      );
-    }
-  };
+
+    const response = await axios.post(
+      `${process.env.REACT_APP_BASE_URL}DeleteShipmentDetailsByClearance`,
+      payload
+    );
+
+    toast.success(response.data.message);
+
+    // ✅ remove only from clearance list
+    setTindexdClearance((prev) =>
+      prev.filter(
+        (row) => row.clearance_id !== item.clearance_id
+      )
+    );
+  } catch (error) {
+    console.error(error.response?.data || error.message);
+  }
+};
+  // const handleclickdeleteClearence = async (item, id) => {
+  //   console.log(item);
+  //   const payload = {
+  //     shipment_detail_id: shipmentID,
+  //     clearance_id: item.clearance_id,
+  //   };
+  //   console.log(payload);
+  //   try {
+  //     console.log(tindexdata);
+  //     const response = await axios.post(
+  //       `${process.env.REACT_APP_BASE_URL}DeleteShipmentDetailsByClearance`,
+  //       payload
+  //     );
+  //     toast.success(response.data.message);
+  //     const updatedData = tindexdClearance.filter(
+  //       (item) => item.shipment_details_id !== item.shipment_details_id
+  //     );
+  //     setTindexdClearance(updatedData);
+  //     getwarehouse();
+  //   } catch (error) {
+  //     console.error(
+  //       "Error deleting shipment details:",
+  //       error.response?.data || error.message
+  //     );
+  //   }
+  // };
   const handlclickposterror = () => {
     toast.error("Shipment requires at least one batch or freight.");
   };
@@ -812,7 +928,7 @@ setTindexdata(updatedData);
                       <input
                         type="text"
                         placeholder="Waybill"
-                        value={inputdata.waybill}
+                        value={inputdata.waybill || ""}
                         onChange={handleFileChange1}
                         className="mb-3 border ps-2 py-2 rounded w-100"
                         name="waybill"
@@ -1188,7 +1304,7 @@ setTindexdata(updatedData);
                             onChange={handleFileChange12}
                             name="assign_shipment_id"
                             className="mb-3 border ps-2 py-3 rounded w-100"
-                            value={inputdata.assign_shipment_id}
+                        value={data1.assign_shipment_id}
                           >
                             <option>Select...</option>
                             {freight1 &&
@@ -1214,7 +1330,7 @@ setTindexdata(updatedData);
                               onChange={handleFileChange12}
                               name="assign_shipment_id"
                               className="mb-3 border ps-2 py-3 rounded w-100"
-                              value={inputdata.assign_shipment_id}
+                            value={data1.assign_shipment_id}
                             >
                               <option>Select...</option>
                               {options &&
@@ -1242,7 +1358,7 @@ setTindexdata(updatedData);
                               onChange={handleFileChange12}
                               name="clearance_id"
                               className="mb-3 border ps-2 py-3 rounded w-100"
-                              value={inputdata.clearance_id}
+                            value={data1.clearance_id}
                             >
                               <option>Select...</option>
                               {data1222 &&
@@ -1352,7 +1468,7 @@ setTindexdata(updatedData);
                     </div>
                   </div>
                   <div className="text-center mt-2">
-                    {tindexdata.length <= 0 ? (
+                    {(tindexdata.length + tindexdClearance.length) === 0? (
                       <Button variant="contained" onClick={handlclickposterror}>
                         Update Warehouse
                       </Button>

@@ -647,11 +647,11 @@ const freightData1 =async (value) => {
    const AssignFreightToSupplier = async () => {
         const payload = {
           clearance_id: freightIdAssignTask.id,
-          supplier_id: supplierName
+          staff_id: supplierName
         };
         try {
           const response = await axios.post(
-            `${process.env.REACT_APP_BASE_URL}assign-clearance-supplier`,
+            `${process.env.REACT_APP_BASE_URL}assignClearanceToStaff`,
             payload
           );
           console.log(response.data);
@@ -664,7 +664,7 @@ const freightData1 =async (value) => {
       }
        const getSupplierdata = () => {
           axios
-            .get(`${process.env.REACT_APP_BASE_URL}supplier-list`)
+            .get(`${process.env.REACT_APP_BASE_URL}staff-list`)
             .then((response) => {
               setSupplierData(response.data.data);
             })
@@ -702,7 +702,7 @@ const freightData1 =async (value) => {
                                       >
                                         <div className="modal-header">
                                           <h2>
-                                            <h2 id="modal-modal-title">Assign Clearance</h2>
+                                            <h2 id="modal-modal-title">Assign Staff</h2>
                                           </h2>
                                           <button className="btn btn-close" onClick={hanldecloseModal}>
                                             <CloseIcon />
@@ -713,7 +713,7 @@ const freightData1 =async (value) => {
                                           <div className="row my-3  ">
                                           </div>
                         <div className="col-12 ">
-                                              <label>Assign Supplier</label>
+                                              <label>Assign Staff</label>
                                               <select
                                                 className="form-cuntrol col-12 border px-3 py-2 mb-2"
                                                 value={supplierName}
@@ -723,7 +723,7 @@ const freightData1 =async (value) => {
                                                 <option>Select</option>
                                                 {supplierData.map((item, index) => (
                                                                   <option key={index} value={item.id}>
-                                                                   {item.name}
+                                                                   {item.full_name}
                                                                   </option>
                                                                 ))}
                                               </select>
@@ -733,7 +733,7 @@ const freightData1 =async (value) => {
                                             className="text-center"
                                             onClick={AssignFreightToSupplier}
                                           >
-                                            Add Supplier
+                                            Add Staff
                                           </Button>
                                         </div>
                                       </Box>

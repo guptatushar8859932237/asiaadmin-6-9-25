@@ -104,10 +104,8 @@ export default function Supplierestimationview() {
     }
   };
   const oripick1 = parseFloat(freight.origin_pick_up_cost) || 0;
-  // const oripick19 = parseFloat(freight.freight_charge_currencyQTY) || 0;
-  // const oripick2 = parseFloat(freight.origin_pick_up_fees) || 0;
   const oripick2 =
-    freight.origin_pick_up_unitType === "1" ? 1 : freight.chargable_rate;
+    freight.origin_pick_up_unitType == "1" ? 1 : freight.chargable_rate;
   const oripick3 = parseFloat(freight.origin_pickup_fee_gpcalc) || 0;
   const oripick4 = freight.origin_pick_up_unitType
     ? oripick1 * oripick2 * freight.freight_charge_currencyQTY
@@ -137,10 +135,10 @@ export default function Supplierestimationview() {
   const oricfs1 = parseFloat(freight.origin_pick_up_cfs_cost) || 0;
   // const oricfs2 = parseFloat(freight.origin_pick_up_cfs_fees) || 0;
   const oricfs2 = parseFloat(
-    freight.origin_pick_up_fuel_unitType === "1" ? 1 : freight.chargable_rate,
+    freight.origin_pick_up_cfs_unitType === "1" ? 1 : freight.chargable_rate,
   );
   const oricfs3 = parseFloat(freight.origin_pickup_vfs_gp) || 0;
-  const oricfs4 = freight.origin_pick_up_fuel_unitType
+  const oricfs4 = freight.origin_pick_up_cfs_unitType
     ? oricfs1 * oricfs2 * freight.origin_pick_up_cfs_unitTypeQTY
     : 0.0;
   let finalValuecfs = 0;
@@ -896,30 +894,17 @@ export default function Supplierestimationview() {
     transitRoe +
     totalChangeRoeOriginaftercalcuinsurance +
     totalChangeRoeOrigin;
-
+      const userType = JSON.parse(localStorage.getItem("data123"));
   const estimateCalculate = async () => {
-     console.log(data1,data2)
+    console.log(data1, data2);
     const payload = {
-      // freight_id: getdata.freight_id,
-      // client_id: getdata.client_ref,
-      // client_name: getdata.client_name,
-      // serial_number: freight.serial_number,
-      // date: update.date,
-      // client_ref: getdata.client_ref,
-      // product_desc: getdata.product_desc,
-      // type: getdata.type,
-      // freight: getdata.freight,
-
-      // incoterm: getdata.incoterm,
-      // dimension: getdata.dimension,
-      // supplier_id: freight.supplier_id,
-    
-      freight_id:  data2.data,
+      freight_id: data2.data,
       client_id: getdata.client_ref,
       client_name: getdata.client_name,
       serial_number: freight.serial_number,
       date: update.date,
       client_ref: getdata.client_ref,
+      user_type: userType.user_type,
       product_desc: getdata.product_desc,
       type: getdata.type,
       freight: getdata.freight,
@@ -960,6 +945,11 @@ export default function Supplierestimationview() {
         freight.origin_pick_documantation_cost_gp,
       oridoc4: oridoc4,
       finaldoc1: finaldoc1,
+      pickup_freight_currency: freight.pickup_freight_currency,
+      freight_charge_currency: freight.freight_charge_currency,
+      Transit_currency: freight.Transit_currency,
+      Destination_freight_currency: freight.Destination_freight_currency,
+      admin_currency_charge: freight.admin_currency_charge,
       roe_origin_doc_currency: freight.roe_origin_doc_currency,
       finalvlaueodoc: finalvlaueodoc,
       origin_pick_up_forewarding_cost: freight.origin_pick_up_forewarding_cost,
@@ -1768,39 +1758,27 @@ export default function Supplierestimationview() {
         `${process.env.REACT_APP_BASE_URL}ApproveShippingEstimate`,
         payload,
       );
-
       toast.success(
         response.data?.message || "Quotation Status Updated Successfully",
       );
       console.log("Success:", response.data);
     } catch (error) {
       console.error("Full Error:", error);
-
-      // 🔹 If backend sends validation errors array
       if (error.response?.data?.errors) {
         error.response.data.errors.forEach((err) => {
           toast.error(err.message || err);
         });
-
-        // 🔹 If backend sends single message
       } else if (error.response?.data?.message) {
         toast.error(error.response.data.message);
-
-        // 🔹 If server error
       } else if (error.response) {
         toast.error(`Server Error: ${error.response.status}`);
-
-        // 🔹 If network error
       } else if (error.request) {
         toast.error("Network error. Please check your connection.");
-
-        // 🔹 Any other error
       } else {
         toast.error(error.message || "Something went wrong");
       }
     }
   };
-
   return (
     <>
       {openmodal && (
@@ -1829,8 +1807,6 @@ export default function Supplierestimationview() {
                     ? `${selected.length} selected`
                     : "Select Users"}
                 </div>
-
-                {/* Dropdown */}
                 {open && (
                   <div
                     style={{
@@ -1895,7 +1871,7 @@ export default function Supplierestimationview() {
                         />
                       </div>
                       <div>
-                        <h4 className="freight_hd mt-0 ms-3">Supplier Form</h4>
+                        <h4 className="freight_hd mt-0 ms-3">Supplier Estimate Form</h4>
                       </div>
                     </div>
                     {/* <MdDownloadForOffline
@@ -4026,7 +4002,7 @@ export default function Supplierestimationview() {
                               border: 0,
                             }}
                             onChange={handlechangecalc}
-                            name="freight_currency"
+                            name="freight_charge_currency"
                             value={freight?.freight_charge_currency}
                           >
                             <option>Select</option>
@@ -4230,8 +4206,8 @@ export default function Supplierestimationview() {
                               border: 0,
                             }}
                             onChange={handlechangecalc}
-                            name="freight_currency_insurance"
-                            value={freight?.freight_currency_insurance}
+                            name="freight_charge_currency"
+                            value={freight?.freight_charge_currency}
                           >
                             <option>Select</option>
                             <option value="RAND">RAND</option>
@@ -6088,7 +6064,7 @@ export default function Supplierestimationview() {
                               border: 0,
                             }}
                             onChange={handlechangecalc}
-                            name="freight_currency"
+                            name="Destination_freight_currency"
                             value={freight?.Destination_freight_currency}
                           >
                             <option>Select</option>
@@ -8640,8 +8616,8 @@ export default function Supplierestimationview() {
                               border: 0,
                             }}
                             onChange={handlechangecalc}
-                            name="freight_currency"
-                            value={freight?.freight_currency}
+                            name="admin_currency_charge"
+                            value={freight?.admin_currency_charge}
                           >
                             <option>Select</option>
                             <option value="RAND">RAND</option>
@@ -8824,12 +8800,13 @@ export default function Supplierestimationview() {
                     </tbody>
                   </table>
                   <div className="text-center mt-3">
-                     {freight.isConfirmed === 1 ? (
+                    {freight.isConfirmed === 1 ? (
                       ""
                     ) : (
-                    <button className="ship_btn" onClick={estimateCalculate}>
-                      Get Quote
-                    </button>)}
+                      <button className="ship_btn" onClick={estimateCalculate}>
+                        Get Quote
+                      </button>
+                    )}
                     {freight.isConfirmed === 1 ? (
                       ""
                     ) : (

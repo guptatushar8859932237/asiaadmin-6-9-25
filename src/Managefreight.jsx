@@ -1016,11 +1016,11 @@ export default function Managefreight() {
                     ></input>
                   </div>
                   <button
-  className="me-2"
-  onClick={() => freightData1(searchQuery)}
->
-  Search
-</button>
+                    className="me-2"
+                    onClick={() => freightData1(searchQuery)}
+                  >
+                    Search
+                  </button>
                   <div className="dropdown">
                     <button
                       className="dropdown-toggle me-2"
@@ -1333,8 +1333,8 @@ export default function Managefreight() {
                                                     Attach Quote
                                                   </div>
                                                 </a>
-                                               
-                                                  <a
+
+                                                <a
                                                   className="dropdown-item li_icon"
                                                   onClick={() => {
                                                     querryinQuote(item);
@@ -1352,7 +1352,7 @@ export default function Managefreight() {
                                                     Chat Client
                                                   </div>
                                                 </a>
-                                                {
+                                                {/* {
                                                   item.supplier_name ? <a
                                                   className="dropdown-item li_icon"
                                                   onClick={() => {
@@ -1371,7 +1371,7 @@ export default function Managefreight() {
                                                     Chat Supplier
                                                   </div>
                                                 </a>:""
-                                                }
+                                                } */}
                                                 <a
                                                   className="dropdown-item li_icon"
                                                   onClick={() => {
@@ -1425,7 +1425,8 @@ export default function Managefreight() {
                                             <>
                                               <span className="dot bg-success me-2"></span>
                                               <p className="text-success mb-0">
-                                                Accepted
+                                                Accepted Quoted{" "}
+                                                {item?.quote_count}
                                               </p>
                                             </>
                                           ) : item.status == 2 ? (
@@ -1446,8 +1447,7 @@ export default function Managefreight() {
                                             <>
                                               <span className="dot bg-info me-2"></span>
                                               <p className="text-info mb-0">
-                                                Estimated :
-                                                {item?.quote_count}
+                                                Estimated
                                               </p>
                                             </>
                                           ) : (
@@ -1455,6 +1455,16 @@ export default function Managefreight() {
                                               <span className="dot bg-dark me-2"></span>
                                               <p className="text-dark mb-0">
                                                 Pending
+                                                {item?.quote_count > 0 && (
+                                                  <span
+                                                    className=" mx-2"
+                                                    style={{
+                                                      colour: "#3498db",
+                                                    }}
+                                                  >
+                                                    Quoted: {item.quote_count}
+                                                  </span>
+                                                )}
                                               </p>
                                             </>
                                           )}

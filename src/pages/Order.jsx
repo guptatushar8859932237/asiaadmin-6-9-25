@@ -759,9 +759,23 @@ export default function Order() {
         toast.error(error.response?.data || "An error occurred");
       });
   };
-  const track123 = (item) => {
-    setSelectedItem(item); // save item data
-    setOpenModalorder(true);
+  const track123 =async (item) => {
+    try {
+        const body = {
+          freight_id: item?.freight_id,
+          order_id: item?.order_id,
+        };
+        const res = await axios.post(
+          `${process.env.REACT_APP_BASE_URL}add_freight_to_warehouse`,
+          body
+        );
+        toast.success(res.data.message);
+        getorder();
+        closeModal();
+        setOpenModalorder(false);
+      } catch (error) {
+        toast.error(error.response?.data?.message || "Something went wrong");
+      }
   };
   const [supplierOptions, setSupplierOptions] = useState([])
   const [warehouseType, setWarehouseType] = useState(""); // radio state
@@ -784,22 +798,7 @@ const getSupplier= async ()=>{
     const type = e.target.value;
     setWarehouseType(type);
     if (type === "asia") {
-      try {
-        const body = {
-          freight_id: selectedItem?.freight_id,
-          order_id: selectedItem?.order_id,
-        };
-        const res = await axios.post(
-          `${process.env.REACT_APP_BASE_URL}add_freight_to_warehouse`,
-          body
-        );
-        toast.success(res.data.message);
-        getorder();
-        closeModal();
-        setOpenModalorder(false);
-      } catch (error) {
-        toast.error(error.response?.data?.message || "Something went wrong");
-      }
+     
     }
   };
   const handleUpdateForSupplier = async () => {

@@ -802,13 +802,13 @@ console.log(payload, "payload");
   const deaddisbursemantc2 =
     // parseFloat(freight.Destination_disbursemant_currency_unit) || 0;
     parseFloat(
-      freight.Destination_AdminAgrncy_currency_unitType === "1"
+      freight.Destination_disbursemant_currenc_unitType1 === "1"
         ? 1
         : freight.chargable_rate,
     );
   const deaddisbursemantc3 =
     parseFloat(freight.Destination_disbursemant_currency_gp) || 0;
-  const deaddisbursemantc4 = freight.Destination_AdminAgrncy_currency_unitType
+  const deaddisbursemantc4 = freight.Destination_disbursemant_currenc_unitType1
     ? deaddisbursemantc1 *
       deaddisbursemantc2 *
       freight.Destination_disbursemant_currency_unitTypeQTY
@@ -964,6 +964,7 @@ user_type: user?.user_type,
         Transit_currency_Cost: freight.Transit_currency_Cost,
         Transit_currency_unit: freight.Transit_currency_unit,
         Transit_currency_gp: freight.Transit_currency_gp,
+        Destination_disbursemant_currenc_unitType1: freight.Destination_disbursemant_currenc_unitType1,
         Transit_currency_roe: freight.Transit_currency_roe,
         finaltransit1: finaltransit1,
         finalvlaueotransit: finalvlaueotransit,
@@ -6227,9 +6228,16 @@ user_type: user?.user_type,
                             className="supplier_form"
                             onChange={handlechangecalc}
                             disabled
-                            value={
-                              freight.freight
-                                ?.Destination_Unpack_currency_unitType
+                            // value={
+                            //   freight.freight
+                            //     ?.Destination_Unpack_currency_unitType
+                            //     ? destinationUnpackdocumentation2
+                            //       ? destinationUnpackdocumentation2
+                            //       : 0.0
+                            //     : 0.0
+                            // }
+                               value={
+                              freight?.Destination_Unpack_currency_unitType
                                 ? destinationUnpackdocumentation2
                                   ? destinationUnpackdocumentation2
                                   : 0.0
@@ -6444,9 +6452,17 @@ user_type: user?.user_type,
                             className="supplier_form"
                             onChange={handlechangecalc}
                             disabled
-                            value={
-                              freight.freight
-                                ?.Destination_fuelsurcharge_currency_typeUnit
+                            // value={
+                            //   freight.freight
+                            //     ?.Destination_fuelsurcharge_currency_typeUnit
+                            //     ? destinationfuelsurchargedocumentation2
+                            //       ? destinationfuelsurchargedocumentation2
+                            //       : 0.0
+                            //     : 0.0
+                            // }
+
+                             value={
+                              freight?.Destination_fuelsurcharge_currency_typeUnit
                                 ? destinationfuelsurchargedocumentation2
                                   ? destinationfuelsurchargedocumentation2
                                   : 0.0
@@ -6661,9 +6677,16 @@ user_type: user?.user_type,
                             className="supplier_form"
                             onChange={handlechangecalc}
                             disabled
-                            value={
-                              freight.freight
-                                ?.Destination_adminsurcharge_currency_unitType
+                            // value={
+                            //   freight.freight
+                            //     ?.Destination_adminsurcharge_currency_unitType
+                            //     ? destinatiadminsurcharge2
+                            //       ? destinatiadminsurcharge2
+                            //       : 0.0
+                            //     : 0.0
+                            // }
+                             value={
+                              freight?.Destination_adminsurcharge_currency_unitType
                                 ? destinatiadminsurcharge2
                                   ? destinatiadminsurcharge2
                                   : 0.0
@@ -8096,6 +8119,7 @@ user_type: user?.user_type,
                               border: 0,
                             }}
                             name="admin_currency_charge"
+                              onChange={handlechangecalc}
                             value={freight?.admin_currency_charge}
                           >
                             <option>Select</option>
@@ -8105,7 +8129,29 @@ user_type: user?.user_type,
                             <option value="EURO">EURO</option>
                           </select>
                         </td>
-                        <td></td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              fontWeight: 400,
+                              border: "0px",
+
+                              verticalAlign: "middle",
+                            }}
+                            type="text"
+                            onKeyPress={handlepresss}
+                            className="supplier_form"
+                            onChange={handlechangecalc}
+                            value={
+                              freight?.Destination_disbursemant_currency_cost
+                            }
+                            name="Destination_disbursemant_currency_cost"
+                            id="floatingInput"
+                            placeholder="0.00"
+                          />
+                        </td>
                         <td>
                           <select
                             className="select_supplier"
@@ -8117,9 +8163,9 @@ user_type: user?.user_type,
                               border: 0,
                             }}
                             onChange={handlechangecalc}
-                            name="Destination_AdminAgrncy_currency_unitType"
+                            name="Destination_disbursemant_currenc_unitType1"
                             value={
-                              freight?.Destination_AdminAgrncy_currency_unitType
+                              freight?.Destination_disbursemant_currenc_unitType1
                             }
                           >
                             <option>Select</option>
@@ -8144,7 +8190,7 @@ user_type: user?.user_type,
                             onChange={handlechangecalc}
                             disabled
                             value={
-                              freight.Destination_AdminAgrncy_currency_unitType
+                              freight.Destination_disbursemant_currenc_unitType1
                                 ? deaddisbursemantc2
                                   ? deaddisbursemantc2
                                   : 0.0

@@ -308,11 +308,17 @@ const handleclickprintdate = async () => {
     toast.error(error.response?.data?.message || "Something went wrong");
   }
 };
-  const handleClick = (item) => {
-    setAggregatedArray(
-      aggregatedArray.filter((currentItem) => currentItem !== item)
-    );
-  };
+ const handleClick = (item) => {
+  // Remove from aggregated array
+  setAggregatedArray((prev) =>
+    prev.filter((currentItem) => currentItem !== item)
+  );
+
+  // Remove from clearance array ALSO
+  setClearanceArray((prev) =>
+    prev.filter((currentItem) => currentItem !== item)
+  );
+};
   return (
     <div className="wpWrapper">
       <div className="container-fluid">
@@ -588,32 +594,7 @@ const handleclickprintdate = async () => {
                       className="mb-3 border ps-2 py-2 rounded w-100"
                     />
                   </div>
-                   {/* <div className="col-12">
-                                                    <label className="ware_label">Select Document</label>
-                                                    <select  style={{ padding: "10px" }}
-                      className="mb-3 border rounded w-100" name="documentName" onChange={handleInputChange}>
-                            <option value="">Select...</option>
-                            <option value="Customs Documents">Customs docs</option>
-                            <option value="Supporting Documents">Supporting docs</option>
-                            <option value="Invoice, Packing List">Invoice / Packing L</option>
-                            <option value="Product Literature">Product Literature</option>
-                            <option value="Letters of authority">LOA</option>
-                            <option value="Waybills">Freight Docs</option>
-                            <option value="Waybills">Shipping instruction</option>
-                            <option value="Supplier Invoices">Freight Invoices </option>
-                            <option value="AD_Quotations">Attach Quote</option>
-                          </select>
-                                                 </div>
-                  <div className="col-12">
-                    <label className="ware_label">Upload Waybill</label>
-                    <input
-                      style={{ padding: "5px" }}
-                      type="file"
-                      onChange={handleInputChangewer}
-                      name="document"
-                      className="mb-3 border ps-2 rounded w-100"
-                    />
-                  </div> */}
+                 
 
                     <div className="row mb-3 mt-4">
                                                   <div className="col-9 mt-3">
@@ -837,7 +818,7 @@ const handleclickprintdate = async () => {
                   <th>Costumer ref.</th>
                   <th>Total BOX</th>
                   <th>Port of Discharge</th>
-                  {/* <th>Action</th> */}
+                  <th>Action</th>
                 </tr>
               </thead>
               <tbody>
@@ -852,14 +833,14 @@ const handleclickprintdate = async () => {
                     <td>{item?.customer_ref}</td>
                     <td>{item.total_box}</td>
                     <td>{item.port_of_discharge}</td>
-                    {/* <td>
+                    <td>
                       <DeleteIcon
                         style={{ cursor: "pointer" }}
                         onClick={() => {
                           handleClick(item);
                         }}
                       />
-                    </td> */}
+                    </td>
                   </tr>
                 ))}
               </tbody>

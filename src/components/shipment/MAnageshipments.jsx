@@ -108,6 +108,7 @@ const [data1, setData1] = useState({
       }
     }
   };
+
   useEffect(() => {
     getcountry();
   }, []);
@@ -572,9 +573,17 @@ const addbuttonclick = async () => {
 
     const newData = response.data.data || [];
 
+    // ✅ STEP 1: FLAG ADD KARO
+    const newDataWithFlag = newData.map((item) => ({
+      ...item,
+      isNew: true,
+    }));
+
+    // ✅ STEP 2: CONDITION BASED STATE UPDATE
     if (data1.assign_shipment === "3") {
+      // 👉 Clearance
       setTindexdClearance((prev) => {
-        const merged = [...prev, ...newData];
+        const merged = [...prev, ...newDataWithFlag];
 
         return merged.filter(
           (item, index, self) =>
@@ -585,14 +594,16 @@ const addbuttonclick = async () => {
         );
       });
     } else {
+      // 👉 Freight / Batch
       setTindexdata((prev) => {
-        const merged = [...prev, ...newData];
+        const merged = [...prev, ...newDataWithFlag];
 
         return merged.filter(
           (item, index, self) =>
             index ===
             self.findIndex(
-              (t) => t.shipment_details_id === item.shipment_details_id
+              (t) =>
+                t.shipment_details_id === item.shipment_details_id
             )
         );
       });
@@ -604,7 +615,19 @@ const addbuttonclick = async () => {
     toast.error(error.response?.data?.message || "Something went wrong");
   }
 };
- const handleclickdelete = async (item) => {
+const handleclickdelete = async (item) => {
+  // ✅ अगर new hai → direct state se remove
+  if (item.isNew) {
+    setTindexdata((prev) =>
+      prev.filter(
+        (row) =>
+          row.shipment_details_id !== item.shipment_details_id
+      )
+    );
+    return;
+  }
+
+  // ❗ old data → API call
   try {
     const payload = {
       shipment_detail_id: item.shipment_details_id,
@@ -618,7 +641,6 @@ const addbuttonclick = async () => {
 
     toast.success(response.data.message);
 
-    // ✅ remove only from freight list
     setTindexdata((prev) =>
       prev.filter(
         (row) =>
@@ -631,6 +653,17 @@ const addbuttonclick = async () => {
 };
 
  const handleclickdeleteClearence = async (item) => {
+  // ✅ new item → no API
+  if (item.isNew) {
+    setTindexdClearance((prev) =>
+      prev.filter(
+        (row) => row.clearance_id !== item.clearance_id
+      )
+    );
+    return;
+  }
+
+  // ❗ old item → API call
   try {
     const payload = {
       shipment_detail_id: shipmentID,
@@ -644,7 +677,6 @@ const addbuttonclick = async () => {
 
     toast.success(response.data.message);
 
-    // ✅ remove only from clearance list
     setTindexdClearance((prev) =>
       prev.filter(
         (row) => row.clearance_id !== item.clearance_id

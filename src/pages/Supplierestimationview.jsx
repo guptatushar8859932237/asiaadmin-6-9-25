@@ -829,13 +829,13 @@ export default function Supplierestimationview() {
   const deaddisbursemantc2 =
     // parseFloat(freight.Destination_disbursemant_currency_unit) || 0;
     parseFloat(
-      freight.Destination_AdminAgrncy_currency_unitType === "1"
+      freight.Destination_disbursemant_currenc_unitType1 == "1"
         ? 1
         : freight.chargable_rate,
     );
   const deaddisbursemantc3 =
     parseFloat(freight.Destination_disbursemant_currency_gp) || 0;
-  const deaddisbursemantc4 = freight.Destination_AdminAgrncy_currency_unitType
+  const deaddisbursemantc4 = freight.Destination_disbursemant_currenc_unitType1
     ? deaddisbursemantc1 *
       deaddisbursemantc2 *
       freight.Destination_disbursemant_currency_unitTypeQTY
@@ -853,7 +853,7 @@ export default function Supplierestimationview() {
 
   const deadoctc1 = parseFloat(freight.Destination_doc_currency_cost) || 0;
   const deadoctc2 = parseFloat(
-    freight.Destination_doc_currency_unittype === "1"
+    freight.Destination_doc_currency_unittype == "1"
       ? 1
       : freight.chargable_rate,
   );
@@ -963,6 +963,7 @@ export default function Supplierestimationview() {
       origin_pick_up_custome_clearance:
         freight.origin_pick_up_custome_clearance,
       origin_pickup_custome_gp: freight.origin_pickup_custome_gp,
+      Destination_disbursemant_currenc_unitType1: freight.Destination_disbursemant_currenc_unitType1,
       oricustome4: oricustome4,
       roe_origin_customes: freight.roe_origin_customes,
       finalcustomes1: finalcustomes1,
@@ -6555,8 +6556,7 @@ export default function Supplierestimationview() {
                             onChange={handlechangecalc}
                             disabled
                             value={
-                              freight.freight
-                                ?.Destination_Unpack_currency_unitType
+                              freight?.Destination_Unpack_currency_unitType
                                 ? destinationUnpackdocumentation2
                                   ? destinationUnpackdocumentation2
                                   : 0.0
@@ -6772,8 +6772,7 @@ export default function Supplierestimationview() {
                             onChange={handlechangecalc}
                             disabled
                             value={
-                              freight.freight
-                                ?.Destination_fuelsurcharge_currency_typeUnit
+                              freight?.Destination_fuelsurcharge_currency_typeUnit
                                 ? destinationfuelsurchargedocumentation2
                                   ? destinationfuelsurchargedocumentation2
                                   : 0.0
@@ -6989,8 +6988,7 @@ export default function Supplierestimationview() {
                             onChange={handlechangecalc}
                             disabled
                             value={
-                              freight.freight
-                                ?.Destination_adminsurcharge_currency_unitType
+                              freight?.Destination_adminsurcharge_currency_unitType
                                 ? destinatiadminsurcharge2
                                   ? destinatiadminsurcharge2
                                   : 0.0
@@ -8432,7 +8430,29 @@ export default function Supplierestimationview() {
                             <option value="EURO">EURO</option>
                           </select>
                         </td>
-                        <td></td>
+                        <td>
+                           <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              fontWeight: 400,
+                              border: "0px",
+
+                              verticalAlign: "middle",
+                            }}
+                            type="text"
+                            onKeyPress={handlepresss}
+                            className="supplier_form"
+                            onChange={handlechangecalc}
+                            value={
+                              freight?.Destination_disbursemant_currency_cost
+                            }
+                            name="Destination_disbursemant_currency_cost"
+                            id="floatingInput"
+                            placeholder="0.00"
+                          />
+                          </td>
                         <td>
                           <select
                             className="select_supplier"
@@ -8444,9 +8464,9 @@ export default function Supplierestimationview() {
                               border: 0,
                             }}
                             onChange={handlechangecalc}
-                            name="Destination_AdminAgrncy_currency_unitType"
+                            name="Destination_disbursemant_currenc_unitType1"
                             value={
-                              freight?.Destination_AdminAgrncy_currency_unitType
+                              freight?.Destination_disbursemant_currenc_unitType1
                             }
                           >
                             <option>Select</option>
@@ -8471,7 +8491,7 @@ export default function Supplierestimationview() {
                             onChange={handlechangecalc}
                             disabled
                             value={
-                              freight.Destination_AdminAgrncy_currency_unitType
+                              freight.Destination_disbursemant_currenc_unitType1
                                 ? deaddisbursemantc2
                                   ? deaddisbursemantc2
                                   : 0.0

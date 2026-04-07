@@ -17,6 +17,7 @@ export default function ShippingEstimate() {
   const [freight, setFreight] = useState([0]);
   const [origin, setOrigin] = useState([0]);
   const [showData, setShowData] = useState(true);
+  const [quotationID, setQuotationID] = useState("");
   const pdfRef = useRef();
   const [client, setClient] = useState([]);
   const [suppluierquot, setSuppluierquot] = useState([]);
@@ -200,12 +201,12 @@ console.log(payload, "payload");
     return isNaN(num) ? 0 : num;
   };
   const totalChageswithOutExchange =
-    safeNumber(finalori1) +
-    safeNumber(finalfuel1) +
-    safeNumber(finalcfs1) +
-    safeNumber(finaldoc1) +
-    safeNumber(finalforewarding1) +
-    safeNumber(finalcustomes1);
+    safeNumber(oripick4) +
+    safeNumber(orifuel4) +
+    safeNumber(oricfs4) +
+    safeNumber(oridoc4) +
+    safeNumber(oriforewarding4) +
+    safeNumber(oricustome4);
   console.log(totalChageswithOutExchange);
   const totalChangeRoeOrigin =
     safeNumber(finalvlaueoriginPickup) +
@@ -269,7 +270,7 @@ console.log(payload, "payload");
   console.log(orifuel1, orifuel3, orifuel4, finalValueFuel, finalvlaueoFuel);
 
   const totalChageswithOutExchangeinsurance =
-    safeNumber(finalValuefreight) + safeNumber(finalValueinsurance);
+    safeNumber(orifreight4) + safeNumber(oriinsurance4);
 
   console.log(totalChageswithOutExchangeinsurance);
 
@@ -1268,15 +1269,17 @@ user_type: user?.user_type,
           freight.Destination_AdminAgrncy_currency_unitType,
         Destination_doc_currency_unittypeQTY:
           freight.Destination_doc_currency_unittypeQTY,
-        ...(getdata.quote_estimate_id && {
-          quote_estimate_id: getdata.quote_estimate_id,
-        }),
+        ...(getdata.quote_estimate_id || quotationID) && {
+          quote_estimate_id: getdata.quote_estimate_id || quotationID,
+        },
       };
       const response = await axios.post(
         `${process.env.REACT_APP_BASE_URL}addEstimateShippingQuote`,
         payload,
       );
       if (response.data.success === true) {
+        navigate("/Admin/managefreight");
+        setQuotationID(response.data.ID)
         toast.success(response.data.message);
       } else {
         console.log("some thing went wrong");

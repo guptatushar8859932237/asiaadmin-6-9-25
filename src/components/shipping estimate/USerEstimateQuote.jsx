@@ -203,12 +203,12 @@ getFreightDataById()
     return isNaN(num) ? 0 : num;
   };
   const totalChageswithOutExchange =
-    safeNumber(finalori1) +
-    safeNumber(finalfuel1) +
-    safeNumber(finalcfs1) +
-    safeNumber(finaldoc1) +
-    safeNumber(finalforewarding1) +
-    safeNumber(finalcustomes1);
+    safeNumber(oripick4) +
+    safeNumber(orifuel4) +
+    safeNumber(oricfs4) +
+    safeNumber(oridoc4) +
+    safeNumber(oriforewarding4) +
+    safeNumber(oricustome4);
   console.log(totalChageswithOutExchange);
   const totalChangeRoeOrigin =
     safeNumber(finalvlaueoriginPickup) +
@@ -272,7 +272,7 @@ getFreightDataById()
   console.log(orifuel1, orifuel3, orifuel4, finalValueFuel, finalvlaueoFuel);
 
   const totalChageswithOutExchangeinsurance =
-    safeNumber(finalValuefreight) + safeNumber(finalValueinsurance);
+    safeNumber(orifreight4) + safeNumber(oriinsurance4);
 
   console.log(totalChageswithOutExchangeinsurance);
 
@@ -805,13 +805,13 @@ getFreightDataById()
   const deaddisbursemantc2 =
     // parseFloat(freight.Destination_disbursemant_currency_unit) || 0;
     parseFloat(
-      freight.Destination_AdminAgrncy_currency_unitType === "1"
+      freight.Destination_disbursemant_currenc_unitType1 === "1"
         ? 1
         : freight.chargable_rate
     );
   const deaddisbursemantc3 =
     parseFloat(freight.Destination_disbursemant_currency_gp) || 0;
-  const deaddisbursemantc4 = freight.Destination_AdminAgrncy_currency_unitType
+  const deaddisbursemantc4 = freight.Destination_disbursemant_currenc_unitType1
     ? deaddisbursemantc1 *
       deaddisbursemantc2 *
       freight.Destination_disbursemant_currency_unitTypeQTY
@@ -1031,8 +1031,8 @@ getFreightDataById()
         final3rdestinationRoe: final3rdestinationRoe,
         Destination_freight_currency_Roe:
           freight.Destination_freight_currency_Roe,
-
         Destination_THC_currency_cost: freight.Destination_THC_currency_cost,
+        user_type: user.user_type,
         Destination_THC_currency_unit: freight.Destination_THC_currency_unit,
         Destination_THC_currency_gp: freight.Destination_THC_currency_gp,
         destinationTHCdocumentation4: destinationTHCdocumentation4,
@@ -1274,6 +1274,7 @@ getFreightDataById()
         payload
       );
       if (response.data.success === true) {
+        navigate("/Admin/freight");
         toast.success(response.data.message);
       } else {
         console.log("some thing went wrong");
@@ -1357,7 +1358,7 @@ getFreightDataById()
   };
 
   const getdataapi = async () => {
-    // console.log(getdata);
+    console.log(getdata);
     const data123456 = {
       quote_estimate_id: getdata122?.quote_estimate_id
         ? getdata122?.quote_estimate_id
@@ -1401,8 +1402,9 @@ getFreightDataById()
       });
   };
   const handleclicknav = () => {
-    navigate("/Admin/managefreight");
+    navigate("/Admin/freight");
   };
+    const user = JSON.parse(localStorage.getItem("data123"));
   const closemodal = () => {
     setOpenmodal(false);
   };
@@ -6221,8 +6223,7 @@ getFreightDataById()
                             onChange={handlechangecalc}
                             disabled
                             value={
-                              freight.freight
-                                ?.Destination_Unpack_currency_unitType
+                              freight?.Destination_Unpack_currency_unitType
                                 ? destinationUnpackdocumentation2
                                   ? destinationUnpackdocumentation2
                                   : 0.0
@@ -6438,8 +6439,7 @@ getFreightDataById()
                             onChange={handlechangecalc}
                             disabled
                             value={
-                              freight.freight
-                                ?.Destination_fuelsurcharge_currency_typeUnit
+                              freight?.Destination_fuelsurcharge_currency_typeUnit
                                 ? destinationfuelsurchargedocumentation2
                                   ? destinationfuelsurchargedocumentation2
                                   : 0.0
@@ -6655,8 +6655,7 @@ getFreightDataById()
                             onChange={handlechangecalc}
                             disabled
                             value={
-                              freight.freight
-                                ?.Destination_adminsurcharge_currency_unitType
+                              freight?.Destination_adminsurcharge_currency_unitType
                                 ? destinatiadminsurcharge2
                                   ? destinatiadminsurcharge2
                                   : 0.0
@@ -8098,7 +8097,29 @@ getFreightDataById()
                             <option value="EURO">EURO</option>
                           </select>
                         </td>
-                        <td></td>
+                        <td>
+                           <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              fontWeight: 400,
+                              border: "0px",
+
+                              verticalAlign: "middle",
+                            }}
+                            type="text"
+                            onKeyPress={handlepresss}
+                            className="supplier_form"
+                            onChange={handlechangecalc}
+                            value={
+                              freight?.Destination_disbursemant_currency_cost
+                            }
+                            name="Destination_disbursemant_currency_cost"
+                            id="floatingInput"
+                            placeholder="0.00"
+                          />
+                        </td>
                         <td>
                           <select
                             className="select_supplier"
@@ -8110,9 +8131,9 @@ getFreightDataById()
                               border: 0,
                             }}
                             onChange={handlechangecalc}
-                            name="Destination_AdminAgrncy_currency_unitType"
+                            name="Destination_disbursemant_currenc_unitType1"
                             value={
-                              freight?.Destination_AdminAgrncy_currency_unitType
+                              freight?.Destination_disbursemant_currenc_unitType1
                             }
                           >
                             <option>Select</option>

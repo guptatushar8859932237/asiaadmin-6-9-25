@@ -227,12 +227,12 @@ export default function Supplierestimationview() {
     return isNaN(num) ? 0 : num;
   };
   const totalChageswithOutExchange =
-    safeNumber(finalori1) +
-    safeNumber(finalfuel1) +
-    safeNumber(finalcfs1) +
-    safeNumber(finaldoc1) +
-    safeNumber(finalforewarding1) +
-    safeNumber(finalcustomes1);
+    safeNumber(oripick4) +
+    safeNumber(orifuel4) +
+    safeNumber(oricfs4) +
+    safeNumber(oridoc4) +
+    safeNumber(oriforewarding4) +
+    safeNumber(oricustome4);
   console.log(totalChageswithOutExchange);
   const totalChangeRoeOrigin =
     safeNumber(finalvlaueoriginPickup) +
@@ -296,7 +296,7 @@ export default function Supplierestimationview() {
   console.log(orifuel1, orifuel3, orifuel4, finalValueFuel, finalvlaueoFuel);
 
   const totalChageswithOutExchangeinsurance =
-    safeNumber(finalValuefreight) + safeNumber(finalValueinsurance);
+    safeNumber(orifreight4) + safeNumber(oriinsurance4);
 
   console.log(totalChageswithOutExchangeinsurance);
 

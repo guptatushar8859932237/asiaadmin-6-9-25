@@ -43,7 +43,7 @@ const style = {
   bgcolor: "background.paper",
   width: "400px",
 };
-const pageSize = 5;
+const pageSize = 10;
 export default function CountryOfOrigin({ countryID = null }) {
   const [country, setCountry] = useState([]);
   const [cities, setCities] = useState([]);
@@ -54,9 +54,11 @@ export default function CountryOfOrigin({ countryID = null }) {
   const [selectedCities3, setSelectedCities3] = useState([]);
   const [selectedCities4, setSelectedCities4] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
+const [totalPages, setTotalPages] = useState(1);
   const [errorMessage, setErrorMessage] = useState("");
   const [open, setOpen] = useState(false);
   const [currentData, setCurrentData] = useState([]);
+  const [search, setSearch] = useState("");
   const [isEditMode, setIsEditMode] = useState(false);
   const [personName, setPersonName] = React.useState([]);
   const [personName1, setPersonName1] = React.useState([]);
@@ -196,26 +198,29 @@ export default function CountryOfOrigin({ countryID = null }) {
       .then((response) => {
         toast.success(response.data.message);
         setOpen(false); // Close modal after saving
-        getdata(); // Reload data to update the table
+       getdata(currentPage) // Reload data to update the table
       })
       .catch((error) => toast.error(error.response.data.message));
   };
 
-  const getdata = () => {
-    axios
-      .get(`${process.env.REACT_APP_BASE_URL}country-list`)
-      .then((response) => setCurrentData(response.data.data))
-      .catch((error) => console.log(error.response.data));
-  };
+const getdata = (page = 1, search = "") => {
+  axios
+    .post(`${process.env.REACT_APP_BASE_URL}country-list`, {
+      page: page,
+      limit: pageSize,
+      search: search, // 👈 search key
+    })
+    .then((response) => {
+      setCurrentData(response.data.data || []);
+      setTotalPages(response.data.total_pages || 1);
+    })
+    .catch((error) => console.log(error.response?.data));
+};
+useEffect(() => {
+  getdata(currentPage, search); // ✅ search pass karo
+}, [currentPage, search]);
 
-  useEffect(() => {
-    getdata();
-  }, []);
-
-  const totalPage = Math.ceil(currentData.length / pageSize);
-  const startIndex = (currentPage - 1) * pageSize;
-  const endIndex = startIndex + pageSize;
-  const currentdata = currentData.slice(startIndex, endIndex);
+const currentdata = currentData;
 
   const handledelete = (item) => {
     Swal.fire({
@@ -234,7 +239,7 @@ export default function CountryOfOrigin({ countryID = null }) {
           })
           .then((response) => {
             toast.success(response.data.message);
-            getdata();
+          getdata(currentPage)
           })
           .catch((error) => {
             toast.error(error.response.data.message);
@@ -247,6 +252,14 @@ export default function CountryOfOrigin({ countryID = null }) {
       }
     });
   };
+
+  useEffect(() => {
+  const delay = setTimeout(() => {
+    getdata(currentPage, search);
+  }, 500);
+
+  return () => clearTimeout(delay);
+}, [currentPage, search]);
   return (
     <div className="wpWrapper">
       <div className="container-fluid">
@@ -258,13 +271,32 @@ export default function CountryOfOrigin({ countryID = null }) {
                   <div className="">
                     <h4 className="freight_hd">Country of Origin</h4>
                   </div>
+    <div className="d-flex">
+    <div>
+
+                  <input
+  type="text"
+  placeholder="Search country..."
+  className="form-control mb-3 me-2"
+  value={search}
+  onChange={(e) => {
+    setSearch(e.target.value);
+    setCurrentPage(1); // 👈 reset page
+  }}
+/>
+    </div>
+    <div>
+
+
                   <Button
                     onClick={handleAdd}
                     variant="contained"
                     color="primary"
-                  >
+                    >
                     Add Country
-                  </Button>
+                    </Button>
+    </div>
+    </div>
                 </div>
               </div>
             </div>
@@ -458,7 +490,7 @@ export default function CountryOfOrigin({ countryID = null }) {
                     {currentdata &&
                       currentdata.map((item, index) => (
                         <TableRow key={index} className="border-bottom">
-                          <TableCell>{startIndex + index + 1}</TableCell>
+                          <TableCell>{index + 1}</TableCell>
                           <TableCell>{item?.country_name}</TableCell>
                           <TableCell className="col-3">
                             {item.cities.map((city) => city.name).join(", ")}
@@ -492,41 +524,27 @@ export default function CountryOfOrigin({ countryID = null }) {
               </div>
             </TableContainer>
             <div className="text-center d-flex justify-content-end align-items-center">
-              <button
-                disabled={currentPage === 1}
-                className="bg_page"
-                onClick={() => handlePageChange(currentPage - 1)}
-              >
-                <i class="fi fi-rr-angle-small-left page_icon"></i>
-              </button>
-              <span className="mx-2">{`Page ${currentPage} of ${totalPage}`}</span>
-              <button
-                disabled={currentPage === totalPage}
-                className="bg_page"
-                onClick={() => handlePageChange(currentPage + 1)}
-              >
-                <i class="fi fi-rr-angle-small-right page_icon"></i>
-              </button>
+             <button
+  disabled={currentPage === 1}
+  className="bg_page"
+  onClick={() => setCurrentPage((prev) => prev - 1)}
+>
+  Prev
+</button>
+
+<span className="mx-2">
+  Page {currentPage} of {totalPages}
+</span>
+
+<button
+  disabled={currentPage === totalPages}
+  className="bg_page"
+  onClick={() => setCurrentPage((prev) => prev + 1)}
+>
+  Next
+</button>
             </div>
-            {/* <div className="mt-4">
-              <button
-                disabled={currentPage === 1}
-                className="btn rounded pagePre"
-                style={{ backgroundColor: "red", color: "white" }}
-                onClick={() => handlePageChange(currentPage - 1)}
-              >
-                Previous
-              </button>
-              <span className="mx-2">{`Page ${currentPage} of ${totalPage}`}</span>
-              <button
-                disabled={currentPage === totalPage}
-                className="btn rounded pageNext"
-                style={{ backgroundColor: "green", color: "white" }}
-                onClick={() => handlePageChange(currentPage + 1)}
-              >
-                Next
-              </button>
-            </div> */}
+           
           </div>
         </div>
       </div>

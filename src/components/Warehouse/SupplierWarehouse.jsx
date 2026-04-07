@@ -5,6 +5,7 @@ import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import { useNavigate } from "react-router-dom";
+import DriveFileMoveIcon from '@mui/icons-material/DriveFileMove';
 import DeleteIcon from "@mui/icons-material/Delete";
 import {
   Modal,
@@ -147,7 +148,7 @@ export default function SupplierWarehouse() {
           user_id: userid,
         };
         try {
-          const response = await axios.get(
+          const response = await axios.post(
             `${process.env.REACT_APP_BASE_URL}GetSupplierCreatedWarehouseOrders`,
             // { params: payload }
           );
@@ -876,7 +877,7 @@ export default function SupplierWarehouse() {
                                               className="client_nm"
                                               style={{ fontSize: "18px" }}
                                             >
-                                              {item.client_name} 
+                                              {item.supplier_name} 
                                               
                                             </p>
                                             <p
@@ -977,6 +978,8 @@ export default function SupplierWarehouse() {
                                         </div>
                                         <div className="row">
                                           <div className="col-md-6">
+                                            {item?.move_to_adminWarhouse == "1"
+                                          ? <span className="text-success">Approved</span>  :item.move_to_adminWarhouse == "2" ? <span className="text-danger">Rejected</span> : <span className="text-secondary">Pending</span>}
                                             {/* <div className="d-flex align-items-center">
                                               <p
                                                 type="radio"
@@ -1006,18 +1009,18 @@ export default function SupplierWarehouse() {
                                             </div> */}
                                           </div>
                                           <div className="col-md-6 text-end">
-                                            <i
-                                              class="fa fa-tasks me-2 mt-2"
-                                              onClick={() =>
-                                                handleEditClickAssign(
-                                                  item
-                                                )
-                                              }
-                                              style={{
-                                                color: "#1d2044",
-                                                cursor: "pointer",
-                                              }}
-                                            />
+{
+   item.move_to_adminWarhouse===0? 
+                                              <DriveFileMoveIcon
+      className="me-2 mt-1"
+      fontSize="small"
+      onClick={() => handleEditClickAssign(item)}
+      style={{
+        color: "#1d2044",
+        cursor: "pointer",
+      }}
+    />:""
+}
                                         {
                                           item.move_to_adminWarhouse===0? <FaEdit
                                               onClick={() =>

@@ -1911,7 +1911,6 @@ const filterOptions = (options, { inputValue }) => {
                                           disabled
                                           value={selectedData.warehouse_cost}
                                           name="warehouse_cost"
-                                          disabled
                                           onChange={handlechangewarehouse}
                                           placeholder=""
                                         ></input>

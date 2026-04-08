@@ -362,14 +362,14 @@ export default function SupplierWarehouse() {
     }
   };
 
-const filterOptions = (options, { inputValue }) => {
-  console.log("Filtering options with input:", inputValue);
-  return options.filter((option) =>
-    option.full_name
-      ?.toLowerCase()
-      .startsWith(inputValue.toLowerCase()) // 👈 strict match
-  );
-};
+  const filterOptions = (options, { inputValue }) => {
+    console.log("Filtering options with input:", inputValue);
+    return options.filter((option) =>
+      option.full_name
+        ?.toLowerCase()
+        .startsWith(inputValue.toLowerCase()) // 👈 strict match
+    );
+  };
   //   const handleSubmit =()=>{
   // console.log(prodata)
   // console.log(nameData)
@@ -758,7 +758,7 @@ const filterOptions = (options, { inputValue }) => {
       if (error.response) {
         toast.error(
           error.response.data?.message ||
-            `Request failed with status ${error.response.status}`,
+          `Request failed with status ${error.response.status}`,
         );
       } else if (error.request) {
         toast.error("Server not responding. Please try again later.");
@@ -853,9 +853,9 @@ const filterOptions = (options, { inputValue }) => {
                                 <>
                                   <tr key={item.id}>
                                     <td className="list_bd">
-                                      <div className="container-fluid">
-                                        <div className="d-flex justify-content-between align-items-center">
-                                          <div className="d-flex align-items-center">
+                                      <div>
+                                        <div className="row align-items-center">
+                                          <div className="col-md-2">
                                             <p
                                               className="client_nm"
                                               style={{ fontSize: "16px" }}
@@ -864,49 +864,47 @@ const filterOptions = (options, { inputValue }) => {
                                               {item.supplier_name}
                                             </p>
                                           </div>
+                                          <div className="col-md-2">
+                                            <div>
+                                              <p>
+                                                {item?.order_number}
 
-                                          <div className="supParaGroup">
-                                            
-                                              <p>
-                                                <span>Total Weight:</span>
-                                                {item.total_weight}
                                               </p>
-                                              <p>
-                                               <span> Total Dimension:</span>
-                                                {item.total_cbm}
-                                              </p>
-                                              <p>
-                                                <span>Total packages:</span>
-                                              {item.total_packages}
-                                              </p>
-                                             
-                                            <p
-                                              className="fright_no mx-2"
-                                             
-                                            >
-                                              {item.batch_number}
+                                            </div>
+                                          </div>
+                                          <div className="col-md-4"></div>
+                                          <div className="col-md-2">
+                                            <p>
+                                              <span className="bold600">Weight:</span>
+                                              {" "} {item.total_weight}
                                             </p>
                                           </div>
-                                          <div className="">
+                                          <div className="col-md-2 text-end">
                                             <p className="port_date">
                                               {new Date(
                                                 item.created_at,
                                               ).toLocaleDateString("en-GB")}
                                             </p>
                                           </div>
+                                          <div className="supParaGroup">
+
+
+                                            <p className="fright_no mx-2"  >
+                                              {item.batch_number}
+                                            </p>
+                                          </div>
+
                                         </div>
+                                        {/* second row */}
                                         <div className="row align-items-center">
-                                          <div className="col-md-3">
+                                          <div className="col-md-4">
                                             <div className="">
-                                              <p
-                                                className="origin"
-                                               
-                                              >
+                                              <p className="origin"  >
                                                 {item.goods_description}
                                               </p>
                                             </div>
                                           </div>
-                                          <div className="col-md-5">
+                                          <div className="col-md-4">
                                             <div className="d-flex align-items-center justify-content-center">
                                               <p className="origin">
                                                 {item.collection_from_name}
@@ -927,22 +925,24 @@ const filterOptions = (options, { inputValue }) => {
                                             </div>
                                           </div>
                                           <div className="col-md-2">
-                                            <div className="text-center">
+                                            <p>
+                                              <span>Dimension: {" "}</span>
+                                              {item.total_cbm}
+                                            </p></div>
+                                          <div className="col-md-2">
+                                            <div className="text-end">
                                               <p className="origin">
                                                 {item.nature_of_hazard}
                                               </p>
                                             </div>
                                           </div>
-                                          <div className="col-md-2">
-                                            <div className="text-end">
-                                                {item?.order_number}
-                                              </div>
-                                          </div>
+
                                         </div>
-                                        <div className="row">
-                                          <div className="col-md-4">
+                                        {/* third row */}
+                                        <div className="row align-items-center">
+                                          <div className="col-md-2">
                                             {item?.move_to_adminWarhouse ==
-                                            "1" ? (
+                                              "1" ? (
                                               <span className="text-success">
                                                 Approved
                                               </span>
@@ -984,17 +984,24 @@ const filterOptions = (options, { inputValue }) => {
                                               )}
                                             </div> */}
                                           </div>
-                                          <div className="col-md-4">
+                                          <div className="col-md-2">
                                             <div>
-                                              <p className="text-center">
+                                              <p>
                                                 Days in Warehouse:
-                                                {item.days_in_warehouse}
+                                                {" "}   {item.days_in_warehouse}
                                               </p>
                                             </div>
                                           </div>
-                                          <div className="col-md-4 text-end">
+                                          <div className="col-md-4"></div>
+                                          <div className="col-md-2">
+                                            <p>
+                                              <span>Packages:</span>
+                                              {" "} {item.total_packages}
+                                            </p>
+                                          </div>
+                                          <div className="col-md-2 text-end">
                                             {item.move_to_adminWarhouse ===
-                                            0 ? (
+                                              0 ? (
                                               <DriveFileMoveIcon
                                                 className="me-2 mt-1"
                                                 fontSize="small"
@@ -1010,7 +1017,7 @@ const filterOptions = (options, { inputValue }) => {
                                               ""
                                             )}
                                             {item.move_to_adminWarhouse ===
-                                            0 ? (
+                                              0 ? (
                                               <FaEdit
                                                 onClick={() =>
                                                   handleEditClick(item.id)
@@ -1349,34 +1356,34 @@ const filterOptions = (options, { inputValue }) => {
                                     <h5>client Details</h5>
                                     <div className="col-md-6">
                                       <label>Customer name</label>
-                                    <Autocomplete
-  options={clientData || []}
-  getOptionLabel={(option) => option.full_name || ""}
-  filterOptions={filterOptions}
+                                      <Autocomplete
+                                        options={clientData || []}
+                                        getOptionLabel={(option) => option.full_name || ""}
+                                        filterOptions={filterOptions}
 
-  value={
-    clientData.find(
-      (item) => item.id === nameData.client_id
-    ) || null
-  }
+                                        value={
+                                          clientData.find(
+                                            (item) => item.id === nameData.client_id
+                                          ) || null
+                                        }
 
-  onChange={(event, newValue) => {
-    handlechangewarehouse({
-      target: {
-        name: "client_id",
-        value: newValue ? newValue.id : "",
-      },
-    });
-  }}
+                                        onChange={(event, newValue) => {
+                                          handlechangewarehouse({
+                                            target: {
+                                              name: "client_id",
+                                              value: newValue ? newValue.id : "",
+                                            },
+                                          });
+                                        }}
 
-  isOptionEqualToValue={(option, value) =>
-    option.id === value.id
-  }
+                                        isOptionEqualToValue={(option, value) =>
+                                          option.id === value.id
+                                        }
 
-  renderInput={(params) => (
-    <TextField {...params} label="Select Client" />
-  )}
-/>
+                                        renderInput={(params) => (
+                                          <TextField {...params} label="Select Client" />
+                                        )}
+                                      />
                                     </div>
                                     <div className="col-md-6">
                                       <label>Customer Ref</label>
@@ -1488,8 +1495,8 @@ const filterOptions = (options, { inputValue }) => {
                                           value={
                                             selectedData.date_received
                                               ? selectedData.date_received.split(
-                                                  "T",
-                                                )[0]
+                                                "T",
+                                              )[0]
                                               : ""
                                           }
                                           name="date_received"
@@ -1542,8 +1549,8 @@ const filterOptions = (options, { inputValue }) => {
                                           value={
                                             selectedData.dispatch_date
                                               ? selectedData.dispatch_date.split(
-                                                  "T",
-                                                )[0]
+                                                "T",
+                                              )[0]
                                               : ""
                                           }
                                           name="dispatch_date"

@@ -1,13 +1,3 @@
-// import React from 'react'
-
-// export default function Supplierwarhousproduct() {
-//   return (
-//     <div>
-      
-//     </div>
-//   )
-// }
-
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -22,7 +12,6 @@ export default function Supplierwarhousproduct() {
   const navigate = useNavigate();
   const [apidata, setApidata] = useState([]);
   const postassiandata =async () => {
-   
     try {
        await  axios
       .get(`${process.env.REACT_APP_BASE_URL}getSupplierWarehouseProducts?supplier_warehouse_id=${info.id}`)
@@ -40,24 +29,40 @@ export default function Supplierwarhousproduct() {
   useEffect(() => {
     postassiandata();
   }, []);
+
+  const getFileType = (fileName = "") => {
+  const ext = fileName.split(".").pop().toLowerCase();
+
+  if (["jpg", "jpeg", "png", "gif", "webp"].includes(ext)) return "image";
+  if (ext === "pdf") return "pdf";
+  if (["xls", "xlsx", "csv"].includes(ext)) return "excel";
+  if (["doc", "docx"].includes(ext)) return "doc";
+  return "other";
+};
   const handleclicknav = () => {
     navigate("/Admin/SupplierWarehouse");
   };
-    const GetFreightImages = () => {
-        const data = { freight_id: info.freight_id, uploaded_by: "1" };
-        axios
-          .post(`${process.env.REACT_APP_BASE_URL}GetFreightImages`, data)
-          .then((response) => {
-            console.log(response.data.data);
-            setDocuments(response.data.data);
-          })
-          .catch((error) => {
-            console.log(error.response?.data);
-          });
-      };
-    useEffect(() => {
-      GetFreightImages();
-    }, []);
+   useEffect(() => {
+  postassiandata();
+
+  if (info?.files) {
+    setDocuments(info.files);
+  }
+}, []);
+useEffect(() => {
+  postassiandata();
+
+  if (info?.files) {
+    const grouped = info.files.reduce((acc, item) => {
+      const key = item.type || "other";
+      if (!acc[key]) acc[key] = [];
+      acc[key].push(item);
+      return acc;
+    }, {});
+
+    setDocuments(grouped);
+  }
+}, []);
      const deleteapi = (id) => {
         console.log(id);
         const data11 = {
@@ -66,7 +71,7 @@ export default function Supplierwarhousproduct() {
         axios
           .post(`${process.env.REACT_APP_BASE_URL}DeleteDocument`, data11)
           .then((response) => {
-            GetFreightImages();
+            // GetFreightImages();
             toast.success(response.data.message);
           })
           .catch((error) => {
@@ -318,34 +323,114 @@ export default function Supplierwarhousproduct() {
             <div className="col-md-12">
             <div className="card desti_card">
               <div className="card-body mb-3">
-                {Object.keys(documents).map((groupName, groupIndex) => (
-                  <div key={groupIndex} className="mb-2">
-                    <label>{groupName} :</label>
-                    {documents[groupName]?.map((item, index) => (
-                      <div key={item.id} className="d-flex align-items-center">
-                        <a
-                          href={`${process.env.REACT_APP_BASE_URLdocument}${item?.document}`}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="view_docu ms-2"
-                        >
-                          View Document
-                        </a>
-                        <DeleteIcon
-                          onClick={() => deleteapi(item.id)}
-                          className="text-danger ms-2"
-                          style={{ cursor: "pointer" }}
-                        />
-                      </div>
-                    ))}
-                  </div>
-                ))}
+               {Object.keys(documents).map((groupName, groupIndex) => (
+  <div key={groupIndex} className="mb-4">
+    <label className="fw-bold text-capitalize">
+      {groupName.replace("_", " ")} :
+    </label>
+
+    <div className="d-flex flex-wrap gap-3 mt-2">
+      {documents[groupName]?.map((item) => {
+        const fileUrl = `${process.env.REACT_APP_BASE_URLdocument}${item.file}`;
+        const fileType = getFileType(item.file);
+
+        return (
+          <div
+            key={item.id}
+            style={{
+              width: "140px",
+              border: "1px solid #ddd",
+              borderRadius: "10px",
+              padding: "8px",
+              textAlign: "center",
+              background: "#fafafa",
+            }}
+          >
+            {/* ✅ IMAGE */}
+            {fileType === "image" && (
+              <img
+                src={fileUrl}
+                alt="file"
+                style={{
+                  width: "100%",
+                  height: "90px",
+                  objectFit: "cover",
+                  borderRadius: "6px",
+                  cursor: "pointer",
+                }}
+                onClick={() => window.open(fileUrl, "_blank")}
+              />
+            )}
+
+            {/* ✅ PDF */}
+            {fileType === "pdf" && (
+              <div
+                style={{ cursor: "pointer" }}
+                onClick={() => window.open(fileUrl, "_blank")}
+              >
+                📄 <br /> PDF File
+              </div>
+            )}
+
+            {/* ✅ EXCEL */}
+            {fileType === "excel" && (
+              <div
+                style={{ cursor: "pointer" }}
+                onClick={() => window.open(fileUrl, "_blank")}
+              >
+                📊 <br /> Excel File
+              </div>
+            )}
+
+            {/* ✅ DOC */}
+            {fileType === "doc" && (
+              <div
+                style={{ cursor: "pointer" }}
+                onClick={() => window.open(fileUrl, "_blank")}
+              >
+                📝 <br /> Document
+              </div>
+            )}
+
+            {/* ✅ OTHER */}
+            {fileType === "other" && (
+              <div
+                style={{ cursor: "pointer" }}
+                onClick={() => window.open(fileUrl, "_blank")}
+              >
+                📎 <br /> File
+              </div>
+            )}
+
+            {/* ✅ FILE NAME */}
+            <div
+              style={{
+                fontSize: "11px",
+                marginTop: "5px",
+                wordBreak: "break-word",
+              }}
+            >
+              {item.file.split("-").slice(1).join("-")}
+            </div>
+
+            {/* ✅ DELETE */}
+            <DeleteIcon
+              onClick={() => deleteapi(item.id)}
+              className="text-danger mt-1"
+              style={{ cursor: "pointer", fontSize: "18px" }}
+            />
+          </div>
+        );
+      })}
+    </div>
+  </div>
+))}
                 {/* Quotation (separate because it's not part of groups) */}
                 <div className="mb-2">
                   <label>Attach Quotation :</label>
                   {info.attachment_Estimate && (
                     <a
-                      href={`${process.env.REACT_APP_BASE_URL}document/${info?.attachment_Estimate}`}
+                      href={`${process.env.REACT_APP_BASE_URLdocument}/${info?.attachment_Estimate}`}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="view_docu ms-2"

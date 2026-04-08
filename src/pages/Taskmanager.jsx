@@ -14,10 +14,10 @@ export default function Taskmanager() {
   const [loader, setLoader] = useState(false);
   // const [activeTab, setActiveTab] = useState("assigned");
   const [assignedData, setAssignedData] = useState([]);
-   const [openPopup, setOpenPopup] = useState(false);
+  const [openPopup, setOpenPopup] = useState(false);
   const [clearanceData, setClearanceData] = useState([]);
   const [customData, setCustomData] = useState([]);
-    const [staffList, setStaffList] = useState([]);
+  const [staffList, setStaffList] = useState([]);
   const [supplier, setSupplier] = useState([]);
   const [commentModal, setCommentModal] = useState(false);
   const [selectedTask, setSelectedTask] = useState(null);
@@ -25,13 +25,13 @@ export default function Taskmanager() {
     comment: "",
     status: "",
   });
-   const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState({
     Title: "",
-  Description: "",
-  Priority: "",
-  TaskFor: "",
-  SupplierId: "",
-  Staffid: ""
+    Description: "",
+    Priority: "",
+    TaskFor: "",
+    SupplierId: "",
+    Staffid: "",
   });
   const navigate = useNavigate();
   /* ================= FETCH ================= */
@@ -48,7 +48,7 @@ export default function Taskmanager() {
       setLoader(false);
     }
   };
-   const handleclickassigntask = () => {
+  const handleclickassigntask = () => {
     setOpenPopup(true);
   };
 
@@ -69,35 +69,39 @@ export default function Taskmanager() {
     }
   };
 
-   const handlechange = (e) => {
-  const { name, value } = e.target;
+  const handlechange = (e) => {
+    const { name, value } = e.target;
 
-  setFormData({
-    ...formData,
-    [name]: value
-  });
-};
+    setFormData({
+      ...formData,
+      [name]: value,
+    });
+  };
 
-  useEffect(()=>{
-    getStaff()
-getSupplierList()
-  },[])
-  const getSupplierList = async()=>{
+  useEffect(() => {
+    getStaff();
+    getSupplierList();
+  }, []);
+  const getSupplierList = async () => {
     try {
-      const res = await axios.get(`${process.env.REACT_APP_BASE_URL}supplier-list`);  
-      setSupplier(res.data.data)
+      const res = await axios.get(
+        `${process.env.REACT_APP_BASE_URL}supplier-list`,
+      );
+      setSupplier(res.data.data);
     } catch (error) {
       console.error("Failed to fetch staff list", error);
     }
-  }
-  const getStaff = async()=>{
+  };
+  const getStaff = async () => {
     try {
-      const res = await axios.get(`${process.env.REACT_APP_BASE_URL}staff-list`);  
-      setStaffList(res.data.data)
+      const res = await axios.get(
+        `${process.env.REACT_APP_BASE_URL}staff-list`,
+      );
+      setStaffList(res.data.data);
     } catch (error) {
       console.error("Failed to fetch staff list", error);
     }
-  }
+  };
 
   const fetchCustomTasks = async () => {
     setLoader(true);
@@ -140,55 +144,41 @@ getSupplierList()
   };
 
   const postData = () => {
+    setLoader(true);
+    let payload = {
+      task_title: formData.Title,
+      description: formData.Description,
+      priority: formData.Priority,
+      staff_id: formData.Staffid,
+    };
 
-  const userid = JSON.parse(localStorage.getItem("data123"))?.id;
+    axios
+      .post(`${process.env.REACT_APP_BASE_URL}createCustomTask`, payload)
+      .then((res) => {
+        if (res.data.success) {
+          toast.success("Task added successfully ✅");
+          closeModal();
+fetchCustomTasks()
+          setFormData({
+            Title: "",
+            Description: "",
+            Priority: "",
+            TaskFor: "",
+            SupplierId: "",
+            Staffid: "",
+          });
+        } else {
+          toast.warning(res.data.message || "Failed to add task ❌");
+        }
 
-  setLoader(true);
-
-  let payload = {
-    title: formData.Title,
-    description: formData.Description,
-    priority: formData.Priority,
-    task_for_type: formData.TaskFor?.toLowerCase(),
-    created_by: userid
+        setLoader(false);
+      })
+      .catch((error) => {
+        console.error(error);
+        toast.error("Failed to add task ❌");
+        setLoader(false);
+      });
   };
-
-  if (formData.TaskFor === "Supplier") {
-    payload.task_for_id = formData.SupplierId;
-  }
-
-  if (formData.TaskFor === "Staff") {
-    payload.task_for_id = formData.Staffid;
-  }
-
-  axios
-    .post(`${process.env.REACT_APP_BASE_URL}add-task`, payload)
-    .then((res) => {
-      if (res.data.success) {
-        toast.success("Task added successfully ✅");
-        closeModal();
-
-        setFormData({
-          Title: "",
-          Description: "",
-          Priority: "",
-          TaskFor: "",
-          SupplierId: "",
-          Staffid: ""
-        });
-
-      } else {
-        toast.warning(res.data.message || "Failed to add task ❌");
-      }
-
-      setLoader(false);
-    })
-    .catch((error) => {
-      console.error(error);
-      toast.error("Failed to add task ❌");
-      setLoader(false);
-    });
-};
   const submitComment = async () => {
     try {
       let payload = {
@@ -229,42 +219,43 @@ getSupplierList()
           <button className="btn btn-primary mx-2" onClick={() => setActiveTab("clearance")}>Clearance</button>
           <button className="btn btn-primary mx-2" onClick={() => setActiveTab("Custom")}>Custom</button> */}
           <button
-  className={`btn mx-2 ${
-    activeTab === "assigned" ? "btn-primary" : "btn-outline-primary"
-  }`}
-  onClick={() => setActiveTab("assigned")}
->
-  Freight
-</button>
+            className={`btn mx-2 ${
+              activeTab === "assigned" ? "btn-primary" : "btn-outline-primary"
+            }`}
+            onClick={() => setActiveTab("assigned")}
+          >
+            Freight
+          </button>
 
-<button
-  className={`btn mx-2 ${
-    activeTab === "clearance" ? "btn-primary" : "btn-outline-primary"
-  }`}
-  onClick={() => setActiveTab("clearance")}
->
-  Clearance
-</button>
+          <button
+            className={`btn mx-2 ${
+              activeTab === "clearance" ? "btn-primary" : "btn-outline-primary"
+            }`}
+            onClick={() => setActiveTab("clearance")}
+          >
+            Clearance
+          </button>
 
-<button
-  className={`btn mx-2 ${
-    activeTab === "Custom" ? "btn-primary" : "btn-outline-primary"
-  }`}
-  onClick={() => setActiveTab("Custom")}
->
-  Custom
-</button>
-{activeTab === "Custom" && (
-                <div className="d-flex justify-content-end mb-2">
-                  <button
-                    className="btn btn-primary"
-                    onClick={() => {
-                      handleclickassigntask();
-                    }}
-                  >
-                    Add Task
-                  </button>
-                </div>)}
+          <button
+            className={`btn mx-2 ${
+              activeTab === "Custom" ? "btn-primary" : "btn-outline-primary"
+            }`}
+            onClick={() => setActiveTab("Custom")}
+          >
+            Custom
+          </button>
+          {activeTab === "Custom" && (
+            <div className="d-flex justify-content-end mb-2">
+              <button
+                className="btn btn-primary"
+                onClick={() => {
+                  handleclickassigntask();
+                }}
+              >
+                Add Task
+              </button>
+            </div>
+          )}
         </div>
         <table className="table">
           <thead>
@@ -272,7 +263,13 @@ getSupplierList()
               <th>#</th>
               <th>Name</th>
               <th>Email</th>
-              <th>{activeTab === "assigned" ? "Freight Number" : activeTab === "clearance" ? "Clearance Number" : "Title"}  </th>
+              <th>
+                {activeTab === "assigned"
+                  ? "Freight Number"
+                  : activeTab === "clearance"
+                    ? "Clearance Number"
+                    : "Title"}{" "}
+              </th>
               <th>Date</th>
               <th>Notes</th>
               <th>Status</th>
@@ -299,13 +296,7 @@ getSupplierList()
                     )?.split("T")[0]
                   }
                 </td>
-                <td>
-                  {
-                      item.notes ||
-                      item.notes ||
-                      item.notes
-                  }
-                </td>
+                <td>{item.notes || item.notes || item.notes}</td>
                 <td>{item.task_status}</td>
                 {/* ✅ ADD COMMENT BUTTON */}
                 <td>
@@ -360,8 +351,8 @@ getSupplierList()
               width: 400,
             }}
           >
-             <h5>Update Status</h5>
-             <select
+            <h5>Update Status</h5>
+            <select
               className="form-control my-2"
               value={commentData.status}
               onChange={(e) =>
@@ -377,7 +368,7 @@ getSupplierList()
               <option value="completed">Completed</option>
               <option value="cancelled">Cancelled</option>
             </select>
-           
+
             <textarea
               className="form-control my-2"
               placeholder="Add Note"
@@ -389,142 +380,98 @@ getSupplierList()
                 })
               }
             />
-           
+
             <Button variant="contained" onClick={submitComment}>
               Submit
             </Button>
           </Box>
         </Modal>
-          <Modal
-            open={openPopup}
-            onClose={closeModal}
-            aria-labelledby="modal-modal-title"
-            aria-describedby="modal-modal-description"
-            className="newModal"
+        <Modal
+          open={openPopup}
+          onClose={closeModal}
+          aria-labelledby="modal-modal-title"
+          aria-describedby="modal-modal-description"
+          className="newModal"
+        >
+          <Box
+            sx={{
+              position: "absolute",
+              top: "50%",
+              left: "50%",
+              transform: "translate(-50%, -50%)",
+              bgcolor: "background.paper",
+              boxShadow: 24,
+            }}
           >
-            <Box
-              sx={{
-                position: "absolute",
-                top: "50%",
-                left: "50%",
-                transform: "translate(-50%, -50%)",
-                bgcolor: "background.paper",
-                boxShadow: 24,
-              }}
-            >
-              <div className="modal-header">
-                <h2 id="modal-modal-title">Add Task</h2>
-                <button className="btn btn-close" onClick={closeModal}>
-                  <CloseIcon />{" "}
-                </button>
-              </div>
-              <div className="newModalGap noFormaControl newModalGap2">
-                <div className="row my-3  ">
-                  <div className="col-6">
-                    <label>Title</label>
-                    <input
-                      type="text"
-                      id="shipper3"
-                      name="Title"
-                      style={{ cursor: "pointer" }}
-                      className="form-control"
-                      onChange={handlechange}
-                    />
-                  </div>
-                  <div className="col-6">
-                    <label>Description</label>
-                    <input
-                      type="text"
-                      id="shipper3"
-                      name="Description"
-                      style={{ cursor: "pointer" }}
-                      className="form-control"
-                      onChange={handlechange}
-                    />
-                  </div>
-                  <div className="col-6">
-                    <label>Priority</label>
-                    <select
-                      type="text"
-                      id="shipper3"
-                      name="Priority"
-                      style={{ cursor: "pointer" }}
-                      className="form-control"
-                      onChange={handlechange}
-                    >
-                      <option >Select</option>
-                      <option value="High">High</option>
-                      <option value="Medium">Medium</option>
-                      <option value="Low">Low</option>
-                    </select>
-                  </div>
-                  <div className="col-6">
-                    <label>Task For</label>
-                    <select
-                      type="text"
-                      id="shipper3"
-                      name="TaskFor"
-                      style={{ cursor: "pointer" }}
-                      className="form-control"
-                      onChange={handlechange}
-                    >
-                      <option >Select</option>
-                      <option value="Self">Self</option>
-                      <option value="Supplier">Supplier</option>
-                      <option value="Staff">Staff</option>
-                    </select>
-                  </div>
-                  {
-                    formData.TaskFor === "Supplier" && (
-                     <div className="col-6">
-                    <label>Supplier List</label>
-                    <select
-name="SupplierId"
-className="form-control"
-onChange={handlechange}
->
-<option>Select</option>
-
-{supplier.map((item) => (
-<option key={item.id} value={item.id}>
-{item.name}
-</option>
-))}
-
-</select>
-                  </div>
-                    )
-                  }
-                 {
-                    formData.TaskFor === "Staff" && (
-                      <div className="col-6">
-
-                    <label>Staff List</label>
-                   <select
-name="Staffid"
-className="form-control"
-onChange={handlechange}
->
-
-<option>Select</option>
-
-{staffList.map((item) => (
-<option key={item.id} value={item.id}>
-{item.full_name}
-</option>
-))}
-
-</select>
-                  </div>
-                    )
-                 }
+            <div className="modal-header">
+              <h2 id="modal-modal-title">Add Task</h2>
+              <button className="btn btn-close" onClick={closeModal}>
+                <CloseIcon />{" "}
+              </button>
+            </div>
+            <div className="newModalGap noFormaControl newModalGap2">
+              <div className="row my-3  ">
+                <div className="col-6">
+                  <label>Title</label>
+                  <input
+                    type="text"
+                    id="shipper3"
+                    name="Title"
+                    style={{ cursor: "pointer" }}
+                    className="form-control"
+                    onChange={handlechange}
+                  />
                 </div>
-                <Button variant="contained" onClick={postData}>
-                  Apply
-                </Button>
+                <div className="col-6">
+                  <label>Description</label>
+                  <input
+                    type="text"
+                    id="shipper3"
+                    name="Description"
+                    style={{ cursor: "pointer" }}
+                    className="form-control"
+                    onChange={handlechange}
+                  />
+                </div>
+                <div className="col-6">
+                  <label>Priority</label>
+                  <select
+                    type="text"
+                    id="shipper3"
+                    name="Priority"
+                    style={{ cursor: "pointer" }}
+                    className="form-control"
+                    onChange={handlechange}
+                  >
+                    <option>Select</option>
+                    <option value="High">High</option>
+                    <option value="Medium">Medium</option>
+                    <option value="Low">Low</option>
+                  </select>
+                </div>
+                  <div className="col-6">
+                    <label>Staff List</label>
+                    <select
+                      name="Staffid"
+                      className="form-control"
+                      onChange={handlechange}
+                    >
+                      <option>Select</option>
+
+                      {staffList.map((item) => (
+                        <option key={item.id} value={item.id}>
+                          {item.full_name}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
               </div>
-            </Box>
-          </Modal>
+              <Button variant="contained" onClick={postData}>
+                Apply
+              </Button>
+            </div>
+          </Box>
+        </Modal>
       </div>
       <ToastContainer />
     </>

@@ -36,7 +36,9 @@ warehouse_assign_order_id:info.warehouse_assign_order_id || info.id
     navigate("/Admin/WarehouseOrder");
   };
     const GetFreightImages = () => {
-        const data = { freight_id: info.freight_id, uploaded_by: "1" };
+        const data = { freight_id: info.freight_id,
+          warehouse_assign_order_id:info.warehouse_assign_order_id || info.id,
+           uploaded_by: "1" };
         axios
           .post(`${process.env.REACT_APP_BASE_URL}GetFreightImages`, data)
           .then((response) => {

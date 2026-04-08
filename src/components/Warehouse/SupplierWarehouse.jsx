@@ -2,10 +2,11 @@ import axios from "axios";
 import React, { useEffect, useRef, useState } from "react";
 import { FaEdit } from "react-icons/fa";
 import { toast, ToastContainer } from "react-toastify";
+import { createFilterOptions } from "@mui/material/Autocomplete";
 import "react-toastify/dist/ReactToastify.css";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import { useNavigate } from "react-router-dom";
-import DriveFileMoveIcon from '@mui/icons-material/DriveFileMove';
+import DriveFileMoveIcon from "@mui/icons-material/DriveFileMove";
 import DeleteIcon from "@mui/icons-material/Delete";
 import {
   Modal,
@@ -127,60 +128,40 @@ export default function SupplierWarehouse() {
   const handleCloseModal2 = () => setIsModalOpen2(false);
   const handleCloseModal3 = () => setIsModalOpen3(false);
   useEffect(() => {
-    getData();
+    getData(1);
   }, []);
   const userid = JSON.parse(localStorage.getItem("data123"))?.id;
   const usertype = JSON.parse(localStorage.getItem("data123"))?.user_type;
-  const getData = async (page) => {
+  const getData = async (page = 1) => {
     try {
-      const datapost = {
-        staff_id: userid,
-        user_type: usertype,
-        route_url: "/GetWarehouseOrders",
+      setLoader(true);
+
+      const payload = {
+        user_id: userid,
+        page: page,
+        limit: pageSize,
       };
-      const permission = await axios.post(
-        `${process.env.REACT_APP_BASE_URL}CheckPermission`,
-        datapost,
+
+      console.log("Sending page:", page); // 🔥 debug
+
+      const response = await axios.post(
+        `${process.env.REACT_APP_BASE_URL}GetSupplierCreatedWarehouseOrders`,
+        payload,
       );
-      if (permission.data.success === true) {
-        setLoader(true);
-        const payload = {
-          user_id: userid,
-        };
-        try {
-          const response = await axios.post(
-            `${process.env.REACT_APP_BASE_URL}GetSupplierCreatedWarehouseOrders`,
-            // { params: payload }
-          );
-          setLoader(false);
-          if (response.data && response.data.data) {
-            setData(response.data.data);
-            setPagenationData(response.data);
-          } else {
-            toast.error("No warehouse orders found.");
-          }
-        } catch (error) {
-          setLoader(false);
-          console.error("Error fetching warehouse orders:", error);
-          if (error.response && error.response.status === 400) {
-            toast.error(
-              error.response.data.message ||
-                "Data not found or permission denied.",
-            );
-          } else {
-            toast.error("Something went wrong while fetching orders.");
-          }
-        }
+
+      console.log("Response page:", response.data.page); // 🔥 debug
+
+      setLoader(false);
+
+      if (response.data && response.data.data) {
+        setData(response.data.data);
+        setPagenationData(response.data);
       } else {
-        toast.error("Permission Denied: You don’t have access to this action");
+        toast.error("No warehouse orders found.");
       }
     } catch (error) {
-      console.error("Error checking permission:", error);
-      if (error.response && error.response.status === 400) {
-        toast.error("Permission Denied: You don’t have access to this page");
-      } else {
-        toast.error("Something went wrong while checking permission.");
-      }
+      setLoader(false);
+      toast.error("Error fetching data");
     }
   };
   const getAllBatch = (item) => {
@@ -203,67 +184,67 @@ export default function SupplierWarehouse() {
       });
   };
   const handlePageChange = (page) => {
+    console.log(page);
     setCurrentPage(page);
     getData(page);
   };
-  const handleEditClick = ( order_id) => {
+  const handleEditClick = (order_id) => {
     const selectedData = data.find((item) => item.id === order_id);
     console.log(selectedData);
     setSelectedData(selectedData);
     handleOpenModal();
   };
-  const userData = JSON.parse(localStorage.getItem("data123"))
- const handleEditClickAssign = async (item) => {
-  console.log(item)
-  const result = await Swal.fire({
-    title: "Are you sure?",
-    text: "Do you want to move this product to the order?",
-    icon: "warning",
-    showCancelButton: true,
-    confirmButtonText: "Yes, Move it!",
-    cancelButtonText: "Cancel",
-  });
+  const userData = JSON.parse(localStorage.getItem("data123"));
+  const handleEditClickAssign = async (item) => {
+    console.log(item);
+    const result = await Swal.fire({
+      title: "Are you sure?",
+      text: "Do you want to move this product to the order?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "Yes, Move it!",
+      cancelButtonText: "Cancel",
+    });
 
-  if (result.isConfirmed) {
-    try {
-      const payload = {
-        supplier_warehouse_id:item.id,
-        user_id:userData.id
-      };
+    if (result.isConfirmed) {
+      try {
+        const payload = {
+          supplier_warehouse_id: item.id,
+          user_id: userData.id,
+        };
 
-      const response = await axios.post(
-        `${process.env.REACT_APP_BASE_URL}MoveSupplierWarehouseOrder`, // 🔥 change API if needed
-        payload,
-       
-      );
+        const response = await axios.post(
+          `${process.env.REACT_APP_BASE_URL}MoveSupplierWarehouseOrder`, // 🔥 change API if needed
+          payload,
+        );
 
-      if (response?.data?.success) {
-        await Swal.fire({
-          icon: "success",
-          title: "Success",
-          text: "Product moved to order successfully!",
-        });
+        if (response?.data?.success) {
+          await Swal.fire({
+            icon: "success",
+            title: "Success",
+            text: "Product moved to order successfully!",
+          });
 
-        // 🔄 refresh data if needed
-        getData(); 
-      } else {
+          // 🔄 refresh data if needed
+          getData(currentPage);
+        } else {
+          Swal.fire({
+            icon: "error",
+            title: "Failed",
+            text: response?.data?.message || "Something went wrong",
+          });
+        }
+      } catch (error) {
         Swal.fire({
           icon: "error",
-          title: "Failed",
-          text: response?.data?.message || "Something went wrong",
+          title: "Error",
+          text:
+            error?.response?.data?.message ||
+            "Something went wrong. Please try again.",
         });
       }
-    } catch (error) {
-      Swal.fire({
-        icon: "error",
-        title: "Error",
-        text:
-          error?.response?.data?.message ||
-          "Something went wrong. Please try again.",
-      });
     }
-  }
-};
+  };
   const handleclose = () => {
     setHandleassignsupplier(false);
   };
@@ -281,7 +262,7 @@ export default function SupplierWarehouse() {
       .post(`${process.env.REACT_APP_BASE_URL}DeleteWarehouseOrder`, data)
       .then((response) => {
         toast.success(response.data.message);
-        getData();
+        getData(currentPage);
       })
       .catch((error) => {
         console.log(error.response.data);
@@ -289,13 +270,13 @@ export default function SupplierWarehouse() {
   };
 
   const handlechangewarehouse2 = (e) => {
-  const { name, value } = e.target;
+    const { name, value } = e.target;
 
-  setProdata((prev) => ({
-    ...prev,
-    [name]: value,
-  }));
-};
+    setProdata((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
   const handleBatchChange = (e, item) => {
     const batchId = e.target.value;
     setBatchidsdsd(e.target.value);
@@ -322,7 +303,7 @@ export default function SupplierWarehouse() {
       .post(`${process.env.REACT_APP_BASE_URL}moveFreightToBatch`, datapost)
       .then((response) => {
         toast.success("Freight moved to batch successfully");
-        getData();
+        getData(currentPage);
       })
       .catch((error) => {
         toast.error(error.response.data.message);
@@ -335,74 +316,82 @@ export default function SupplierWarehouse() {
     setSelectedData({ ...selectedData, [name]: value });
   };
   const handleSubmit = async () => {
-  console.log(prodata);
-  console.log(nameData);
+    console.log(prodata);
+    console.log(nameData);
 
-  const payload = {
-    supplier_warehouse_id: selectedData?.id,
-    client_id: nameData?.client_id,
-    customer_ref: nameData?.customer_ref,
-    order_action: nameData?.order_action,
-    order_id: nameData?.order_id,
-    batch_id: nameData?.batch_id,
-  };
+    const payload = {
+      supplier_warehouse_id: selectedData?.id,
+      client_id: nameData?.client_id,
+      customer_ref: nameData?.customer_ref,
+      order_action: nameData?.order_action,
+      order_id: nameData?.order_id,
+      batch_id: nameData?.batch_id,
+    };
 
-  try {
-    const response = await axios.post(
-      `${process.env.REACT_APP_BASE_URL}adminUpdateSupplierWarehouse`,
-      payload
-    );
+    try {
+      const response = await axios.post(
+        `${process.env.REACT_APP_BASE_URL}adminUpdateSupplierWarehouse`,
+        payload,
+      );
 
-    if (response?.data?.success) {
-      handleCloseModalpopup()
-      setNameData("")
-      await Swal.fire({
-        icon: "success",
-        title: "Success",
-        text: "Warehouse updated successfully!",
-      });
+      if (response?.data?.success) {
+        handleCloseModalpopup();
+        setNameData("");
+        await Swal.fire({
+          icon: "success",
+          title: "Success",
+          text: "Warehouse updated successfully!",
+        });
+      } else {
+        Swal.fire({
+          icon: "error",
+          title: "Failed",
+          text: response?.data?.message || "Update failed",
+        });
+      }
+    } catch (error) {
+      console.log(error);
 
-    } else {
       Swal.fire({
         icon: "error",
-        title: "Failed",
-        text: response?.data?.message || "Update failed",
+        title: "Error",
+        text:
+          error?.response?.data?.message ||
+          "Something went wrong. Please try again.",
       });
     }
-  } catch (error) {
-    console.log(error);
+  };
 
-    Swal.fire({
-      icon: "error",
-      title: "Error",
-      text:
-        error?.response?.data?.message ||
-        "Something went wrong. Please try again.",
-    });
-  }
+const filterOptions = (options, { inputValue }) => {
+  console.log("Filtering options with input:", inputValue);
+  return options.filter((option) =>
+    option.full_name
+      ?.toLowerCase()
+      .startsWith(inputValue.toLowerCase()) // 👈 strict match
+  );
 };
-//   const handleSubmit =()=>{
-// console.log(prodata)
-// console.log(nameData)
-// // console.log(supplier_warehouse_id)
-//         const payload={
-//    supplier_warehouse_id:selectedData.id,
-//     client_id:nameData.client_id,
-//      customer_ref:nameData.customer_ref,
-//       order_action:nameData.order_action, 
-//       order_id:nameData.order_id,
-// batch_id:nameData.batch_id
-//     }
-//     try {
-//         const response = axios.post(`${process.env.REACT_APP_BASE_URL}adminUpdateSupplierWarehouse`,payload)
-//         if(response.data.success){
-//           Swal.meesaeg
-//           handleCloseModalpopup()
-//         }
-//     } catch (error) {
-//       console.log(error)
-//     }
-//   }
+  //   const handleSubmit =()=>{
+  // console.log(prodata)
+  // console.log(nameData)
+  // // console.log(supplier_warehouse_id)
+  //         const payload={
+  //    supplier_warehouse_id:selectedData.id,
+  //     client_id:nameData.client_id,
+  //      customer_ref:nameData.customer_ref,
+  //       order_action:nameData.order_action,
+  //       order_id:nameData.order_id,
+  // batch_id:nameData.batch_id
+  //     }
+  //     try {
+  //         const response = axios.post(`${process.env.REACT_APP_BASE_URL}adminUpdateSupplierWarehouse`,payload)
+  //         if(response.data.success){
+  //           Swal.meesaeg
+  //           handleCloseModalpopup()
+  //         }
+  //     } catch (error) {
+  //       console.log(error)
+  //     }
+  //   }
   // const handleSubmit = () => {
   //   const formdata1 = new FormData();
   //   formdata1.append(
@@ -479,7 +468,7 @@ export default function SupplierWarehouse() {
   };
   useEffect(() => {
     getcountry();
-    allOrder()
+    allOrder();
   }, []);
   const getcountry = () => {
     axios
@@ -538,16 +527,18 @@ export default function SupplierWarehouse() {
     const { name, value } = e.target;
     setProdata({ ...prodata, [name]: value });
   };
- const allOrder=async()=>{
+  const allOrder = async () => {
     try {
-      const response = await axios.get(`${process.env.REACT_APP_BASE_URL}AllOrderNumbers`)
-      if(response.data.success){
-        setOrderDatap(response.data.data)
+      const response = await axios.get(
+        `${process.env.REACT_APP_BASE_URL}AllOrderNumbers`,
+      );
+      if (response.data.success) {
+        setOrderDatap(response.data.data);
       }
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
-  }
+  };
   const handpechangepro = () => {
     console.log(erd);
     const formdata = new FormData();
@@ -656,14 +647,12 @@ export default function SupplierWarehouse() {
         toast.error(error.response.data.message);
       });
   };
-
   const handleSearch = (e) => {
     const value = e.target.value;
     setSearchQuery(value);
     setCurrentPage(1);
     throttledSearch(value); // ✅ throttled call
   };
-
   const throttle = (func, delay) => {
     let lastCall = 0;
     return (...args) => {
@@ -674,13 +663,11 @@ export default function SupplierWarehouse() {
       }
     };
   };
-
   const throttledSearch = useRef(
     throttle((value) => {
       getdata11(value);
     }, 1000),
   ).current;
-
   const getdata11 = async (value) => {
     setLoader(true);
     try {
@@ -707,18 +694,15 @@ export default function SupplierWarehouse() {
       }
     }
   };
-
   useEffect(() => {
     getSupplier();
     getBatches();
   }, []);
-
   const getBatches = async () => {
     try {
       const response = await axios.get(
         `${process.env.REACT_APP_BASE_URL}AllWarehouseBatchNumbers`,
       );
-
       if (response.status === 200) {
         setHandlebatches(response.data.data);
       } else {
@@ -736,7 +720,6 @@ export default function SupplierWarehouse() {
       const response = await axios.get(
         `${process.env.REACT_APP_BASE_URL}supplier-list`,
       );
-
       if (response.status === 200) {
         setHandlsupplier(response.data.data);
       } else {
@@ -787,11 +770,11 @@ export default function SupplierWarehouse() {
   };
 
   const handlechangewarehouse1 = (e) => {
-  setProdata({
-    ...prodata,
-    [e.target.name]: e.target.value,
-  });
-};
+    setProdata({
+      ...prodata,
+      [e.target.name]: e.target.value,
+    });
+  };
 
   const handlechangewarehouse = (e) => {
     const { name, value } = e.target;
@@ -814,9 +797,9 @@ export default function SupplierWarehouse() {
   };
 
   const options = orderDatap.map((item) => ({
-  value: item.order_number,
-  label: item.order_number,
-}));
+    value: item.order_number,
+    label: item.order_number,
+  }));
   return (
     <>
       <div className="wpWrapper">
@@ -861,7 +844,7 @@ export default function SupplierWarehouse() {
                 <div className="  mt-3">
                   <div className="">
                     <div className="table-responsive">
-                      <table className="table table-striped tableICon">
+                      <table className="table table-striped tableICon supplierMainTable">
                         <tbody>
                           {data &&
                             data.length > 0 &&
@@ -875,14 +858,31 @@ export default function SupplierWarehouse() {
                                           <div className="d-flex align-items-center">
                                             <p
                                               className="client_nm"
-                                              style={{ fontSize: "18px" }}
+                                              style={{ fontSize: "16px" }}
                                             >
-                                              {item.supplier_name} 
-                                              
+                                              {item?.warehouse_name} /{" "}
+                                              {item.supplier_name}
                                             </p>
+                                          </div>
+
+                                          <div className="supParaGroup">
+                                            
+                                              <p>
+                                                <span>Total Weight:</span>
+                                                {item.total_weight}
+                                              </p>
+                                              <p>
+                                               <span> Total Dimension:</span>
+                                                {item.total_cbm}
+                                              </p>
+                                              <p>
+                                                <span>Total packages:</span>
+                                              {item.total_packages}
+                                              </p>
+                                             
                                             <p
                                               className="fright_no mx-2"
-                                              style={{ fontSize: "14px" }}
+                                             
                                             >
                                               {item.batch_number}
                                             </p>
@@ -900,7 +900,7 @@ export default function SupplierWarehouse() {
                                             <div className="">
                                               <p
                                                 className="origin"
-                                                style={{ fontSize: "14px" }}
+                                               
                                               >
                                                 {item.goods_description}
                                               </p>
@@ -933,53 +933,29 @@ export default function SupplierWarehouse() {
                                               </p>
                                             </div>
                                           </div>
-                                          {/* <div className="col-md-2">
+                                          <div className="col-md-2">
                                             <div className="text-end">
-                                              <div className="dropdown">
-                                                <select
-                                                  onClick={() => {
-                                                    getAllBatch(item);
-                                                  }}
-                                                  onChange={(e) =>
-                                                    handleBatchChange(e, item)
-                                                  }
-                                                  name="dropval"
-                                                  value={item?.dropval}
-                                                  className="py-1 ps-1 sel_batches"
-                                                  style={{ cursor: "pointer" }}
-                                                >
-                                                  <option
-                                                    className="op_tion"
-                                                    value=""
-                                                  >
-                                                    Select Batch
-                                                  </option>
-                                                  {batch &&
-                                                    batch.length > 0 &&
-                                                    batch.map(
-                                                      (batchItem, index) => (
-                                                        <option
-                                                          className="op_tion"
-                                                          key={index}
-                                                          value={
-                                                            batchItem.batch_id
-                                                          }
-                                                        >
-                                                          {
-                                                            batchItem.batch_number
-                                                          }
-                                                        </option>
-                                                      ),
-                                                    )}
-                                                </select>
+                                                {item?.order_number}
                                               </div>
-                                            </div>
-                                          </div> */}
+                                          </div>
                                         </div>
                                         <div className="row">
-                                          <div className="col-md-6">
-                                            {item?.move_to_adminWarhouse == "1"
-                                          ? <span className="text-success">Approved</span>  :item.move_to_adminWarhouse == "2" ? <span className="text-danger">Rejected</span> : <span className="text-secondary">Pending</span>}
+                                          <div className="col-md-4">
+                                            {item?.move_to_adminWarhouse ==
+                                            "1" ? (
+                                              <span className="text-success">
+                                                Approved
+                                              </span>
+                                            ) : item.move_to_adminWarhouse ==
+                                              "2" ? (
+                                              <span className="text-danger">
+                                                Rejected
+                                              </span>
+                                            ) : (
+                                              <span className="text-secondary">
+                                                Pending
+                                              </span>
+                                            )}
                                             {/* <div className="d-flex align-items-center">
                                               <p
                                                 type="radio"
@@ -1008,33 +984,46 @@ export default function SupplierWarehouse() {
                                               )}
                                             </div> */}
                                           </div>
-                                          <div className="col-md-6 text-end">
-{
-   item.move_to_adminWarhouse===0? 
+                                          <div className="col-md-4">
+                                            <div>
+                                              <p className="text-center">
+                                                Days in Warehouse:
+                                                {item.days_in_warehouse}
+                                              </p>
+                                            </div>
+                                          </div>
+                                          <div className="col-md-4 text-end">
+                                            {item.move_to_adminWarhouse ===
+                                            0 ? (
                                               <DriveFileMoveIcon
-      className="me-2 mt-1"
-      fontSize="small"
-      onClick={() => handleEditClickAssign(item)}
-      style={{
-        color: "#1d2044",
-        cursor: "pointer",
-      }}
-    />:""
-}
-                                        {
-                                          item.move_to_adminWarhouse===0? <FaEdit
-                                              onClick={() =>
-                                                handleEditClick(
-                                                  item.id,
-                                                )
-                                              }
-                                              style={{
-                                                color: "#1d2044",
-                                                cursor: "pointer",
-                                              }}
-                                            />:""
-                                        }  
-                                         
+                                                className="me-2 mt-1"
+                                                fontSize="small"
+                                                onClick={() =>
+                                                  handleEditClickAssign(item)
+                                                }
+                                                style={{
+                                                  color: "#1d2044",
+                                                  cursor: "pointer",
+                                                }}
+                                              />
+                                            ) : (
+                                              ""
+                                            )}
+                                            {item.move_to_adminWarhouse ===
+                                            0 ? (
+                                              <FaEdit
+                                                onClick={() =>
+                                                  handleEditClick(item.id)
+                                                }
+                                                style={{
+                                                  color: "#1d2044",
+                                                  cursor: "pointer",
+                                                }}
+                                              />
+                                            ) : (
+                                              ""
+                                            )}
+
                                             {/* <DeleteIcon
                                               onClick={() =>
                                                 handleEditClick12(
@@ -1351,19 +1340,6 @@ export default function SupplierWarehouse() {
                           <div className="newModalGap">
                             <div className="text-center">
                               <div className="d-flex justify-content-between">
-                                {/* <div
-                                  className="fs-3 border rounded-circle px-2 bg-dark text-white"
-                                  style={{
-                                    cursor: "pointer",
-                                    height: 40,
-                                    width: 40,
-                                  }}
-                                  data-bs-toggle="modal"
-                                  data-bs-target="#exampleModal"
-                                  onClick={handleCloseModal}
-                                >
-                                  +
-                                </div> */}
                               </div>
                             </div>
                             {selectedData && (
@@ -1373,40 +1349,14 @@ export default function SupplierWarehouse() {
                                     <h5>client Details</h5>
                                     <div className="col-md-6">
                                       <label>Customer name</label>
-                                {/* <Autocomplete
+                                    <Autocomplete
   options={clientData || []}
   getOptionLabel={(option) => option.full_name || ""}
+  filterOptions={filterOptions}
 
   value={
     clientData.find(
-      (item) => item.id === prodata.id
-    ) || null
-  }
-
-  onChange={(event, newValue) => {
-    handlechangewarehouse({
-      target: {
-        name: "client_id",
-        value: newValue ? newValue.id : "", // ✅ store ID
-      },
-    });
-  }}
-
-  isOptionEqualToValue={(option, value) =>
-    option.id === value.id
-  }
-
-  renderInput={(params) => (
-    <TextField {...params} label="Select Client" />
-  )}
-/> */}
-  <Autocomplete
-  options={clientData || []}
-  getOptionLabel={(option) => option.full_name || ""}
-
-  value={
-    clientData.find(
-      (item) => item.id === nameData.client_id   // ✅ use stored ID
+      (item) => item.id === nameData.client_id
     ) || null
   }
 
@@ -1453,68 +1403,81 @@ export default function SupplierWarehouse() {
                                     {nameData.order_action === "No" ? (
                                       <div className="col-md-6">
                                         <label>Order Number</label>
-                                  <Autocomplete
-  options={orderDatap || []}
-  getOptionLabel={(option) => option.order_number || ""}
-
-  value={
-    orderDatap.find(
-      (item) => item.order_id === nameData.order_id
-    ) || null
-  }
-
-  onChange={(event, newValue) => {
-    handlechangewarehouse({
-      target: {
-        name: "order_id",
-        value: newValue ? newValue.order_id : "", // ✅ store ID
-      },
-    });
-  }}
-
-  isOptionEqualToValue={(option, value) =>
-    option.order_id === value.order_id
-  }
-
-  renderInput={(params) => (
-    <TextField {...params} label="Select Order" />
-  )}
-/>
+                                        <Autocomplete
+                                          options={orderDatap || []}
+                                          getOptionLabel={(option) =>
+                                            option.order_number || ""
+                                          }
+                                          value={
+                                            orderDatap.find(
+                                              (item) =>
+                                                item.order_id ===
+                                                nameData.order_id,
+                                            ) || null
+                                          }
+                                          onChange={(event, newValue) => {
+                                            handlechangewarehouse({
+                                              target: {
+                                                name: "order_id",
+                                                value: newValue
+                                                  ? newValue.order_id
+                                                  : "", // ✅ store ID
+                                              },
+                                            });
+                                          }}
+                                          isOptionEqualToValue={(
+                                            option,
+                                            value,
+                                          ) =>
+                                            option.order_id === value.order_id
+                                          }
+                                          renderInput={(params) => (
+                                            <TextField
+                                              {...params}
+                                              label="Select Order"
+                                            />
+                                          )}
+                                        />
                                       </div>
                                     ) : (
                                       ""
                                     )}
                                     <div className="col-md-6">
-  <label>Groupage #</label>
+                                      <label>Groupage #</label>
 
- <Autocomplete
-  options={handlebatches || []}
-  getOptionLabel={(option) => option.batch_number || ""}
-
-  value={
-    handlebatches.find(
-      (item) => item.batch_id === nameData.batch_id   // ✅ use state
-    ) || null
-  }
-
-  onChange={(e, value) => {
-    handlechangewarehouse({
-      target: {
-        name: "batch_id",
-        value: value ? value.batch_id : "",
-      },
-    });
-  }}
-
-  isOptionEqualToValue={(option, value) =>
-    option.batch_id === value.batch_id
-  }
-
-  renderInput={(params) => (
-    <TextField {...params} label="Select Groupage" />
-  )}
-/>
-</div>
+                                      <Autocomplete
+                                        options={handlebatches || []}
+                                        getOptionLabel={(option) =>
+                                          option.batch_number || ""
+                                        }
+                                        value={
+                                          handlebatches.find(
+                                            (item) =>
+                                              item.batch_id ===
+                                              nameData.batch_id, // ✅ use state
+                                          ) || null
+                                        }
+                                        onChange={(e, value) => {
+                                          handlechangewarehouse({
+                                            target: {
+                                              name: "batch_id",
+                                              value: value
+                                                ? value.batch_id
+                                                : "",
+                                            },
+                                          });
+                                        }}
+                                        isOptionEqualToValue={(option, value) =>
+                                          option.batch_id === value.batch_id
+                                        }
+                                        renderInput={(params) => (
+                                          <TextField
+                                            {...params}
+                                            label="Select Groupage"
+                                          />
+                                        )}
+                                      />
+                                    </div>
                                     <div className="row g-2">
                                       <div className="col-md-6">
                                         <label>Date</label>
@@ -1540,7 +1503,6 @@ export default function SupplierWarehouse() {
                                           type="type"
                                           className="form-control"
                                           disabled
-                                        
                                           value={
                                             selectedData.warehouse_order_id
                                           }
@@ -1990,7 +1952,7 @@ export default function SupplierWarehouse() {
                                             selectedData.warehouse_dispatch
                                           }
                                           name="warehouse_dispatch"
-                                         disabled
+                                          disabled
                                           onChange={handlechangewarehouse}
                                           placeholder=""
                                         >
@@ -2321,7 +2283,6 @@ export default function SupplierWarehouse() {
                                 >
                                   Upload Documents
                                 </Button>
-
                                 {show1 ? (
                                   <Modal
                                     open={show1}
@@ -2345,8 +2306,6 @@ export default function SupplierWarehouse() {
                                       }}
                                     >
                                       <h2>Upload Documents</h2>
-
-                                      {/* Dropdown */}
                                       <FormControl fullWidth sx={{ mt: 2 }}>
                                         <InputLabel id="doc-select-label">
                                           Select Document Type
@@ -2366,8 +2325,6 @@ export default function SupplierWarehouse() {
                                           ))}
                                         </Select>
                                       </FormControl>
-
-                                      {/* Dynamic file inputs */}
                                       <div className="mt-3">
                                         {selectedDocs.map((doc, index) => (
                                           <div key={index} className="mb-3">
@@ -2386,8 +2343,6 @@ export default function SupplierWarehouse() {
                                           </div>
                                         ))}
                                       </div>
-
-                                      {/* Footer buttons */}
                                       <Box
                                         sx={{
                                           display: "flex",
@@ -2414,34 +2369,9 @@ export default function SupplierWarehouse() {
                                 )}
                               </div>
                             </div>
-                            {/* <div className="row mb-3">
-                              <div className="col-6 mt-3">
-                          <select name="documentName" className="w-100 py-3"  onChange={handlechangepro}>
-                            <option value="">Select Document</option>
-                            <option value="Warehouse Entry Docs">  Shipper Docs</option>
-                            <option value="Warehouse Entry Docs">Warehouse Docs</option>
-                            <option value="Invoice, Packing List">Invoice / Packing </option>
-                            <option value="Product Literature">Product Literature</option>
-                            <option value="Letters of Authority">LOA</option>
-                          </select>
-                        </div>
-                              <div className="col-6 mt-3">
-                          <label>Upload Document</label>
-                          <input
-                            type="file"
-                            multiple
-                            className="w-100 mb-3 rounded"
-                            onChange={(e) =>
-                              handleFileChange(e, "other_documents")
-                            }
-                          />
-                        </div>
-                            </div> */}
                             <div className="row mb-3"></div>
-
                             <div class="modal-footer"></div>
                           </div>
-
                           <Box mt={3} display="flex" justifyContent="flex-end">
                             <Button
                               variant="contained"

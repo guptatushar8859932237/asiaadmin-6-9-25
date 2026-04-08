@@ -4863,3 +4863,17 @@ td {
   background:white;
   border-top:1px solid #eee;
 }
+.supParaGroup {
+  display: flex;
+  align-content: center;
+  gap: 10px;
+}
+.supParaGroup span {
+  font-weight: 600;
+  font-size: 12px;
+  margin-right: 5px;
+}
+.supplierMainTable td,.supplierMainTable p{
+  font-size: 12px;
+}
+ 

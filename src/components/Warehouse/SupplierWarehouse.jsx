@@ -867,7 +867,7 @@ export default function SupplierWarehouse() {
                                           <div className="col-md-2">
                                             <div>
                                               <p>
-                                                {item?.order_number}
+                                                Order Number: {item?.order_number}
 
                                               </p>
                                             </div>
@@ -885,6 +885,25 @@ export default function SupplierWarehouse() {
                                                 item.created_at,
                                               ).toLocaleDateString("en-GB")}
                                             </p>
+                                            <p className="port_date">
+                                             <div className="col-md-2 text-end">
+ {item?.move_to_adminWarhouse ==
+                                              "1" ? (
+                                              <span className="text-success">
+                                                Approved
+                                              </span>
+                                            ) : item.move_to_adminWarhouse ==
+                                              "2" ? (
+                                              <span className="text-danger">
+                                                Rejected
+                                              </span>
+                                            ) : (
+                                              <span className="text-secondary">
+                                                Pending
+                                              </span>
+                                            )}
+                                          </div>
+                                            </p>
                                           </div>
                                           <div className="supParaGroup">
 
@@ -893,7 +912,7 @@ export default function SupplierWarehouse() {
                                               {item.batch_number}
                                             </p>
                                             <p className="fright_no mx-2"  >
-                                             Order Number : {item.order_number}
+                                             {/* Order Number : {item.order_number} */}
                                             </p>
                                           </div>
 
@@ -903,7 +922,7 @@ export default function SupplierWarehouse() {
                                           <div className="col-md-4">
                                             <div className="">
                                               <p className="origin"  >
-                                                {item.goods_description}
+                                                {item.customer_name}
                                               </p>
                                             </div>
                                           </div>
@@ -925,6 +944,9 @@ export default function SupplierWarehouse() {
                                                   )
                                                 </span> */}
                                               </p>
+                                              <p>
+                                                
+                                              </p>
                                             </div>
                                           </div>
                                           <div className="col-md-2">
@@ -939,26 +961,14 @@ export default function SupplierWarehouse() {
                                               </p>
                                             </div>
                                           </div>
+                                         
 
                                         </div>
                                         {/* third row */}
                                         <div className="row align-items-center">
                                           <div className="col-md-2">
-                                            {item?.move_to_adminWarhouse ==
-                                              "1" ? (
-                                              <span className="text-success">
-                                                Approved
-                                              </span>
-                                            ) : item.move_to_adminWarhouse ==
-                                              "2" ? (
-                                              <span className="text-danger">
-                                                Rejected
-                                              </span>
-                                            ) : (
-                                              <span className="text-secondary">
-                                                Pending
-                                              </span>
-                                            )}
+                                           
+                                        {item.goods_description}
                                             {/* <div className="d-flex align-items-center">
                                               <p
                                                 type="radio"

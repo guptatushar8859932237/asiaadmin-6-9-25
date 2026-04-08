@@ -372,7 +372,6 @@ const ManageCustomer = () => {
   const handleclosemodal = () => {
     setOpenmodal(false);
   };
-
   const querryinQuote = (item) => {
     console.log("item", item);
     navigate("/Admin/QuotationInFreight", { state: { data: item } });

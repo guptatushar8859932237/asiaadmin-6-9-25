@@ -892,6 +892,9 @@ export default function SupplierWarehouse() {
                                             <p className="fright_no mx-2"  >
                                               {item.batch_number}
                                             </p>
+                                            <p className="fright_no mx-2"  >
+                                             Order Number : {item.order_number}
+                                            </p>
                                           </div>
 
                                         </div>

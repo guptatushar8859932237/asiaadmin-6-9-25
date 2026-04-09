@@ -327,8 +327,9 @@ export default function ManageSupplier() {
                       setCurrentPage(currentPage - 1);
                       getdata(currentPage - 1, searchQuery);
                     }}
+                    className="bg_page"
                   >
-                    ◀
+                  <i class="fi fi-rr-angle-small-left page_icon"></i>
                   </button>
 
                   <span className="mx-2">
@@ -337,12 +338,13 @@ export default function ManageSupplier() {
 
                   <button
                     disabled={currentPage === totalPages}
+                    className="bg_page"
                     onClick={() => {
                       setCurrentPage(currentPage + 1);
                       getdata(currentPage + 1, searchQuery);
                     }}
                   >
-                    ▶
+                  <i class="fi fi-rr-angle-small-right page_icon"></i>
                   </button>
                 </div>
               </div>

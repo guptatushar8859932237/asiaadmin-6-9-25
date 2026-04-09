@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 
 const TreeNode = ({ node, handleCheck }) => {
   const [isExpanded, setIsExpanded] = useState(false);
+
 const navigate= useNavigate();
   return (
     <div className="ml-4 staffPer">
@@ -35,7 +36,7 @@ const navigate= useNavigate();
 const UserPermission = ({ staffId }) => {
   const [treeData, setTreeData] = useState([]);
   const [staffPermissions, setStaffPermissions] = useState([]); // Store checked permissions
-
+  const navigate = useNavigate();
   useEffect(() => {
     const getTreeData = async () => {
       try {
@@ -124,7 +125,7 @@ const UserPermission = ({ staffId }) => {
           <div class="content">
     <div class="row">
             <div class="col-lg-3" 
-            // onClick={() => { navigate('/supplier/Attendancemanagement') }}
+            onClick={() => { navigate('/Admin/KPIDashboard') }}
             >
               <div class="cardDash">
                 <h4 className="hd_dash">Leave</h4>

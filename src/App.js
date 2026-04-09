@@ -95,6 +95,8 @@ import Warehouseview from "./components/Warehouse/Warehouseview";
 import Supplierwarhousproduct from "./pages/Supplierwarhousproduct";
 import TaskManagerstaff from "./pages/TaskManagerstaff";
 import TaskDetails from "./pages/TaskDetails";
+import Profilesection from "./pages/Profilesection";
+import ClientKpiModule from "./pages/ClientKpiModule";
 const Dashboard = lazy(() => import("./pages/Dashboard"));
 const Users = lazy(() => import("./pages/Users"));
 const Messages = lazy(() => import("./pages/Messages"));
@@ -156,6 +158,7 @@ export default function App() {
                   element={<Sageinvoices />}
                 />
                 <Route index path="/Admin/cashbook" element={<Cashbook />} />
+                <Route index path="/Admin/Profilesection" element={<Profilesection />} />
                 <Route
                   index
                   path="/Admin/billofladding"
@@ -216,6 +219,11 @@ export default function App() {
                   index
                   path="/Admin/KPIDashboard"
                   element={<Dashboard1 />}
+                />
+                <Route
+                  index
+                  path="/Admin/ClientKPIModule"
+                  element={<ClientKpiModule />}
                 />
                 <Route
                   index

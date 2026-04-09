@@ -158,7 +158,7 @@ export default function Taskmanager() {
         if (res.data.success) {
           toast.success("Task added successfully ✅");
           closeModal();
-fetchCustomTasks()
+          fetchCustomTasks();
           setFormData({
             Title: "",
             Description: "",
@@ -257,85 +257,102 @@ fetchCustomTasks()
             </div>
           )}
         </div>
-        <table className="table">
-          <thead>
-            <tr>
-              <th>#</th>
-              <th>Name</th>
-              <th>Email</th>
-              <th>
-                {activeTab === "assigned"
-                  ? "Freight Number"
-                  : activeTab === "clearance"
-                    ? "Clearance Number"
-                    : "Title"}{" "}
-              </th>
-              <th>Date</th>
-              <th>Notes</th>
-              <th>Status</th>
-              <th>Action</th>
-            </tr>
-          </thead>
-          <tbody>
-            {currentData.map((item, index) => (
-              <tr key={index}>
-                <td>{startIndex + index + 1}</td>
-                <td>{item.staff_name}</td>
-                <td>{item.staff_email}</td>
-                <td>
-                  {item.task_title ||
-                    item.freight_number ||
-                    item.clearance_number}
-                </td>
-                <td>
-                  {
-                    (
-                      item.created_at ||
-                      item.freight_created_at ||
-                      item.task_created_at
-                    )?.split("T")[0]
-                  }
-                </td>
-                <td>{item.notes || item.notes || item.notes}</td>
-                <td>{item.task_status}</td>
-                {/* ✅ ADD COMMENT BUTTON */}
-                <td>
-                  <div style={{ display: "flex", gap: "10px" }}>
-                    {/* ➕ Add Comment Icon */}
-                    <AddCommentIcon
-                      style={{ cursor: "pointer", color: "#1976d2" }}
-                      onClick={() => handleAddComment(item)}
-                      titleAccess="Add Comment"
-                    />
-
-                    {/* 👁️ View Icon */}
-                    <VisibilityIcon
-                      style={{ cursor: "pointer", color: "green" }}
-                      onClick={() => handleView(item)}
-                      titleAccess="View Details"
-                    />
-                  </div>
-                </td>
+        <div className="table-responsive mt-3">
+          <table className="table table-striped tableICon">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Name</th>
+                <th>
+                  {activeTab === "assigned"
+                    ? "Freight Number"
+                    : activeTab === "clearance"
+                      ? "Clearance Number"
+                      : "Title"}{" "}
+                </th>
+                <th>Due Date</th>
+                <th>Notes</th>
+                <th>Status</th>
+                <th>Action</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {currentData.map((item, index) => (
+                <tr key={index}>
+                  <td>{startIndex + index + 1}</td>
+                  <td>{item.staff_name}</td>
+                  <td>
+                    {item.task_title ||
+                      item.freight_number ||
+                      item.clearance_number}
+                  </td>
+                  <td>
+                    {(() => {
+                      const dateValue =
+                        item.created_at ||
+                        item.freight_created_at ||
+                        item.task_created_at;
+
+                      if (!dateValue) return "-";
+
+                      const createdDate = new Date(dateValue);
+                      const today = new Date();
+
+                      // Remove time part (important for accurate day difference)
+                      createdDate.setHours(0, 0, 0, 0);
+                      today.setHours(0, 0, 0, 0);
+
+                      const diffTime = today - createdDate;
+                      const diffDays = Math.floor(
+                        diffTime / (1000 * 60 * 60 * 24),
+                      );
+
+                      return diffDays >= 0 ? `${diffDays} days` : "0 days";
+                    })()}
+                  </td>
+                  <td>{item.notes || item.notes || item.notes}</td>
+                  <td>{item.task_status}</td>
+                  {/* ✅ ADD COMMENT BUTTON */}
+                  <td>
+                    <div style={{ display: "flex", gap: "10px" }}>
+                      {/* ➕ Add Comment Icon */}
+                      <AddCommentIcon
+                        style={{ cursor: "pointer", color: "#1976d2" }}
+                        onClick={() => handleAddComment(item)}
+                        titleAccess="Add Comment"
+                      />
+
+                      {/* 👁️ View Icon */}
+                      <VisibilityIcon
+                        style={{ cursor: "pointer", color: "green" }}
+                        onClick={() => handleView(item)}
+                        titleAccess="View Details"
+                      />
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
         {/* PAGINATION */}
-        <div>
+        <div className="text-center d-flex justify-content-end align-items-center">
           <button
+            className="bg_page"
             disabled={currentPage === 1}
             onClick={() => setCurrentPage(currentPage - 1)}
           >
-            Prev
+            <i class="fi fi-rr-angle-small-left page_icon"></i>
           </button>
           <span>
-            {currentPage} / {totalPages || 1}
+            Page {currentPage} of {totalPages || 1}
           </span>
           <button
             disabled={currentPage === totalPages}
+            className="bg_page"
             onClick={() => setCurrentPage(currentPage + 1)}
           >
-            Next
+            <i class="fi fi-rr-angle-small-right page_icon"></i>
           </button>
         </div>
         {/* ================= MODAL ================= */}
@@ -449,22 +466,22 @@ fetchCustomTasks()
                     <option value="Low">Low</option>
                   </select>
                 </div>
-                  <div className="col-6">
-                    <label>Staff List</label>
-                    <select
-                      name="Staffid"
-                      className="form-control"
-                      onChange={handlechange}
-                    >
-                      <option>Select</option>
+                <div className="col-6">
+                  <label>Staff List</label>
+                  <select
+                    name="Staffid"
+                    className="form-control"
+                    onChange={handlechange}
+                  >
+                    <option>Select</option>
 
-                      {staffList.map((item) => (
-                        <option key={item.id} value={item.id}>
-                          {item.full_name}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
+                    {staffList.map((item) => (
+                      <option key={item.id} value={item.id}>
+                        {item.full_name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
               </div>
               <Button variant="contained" onClick={postData}>
                 Apply

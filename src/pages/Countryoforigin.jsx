@@ -529,7 +529,7 @@ const currentdata = currentData;
   className="bg_page"
   onClick={() => setCurrentPage((prev) => prev - 1)}
 >
-  Prev
+   <i class="fi fi-rr-angle-small-left page_icon"></i>
 </button>
 
 <span className="mx-2">
@@ -541,7 +541,7 @@ const currentdata = currentData;
   className="bg_page"
   onClick={() => setCurrentPage((prev) => prev + 1)}
 >
-  Next
+   <i class="fi fi-rr-angle-small-right page_icon"></i>
 </button>
             </div>
            

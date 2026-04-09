@@ -219,6 +219,11 @@ const routes = [
     name: "Task Manager",
     icon: <LanguageOutlinedIcon />,
   },
+  {
+    path: "/Admin/ClientKPIModule",
+    name: "Client KPI Module",
+    icon: <LanguageOutlinedIcon />,
+  },
 ];
 const userControlRoutes = {
   path: "",

@@ -797,27 +797,27 @@ const handleclickdelete = async (item) => {
                             </td>{" "}
                             <td className="w-25">
                               <div className="progress">
-                                <div
-                                  className="progress-bar progress-bar-striped bg-success"
-                                  role="progressbar"
-                                  style={{
-                                    width: `${
-                                      item.status === "Goods at origin port"
-                                        ? "20%"
-                                        : item.status === "Goods are in transit"
-                                        ? "40%"
-                                        : item.status ===
-                                          "Arrived at destination port"
-                                        ? "60%"
-                                        : item.status ===
-                                          "Customs clearing in progress"
-                                        ? "80%"
-                                        : item.status === "Customs released"
-                                        ? "100%"
-                                        : "25%"
-                                    }`,
-                                  }}
-                                />
+                              <div
+  className={`progress-bar progress-bar-striped ${
+    item.status === "Customs released" ? "bg-secondary" : "bg-success"
+  }`}
+  role="progressbar"
+  style={{
+    width: `${
+      item.status === "Goods at origin port"
+        ? "20%"
+        : item.status === "Goods are in transit"
+        ? "40%"
+        : item.status === "Arrived at destination port"
+        ? "60%"
+        : item.status === "Customs clearing in progress"
+        ? "80%"
+        : item.status === "Customs released"
+        ? "100%"
+        : "25%"
+    }`,
+  }}
+/>
                               </div>
                               <div className="dropdown text-end">
                                 <a

@@ -106,7 +106,8 @@ const Header = () => {
         >
           <MenuItem onClick={() => { navigate('/Admin/profile'); setAnchorEl(null); }}>Profile</MenuItem>
           <MenuItem onClick={() => { navigate('/Admin/changepassword'); setAnchorEl(null); }}>Change Password</MenuItem>
-          <MenuItem onClick={() => { navigate('/Admin/User'); setAnchorEl(null); }}>Chatting</MenuItem>
+          <MenuItem onClick={() => { navigate('/Admin/User'); setAnchorEl(null); }}>Messages</MenuItem>
+          <MenuItem onClick={() => { navigate('/Admin/Profilesection'); setAnchorEl(null); }}>Profile section</MenuItem>
           <MenuItem onClick={() => { handleLogout(); setAnchorEl(null); }}>Logout</MenuItem>
         </Menu>
       </div>

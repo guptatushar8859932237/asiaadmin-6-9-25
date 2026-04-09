@@ -1,179 +1,17 @@
-// import axios from "axios";
-// import React, { useEffect, useState } from "react";
-// import { toast, ToastContainer } from "react-toastify";
-// import "react-toastify/dist/ReactToastify.css";
-// import { FaEdit } from "react-icons/fa";
-// import { AiFillDelete } from "react-icons/ai";
-// const pageSize = 10;
-// export default function Contactus() {
-//   const [currentPage, setCurrentPage] = useState(1);
-//   const [data, setData] = useState([]);
-//   const [loader, setLoader] = useState(false);
-//   const totalPage = Math.ceil(data.length / pageSize);
-//   const startIndex = (currentPage - 1) * pageSize;
-//   const endIndex = startIndex + pageSize;
-//   const currentdata = data.slice(startIndex, endIndex);
-//   const handlePageChange = (page) => {
-//     setCurrentPage(page);
-//   };
-//   useEffect(() => {
-//     getContactList();
-//   }, []);
-//   const getContactList = () => {
-//     setLoader(true);
-//     axios
-//       .get(`${process.env.REACT_APP_BASE_URL}getContactUs`)
-//       .then((response) => {
-//         setLoader(false);
-//         setData(response.data.data || []);
-//       })
-//       .catch((error) => {
-//         setLoader(false);
-//         console.log(error.response?.data?.message || error.message);
-//         toast.error("Failed to fetch contact data.");
-//       });
-//   };
-//   // ✅ Delete a contact record
-//   const deleteContact = (id) => {
-//     if (!window.confirm("Are you sure you want to delete this record?")) return;
-//     axios
-//       .post(`${process.env.REACT_APP_BASE_URL}DeleteContactUs`, { id })
-//       .then((response) => {
-//         toast.success(response.data.message);
-//         getContactList();
-//       })
-//       .catch((error) => {
-//         console.log(error.response?.data);
-//         toast.error("Failed to delete record");
-//       });
-//   };
-//   return (
-//     <>
-//       {loader ? (
-//         <div className="loader-container">
-//           <div className="loader"></div>
-//           <p className="loader-text">Loading... Please wait</p>
-//         </div>
-//       ) : (
-//         <div className="wpWrapper">
-//           <div className="container-fluid">
-//             <div className="row manageFreight">
-//               <div className="col-12">
-//                 <div className="d-flex justify-content-between align-items-center">
-//                   <h4 className="freight_hd">Contact Us Enquiries</h4>
-//                 </div>
-//               </div>
-//             </div>
-//             <div className="table-responsive mt-3">
-//               <table className="table table-striped tableICon">
-//                 <thead>
-//                   <tr>
-//                     <th>Sr.No.</th>
-//                     <th>Name</th>
-//                     <th>Country</th>
-//                     <th>Email</th>
-//                     <th>Phone No</th>
-//                     <th>Subject</th>
-//                     <th>Nature of Enquiry</th>
-//                     <th>Message</th>
-//                     <th>Action</th>
-//                   </tr>
-//                 </thead>
-//                 <tbody>
-//                   {currentdata && currentdata.length > 0 ? (
-//                     currentdata.map((item, index) => (
-//                       <tr key={item.id}>
-//                         <td>{startIndex + index + 1}</td>
-//                         <td>{item.name || "-"}</td>
-//                         <td>{item.country || "-"}</td>
-//                         <td>{item.email || "-"}</td>
-//                         <td>{item.phone_no || "-"}</td>
-//                         <td>{item.subject || "-"}</td>
-//                         <td>{item.nature_of_enq || "-"}</td>
-//                         <td>{item.message || "-"}</td>
-//                         <td>
-//                           <FaEdit
-//                             title="Edit (future)"
-//                             style={{
-//                               color: "#1b2245",
-//                               marginRight: "10px",
-//                               width: "20px",
-//                               height: "15px",
-//                               cursor: "pointer",
-//                               opacity: 0.5,
-//                             }}
-//                           />
-//                           <AiFillDelete
-//                             title="Delete"
-//                             onClick={() => deleteContact(item.id)}
-//                             style={{
-//                               color: "red",
-//                               width: "20px",
-//                               height: "18px",
-//                               cursor: "pointer",
-//                             }}
-//                           />
-//                         </td>
-//                       </tr>
-//                     ))
-//                   ) : (
-//                     <tr>
-//                       <td colSpan="9" className="text-center">
-//                         No records found.
-//                       </td>
-//                     </tr>
-//                   )}
-//                 </tbody>
-//               </table>
-
-//               {/* Pagination */}
-//               {totalPage > 1 && (
-//                 <div className="text-center d-flex justify-content-end align-items-center">
-//                   <button
-//                     disabled={currentPage === 1}
-//                     className="bg_page"
-//                     onClick={() => handlePageChange(currentPage - 1)}
-//                   >
-//                     <i className="fi fi-rr-angle-small-left page_icon"></i>
-//                   </button>
-//                   <span className="mx-2">{`Page ${currentPage} of ${totalPage}`}</span>
-//                   <button
-//                     disabled={currentPage === totalPage}
-//                     className="bg_page"
-//                     onClick={() => handlePageChange(currentPage + 1)}
-//                   >
-//                     <i className="fi fi-rr-angle-small-right page_icon"></i>
-//                   </button>
-//                 </div>
-//               )}
-//             </div>
-//           </div>
-//         </div>
-//       )}
-//       <ToastContainer />
-//     </>
-//   );
-// }
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { FaEdit } from "react-icons/fa";
 import { AiFillDelete } from "react-icons/ai";
-
 const pageSize = 10;
-
 export default function Contactus() {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [data, setData] = useState([]);
   const [loader, setLoader] = useState(false);
   const [search, setSearch] = useState("");
-
-  // ✅ API CALL (pagination + search)
   const getContactList = (page = 1, search = "") => {
     setLoader(true);
-
     axios
       .post(`${process.env.REACT_APP_BASE_URL}getContactUs`, {
         page: page,
@@ -182,7 +20,6 @@ export default function Contactus() {
       })
       .then((response) => {
         setLoader(false);
-
         setData(response.data.data || []);
         setTotalPages(response.data.total_pages || 1);
       })
@@ -192,20 +29,14 @@ export default function Contactus() {
         toast.error("Failed to fetch contact data.");
       });
   };
-
-  // ✅ useEffect (search + pagination)
   useEffect(() => {
     const delay = setTimeout(() => {
       getContactList(currentPage, search);
     }, 400); // debounce
-
     return () => clearTimeout(delay);
   }, [currentPage, search]);
-
-  // ✅ Delete
   const deleteContact = (id) => {
     if (!window.confirm("Are you sure you want to delete this record?")) return;
-
     axios
       .post(`${process.env.REACT_APP_BASE_URL}DeleteContactUs`, { id })
       .then((response) => {
@@ -217,7 +48,6 @@ export default function Contactus() {
         toast.error("Failed to delete record");
       });
   };
-
   return (
     <>
       {loader ? (
@@ -232,8 +62,6 @@ export default function Contactus() {
               <div className="col-12">
                 <div className="d-flex justify-content-between align-items-center">
                   <h4 className="freight_hd">Contact Us Enquiries</h4>
-
-                  {/* ✅ SEARCH INPUT */}
                   <input
                     type="text"
                     placeholder="Search..."
@@ -247,7 +75,6 @@ export default function Contactus() {
                 </div>
               </div>
             </div>
-
             <div className="table-responsive mt-3">
               <table className="table table-striped tableICon">
                 <thead>
@@ -263,15 +90,12 @@ export default function Contactus() {
                     <th>Action</th>
                   </tr>
                 </thead>
-
                 <tbody>
                   {data && data.length > 0 ? (
                     data.map((item, index) => (
                       <tr key={item.id}>
                         {/* ✅ Correct serial number */}
-                        <td>
-                          {(currentPage - 1) * pageSize + index + 1}
-                        </td>
+                        <td>{(currentPage - 1) * pageSize + index + 1}</td>
                         <td>{item.name || "-"}</td>
                         <td>{item.country || "-"}</td>
                         <td>{item.email || "-"}</td>
@@ -305,36 +129,28 @@ export default function Contactus() {
                     </tr>
                   )}
                 </tbody>
+                {totalPages > 1 && (
+                  <div className="text-end d-flex justify-content-end align-items-center">
+                    <button
+                      disabled={currentPage === 1}
+                      className="bg_page"
+                      onClick={() => setCurrentPage((prev) => prev - 1)}
+                    >
+                      <i class="fi fi-rr-angle-small-left page_icon"></i>
+                    </button>
+                    <span className="mx-2">
+                      Page {currentPage} of {totalPages}
+                    </span>
+                    <button
+                      disabled={currentPage === totalPages}
+                      className="bg_page"
+                      onClick={() => setCurrentPage((prev) => prev + 1)}
+                    >
+                      <i class="fi fi-rr-angle-small-right page_icon"></i>
+                    </button>
+                  </div>
+                )}
               </table>
-
-              {/* ✅ PAGINATION */}
-              {totalPages > 1 && (
-                <div className="text-end d-flex justify-content-end align-items-center">
-                  <button
-                    disabled={currentPage === 1}
-                    className="bg_page"
-                    onClick={() =>
-                      setCurrentPage((prev) => prev - 1)
-                    }
-                  >
-                    Prev
-                  </button>
-
-                  <span className="mx-2">
-                    Page {currentPage} of {totalPages}
-                  </span>
-
-                  <button
-                    disabled={currentPage === totalPages}
-                    className="bg_page"
-                    onClick={() =>
-                      setCurrentPage((prev) => prev + 1)
-                    }
-                  >
-                    Next
-                  </button>
-                </div>
-              )}
             </div>
           </div>
         </div>

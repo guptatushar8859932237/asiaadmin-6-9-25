@@ -276,12 +276,13 @@ const formdata={
                 <div className="d-flex justify-content-end align-items-end my-3">
                   <button
                     disabled={currentPage === 1}
+                      className="bg_page"
                     onClick={() => {
                       setCurrentPage(currentPage - 1);
                       getdata(currentPage - 1, searchQuery);
                     }}
                   >
-                    ◀
+                          <i class="fi fi-rr-angle-small-left page_icon"></i>
                   </button>
 
                   <span className="mx-2">
@@ -290,12 +291,13 @@ const formdata={
 
                   <button
                     disabled={currentPage === totalPages}
+                      className="bg_page"
                     onClick={() => {
                       setCurrentPage(currentPage + 1);
                       getdata(currentPage + 1, searchQuery);
                     }}
                   >
-                    ▶
+                    <i class="fi fi-rr-angle-small-right page_icon"></i>
                   </button>
                 </div>
               </div>

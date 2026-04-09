@@ -466,13 +466,13 @@ const Notification = () => {
                 })}
               </tbody>
             </table>
-            <div className="d-flex justify-content-end align-items-center">
+            <div className="text-center d-flex justify-content-end align-items-center">
               <button
                 disabled={currentPage === 1}
                 onClick={() => handlePageChange(currentPage - 1)}
                 className="bg_page"
               >
-                &lt;
+               <i class="fi fi-rr-angle-small-left page_icon"></i>
               </button>
               <span className="mx-2">{`Page ${currentPage} of ${totalPage}`}</span>
               <button
@@ -480,7 +480,7 @@ const Notification = () => {
                 onClick={() => handlePageChange(currentPage + 1)}
                 className="bg_page"
               >
-                &gt;
+                  <i class="fi fi-rr-angle-small-right page_icon"></i>
               </button>
             </div>
           </div>

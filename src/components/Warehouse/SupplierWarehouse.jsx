@@ -364,10 +364,9 @@ export default function SupplierWarehouse() {
 
   const filterOptions = (options, { inputValue }) => {
     console.log("Filtering options with input:", inputValue);
-    return options.filter((option) =>
-      option.full_name
-        ?.toLowerCase()
-        .startsWith(inputValue.toLowerCase()) // 👈 strict match
+    return options.filter(
+      (option) =>
+        option.full_name?.toLowerCase().startsWith(inputValue.toLowerCase()), // 👈 strict match
     );
   };
   //   const handleSubmit =()=>{
@@ -758,7 +757,7 @@ export default function SupplierWarehouse() {
       if (error.response) {
         toast.error(
           error.response.data?.message ||
-          `Request failed with status ${error.response.status}`,
+            `Request failed with status ${error.response.status}`,
         );
       } else if (error.request) {
         toast.error("Server not responding. Please try again later.");
@@ -866,17 +865,16 @@ export default function SupplierWarehouse() {
                                           </div>
                                           <div className="col-md-2">
                                             <div>
-                                              <p>
-                                                Order Number: {item?.order_number}
-
-                                              </p>
+                                              <p>{item?.order_number}</p>
                                             </div>
                                           </div>
                                           <div className="col-md-4"></div>
                                           <div className="col-md-2">
                                             <p>
-                                              <span className="bold600">Weight:</span>
-                                              {" "} {item.total_weight}
+                                              <span className="bold600">
+                                                Weight:
+                                              </span>{" "}
+                                              {item.total_weight}
                                             </p>
                                           </div>
                                           <div className="col-md-2 text-end">
@@ -886,42 +884,39 @@ export default function SupplierWarehouse() {
                                               ).toLocaleDateString("en-GB")}
                                             </p>
                                             <p className="port_date">
-                                             <div className="col-md-2 text-end">
- {item?.move_to_adminWarhouse ==
-                                              "1" ? (
-                                              <span className="text-success">
-                                                Approved
-                                              </span>
-                                            ) : item.move_to_adminWarhouse ==
-                                              "2" ? (
-                                              <span className="text-danger">
-                                                Rejected
-                                              </span>
-                                            ) : (
-                                              <span className="text-secondary">
-                                                Pending
-                                              </span>
-                                            )}
-                                          </div>
+                                              <div className="ss text-end">
+                                                {item?.move_to_adminWarhouse ==
+                                                "1" ? (
+                                                  <span className="text-success">
+                                                    Moved To Warehouse
+                                                  </span>
+                                                ) : item.move_to_adminWarhouse ==
+                                                  "2" ? (
+                                                  <span className="text-danger">
+                                                    Rejected
+                                                  </span>
+                                                ) : (
+                                                  <span className="text-secondary">
+                                                    Pending
+                                                  </span>
+                                                )}
+                                              </div>
                                             </p>
                                           </div>
                                           <div className="supParaGroup">
-
-
-                                            <p className="fright_no mx-2"  >
+                                            <p className="fright_no mx-2">
                                               {item.batch_number}
                                             </p>
-                                            <p className="fright_no mx-2"  >
-                                             {/* Order Number : {item.order_number} */}
+                                            <p className="fright_no mx-2">
+                                              {/* Order Number : {item.order_number} */}
                                             </p>
                                           </div>
-
                                         </div>
                                         {/* second row */}
                                         <div className="row align-items-center">
                                           <div className="col-md-4">
                                             <div className="">
-                                              <p className="origin"  >
+                                              <p className="origin">
                                                 {item.customer_name}
                                               </p>
                                             </div>
@@ -944,16 +939,15 @@ export default function SupplierWarehouse() {
                                                   )
                                                 </span> */}
                                               </p>
-                                              <p>
-                                                
-                                              </p>
+                                              <p></p>
                                             </div>
                                           </div>
                                           <div className="col-md-2">
                                             <p>
-                                              <span>Dimension: {" "}</span>
+                                              <span>Dimension: </span>
                                               {item.total_cbm}
-                                            </p></div>
+                                            </p>
+                                          </div>
                                           <div className="col-md-2">
                                             <div className="text-end">
                                               <p className="origin">
@@ -961,14 +955,11 @@ export default function SupplierWarehouse() {
                                               </p>
                                             </div>
                                           </div>
-                                         
-
                                         </div>
                                         {/* third row */}
                                         <div className="row align-items-center">
                                           <div className="col-md-2">
-                                           
-                                        {item.goods_description}
+                                            {item.goods_description}
                                             {/* <div className="d-flex align-items-center">
                                               <p
                                                 type="radio"
@@ -1000,21 +991,21 @@ export default function SupplierWarehouse() {
                                           <div className="col-md-2">
                                             <div>
                                               <p>
-                                                Days in Warehouse:
-                                                {" "}   {item.days_in_warehouse}
+                                                Days in Warehouse:{" "}
+                                                {item.days_in_warehouse}
                                               </p>
                                             </div>
                                           </div>
                                           <div className="col-md-4"></div>
                                           <div className="col-md-2">
                                             <p>
-                                              <span>Packages:</span>
-                                              {" "} {item.total_packages}
+                                              <span>Packages:</span>{" "}
+                                              {item.total_packages}
                                             </p>
                                           </div>
                                           <div className="col-md-2 text-end">
                                             {item.move_to_adminWarhouse ===
-                                              0 ? (
+                                            0 ? (
                                               <DriveFileMoveIcon
                                                 className="me-2 mt-1"
                                                 fontSize="small"
@@ -1030,7 +1021,7 @@ export default function SupplierWarehouse() {
                                               ""
                                             )}
                                             {item.move_to_adminWarhouse ===
-                                              0 ? (
+                                            0 ? (
                                               <FaEdit
                                                 onClick={() =>
                                                   handleEditClick(item.id)
@@ -1359,8 +1350,7 @@ export default function SupplierWarehouse() {
                           </div>
                           <div className="newModalGap">
                             <div className="text-center">
-                              <div className="d-flex justify-content-between">
-                              </div>
+                              <div className="d-flex justify-content-between"></div>
                             </div>
                             {selectedData && (
                               <form onSubmit={handleSubmit} className="p-3">
@@ -1371,30 +1361,34 @@ export default function SupplierWarehouse() {
                                       <label>Customer name</label>
                                       <Autocomplete
                                         options={clientData || []}
-                                        getOptionLabel={(option) => option.full_name || ""}
+                                        getOptionLabel={(option) =>
+                                          option.full_name || ""
+                                        }
                                         filterOptions={filterOptions}
-
                                         value={
                                           clientData.find(
-                                            (item) => item.id === nameData.client_id
+                                            (item) =>
+                                              item.id === nameData.client_id,
                                           ) || null
                                         }
-
                                         onChange={(event, newValue) => {
                                           handlechangewarehouse({
                                             target: {
                                               name: "client_id",
-                                              value: newValue ? newValue.id : "",
+                                              value: newValue
+                                                ? newValue.id
+                                                : "",
                                             },
                                           });
                                         }}
-
                                         isOptionEqualToValue={(option, value) =>
                                           option.id === value.id
                                         }
-
                                         renderInput={(params) => (
-                                          <TextField {...params} label="Select Client" />
+                                          <TextField
+                                            {...params}
+                                            label="Select Client"
+                                          />
                                         )}
                                       />
                                     </div>
@@ -1508,8 +1502,8 @@ export default function SupplierWarehouse() {
                                           value={
                                             selectedData.date_received
                                               ? selectedData.date_received.split(
-                                                "T",
-                                              )[0]
+                                                  "T",
+                                                )[0]
                                               : ""
                                           }
                                           name="date_received"
@@ -1562,8 +1556,8 @@ export default function SupplierWarehouse() {
                                           value={
                                             selectedData.dispatch_date
                                               ? selectedData.dispatch_date.split(
-                                                "T",
-                                              )[0]
+                                                  "T",
+                                                )[0]
                                               : ""
                                           }
                                           name="dispatch_date"

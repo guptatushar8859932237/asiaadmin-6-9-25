@@ -30,6 +30,7 @@ const [data1, setData1] = useState({
   const [data1222, setData1222] = useState([]);
   const [countries, setcountries] = useState([]);
   const [inputdata, setInputdata] = useState([]);
+  const [searchQuery, setSearchQuery] = useState("");
   const [tindexdata, setTindexdata] = useState([]);
   const [tindexdClearance, setTindexdClearance] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -122,15 +123,21 @@ const [data1, setData1] = useState({
         console.log(error.response.data.data);
       });
   };
-  useEffect(() => {
-  getwarehouse(1);
-}, []);
- const getwarehouse = (page = 1) => {
+ useEffect(() => {
+  const delay = setTimeout(() => {
+    getwarehouse(currentPage, searchQuery);
+  }, 800); // debounce
+
+  return () => clearTimeout(delay);
+}, [currentPage, searchQuery]);
+
+const getwarehouse = (page = 1, search = "") => {
   setLoader(true);
 
   const payload = {
     user_id: userid,
     page: page,
+    search: search, // ✅ ADD THIS
   };
 
   axios
@@ -145,6 +152,26 @@ const [data1, setData1] = useState({
       console.log(error?.response?.data?.message);
     });
 };
+//  const getwarehouse = (page = 1) => {
+//   setLoader(true);
+
+//   const payload = {
+//     user_id: userid,
+//     page: page,
+//   };
+
+//   axios
+//     .post(`${process.env.REACT_APP_BASE_URL}getShipment`, payload)
+//     .then((response) => {
+//       setLoader(false);
+//       setData(response.data.data || []);
+//       setPagenatedData(response.data || {});
+//     })
+//     .catch((error) => {
+//       setLoader(false);
+//       console.log(error?.response?.data?.message);
+//     });
+// };
   const openModal2 = (id) => {
     setShipmentID(id);
     const postshipmentpost = {
@@ -738,16 +765,27 @@ const handleclickdelete = async (item) => {
           <div className="container-fluid">
             <div className="row  manageFreight">
               <div className="col-12">
-                <div className="d-flex justify-content-between align-items-center">
-                  <div>
-                    <h4 className="freight_hd">Shipments List</h4>
-                  </div>
-                  <div className="d-flex justify-content-end align-items-center">
-                    <div className="mx-2">
-                      <button onClick={openModal1}>Add Shipment</button>
-                    </div>
-                  </div>
-                </div>
+              <div className="d-flex justify-content-between align-items-center">
+  <h4 className="freight_hd">Shipments List</h4>
+
+  <div className="d-flex">
+    <input
+      type="text"
+      placeholder="Search shipment..."
+      className="form-control"
+      style={{ width: "250px" }}
+      value={searchQuery}
+      onChange={(e) => {
+        setSearchQuery(e.target.value);
+        setCurrentPage(1); // reset page
+      }}
+    />
+
+    <button className="ms-2" onClick={openModal1}>
+      Add Shipment
+    </button>
+  </div>
+</div>
               </div>
             </div>
             <div className="table-responsive mt-2">

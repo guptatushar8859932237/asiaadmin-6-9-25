@@ -57,6 +57,7 @@ const Header = () => {
     localStorage.clear();
     navigate('/');
   };
+  const dataget = JSON.parse(localStorage.getItem("data123"))
   return (
     <header className='header' style={{ backgroundColor: "#f0f2f5" }}>
       <div className='d-flex justify-content-end align-items-center gap-4 pt-4'>
@@ -107,7 +108,10 @@ const Header = () => {
           <MenuItem onClick={() => { navigate('/Admin/profile'); setAnchorEl(null); }}>Profile</MenuItem>
           <MenuItem onClick={() => { navigate('/Admin/changepassword'); setAnchorEl(null); }}>Change Password</MenuItem>
           <MenuItem onClick={() => { navigate('/Admin/User'); setAnchorEl(null); }}>Messages</MenuItem>
-          <MenuItem onClick={() => { navigate('/Admin/Profilesection'); setAnchorEl(null); }}>Profile section</MenuItem>
+         {
+dataget.id=="1" ?
+          "":<MenuItem onClick={() => { navigate('/Admin/Profilesection'); setAnchorEl(null); }}>Manage Leave</MenuItem>
+         }
           <MenuItem onClick={() => { handleLogout(); setAnchorEl(null); }}>Logout</MenuItem>
         </Menu>
       </div>

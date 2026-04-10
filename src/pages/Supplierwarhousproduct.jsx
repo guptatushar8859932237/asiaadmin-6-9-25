@@ -29,10 +29,8 @@ export default function Supplierwarhousproduct() {
   useEffect(() => {
     postassiandata();
   }, []);
-
   const getFileType = (fileName = "") => {
   const ext = fileName.split(".").pop().toLowerCase();
-
   if (["jpg", "jpeg", "png", "gif", "webp"].includes(ext)) return "image";
   if (ext === "pdf") return "pdf";
   if (["xls", "xlsx", "csv"].includes(ext)) return "excel";
@@ -44,14 +42,12 @@ export default function Supplierwarhousproduct() {
   };
    useEffect(() => {
   postassiandata();
-
   if (info?.files) {
     setDocuments(info.files);
   }
 }, []);
 useEffect(() => {
   postassiandata();
-
   if (info?.files) {
     const grouped = info.files.reduce((acc, item) => {
       const key = item.type || "other";
@@ -59,7 +55,6 @@ useEffect(() => {
       acc[key].push(item);
       return acc;
     }, {});
-
     setDocuments(grouped);
   }
 }, []);
@@ -78,6 +73,26 @@ useEffect(() => {
             console.log(error.response.data);
           });
       };
+      const totals = apidata.reduce(
+  (acc, item) => {
+    acc.packages += Number(item.packages) || 0;
+    acc.weight += Number(item.weight) || 0;
+    // 🔥 Handle dimension safely
+    if (item.dimension && typeof item.dimension === "string") {
+      const dims = item.dimension.split("x").map(Number);
+      if (dims.length === 3) {
+        const volume = dims[0] * dims[1] * dims[2];
+        acc.dimension += volume || 0;
+      } else {
+        acc.dimension += Number(item.dimension) || 0;
+      }
+    } else {
+      acc.dimension += Number(item.dimension) || 0;
+    }
+    return acc;
+  },
+  { packages: 0, dimension: 0, weight: 0 }
+);
   return (
     <div className="wpWrapper">
       <div className="container-fluid">
@@ -277,7 +292,7 @@ useEffect(() => {
                               </td>
                               <td>
                                 <p className="client_para1">
-                                  {info.total_weight}
+                                  {totals.weight}
                                 </p>
                               </td>
                             </tr>
@@ -287,7 +302,7 @@ useEffect(() => {
                               </td>
                               <td>
                                 <p className="client_para1">
-                                 {info?.total_cbm}
+                                 {totals.dimension}
                                 </p>
                               </td>
                             </tr>
@@ -297,20 +312,10 @@ useEffect(() => {
                               </td>
                               <td>
                                 <p className="client_para1">
-                                  {info.total_packages}
+                                  {totals.packages}
                                 </p>
                               </td>
                             </tr>
-                            {/* <tr>
-                              <td>
-                                <p className="client_para1">Orders:</p>
-                              </td>
-                              <td>
-                                <p className="client_para1">
-                                  
-                                </p>
-                              </td>
-                            </tr> */}
                           </tbody>
                         </table>
                       </div>
@@ -435,7 +440,7 @@ useEffect(() => {
                       rel="noopener noreferrer"
                       className="view_docu ms-2"
                     >
-                      View Document
+                      View
                     </a>
                   )}
                 </div>

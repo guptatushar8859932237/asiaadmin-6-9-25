@@ -323,7 +323,7 @@ warehouse_assign_order_id:info.warehouse_assign_order_id || info.id
                           rel="noopener noreferrer"
                           className="view_docu ms-2"
                         >
-                          View Document
+                          View 
                         </a>
                         <DeleteIcon
                           onClick={() => deleteapi(item.id)}
@@ -344,7 +344,7 @@ warehouse_assign_order_id:info.warehouse_assign_order_id || info.id
                       rel="noopener noreferrer"
                       className="view_docu ms-2"
                     >
-                      View Document
+                      View 
                     </a>
                   )}
                 </div>

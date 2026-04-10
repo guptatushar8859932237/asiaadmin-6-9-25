@@ -38,6 +38,7 @@ export default function WarehouseOrder() {
   const [currentPage, setCurrentPage] = useState(1);
   const [data, setData] = useState([]);
   const [batch, setBatch] = useState([]);
+  const [countries, setCountries] = useState([]);
   const [file, setFile] = useState(null);
   const [formFiles, setFormFiles] = useState({
     supplier_invoice: [],
@@ -73,7 +74,19 @@ export default function WarehouseOrder() {
 
   const [show1, setShow1] = useState(false);
   const [selectedDocs, setSelectedDocs] = useState([]);
-
+  useEffect(() => {
+    getcountry();
+  }, []);
+  const getcountry = () => {
+    axios
+      .get(`${process.env.REACT_APP_BASE_URL}GetCountries`)
+      .then((response) => {
+        setCountries(response.data.data);
+      })
+      .catch((error) => {
+        console.log(error.response.data.data);
+      });
+  };
   const docOptions = [
     { id: "Warehouse Entry Docs", label: "Shipper Docs" },
     { id: "Warehouse Entry Docs", label: "Warehouse Docs" },
@@ -210,18 +223,18 @@ export default function WarehouseOrder() {
     setSelectedData(selectedData);
     handleOpenModal();
   };
-  const handleEditClickAssign = (freight_ID,  order_id) => {
-    console.log(freight_ID,  order_id);
+  const handleEditClickAssign = (freight_ID, order_id) => {
+    console.log(freight_ID, order_id);
     setOrderID(order_id);
     setFreightIdPass(freight_ID);
     const selectedData = data.find((item) => item.freight_ID === freight_ID);
     console.log(selectedData);
     setSelectedData(selectedData);
-    setHandleassignsupplier(true)
+    setHandleassignsupplier(true);
   };
-  const handleclose=()=>{
-      setHandleassignsupplier(false)
-  }
+  const handleclose = () => {
+    setHandleassignsupplier(false);
+  };
   const handleEditClick12 = (
     warehouse_assign_order_id,
     order_id,
@@ -302,11 +315,26 @@ export default function WarehouseOrder() {
     formdata1.append("warehouse_dispatch", selectedData.warehouse_dispatch);
     formdata1.append("cost_to_dispatch", selectedData.cost_to_dispatch);
     formdata1.append("documentName", selectedData.documentName);
-
-    // If packages is an object or array, stringify it
+    formdata1.append("courier_waybill_ref", selectedData.courier_waybill_ref);
+    formdata1.append("dispatched_date", selectedData.dispatched_date);
+    formdata1.append("warehouse_comment", selectedData.warehouse_comment);
+    formdata1.append("customer_ref", selectedData.customer_ref);
+    formdata1.append("box_marking", selectedData.box_marking);
+    formdata1.append("hazardous", selectedData.hazardous);
+    formdata1.append("hazard_description", selectedData.hazard_description);
+    formdata1.append("package_comment", selectedData.package_comment);
+    formdata1.append("damage_goods", selectedData.damage_goods);
+    formdata1.append("damaged_pkg_qty", selectedData.damaged_pkg_qty);
+    formdata1.append("damage_comment", selectedData.damage_comment);
+    formdata1.append("supplier_company", selectedData.supplier_company);
+    formdata1.append("supplier_address", selectedData.supplier_address);
+    formdata1.append("supplier_contact_no", selectedData.supplier_contact_no);
+    formdata1.append("warehouse_order_id", selectedData.warehouse_order_id);
+    formdata1.append("warehouse_storage", selectedData.warehouse_storage);
+    formdata1.append("handling_required", selectedData.handling_required);
+    formdata1.append("handling_cost", selectedData.handling_cost);
+    formdata1.append("supplier_contact", selectedData.supplier_contact);
     formdata1.append("packages", JSON.stringify(selectedData.packages));
-
-    // Append files (with static key "document")
     selectedDocs.forEach((doc) => {
       console.log("Doc Type:", doc.name);
       doc.files.forEach((file) => {
@@ -314,13 +342,9 @@ export default function WarehouseOrder() {
         console.log("File:", file.name, "| Size:", file.size, "bytes");
       });
     });
-
-    // Optional: Debug log of FormData contents
     for (let [key, value] of formdata1.entries()) {
       console.log(`${key}:`, value);
     }
-
-    // Submit the data via axios
     axios
       .post(`${process.env.REACT_APP_BASE_URL}editWarehouseDetails`, formdata1)
       .then((response) => {
@@ -334,7 +358,6 @@ export default function WarehouseOrder() {
         toast.error("Error updating warehouse order");
       });
   };
-
   const closeModal1 = () => {
     setIsModalOpen1(false);
   };
@@ -365,7 +388,7 @@ export default function WarehouseOrder() {
   };
 
   const handleclicknavi = async (item) => {
-   console.log(item)
+    console.log(item);
     try {
       const datapost = {
         staff_id: userid,
@@ -564,78 +587,74 @@ export default function WarehouseOrder() {
     }
   };
 
-  useEffect(()=>{
-    getSupplier()
-  },[])
+  useEffect(() => {
+    getSupplier();
+  }, []);
 
-const getSupplier = async () => {
-  try {
-    const response = await axios.get(
-      `${process.env.REACT_APP_BASE_URL}supplier-list`
-    );
-
-    if (response.status === 200) {
-      setHandlsupplier(response.data.data);
-    } else {
-      console.error("Unexpected response:", response);
-    }
-  } catch (error) {
-    console.error(
-      "Error fetching supplier list:",
-      error.response?.data || error.message
-    );
-  }
-};
-
-const handleChangeSupplier=(e)=>{
-  setResponseData(e.target.value)
-}
-
-const AssignSupplier = async () => {
-  if (!responseData) {
-    toast.error("Please select a supplier");
-    return;
-  }
-
-  const payload = {
-    supplier_id: parseInt(responseData, 10),
-    freight_id: freightIdPass,
-    order_id: orderID,
-  };
-
-  console.log("Payload:", payload);
-
-  try {
-    const response = await axios.post(
-      `${process.env.REACT_APP_BASE_URL}assignWarehouseOrderToSupplier`,
-      payload
-    );
-
-    toast.success(response.data?.message || "Supplier assigned successfully");
-    handleclose();
-
-  } catch (error) {
-    // 🔥 HANDLE ALL POSSIBLE ERRORS
-    if (error.response) {
-      // ✅ Server responded with error status (400, 401, 403, 404, 409, 500)
-      toast.error(
-        error.response.data?.message ||
-        `Request failed with status ${error.response.status}`
+  const getSupplier = async () => {
+    try {
+      const response = await axios.get(
+        `${process.env.REACT_APP_BASE_URL}supplier-list`,
       );
 
-    } else if (error.request) {
-      // ✅ Request sent but no response (server down / CORS / network issue)
-      toast.error("Server not responding. Please try again later.");
+      if (response.status === 200) {
+        setHandlsupplier(response.data.data);
+      } else {
+        console.error("Unexpected response:", response);
+      }
+    } catch (error) {
+      console.error(
+        "Error fetching supplier list:",
+        error.response?.data || error.message,
+      );
+    }
+  };
 
-    } else {
-      // ✅ Something else went wrong
-      toast.error(error.message || "Something went wrong");
+  const handleChangeSupplier = (e) => {
+    setResponseData(e.target.value);
+  };
+
+  const AssignSupplier = async () => {
+    if (!responseData) {
+      toast.error("Please select a supplier");
+      return;
     }
 
-    console.error("AssignSupplier Error:", error);
-  }
-};
+    const payload = {
+      supplier_id: parseInt(responseData, 10),
+      freight_id: freightIdPass,
+      order_id: orderID,
+    };
 
+    console.log("Payload:", payload);
+
+    try {
+      const response = await axios.post(
+        `${process.env.REACT_APP_BASE_URL}assignWarehouseOrderToSupplier`,
+        payload,
+      );
+
+      toast.success(response.data?.message || "Supplier assigned successfully");
+      handleclose();
+    } catch (error) {
+      // 🔥 HANDLE ALL POSSIBLE ERRORS
+      if (error.response) {
+        // ✅ Server responded with error status (400, 401, 403, 404, 409, 500)
+        toast.error(
+          error.response.data?.message ||
+            `Request failed with status ${error.response.status}`,
+        );
+      } else if (error.request) {
+        // ✅ Request sent but no response (server down / CORS / network issue)
+        toast.error("Server not responding. Please try again later.");
+      } else {
+        // ✅ Something else went wrong
+        toast.error(error.message || "Something went wrong");
+      }
+
+      console.error("AssignSupplier Error:", error);
+    }
+  };
 
   return (
     <>
@@ -826,8 +845,8 @@ const AssignSupplier = async () => {
                                             </div>
                                           </div>
                                           <div className="col-md-6 text-end">
-                                            <i 
-                                            class="fa fa-tasks me-2 mt-2"
+                                            <i
+                                              class="fa fa-tasks me-2 mt-2"
                                               onClick={() =>
                                                 handleEditClickAssign(
                                                   item.freight_ID,
@@ -928,30 +947,36 @@ const AssignSupplier = async () => {
                             p: 4,
                           }}
                         >
-                          <h4 id="modal-modal-title text-dark">Assign Supplier</h4>
-                        <select className="form-control" onChange={handleChangeSupplier} >
-                          <option>select</option>
-
-                          {
-                            handlsupplier && handlsupplier.length>0 && handlsupplier.map((item,index)=>{
-                              return(
-                                <>
-                              <option key={index} value={item.id}>{item.name}</option>
-                                </>
-                              )
-                            })
-                          }
-                        </select>
-                        <div className="d-flex  mt-3">
-
-                          <Button
-                            variant="contained"
-                            className="submit_btn"
-                            onClick={AssignSupplier}
+                          <h4 id="modal-modal-title text-dark">
+                            Assign Supplier
+                          </h4>
+                          <select
+                            className="form-control"
+                            onChange={handleChangeSupplier}
                           >
-                            Submit
-                          </Button>
-                        </div>
+                            <option>select</option>
+
+                            {handlsupplier &&
+                              handlsupplier.length > 0 &&
+                              handlsupplier.map((item, index) => {
+                                return (
+                                  <>
+                                    <option key={index} value={item.id}>
+                                      {item.name}
+                                    </option>
+                                  </>
+                                );
+                              })}
+                          </select>
+                          <div className="d-flex  mt-3">
+                            <Button
+                              variant="contained"
+                              className="submit_btn"
+                              onClick={AssignSupplier}
+                            >
+                              Submit
+                            </Button>
+                          </div>
                         </Box>
                       </Modal>
                       <Modal
@@ -1239,7 +1264,13 @@ const AssignSupplier = async () => {
                                       InputLabelProps={{
                                         shrink: true,
                                       }}
-                                      value={selectedData.date_received || ""}
+                                      value={
+                                        selectedData.date_received
+                                          ? new Date(selectedData.date_received)
+                                              .toISOString()
+                                              .split("T")[0]
+                                          : ""
+                                      }
                                       onChange={handleInputChange}
                                     />
                                   </Grid>
@@ -1251,7 +1282,7 @@ const AssignSupplier = async () => {
                                       name="package_type"
                                       value={selectedData.package_type || ""}
                                       onChange={handleInputChange}
-                                    />
+                                    />    
                                   </Grid>
                                   <Grid item xs={12} sm={6}>
                                     <TextField
@@ -1280,7 +1311,8 @@ const AssignSupplier = async () => {
                                       variant="outlined"
                                       name="order_costs_to_collect"
                                       value={
-                                        selectedData.order_costs_to_collect || ""
+                                        selectedData.order_costs_to_collect ||
+                                        ""
                                       }
                                       onChange={handleInputChange}
                                     />
@@ -1291,7 +1323,9 @@ const AssignSupplier = async () => {
                                       label="Warehouse Cost"
                                       variant="outlined"
                                       name="order_warehouse_cost"
-                                      value={selectedData.order_warehouse_cost || ""}
+                                      value={
+                                        selectedData.order_warehouse_cost || ""
+                                      }
                                       onChange={handleInputChange}
                                     />
                                   </Grid>
@@ -1329,7 +1363,414 @@ const AssignSupplier = async () => {
                                       onChange={handleInputChange}
                                     />
                                   </Grid>
+                                  <div className="ps-3">
+                                    <div className="row g-2">
+                                      <div className="col-md-6">
+                                        <label>Date</label>
+                                        <input
+                                          type="date"
+                                          className="form-control"
+                                          value={
+                                            selectedData.date_received
+                                              ? selectedData.date_received.split(
+                                                  "T",
+                                                )[0]
+                                              : ""
+                                          }
+                                          name="date_received"
+                                          onChange={handleInputChange}
+                                        />
+                                      </div>
 
+                                      <div className="col-md-6">
+                                        <label>Warehouse Order Id</label>
+                                        <input
+                                          type="type"
+                                          className="form-control"
+                                          value={
+                                            selectedData.warehouse_order_id
+                                          }
+                                          name="warehouse_order_id"
+                                          onChange={handleInputChange}
+                                          placeholder=""
+                                        ></input>
+                                      </div>
+                                      <div className="col-md-6">
+                                        <label>Courier waybill_ref</label>
+                                        <input
+                                          type="type"
+                                          className="form-control"
+                                          value={
+                                            selectedData.courier_waybill_ref
+                                          }
+                                          name="courier_waybill_ref"
+                                          onChange={handleInputChange}
+                                          placeholder=""
+                                        ></input>
+                                      </div>
+                                      <div className="col-md-6">
+                                        <label>Dispatch Date</label>
+                                        <input
+                                          type="date"
+                                          className="form-control"
+                                          value={
+                                            selectedData.dispatch_date
+                                              ? selectedData.dispatch_date.split(
+                                                  "T",
+                                                )[0]
+                                              : ""
+                                          }
+                                          name="dispatch_date"
+                                          onChange={handleInputChange}
+                                        />
+                                      </div>
+                                    </div>
+                                    <h5 className="mt-3 mb-2">
+                                      Package Information
+                                    </h5>
+                                    <div className="row g-2">
+                                      <div className="col-md-6">
+                                        <label>Customer Name</label>
+                                        <input
+                                          className="form-control"
+                                          value={selectedData.customer_name}
+                                          name="customer_name"
+                                          onChange={handleInputChange}
+                                          placeholder="customer name"
+                                        ></input>
+                                      </div>
+                                      <div className="col-md-6">
+                                        <label>Customer ref</label>
+                                        <input
+                                          className="form-control"
+                                          value={selectedData.customer_ref}
+                                          name="customer_ref"
+                                          onChange={handleInputChange}
+                                          placeholder="customer name"
+                                        ></input>
+                                      </div>
+
+                                      <div className="col-md-6">
+                                        <label>Country of Origin</label>
+                                        <select
+                                          name="collection_from"
+                                          value={selectedData.collection_from}
+                                          onChange={handleInputChange}
+                                          className="form-select"
+                                        >
+                                          <option>Select</option>
+                                          {countries &&
+                                            countries.length > 0 &&
+                                            countries.map((item, index) => {
+                                              return (
+                                                <>
+                                                  <option
+                                                    key={index}
+                                                    value={item.id}
+                                                  >
+                                                    {item.name}
+                                                  </option>
+                                                </>
+                                              );
+                                            })}
+                                        </select>
+                                      </div>
+                                      <div className="col-md-6">
+                                        <label> Destination Country</label>
+                                        <select
+                                          name="destination_country"
+                                          value={
+                                            selectedData.destination_country
+                                          }
+                                          onChange={handleInputChange}
+                                          className="form-select"
+                                        >
+                                          <option>Select</option>
+                                          {countries &&
+                                            countries.length > 0 &&
+                                            countries.map((item, index) => {
+                                              return (
+                                                <>
+                                                  <option
+                                                    key={index}
+                                                    value={item.id}
+                                                  >
+                                                    {item.name}
+                                                  </option>
+                                                </>
+                                              );
+                                            })}
+                                        </select>
+                                      </div>
+
+                                      <div className="col-md-6">
+                                        <label>Box Marking</label>
+                                        <input
+                                          className="form-control"
+                                          name="box_marking"
+                                          value={selectedData.box_marking}
+                                          onChange={handleInputChange}
+                                        ></input>
+                                      </div>
+                                      <div className="col-md-6">
+                                        <label>Good Description</label>
+                                        <input
+                                          type="Good Description"
+                                          className="form-control"
+                                          value={selectedData.goods_description}
+                                          name="goods_description"
+                                          onChange={handleInputChange}
+                                          placeholder=""
+                                        ></input>
+                                      </div>
+                                      <div className="col-md-6">
+                                        <label>Packing Type</label>
+                                        <select
+                                          className="form-select"
+                                          value={selectedData.package_type}
+                                          name="package_type"
+                                          onChange={handleInputChange}
+                                          placeholder=""
+                                        >
+                                          <option value="">Select</option>
+                                          <option value="carte">carte</option>
+                                          <option value="pallet">pallet</option>
+                                          <option value="Box">Box</option>
+                                          <option value="Bag">Bag</option>
+                                        </select>
+                                      </div>
+                                      <div className="col-md-6">
+                                        <label>Hazardous </label>
+                                        <select
+                                          className="form-select"
+                                          value={selectedData.hazardous}
+                                          name="hazardous"
+                                          onChange={handleInputChange}
+                                          placeholder=""
+                                        >
+                                          <option value="">Select</option>
+                                          <option value="Yes">Yes</option>
+                                          <option value="No">No</option>
+                                        </select>
+                                      </div>
+                                      {selectedData.hazardous === "Yes" ? (
+                                        <div className="col-md-6">
+                                          <label>
+                                            Description of Hazardous{" "}
+                                          </label>
+                                          <input
+                                            type="type"
+                                            className="form-control"
+                                            value={
+                                              selectedData.hazard_description
+                                            }
+                                            name="hazard_description"
+                                            onChange={handleInputChange}
+                                            placeholder=""
+                                          ></input>
+                                        </div>
+                                      ) : (
+                                        ""
+                                      )}
+                                      <div className="col-md-6">
+                                        <label>Total Package</label>
+                                        <input
+                                          type="text"
+                                          className="form-control"
+                                          value={selectedData.total_packages}
+                                          name="total_packages"
+                                          onChange={handleInputChange}
+                                          placeholder=""
+                                        ></input>
+                                      </div>
+                                      <div className="col-md-6">
+                                        <label>Total Dimension </label>
+                                        <input
+                                          type="text"
+                                          className="form-control"
+                                          value={selectedData.total_cbm}
+                                          name="total_cbm"
+                                          onChange={handleInputChange}
+                                          placeholder=""
+                                        ></input>
+                                      </div>
+                                      <div className="col-lg-12">
+                                        <label>Comment on Packages</label>
+                                        <textarea
+                                          className="w-100 form-control"
+                                          name="package_comment"
+                                          value={selectedData.package_comment}
+                                          placeholder="Other Information"
+                                        ></textarea>
+                                      </div>
+                                    </div>
+                                    <h5 className="mt-3 mb-2">Damaged Goods</h5>
+                                    <div className="row g-2">
+                                      <div className="col-md-6">
+                                        <label>Damaged Goods</label>
+                                        <select
+                                          type="text"
+                                          className="form-select"
+                                          value={selectedData.damaged_goods}
+                                          name="damaged_goods"
+                                          onChange={handleInputChange}
+                                          placeholder=""
+                                        >
+                                          <option value="">Select</option>
+                                          <option value="Yes">Yes</option>
+                                          <option value="No">No</option>
+                                        </select>
+                                      </div>
+                                      <div className="col-md-6">
+                                        <label>Damaged Packed (qty)</label>
+                                        <input
+                                          type="text"
+                                          className="form-control"
+                                          value={selectedData.damaged_pkg_qty}
+                                          name="damaged_pkg_qty"
+                                          onChange={handleInputChange}
+                                        ></input>
+                                      </div>
+                                      {/* <div className="col-md-12">
+                                        <label>Attach File</label>
+                                        <input
+                                          type="file"
+                                          className="form-control"
+                                          
+                                          name="attach_file"
+                                          onChange={handleInputChange}
+                                        ></input>
+                                      </div> */}
+
+                                      <div className="col-md-12">
+                                        <label>Comment on Damaged</label>
+
+                                        <textarea
+                                          className="w-100 form-control"
+                                          name="damage_comment"
+                                          onChange={handleInputChange}
+                                          value={selectedData.damage_comment}
+                                        ></textarea>
+                                      </div>
+                                    </div>
+                                    <h5 className="mt-3 mb-2">
+                                      Supplier Information
+                                    </h5>
+                                    <div className="row g-2">
+                                      <div className="col-md-6">
+                                        <label>Supplier Name (Company)</label>
+                                        <input
+                                          type="text"
+                                          className="form-control"
+                                          value={selectedData.supplier_company}
+                                          name="supplier_company"
+                                          onChange={handleInputChange}
+                                        ></input>
+                                      </div>
+                                      <div className="col-md-6">
+                                        <label>Supplier Name (Person)</label>
+                                        <input
+                                          type="text"
+                                          className="form-control"
+                                          value={selectedData.supplier_person}
+                                          name="supplier_person"
+                                          onChange={handleInputChange}
+                                        ></input>
+                                      </div>
+                                      <div className="col-md-6">
+                                        <label>Supplier Address</label>
+                                        <input
+                                          type="text"
+                                          className="form-control"
+                                          value={selectedData.supplier_address}
+                                          name="supplier_address"
+                                          onChange={handleInputChange}
+                                        ></input>
+                                      </div>
+                                      <div className="col-md-6">
+                                        <label>Supplier Contact</label>
+                                        <input
+                                          type="text"
+                                          className="form-control"
+                                          value={selectedData.supplier_contact}
+                                          name="supplier_contact"
+                                          onChange={handleInputChange}
+                                          placeholder=""
+                                        ></input>
+                                      </div>
+                                    </div>
+                                    <h5 className="mt-3 mb-2">
+                                      Cargo Handeling
+                                    </h5>
+                                    <div className="row g-2">
+                                      <div className="col-md-6">
+                                        <label>Warehouse Storage</label>
+                                        <select
+                                          className="form-select"
+                                          value={selectedData.warehouse_storage}
+                                          name="warehouse_storage"
+                                          onChange={handleInputChange}
+                                          placeholder="customer name"
+                                        >
+                                          <option value="">Select</option>
+                                          <option value="Yes">Yes</option>
+                                          <option value="No">No</option>
+                                        </select>
+                                      </div>
+                                      <div className="col-md-6">
+                                        <label>Handeling Required</label>
+                                        <select
+                                          type="text"
+                                          className="form-select"
+                                          value={selectedData.handling_required}
+                                          name="handling_required"
+                                          onChange={handleInputChange}
+                                          placeholder=""
+                                        >
+                                          <option value="">Select</option>
+                                          <option value="Yes">Yes</option>
+                                          <option value="No">No</option>
+                                        </select>
+                                      </div>
+                                      <div className="col-md-6">
+                                        <label>Handeling cost</label>
+                                        <input
+                                          type="text"
+                                          className="form-control"
+                                          value={selectedData.handling_cost}
+                                          name="handling_cost"
+                                          onChange={handleInputChange}
+                                          placeholder=""
+                                        ></input>
+                                      </div>
+                                      <div className="col-md-6">
+                                        <label>Warehouse Dispatch</label>
+                                        <select
+                                          className="form-select"
+                                          value={
+                                            selectedData.warehouse_dispatch
+                                          }
+                                          name="warehouse_dispatch"
+                                          onChange={handleInputChange}
+                                          placeholder=""
+                                        >
+                                          <option value="">Select</option>
+                                          <option value="Yes">Yes</option>
+                                          <option value="No">No</option>
+                                        </select>
+                                      </div>
+                                      <div className="col-md-12">
+                                        <label>Warehouse Comment</label>
+                                        <textarea
+                                          className="form-control"
+                                          value={selectedData.warehouse_comment}
+                                          name="warehouse_comment"
+                                          onChange={handleInputChange}
+                                          placeholder=""
+                                        ></textarea>
+                                      </div>
+                                    </div>
+                                  </div>
                                   <div className="row mb-3 mt-4">
                                     <div className="col-9 mt-3">
                                       <h4 className="freight_hd">

@@ -28,22 +28,34 @@ const Notification = () => {
   const [batchlist1, setBatchlist1] = useState([]);
   const [batchUserList, setBatchUserList] = useState([]);
   const [selectedUsers, setSelectedUsers] = useState([]);
+  const [totalPage, setTotalPage] = useState(1);
+const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [error, setError] = useState({});
   const titleRef = useRef();
   const messageRef = useRef();
   const documentRef = useRef();
-  const showdata = async () => {
-    try {
-      const response = await axios.post(
-        `${process.env.REACT_APP_BASE_URL}notification-list`,
-      );
-      setData(response?.data?.data || []);
-    } catch (err) {
-      console.error(err);
-      setError("Failed to load notifications");
-    }
-  };
+ const showdata = async (page = 1, search = "") => {
+  try {
+    const payload = {
+      page: page,
+      limit: pageSize,
+      search: search,
+    };
+
+    const response = await axios.post(
+      `${process.env.REACT_APP_BASE_URL}notification-list`,
+      payload
+    );
+
+    setData(response?.data?.data || []);
+    setTotalPage(response?.data?.totalPages || 1);
+
+  } catch (err) {
+    console.error(err);
+    setError("Failed to load notifications");
+  }
+};
   const handledelete = (id) => {
     Swal.fire({
       title: "Are you sure?",
@@ -198,12 +210,12 @@ const Notification = () => {
   const handlePageChange = (page) => {
     setCurrentPage(page);
   };
-  useEffect(() => {
-    showdata();
-  }, []);
-  const totalPage = Math.ceil(data.length / pageSize);
-  const startIndex = (currentPage - 1) * pageSize;
-  const currentdata = data.slice(startIndex, startIndex + pageSize);
+ useEffect(() => {
+  showdata(currentPage, searchQuery);
+}, [currentPage, searchQuery]);
+  // const totalPage = Math.ceil(data.length / pageSize);
+  // const startIndex = (currentPage - 1) * pageSize;
+  // const currentdata = data.slice(startIndex, startIndex + pageSize);
 
   const handleCheckboxChange = (e) => {
     const { name, checked } = e.target;
@@ -215,13 +227,29 @@ const Notification = () => {
         <div className="container-fluid">
           <div className="d-flex justify-content-between align-items-center mb-3">
             <h4>Notification</h4>
+            <div className="d-flex">
+
+            <input
+  type="text"
+  className="py-1 rounded ps-1 mx-2"
+  placeholder="Search"
+  value={searchQuery}
+  onChange={(e) => {
+    setSearchQuery(e.target.value);
+    setCurrentPage(1); // reset page on search
+  }}
+/>
+  <div>
+
             <button
               data-bs-toggle="modal"
               data-bs-target="#exampleModal"
               className="btn btn-primary"
-            >
+              >
               Send Notification
             </button>
+                </div>
+              </div>
           </div>
           <div className="modal fade" id="exampleModal" tabIndex="-1">
             <div className="modal-dialog modal-dialog-centered">
@@ -423,7 +451,7 @@ const Notification = () => {
                 </tr>
               </thead>
               <tbody>
-                {currentdata.map((item, index) => {
+                {data.map((item, index) => {
                   const date = new Date(item?.created_at);
                   const formattedDate = date.toLocaleDateString("en-GB", {
                     day: "numeric",
@@ -432,7 +460,7 @@ const Notification = () => {
                   });
                   return (
                     <tr key={item.id}>
-                      <td>{startIndex + index + 1}</td>
+                    <td>{(currentPage - 1) * pageSize + index + 1}</td>
                       <td>{item.title}</td>
                       <td
                         dangerouslySetInnerHTML={{
@@ -467,7 +495,7 @@ const Notification = () => {
               </tbody>
             </table>
             <div className="text-center d-flex justify-content-end align-items-center">
-              <button
+              {/* <button
                 disabled={currentPage === 1}
                 onClick={() => handlePageChange(currentPage - 1)}
                 className="bg_page"
@@ -481,7 +509,26 @@ const Notification = () => {
                 className="bg_page"
               >
                   <i class="fi fi-rr-angle-small-right page_icon"></i>
-              </button>
+              </button> */}
+              <button
+  disabled={currentPage === 1}
+   className="bg_page"
+  onClick={() => setCurrentPage(currentPage - 1)}
+>
+  <i class="fi fi-rr-angle-small-left page_icon"></i>
+</button>
+
+<span>
+  Page {currentPage} of {totalPage}
+</span>
+
+<button
+ className="bg_page"
+  disabled={currentPage === totalPage}
+  onClick={() => setCurrentPage(currentPage + 1)}
+>
+  <i class="fi fi-rr-angle-small-right page_icon"></i>
+</button>
             </div>
           </div>
         </div>

@@ -1,22 +1,6 @@
-// import React from 'react'
-
-// export default function ClientKpiModule() {
-//   return (
-//     <div className="wpWrapper">
-//         <div className="container-fluid">
-//       ClientKPIModule
-//     </div>
-//     </div>
-//   )
-// }
 import axios from "axios";
 import React, { useEffect, useState } from "react";
-import { AiFillDelete } from "react-icons/ai";
 import { toast, ToastContainer } from "react-toastify";
-import Swal from "sweetalert2";
-import { Box, Button, Modal } from "@mui/material";
-import { FaEdit } from "react-icons/fa";
-import CloseIcon from "@mui/icons-material/Close";
 const pageSize = 10;
 export default function ClientKpiModule() {
   const [currentPage, setCurrentPage] = useState(1);
@@ -24,42 +8,38 @@ export default function ClientKpiModule() {
   const [countruies, setCountruies] = useState([]);
   const [loader, setLoader] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isModalOpen2, setIsModalOpen2] = useState(false);
   const [pagenationData, setPagenationData] = useState(1);
-
-
   // ---------------- FETCH DATA ----------------
-  const getdata = async (page = 1, search = "") => {
-    try {
-      setLoader(true);
+ const getdata = async (page = 1, search = "") => {
+  try {
+    setLoader(true);
 
-      const payload = {
-        page: page,
-        limit: pageSize,
-        search: search,
-      };
+    const response = await axios.get(
+      `${process.env.REACT_APP_BASE_URL}ClientKPIModule`,
+      {
+        params: {
+          page: page,
+          limit: pageSize,
+          search: search,
+        },
+      }
+    );
 
-      const response = await axios.get(
-        `${process.env.REACT_APP_BASE_URL}ClientKPIModule`,
-        payload
-      );
-      console.log(response.data.data)
-      setData(response.data.data);
-      setPagenationData(response.data);
-    } catch (error) {
-      toast.error("Error fetching suppliers");
-    } finally {
-      setLoader(false);
-    }
-  };
+    console.log(response.data.data);
 
+    setData(response.data.data);
+    setPagenationData(response.data.pagination);
+
+  } catch (error) {
+    toast.error("Error fetching suppliers");
+  } finally {
+    setLoader(false);
+  }
+};
 useEffect(() => {
   getdata(currentPage, searchQuery);
-}, []);
-
-  const totalPages = Math.ceil(pagenationData.total / pagenationData.limit);
-
+}, [currentPage, searchQuery]);
+const totalPages = pagenationData?.totalPages || 1;
   const getcountry = () => {
     axios
       .get(`${process.env.REACT_APP_BASE_URL}GetCountries`)
@@ -70,7 +50,6 @@ useEffect(() => {
         toast.error("Country fetch failed");
       });
   };
-
   useEffect(() => {
     getcountry();
   }, []);
@@ -81,7 +60,6 @@ useEffect(() => {
     getdata(1, value); 
   };
   return (
-    <>
       <>
         <div className="wpWrapper">
           <div className="container-fluid">
@@ -95,12 +73,6 @@ useEffect(() => {
                   value={searchQuery}
                   onChange={handleSearch}
                 />
-                {/* <button
-                  className="btn btn-primary ms-2"
-                  onClick={() => setIsModalOpen(true)}
-                >
-                  Add Customs Agent
-                </button> */}
               </div>
             </div>
             {/* ---------------- TABLE ---------------- */}
@@ -125,7 +97,7 @@ useEffect(() => {
                   <tbody>
                     {data.map((item, index) => (
                       <tr key={index}>
-                        <td>{index + 1}</td>
+                       <td>{(currentPage - 1) * pageSize + index + 1}</td>
                         <td>{item.full_name}</td>
                         <td>{item.total_freight}</td>
                         <td>{item.total_orders}</td>
@@ -135,7 +107,6 @@ useEffect(() => {
                     ))}
                   </tbody>
                 </table>
-                {/* PAGINATION */}
                 <div className="d-flex justify-content-end align-items-end my-3">
                   <button
                     disabled={currentPage === 1}
@@ -147,11 +118,9 @@ useEffect(() => {
                   >
                       <i class="fi fi-rr-angle-small-left page_icon"></i>
                   </button>
-
                   <span className="mx-2">
                     Page {currentPage} of {totalPages}
                   </span>
-
                   <button
                     disabled={currentPage === totalPages}
                       className="bg_page"
@@ -169,6 +138,5 @@ useEffect(() => {
         </div>
         <ToastContainer />
       </>
-    </>
   );
 }

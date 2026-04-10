@@ -97,6 +97,7 @@ import TaskManagerstaff from "./pages/TaskManagerstaff";
 import TaskDetails from "./pages/TaskDetails";
 import Profilesection from "./pages/Profilesection";
 import ClientKpiModule from "./pages/ClientKpiModule";
+import KPIgetdatauser from "./pages/KPIgetdatauser";
 const Dashboard = lazy(() => import("./pages/Dashboard"));
 const Users = lazy(() => import("./pages/Users"));
 const Messages = lazy(() => import("./pages/Messages"));
@@ -244,6 +245,11 @@ export default function App() {
                   index
                   path="/Admin/staff-details"
                   element={<StaffDetails />}
+                />
+                <Route
+                  index
+                  path="/Admin/KPIgetdatauser"
+                  element={<KPIgetdatauser />}
                 />
                 <Route
                   index

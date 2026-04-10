@@ -125,7 +125,7 @@ const UserPermission = ({ staffId }) => {
           <div class="content">
     <div class="row">
             <div class="col-lg-3" 
-            onClick={() => { navigate('/Admin/KPIDashboard') }}
+            onClick={() => { navigate('/Admin/KPIgetdatauser',{state:{staffId: staffId}}) }}
             >
               <div class="cardDash">
                 <h4 className="hd_dash">Leave</h4>

@@ -83,7 +83,6 @@ export default function Managefreight() {
     assign_to_transporter: "",
     assign_warehouse: "",
     assign_to_clearing: "",
-    send_to_warehouse: "",
     shipment_ref: "",
     shipment_origin: "",
     shipment_des: "",
@@ -95,7 +94,6 @@ export default function Managefreight() {
     client_quoted: "",
     product_desc: "",
     send_to_warehouse: "",
-    assign_to_clearing: "",
     cargo_pickup: "",
     sales_representative: "",
   });
@@ -194,7 +192,6 @@ export default function Managefreight() {
     try {
       const postdata = {
         staff_id: userid,
-
         route_url: "/freight-list",
         user_type: usertype,
       };
@@ -228,9 +225,11 @@ export default function Managefreight() {
       toast.error("You don't have permission to access this page");
     }
   };
-  useEffect(() => {
-    frightData();
-  }, []);
+useEffect(() => {
+  if (userid && usertype) {
+    frightData(currentPage);
+  }
+}, [userid, usertype, currentPage]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -273,7 +272,7 @@ export default function Managefreight() {
             })
             .then((response) => {
               toast.success(response.data.message);
-              frightData();
+               frightData(currentPage);
             })
             .catch((error) => {
               toast.error(error.response.data.message);
@@ -291,6 +290,7 @@ export default function Managefreight() {
   };
   /////////////////////////////////////////update freight///////////////////////////////////////////
   const handleupdate = async (freight_id) => {
+    console.log(freight_id);
     const payload = {
       freight_id: freight_id,
     };
@@ -299,78 +299,32 @@ export default function Managefreight() {
         `${process.env.REACT_APP_BASE_URL}freight-list-byId`,
         payload,
       );
-
       if (response?.data?.data?.length > 0) {
         console.log(response.data.data[0]);
-        // setGetUSer(response.data.data[0]);
         setInputdata(response.data.data[0]);
       }
     } catch (error) {
       console.error("Error fetching freight data by id:", error);
     }
-    // const setUSer = data.filter((item) => item.freight_id === freight_id);
-    // const getUSer = setUSer[0];
-    // console.log(getUSer);
-    // setInputdata({
-    //   freight_id: freight_id,
-    //   client_ref: getUSer.client_ref,
-    //   type: getUSer.type,
-    //   freight: getUSer.freight,
-    //   incoterm: getUSer.incoterm,
-    //   dimension: getUSer.dimension,
-    //   weight: getUSer.weight,
-    //   comment: getUSer.comment,
-    //   fcl_lcl: getUSer.fcl_lcl,
-    //   no_of_packages: getUSer.no_of_packages,
-    //   package_type: getUSer.package_type,
-    //   commodity: getUSer.commodity,
-    //   hazardous: getUSer.hazardous,
-    //   country_of_origin: getUSer.collection_from,
-    //   destination_country: getUSer.delivery_to,
-    //   supplier_address: getUSer.supplier_address,
-    //   port_of_loading: getUSer.port_of_loading,
-    //   post_of_discharge: getUSer.post_of_discharge,
-    //   place_of_delivery: getUSer.place_of_delivery,
-    //   transit_time: getUSer.transit_time,
-    //   add_attachments: getUSer.add_attachments,
-    //   nature_of_hazard: getUSer.nature_of_hazard,
-    //   volumetric_weight: getUSer.volumetric_weight,
-    //   shipment_ref: getUSer.shipment_ref,
-    //   assign_for_estimate: getUSer.assign_for_estimate,
-    //   assign_to_transporter: getUSer.assign_to_transporter,
-    //   assign_warehouse: getUSer.assign_warehouse,
-    //   assign_to_clearing: getUSer.assign_to_clearing,
-    //   send_to_warehouse: getUSer.send_to_warehouse,
-    //   shipment_origin: getUSer.shipment_origin,
-    //   shipment_des: getUSer.shipment_des,
-    //   priority: getUSer.priority,
-    //   is_active: getUSer.is_active,
-    //   ready_for_collection: getUSer.ready_for_collection,
-    //   quote_received: getUSer.quote_received,
-    //   client_quoted: getUSer.client_quoted,
-    //   insurance: getUSer.insurance,
-    //   product_desc: getUSer.product_desc,
-    //   client_ref_name: getUSer.client_ref_name,
-    //   document: getUSer.add_attachment_file,
-    //   shipper_name: getUSer.shipper_name,
-    //   supplier_address: getUSer.supplier_address,
-    //   sales_representative: getUSer.sales_id,
-    // });
   };
   const handleupdateapi = (e) => {
     const { name, value } = e.target;
-    setInputdata({ ...inputdata, [name]: value });
+    setInputdata((prev) => ({
+  ...prev,
+  [name]: value,
+}));
   };
   let today = new Date();
   let year = today.getFullYear();
   let month = String(today.getMonth() + 1).padStart(2, "0"); // Months are 0-based, so add 1
   let day = String(today.getDate()).padStart(2, "0");
   let formattedDate = `${year}-${month}-${day}`;
-  const handleupdateapipost = (freight_id) => {
+
+   const handleupdateapipost = (freight_id) => {
     console.log(inputdata.client_ref);
     const formdata = new FormData();
     formdata.append("date", formattedDate);
-    formdata.append("id", inputdata?.freight_id);
+    formdata.append("id", inputdata.freight_id);
     formdata.append("client_ref", inputdata.client_ref);
     formdata.append("type", inputdata.type);
     formdata.append("freight", inputdata.freight);
@@ -401,7 +355,7 @@ export default function Managefreight() {
       "volumetric_weight",
       inputdata.dimension
         ? 167 * inputdata.dimension
-        : inputdata.volumetric_weight,
+        : inputdata.volumetric_weight
     );
     formdata.append("assign_for_estimate", inputdata.assign_for_estimate);
     formdata.append("add_attachments", inputdata.add_attachments);
@@ -413,18 +367,18 @@ export default function Managefreight() {
     formdata.append("shipment_origin", inputdata.shipment_origin);
     formdata.append("shipment_des", inputdata.shipment_des);
     formdata.append("product_desc", inputdata.product_desc);
-    formdata.append("shipper_name", inputdata.shipper_name);
-    formdata.append("supplier_address", inputdata.supplier_address);
     formdata.append("client_ref_name", inputdata.client_ref_name);
     formdata.append("cargo_pickup", inputdata.cargo_pickup);
     formdata.append("sales_representative", inputdata.sales_representative);
     formdata.append("documentName", inputdata.documentName);
-    selectedDocs.forEach((doc) => {
-      doc.files.forEach((file) => {
-        formdata.append(doc.name, file); // 👈 each file append
-        console.log("File:", file.name, "| Size:", file.size, "bytes");
-      });
-    });
+     selectedDocs.forEach((doc) => {
+       doc.files.forEach((file) => {
+         formdata.append(doc.name, file);  
+         console.log("File:", file.name, "| Size:", file.size, "bytes");
+       });
+     });
+  
+    console.log(formdata);
     axios
       .post(`${process.env.REACT_APP_BASE_URL}edit-freight`, formdata)
       .then((response) => {
@@ -432,7 +386,7 @@ export default function Managefreight() {
         console.log(response.data.message);
         if (response.data.success === true) {
           setLoader(false);
-          getFreightWithoutpermission();
+          frightData(currentPage);
           toast.success(response.data.message);
         }
         return 0;
@@ -442,6 +396,84 @@ export default function Managefreight() {
         toast.error(error.response?.data || "An error occurred");
       });
   };
+  // const handleupdateapipost =async (freight_id) => {
+  //   console.log(inputdata.client_ref);
+  //   const formdata = new FormData();
+  //   formdata.append("date", formattedDate);
+  //   formdata.append("id", inputdata?.freight_id);
+  //   formdata.append("client_ref", inputdata.client_ref);
+  //   formdata.append("type", inputdata.type);
+  //   formdata.append("freight", inputdata.freight);
+  //   formdata.append("incoterm", inputdata.incoterm);
+  //   formdata.append("dimension", inputdata.dimension);
+  //   formdata.append("weight", inputdata.weight);
+  //   formdata.append("quote_received", inputdata.quote_received);
+  //   formdata.append("client_quoted", inputdata.client_quoted);
+  //   formdata.append("is_active", inputdata.is_active);
+  //   formdata.append("destination_country", inputdata.destination_country);
+  //   formdata.append("comment", inputdata.comment);
+  //   formdata.append("no_of_packages", inputdata.no_of_packages);
+  //   formdata.append("fcl_lcl", inputdata.fcl_lcl);
+  //   formdata.append("package_type", inputdata.package_type);
+  //   formdata.append("insurance", inputdata.insurance);
+  //   formdata.append("commodity", inputdata.commodity);
+  //   formdata.append("hazardous", inputdata.hazardous);
+  //   formdata.append("country_of_origin", inputdata.country_of_origin);
+  //   formdata.append("supplier_address", inputdata.supplier_address);
+  //   formdata.append("port_of_loading", inputdata.port_of_loading);
+  //   formdata.append("post_of_discharge", inputdata.post_of_discharge);
+  //   formdata.append("place_of_delivery", inputdata.place_of_delivery);
+  //   formdata.append("ready_for_collection", inputdata.ready_for_collection);
+  //   formdata.append("transit_time", inputdata.transit_time);
+  //   formdata.append("priority", inputdata.priority);
+  //   formdata.append("nature_of_hazard", inputdata.nature_of_hazard);
+  //   formdata.append(
+  //     "volumetric_weight",
+  //     inputdata.dimension
+  //       ? 167 * inputdata.dimension
+  //       : inputdata.volumetric_weight,
+  //   );
+  //   formdata.append("assign_for_estimate", inputdata.assign_for_estimate);
+  //   formdata.append("add_attachments", inputdata.add_attachments);
+  //   formdata.append("assign_to_transporter", inputdata.assign_to_transporter);
+  //   formdata.append("assign_warehouse", inputdata.assign_warehouse);
+  //   formdata.append("assign_to_clearing", inputdata.assign_to_clearing);
+  //   formdata.append("shipment_ref", inputdata.shipment_ref);
+  //   formdata.append("send_to_warehouse", inputdata.send_to_warehouse);
+  //   formdata.append("shipment_origin", inputdata.shipment_origin);
+  //   formdata.append("shipment_des", inputdata.shipment_des);
+  //   formdata.append("product_desc", inputdata.product_desc);
+  //   formdata.append("shipper_name", inputdata.shipper_name);
+  //   formdata.append("supplier_address", inputdata.supplier_address);
+  //   formdata.append("client_ref_name", inputdata.client_ref_name);
+  //   formdata.append("cargo_pickup", inputdata.cargo_pickup);
+  //   formdata.append("sales_representative", inputdata.sales_representative);
+  //   formdata.append("documentName", inputdata.documentName);
+  //   selectedDocs.forEach((doc) => {
+  //     doc.files.forEach((file) => {
+  //       formdata.append(doc.name, file); // 👈 each file append
+  //       console.log("File:", file.name, "| Size:", file.size, "bytes");
+  //     });
+  //   });
+  // await  axios.post(`${process.env.REACT_APP_BASE_URL}edit-freight`, formdata)
+  //     .then((response) => {
+  //       setLoader(true);
+  //       console.log(response.data.message);
+  //       if (response.data.success === true) {
+  //         // getFreightWithoutpermission();
+  //         setLoader(true);
+  //       frightData(currentPage);
+  //         // postData()
+  //         setLoader(false);
+  //         toast.success(response.data.message);
+  //       }
+        
+  //     })
+  //     .catch((error) => {
+  //       console.error(error.response);
+  //       toast.error(error.response?.data || "An error occurred");
+  //     });
+  // };
   //////////////////////////////////////get app api////////////////////////////////////////////////////
   const clientlist = () => {
     axios
@@ -591,7 +623,7 @@ export default function Managefreight() {
         })
         .then((response) => {
           toast.success(response.data.message);
-          frightData();
+          frightData(currentPage);
         })
         .catch((error) => {
           toast.error(error.response.data.message);
@@ -698,21 +730,6 @@ export default function Managefreight() {
     setSearchQuery(value);
     setCurrentPage(1);
   };
-  // useEffect(() => {
-  //   const timer = setTimeout(() => {
-  //     freightData1(searchQuery);
-  //   }, 500);
-
-  //   return () => clearTimeout(timer);
-  // }, [searchQuery]);
-  // const handleSearch = (e) => {
-  //   const value = e.target.value;
-
-  //   setSearchQuery(value);
-  //   setCurrentPage(1);
-
-  //   throttledSearch(value); // ✅ throttled call
-  // };
 
   const throttle = (func, delay) => {
     let lastCall = 0;
@@ -762,7 +779,7 @@ export default function Managefreight() {
       .post(`${process.env.REACT_APP_BASE_URL}status-Freight`, data123)
       .then((response) => {
         toast.success(response.data.message);
-        frightData();
+        frightData(currentPage);
       })
       .catch((error) => {
         console.log(error.response.data);
@@ -890,7 +907,7 @@ export default function Managefreight() {
       );
       console.log(response.data);
       toast.success(response.data.message);
-      frightData();
+      frightData(currentPage);
       setOpenmodalAssignFreight(false);
     } catch (error) {
       toast.error(error.response.data.message);
@@ -933,10 +950,6 @@ export default function Managefreight() {
   const querryinQuote = (item) => {
     console.log("item", item);
     navigate("/Admin/QuotationInFreightCostumer", { state: { data: item } });
-  };
-  const querryinQChat = (item) => {
-    console.log("item", item);
-    navigate("/Admin/QuotationInFreightSupplier", { state: { data: item } });
   };
 
   return (
@@ -2016,6 +2029,18 @@ export default function Managefreight() {
                                               </div>
                                               <div className="">
                                                 <div className="row borderShip">
+                                                  <div className=" col-lg-6  mb-3">
+                                                    <label>
+                                                      Product Description
+                                                    </label>
+                                                    <input
+                                                      name="product_desc"
+                                                      value={
+                                                        inputdata.product_desc
+                                                      }
+                                                      onChange={handleupdateapi}
+                                                    ></input>
+                                                  </div>
                                                   <div className="col-lg-6 mb-3">
                                                     <label>Package Type</label>
                                                     <br />

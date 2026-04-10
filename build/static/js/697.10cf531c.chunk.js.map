@@ -1,0 +1,1 @@
+{"version":3,"file":"static/js/697.10cf531c.chunk.js","mappings":"oJAAA,MAIA,EAJcA,KACLC,EAAAA,EAAAA,KAAA,OAAKC,UAAU,QAAOC,SAAC,U","sources":["pages/Users.jsx"],"sourcesContent":["const Users = () => {\n  return <div className=\"title\"> Users</div>;\n};\n\nexport default Users;\n"],"names":["Users","_jsx","className","children"],"sourceRoot":""}

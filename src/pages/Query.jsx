@@ -15,18 +15,26 @@ const [showDropdown, setShowDropdown] = useState(false);
   const [dataDispute, setDataDispute] = useState("");
     const [modalid, setModalid] = useState(null);
   const [data, setData] = useState({});
+  const [totalPage, setTotalPage] = useState(1);
+const [loader, setLoader] = useState(false);
   const [isModalOpen1, setIsModalOpen1] = useState(false);
   const [modalOpendAdd, setModalOpendAdd] = useState(false);
   const [supplierdata, setSupplierdata] = useState([]);
-  useEffect(() => {
-    getclientlistr();
-  }, []);
-  const getclientlistr = () => {
+ useEffect(() => {
+  getclientlistr(currentPage, searchQuery);
+}, [currentPage, searchQuery]);
+  const getclientlistr = (page = 1, search = "") => {
+      const payload = {
+      page: page,
+      limit: pageSize,
+      search: search,
+    };
     axios
-      .get(`${process.env.REACT_APP_BASE_URL}getQueries`)
+      .post(`${process.env.REACT_APP_BASE_URL}getQueries`,payload)
       .then((response) => {
         console.log(response.data.data);
         // setLoader(false);
+           setTotalPage(response?.data?.totalPages || 1);
         setSupplierdata(response.data.data);
       })
       .catch((error) => {
@@ -51,7 +59,7 @@ const [showDropdown, setShowDropdown] = useState(false);
         axios
           .post(`${process.env.REACT_APP_BASE_URL}deleteQueries`, data1)
           .then((response) => {
-            getclientlistr();
+        getclientlistr(currentPage, searchQuery);
             toast.success(response.data.message);
           })
           .catch((error) => {
@@ -72,10 +80,7 @@ const [showDropdown, setShowDropdown] = useState(false);
     console.log(item);
     return item?.name?.toLowerCase()?.includes(searchQuery.toLowerCase());
   });
-  const totalPage = Math.ceil(filteredData.length / pageSize);
-  const startIndex = (currentPage - 1) * pageSize;
-  const endIndex = startIndex + pageSize;
-  const currentdata = filteredData.slice(startIndex, endIndex);
+
   const handledit = (id) => {
     setModalid(id);
     setIsModalOpen1(true);
@@ -184,7 +189,7 @@ const handleclickapi1 = async () => {
       setDataDispute({});
       setClientSearch("");
       setClientList([]);
-      getclientlistr(); // refresh table
+     getclientlistr(currentPage, searchQuery);// refresh table
     } else {
       toast.error(response.data.message || "Failed to add query");
     }
@@ -193,8 +198,6 @@ const handleclickapi1 = async () => {
     toast.error("Something went wrong");
   }
 };
-
-
   return (
     <>
       <div className="wpWrapper">
@@ -207,10 +210,23 @@ const handleclickapi1 = async () => {
                     <div className="">
                       <h4 className="freight_hd">Customer Query</h4>
                     </div>
+                    <div className="d-flex">
+
+                    <input
+                     className="py-1 rounded ps-1"
+                     type="text"
+                     placeholder="Search by name"
+                     value={searchQuery}
+                     onChange={(e) => {
+                       setSearchQuery(e.target.value);
+                       setCurrentPage(1);
+                      }}
+/>
                     <div className="">
                       <button className="freight_hd" onClick={handleclickopen}>
                         Add Dispute
                       </button>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -232,9 +248,9 @@ const handleclickapi1 = async () => {
                     </tr>
                   </thead>
                   <tbody style={{ border: "none" }}>
-                    {currentdata &&
-                      currentdata.length > 0 &&
-                      currentdata.map((item, index) => {
+                    {supplierdata &&
+                      supplierdata.length > 0 &&
+                      supplierdata.map((item, index) => {
                         return (
                           <>
                             <tr className="border-bottom" key={index}>

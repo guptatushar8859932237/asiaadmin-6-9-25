@@ -1,48 +1,3 @@
-// import { useState } from "react";
-// import { useNavigate } from "react-router-dom"
-// export default function Profilesection() {
-//   const navigaet = useNavigate()
-//   const [activeCard, setActiveCard] = useState("leave");
-//   return (
-//     <>
-//     <div class="wpWrapper">
-//       <div className="container-fluid">
-// <div className="mt-4">
-//   {activeCard === "leave" && (
-//      <div className="wpWrapper">
-//         <div className="container-fluid">
-//       <h5>Leave Data</h5>
-//       <p>Here is leave related data...</p>
-//     </div>
-//     </div>
-//   )}
-
-//   {activeCard === "conversion" && (
-//     <div className="card p-3">
-//       <h5>Conversion Data</h5>
-//       <p>Here is conversion related data...</p>
-//     </div>
-//   )}
-
-//   {activeCard === "feedback" && (
-//     <div className="card p-3">
-//       <h5>Feedback Data</h5>
-//       <p>Here is feedback related data...</p>
-//     </div>
-//   )}
-
-//   {activeCard === "rating" && (
-//     <div className="card p-3">
-//       <h5>Rating Data</h5>
-//       <p>Here is rating related data...</p>
-//     </div>
-//   )}
-// </div>
-// </div>
-// </div>
-//   </>
-//   )
-// }
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { AiFillDelete } from "react-icons/ai";
@@ -275,6 +230,8 @@ const formdata={
                       <th> Leave From</th>
                       <th>Leave To</th>
                       <th>Reason</th>
+                      <th>Remark</th>
+                      <th>Status</th>
                       <th>Action</th>
                     </tr>
                   </thead>
@@ -285,15 +242,17 @@ const formdata={
                         <td>{ item.leave_from.split('T')[0] }</td>
                         <td>{item.leave_to.split('T')[0]}</td>
                         <td>{item.reason}</td>
+                        <td>{item?.admin_remark}</td>
+                        <td>{item?.status===0 ? "Pending" : item.status===1 ? "Approved" : "Rejected"}</td>
                         <td>
-                          <FaEdit
+                          {/* <FaEdit
                             onClick={() => openModal2(item.id)}
                             style={{
                               color: "#1b2245",
                               marginRight: "10px",
                               cursor: "pointer",
                             }}
-                          />
+                          /> */}
                           <AiFillDelete
                             className="text-danger"
                             style={{ cursor: "pointer" }}

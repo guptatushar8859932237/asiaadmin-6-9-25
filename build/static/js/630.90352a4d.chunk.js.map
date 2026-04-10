@@ -1,0 +1,1 @@
+{"version":3,"file":"static/js/630.90352a4d.chunk.js","mappings":"oJAAA,MAIA,EAJoBA,KACXC,EAAAA,EAAAA,KAAA,OAAKC,UAAU,QAAOC,SAAC,iB","sources":["pages/FileManager.jsx"],"sourcesContent":["const FileManager = () => {\n  return <div className=\"title\"> File Manager</div>;\n};\n\nexport default FileManager;\n"],"names":["FileManager","_jsx","className","children"],"sourceRoot":""}

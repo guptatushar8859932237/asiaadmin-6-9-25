@@ -467,7 +467,7 @@ export default function SupplierWarehouse() {
   };
   useEffect(() => {
     getcountry();
-    allOrder();
+    // allOrder();
   }, []);
   const getcountry = () => {
     axios
@@ -526,10 +526,11 @@ export default function SupplierWarehouse() {
     const { name, value } = e.target;
     setProdata({ ...prodata, [name]: value });
   };
-  const allOrder = async () => {
+  const allOrder = async (client_id) => {
+      console.log(client_id);
     try {
       const response = await axios.get(
-        `${process.env.REACT_APP_BASE_URL}AllOrderNumbers`,
+        `${process.env.REACT_APP_BASE_URL}AllOrderNumbers?client_id=${client_id.client_id}`,
       );
       if (response.data.success) {
         setOrderDatap(response.data.data);
@@ -1379,6 +1380,9 @@ export default function SupplierWarehouse() {
                                                 ? newValue.id
                                                 : "",
                                             },
+                                          });
+                                          allOrder({
+                                            client_id: newValue ? newValue.id : "",
                                           });
                                         }}
                                         isOptionEqualToValue={(option, value) =>

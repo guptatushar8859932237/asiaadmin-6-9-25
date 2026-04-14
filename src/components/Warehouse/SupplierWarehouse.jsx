@@ -859,7 +859,7 @@ export default function SupplierWarehouse() {
                                               className="client_nm"
                                               style={{ fontSize: "16px" }}
                                             >
-                                              {item?.warehouse_name} /{" "}
+                                              {item?.warehouse_name} {item.supplier_name? "/":""}{" "}
                                               {item.supplier_name}
                                             </p>
                                           </div>

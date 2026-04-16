@@ -1210,7 +1210,31 @@ export default function WarehouseOrder() {
                             </div>
                             {selectedData && (
                               <form onSubmit={handleSubmit} className="pt-3">
-                                <Grid container spacing={2}>
+                           <Grid container spacing={2}>
+                            <Grid
+                                    item
+                                    xs={12}
+                                    sm={6}
+                                    className="warehouse_ord"
+                                  >
+                                        <TextField
+                                          className="form-control"
+                                          value={selectedData.customer_name}
+                                          name="customer_name"
+                                          onChange={handleInputChange}
+                                          placeholder="customer name"
+                                        />
+                                  
+                                        <TextField
+                                          className="form-control"
+                                          value={selectedData.customer_ref}
+                                          name="customer_ref"
+                                          onChange={handleInputChange}
+                                          placeholder="customer name"
+                                        />
+                                         </Grid>
+                                         </Grid>
+                                        <Grid container spacing={2}>
                                   <Grid
                                     item
                                     xs={12}
@@ -1419,7 +1443,7 @@ export default function WarehouseOrder() {
                                       Package Information
                                     </h5>
                                     <div className="row g-2">
-                                    
+                                   
 
                                       <div className="col-md-6">
                                         <label>Country of Origin</label>

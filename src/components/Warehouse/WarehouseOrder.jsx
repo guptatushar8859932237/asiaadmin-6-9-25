@@ -1419,26 +1419,7 @@ export default function WarehouseOrder() {
                                       Package Information
                                     </h5>
                                     <div className="row g-2">
-                                      <div className="col-md-6">
-                                        <label>Customer Name</label>
-                                        <TextField
-                                          className="form-control"
-                                          value={selectedData.customer_name}
-                                          name="customer_name"
-                                          onChange={handleInputChange}
-                                          placeholder="customer name"
-                                        />
-                                      </div>
-                                      <div className="col-md-6">
-                                        <label>Customer ref</label>
-                                        <TextField
-                                          className="form-control"
-                                          value={selectedData.customer_ref}
-                                          name="customer_ref"
-                                          onChange={handleInputChange}
-                                          placeholder="customer name"
-                                        />
-                                      </div>
+                                    
 
                                       <div className="col-md-6">
                                         <label>Country of Origin</label>

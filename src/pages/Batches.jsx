@@ -69,7 +69,8 @@ export default function Batches() {
   const getdata = (page) => {
     setLoader(true);
     const payload = {
-      page: page}
+      page: page,
+      search: querry, }
     axios
       .post(`${process.env.REACT_APP_BASE_URL}NewGetAllBatch`,payload)
       .then((response) => {
@@ -83,18 +84,25 @@ export default function Batches() {
         console.log(error.response.data);
       });
   };
-  useEffect(() => {
-    getdata();
-  }, []);
+useEffect(() => {
+  const delayDebounce = setTimeout(() => {
+    getdata(1);
+  }, 800);
+
+  return () => clearTimeout(delayDebounce);
+}, [querry]);
   const openModal = () => {
     navigate("/Admin/AddBatch");
   };
   const closeModal = () => {
     setIsModalOpen(false);
   };
-  const handlechnage = (e) => {
-    setQuerry(e.target.value);
-  };
+ const handlechnage = (e) => {
+  const value = e.target.value;
+  setQuerry(value);
+
+  getdata(1); // 👈 call API when typing
+};
   const handlekey = (e) => {
     if (e.charCode < 48 || e.charCode > 57) {
       e.preventDefault();
@@ -676,7 +684,27 @@ export default function Batches() {
                   </Button>
                 </Box>
               </Modal>
-              <Modal
+             
+              <ToastContainer />
+              <div className="text-center d-flex justify-content-end align-items-center mt-3">
+                <button
+                  disabled={currentPage === 1}
+                  className="bg_page"
+                  onClick={() => handlePageChange(currentPage - 1)}
+                >
+                  <i class="fi fi-rr-angle-small-left page_icon"></i>
+                </button>
+                <span className="mx-2">{`Page ${currentPage} of ${totalPages}`}</span>
+                <button
+                  disabled={currentPage === totalPages}
+                  className="bg_page"
+                  onClick={() => handlePageChange(currentPage + 1)}
+                >
+                  <i class="fi fi-rr-angle-small-right page_icon"></i>
+                </button>
+              </div>
+            </div>
+             <Modal
                 open={isModalOpen2}
                 onClose={closeModal2}
                 aria-labelledby="modal-modal-title"
@@ -1474,25 +1502,6 @@ export default function Batches() {
                   </div>
                 </Box>
               </Modal>
-              <ToastContainer />
-              <div className="text-center d-flex justify-content-end align-items-center mt-3">
-                <button
-                  disabled={currentPage === 1}
-                  className="bg_page"
-                  onClick={() => handlePageChange(currentPage - 1)}
-                >
-                  <i class="fi fi-rr-angle-small-left page_icon"></i>
-                </button>
-                <span className="mx-2">{`Page ${currentPage} of ${totalPages}`}</span>
-                <button
-                  disabled={currentPage === totalPages}
-                  className="bg_page"
-                  onClick={() => handlePageChange(currentPage + 1)}
-                >
-                  <i class="fi fi-rr-angle-small-right page_icon"></i>
-                </button>
-              </div>
-            </div>
           </div>
         </div>
       )}

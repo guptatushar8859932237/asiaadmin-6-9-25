@@ -315,6 +315,7 @@ export default function WarehouseOrder() {
     formdata1.append("date_received", selectedData.date_received);
     formdata1.append("package_type", selectedData.package_type);
     formdata1.append("no_of_packages", selectedData.no_of_packages);
+    formdata1.append("customer_name", selectedData.customer_name);
     formdata1.append("total_dimension", selectedData.total_dimension);
     formdata1.append("goods_description", selectedData.goods_description);
     formdata1.append("weight", selectedData.weight);
@@ -322,14 +323,13 @@ export default function WarehouseOrder() {
     formdata1.append("warehouse_cost", selectedData.order_warehouse_cost);
     formdata1.append("warehouse_dispatch", selectedData.warehouse_dispatch);
     formdata1.append("cost_to_dispatch", selectedData.cost_to_dispatch);
-    formdata1.append("dispatch_date", selectedData.dispatch_date);
+    formdata1.append("dispatched_date", selectedData.dispatched_date);
     formdata1.append("documentName", selectedData.documentName);
     formdata1.append("courier_waybill_ref", selectedData.courier_waybill_ref);
-    formdata1.append("dispatched_date", selectedData.dispatched_date);
+    // formdata1.append("dispatched_date", selectedData.dispatched_date);
     formdata1.append("warehouse_comment", selectedData.warehouse_comment);
     formdata1.append("customer_ref", selectedData.customer_ref);
     formdata1.append("box_marking", selectedData.box_marking);
-    formdata1.append("customer_name", selectedData.customer_name);
     formdata1.append("hazardous", selectedData.hazardous);
     formdata1.append("hazard_description", selectedData.hazard_description);
     formdata1.append("package_comment", selectedData.package_comment);
@@ -1215,9 +1215,9 @@ export default function WarehouseOrder() {
                               </div>
                             </div>
                             {selectedData && (
-                              <form onSubmit={handleSubmit}>
+                          
                                 <div className="row g-2">
-                                  <div item className="col-md-6">
+                                  {/* <div item className="col-md-6">
                                     <label htmlFor="">Customer Name</label>
                                     <input
                                       className="form-control"
@@ -1237,58 +1237,8 @@ export default function WarehouseOrder() {
                                       onChange={handleInputChange}
                                       placeholder="customer name"
                                     />
-                                  </div>
-
-                                  <div item className="col-md-6">
-                                    <label htmlFor="">Warehouse Receipt No</label>
-                                    <input
-                                      className="form-control"
-                                      label="Warehouse Receipt No"
-                                      variant="outlined"
-                                      name="ware_receipt_no"
-                                      value={selectedData.ware_receipt_no || ""}
-                                      onChange={handleInputChange}
-                                    />
-                                  </div>
-                                  <div item className="col-md-6">
-                                    <label htmlFor="">Waybill</label>
-
-                                    <input
-                                      className="form-control"
-                                      label="Waybill"
-                                      variant="outlined"
-                                      name="tracking_number"
-                                      value={selectedData.tracking_number || ""}
-                                      onChange={handleInputChange}
-                                    />
-                                  </div>
-                                  {/* <div item xs={12} sm={6}>
-                                    <TextField
-                                      fullWidth
-                                      label="Warehouse Status"
-                                      variant="outlined"
-                                      name="warehouse_status"
-                                      value={
-                                        selectedData.warehouse_status || ""
-                                      }
-                                      onChange={handleInputChange}
-                                    />
                                   </div> */}
-                                  <div item className="col-md-6">
-                                    <label htmlFor="">Warehouse Collect</label>
-
-                                    <input
-                                      className="form-control"
-                                      label="Warehouse Collect"
-                                      variant="outlined"
-                                      name="warehouse_collect"
-                                      value={
-                                        selectedData.warehouse_collect || ""
-                                      }
-                                      onChange={handleInputChange}
-                                    />
-                                  </div>
-                                  <div item className="col-md-6">
+ <div item className="col-md-6">
                                     <label htmlFor="">Date</label>
                                     <input
                                       className="form-control"
@@ -1310,99 +1260,7 @@ export default function WarehouseOrder() {
                                       onChange={handleInputChange}
                                     />
                                   </div>
-                                  {/* <div item xs={12} sm={6}>
-                                    <TextField
-                                      fullWidth
-                                      label="Package Type"
-                                      variant="outlined"
-                                      name="package_type"
-                                      value={selectedData.package_type || ""}
-                                      onChange={handleInputChange}
-                                    />    
-                                  </div> */}
-                                  <div item className="col-md-6">
-                                    <label htmlFor="">Total Packages</label>
-                                    <input
-                                      className="form-control"
-                                      label="Total Packages"
-                                      variant="outlined"
-                                      name="no_of_packages"
-                                      value={selectedData.no_of_packages || ""}
-                                      onChange={handleInputChange}
-                                    />
-                                  </div>
-                                  <div item className="col-md-6">
-                                    <input
-                                      className="form-control"
-                                      label="Dimension"
-                                      variant="outlined"
-                                      name="total_dimension"
-                                      value={selectedData.total_dimension || ""}
-                                      onChange={handleInputChange}
-                                    />
-                                  </div>
-                                  <div item className="col-md-6">
-                                    <input
-                                      className="form-control"
-                                      label="Costs to collect"
-                                      variant="outlined"
-                                      name="order_costs_to_collect"
-                                      value={
-                                        selectedData.order_costs_to_collect ||
-                                        ""
-                                      }
-                                      onChange={handleInputChange}
-                                    />
-                                  </div>
-                                  <div item className="col-md-6">
-                                    <input
-                                      className="form-control"
-                                      label="Warehouse Cost"
-                                      variant="outlined"
-                                      name="order_warehouse_cost"
-                                      value={
-                                        selectedData.order_warehouse_cost || ""
-                                      }
-                                      onChange={handleInputChange}
-                                    />
-                                  </div>
-                                  <div item className="col-md-6">
-                                    <input
-                                      className="form-control"
-                                      label="Warehouse Dispatch"
-                                      variant="outlined"
-                                      name="warehouse_dispatch"
-                                      value={
-                                        selectedData.warehouse_dispatch || ""
-                                      }
-                                      onChange={handleInputChange}
-                                    />
-                                  </div>
-                                  <div item className="col-md-6">
-                                    <input
-                                      className="form-control"
-
-                                      label="Cost to Dispatch"
-                                      variant="outlined"
-                                      name="cost_to_dispatch"
-                                      value={
-                                        selectedData.cost_to_dispatch || ""
-                                      }
-                                      onChange={handleInputChange}
-                                    />
-                                  </div>
-                                  <div item className="col-md-6">
-                                    <input
-                                      className="form-control"
-
-                                      label="Weight"
-                                      variant="outlined"
-                                      name="weight"
-                                      value={selectedData.weight || ""}
-                                      onChange={handleInputChange}
-                                    />
-                                  </div>
-                                  <div className="col-md-6">
+<div className="col-md-6">
                                     <label>Warehouse Order Id</label>
                                     <input
                                       type="type"
@@ -1415,7 +1273,8 @@ export default function WarehouseOrder() {
                                       placeholder=""
                                     />
                                   </div>
-                                  <div className="col-md-6">
+
+ <div className="col-md-6">
                                     <label>Courier waybill_ref</label>
                                     <input
                                       type="type"
@@ -1434,24 +1293,46 @@ export default function WarehouseOrder() {
                                       type="date"
                                       className="form-control"
                                       value={
-                                        selectedData.dispatch_date
-                                          ? selectedData.dispatch_date.split(
-                                            "T",
-                                          )[0]
+                                        selectedData?.dispatched_date &&
+                                          !isNaN(new Date(selectedData.dispatched_date))
+                                          ? new Date(selectedData.dispatched_date)
+                                            .toISOString()
+                                            .split("T")[0]
                                           : ""
                                       }
-                                      name="dispatch_date"
+                                      name="dispatched_date"
                                       onChange={handleInputChange}
                                     />
                                   </div>
-
-                                  <div className="col-md-12">
+<div className="col-md-12">
                                     <h5 className="mt-3 mb-2">
                                       Package Information
                                     </h5>
                                   </div>
 
-                                  <div className="col-md-6">
+
+ <div item className="col-md-6">
+                                    <label htmlFor="">Customer Name</label>
+                                    <input
+                                      className="form-control"
+                                      value={selectedData.customer_name}
+                                      name="customer_name"
+                                      onChange={handleInputChange}
+                                      placeholder="customer name"
+                                    />
+                                  </div>
+                                  <div item className="col-md-6">
+                                    <label htmlFor="">Customer Ref</label>
+
+                                    <input
+                                      className="form-control"
+                                      value={selectedData.customer_ref}
+                                      name="customer_ref"
+                                      onChange={handleInputChange}
+                                     
+                                    />
+                                  </div>
+ <div className="col-md-6">
                                     <label>Country of Origin</label>
                                     <select
                                       name="country_collection_form"
@@ -1550,8 +1431,8 @@ export default function WarehouseOrder() {
                                       placeholder=""
                                     >
                                       <option value="">Select</option>
-                                      <option value="Yes">Yes</option>
-                                      <option value="No">No</option>
+                                      <option value="yes">Yes</option>
+                                      <option value="no">No</option>
                                     </select>
                                   </div>
                                   {selectedData.hazardous === "Yes" ? (
@@ -1573,49 +1454,72 @@ export default function WarehouseOrder() {
                                   ) : (
                                     ""
                                   )}
-                                  {/* <div className="col-md-6">
-                                        <label>Total Package</label>
-                                        <TextField
-                                          type="text"
-                                          className="form-control"
-                                          value={selectedData.total_packages}
-                                          name="total_packages"
-                                          onChange={handleInputChange}
-                                          placeholder=""
-                                        />
-                                      </div>
-                                      <div className="col-md-6">
-                                        <label>Total Dimension </label>
-                                        <TextField
-                                          type="text"
-                                          className="form-control"
-                                          value={selectedData.total_cbm}
-                                          name="total_cbm"
-                                          onChange={handleInputChange}
-                                          placeholder=""
-                                        />
-                                      </div> */}
+                                  
+
+  <div item className="col-md-6">
+                                    <label htmlFor="">Total Packages</label>
+                                    <input
+                                      className="form-control"
+                                      label="Total Packages"
+                                      variant="outlined"
+                                      name="no_of_packages"
+                                      value={selectedData.no_of_packages || ""}
+                                      onChange={handleInputChange}
+                                    />
+                                  </div>
+                                  <div item className="col-md-6">
+                                     <label htmlFor="">Dimension</label>
+                                    <input
+                                      className="form-control"
+                                      label="Dimension"
+                                      variant="outlined"
+                                      name="total_dimension"
+                                      value={selectedData.total_dimension || ""}
+                                      onChange={handleInputChange}
+                                    />
+                                  </div>
+
+   <div item className="col-md-6">
+                                      <label htmlFor="">Weight</label>
+                                    <input
+                                      className="form-control"
+
+                                      label="Weight"
+                                      variant="outlined"
+                                      name="weight"
+                                      value={selectedData.weight || ""}
+                                      onChange={handleInputChange}
+                                    />
+                                  </div>
+
+
+
+
+
                                   <div className="col-lg-12">
                                     <label>Comment on Packages</label>
                                     <textarea
                                       className="w-100 form-control"
                                       name="package_comment"
                                       value={selectedData.package_comment}
+                                       onChange={handleInputChange}
                                       placeholder="Other Information"
                                     ></textarea>
                                   </div>
 
-                                  <div className="col-md-12">
-                                    <h5 className="mt-3 mb-2">Damaged Goods</h5>
+  <div className="col-md-12">
+                                    <h5 className="mt-3 mb-2">Damaged Goods
+                                    </h5>
                                   </div>
+
 
                                   <div className="col-md-6">
                                     <label>Damaged Goods</label>
                                     <select
                                       type="text"
                                       className="form-select"
-                                      value={selectedData.damaged_goods}
-                                      name="damaged_goods"
+                                      value={selectedData.damage_goods}
+                                      name="damage_goods"
                                       onChange={handleInputChange}
                                       placeholder=""
                                     >
@@ -1655,8 +1559,7 @@ export default function WarehouseOrder() {
                                       value={selectedData.damage_comment}
                                     ></textarea>
                                   </div>
-
-                                  <div className="col-md-12">
+   <div className="col-md-12">
                                     <h5 className="mt-3 mb-2">
                                       Supplier Information
                                     </h5>
@@ -1704,27 +1607,73 @@ export default function WarehouseOrder() {
                                     />
                                   </div>
 
-                                  <div className="col-md-12">
+
+ <div className="col-md-12">
                                     <h5 className="mt-3 mb-2">
                                       Cargo Handeling
                                     </h5>
                                   </div>
 
-                                  <div className="col-md-6">
+    <div item className="col-md-6">
+                                    <label htmlFor="">Warehouse Collect</label>
+
+                                    <select
+                                      className="form-select"
+                                      label="Warehouse Collect"
+                                      variant="outlined"
+                                      name="warehouse_collect"
+                                      value={
+                                        selectedData.warehouse_collect || ""
+                                      }
+                                      onChange={handleInputChange}
+                                    >
+                                      <option></option>
+                                      <option value="Yes">Yes</option>
+                                      <option value="No">No</option>
+                                    </select>
+                                  </div>
+  <div item className="col-md-6">
+                                     <label htmlFor="">Warehouse Cost</label>
+                                    <input
+                                      className="form-control"
+                                      label="Warehouse Cost"
+                                      variant="outlined"
+                                      name="order_warehouse_cost"
+                                      value={
+                                        selectedData.order_warehouse_cost || ""
+                                      }
+                                      onChange={handleInputChange}
+                                    />
+                                  </div>
+ <div className="col-md-6">
                                     <label>Warehouse Storage</label>
                                     <select
                                       className="form-select"
                                       value={selectedData.warehouse_storage}
                                       name="warehouse_storage"
                                       onChange={handleInputChange}
-                                      placeholder="customer name"
+                                     
                                     >
                                       <option value="">Select</option>
                                       <option value="Yes">Yes</option>
                                       <option value="No">No</option>
                                     </select>
                                   </div>
-                                  <div className="col-md-6">
+ <div item className="col-md-6">
+                                      <label htmlFor="">Costs to collect</label>
+                                    <input
+                                      className="form-control"
+                                      label="Costs to collect"
+                                      variant="outlined"
+                                      name="order_costs_to_collect"
+                                      value={
+                                        selectedData.order_costs_to_collect ||
+                                        ""
+                                      }
+                                      onChange={handleInputChange}
+                                    />
+                                  </div>
+ <div className="col-md-6">
                                     <label>Handeling Required</label>
                                     <select
                                       type="text"
@@ -1766,7 +1715,21 @@ export default function WarehouseOrder() {
                                       <option value="No">No</option>
                                     </select>
                                   </div>
-                                  <div className="col-md-12">
+ <div item className="col-md-6">
+                                      <label htmlFor="">Cost to Dispatch</label>
+                                    <input
+                                      className="form-control"
+
+                                      label="Cost to Dispatch"
+                                      variant="outlined"
+                                      name="cost_to_dispatch"
+                                      value={
+                                        selectedData.cost_to_dispatch || ""
+                                      }
+                                      onChange={handleInputChange}
+                                    />
+                                  </div>
+ <div className="col-md-12">
                                     <label>Warehouse Comment</label>
                                     <textarea
                                       className="form-control"
@@ -1777,7 +1740,41 @@ export default function WarehouseOrder() {
                                     ></textarea>
                                   </div>
 
-                                  <div className="col-8 mt-4">
+
+
+
+
+
+
+
+
+
+                                  
+                                  {/* <div item className="col-md-6">
+                                    <label htmlFor="">Warehouse Receipt No</label>
+                                    <input
+                                      className="form-control"
+                                      label="Warehouse Receipt No"
+                                      variant="outlined"
+                                      name="ware_receipt_no"
+                                      value={selectedData.ware_receipt_no || ""}
+                                      onChange={handleInputChange}
+                                    />
+                                  </div> */}
+                                  {/* <div item className="col-md-6">
+                                    <label htmlFor="">Waybill</label>
+
+                                    <input
+                                      className="form-control"
+                                      label="Waybill"
+                                      variant="outlined"
+                                      name="tracking_number"
+                                      value={selectedData.tracking_number || ""}
+                                      onChange={handleInputChange}
+                                    />
+                                  </div> */}
+                                
+                                  {/* <div className="col-8 mt-4">
                                     <h5>
                                       Document Section
                                     </h5>
@@ -1817,7 +1814,7 @@ export default function WarehouseOrder() {
                                           <h2>Upload Documents</h2>
 
                                           {/* Dropdown */}
-                                          <FormControl
+                                          {/* <FormControl
                                             fullWidth
                                             sx={{ mt: 2 }}
                                           >
@@ -1841,7 +1838,7 @@ export default function WarehouseOrder() {
                                           </FormControl>
 
                                           {/* Dynamic file inputs */}
-                                          <div className="mt-3">
+                                          {/* <div className="mt-3">
                                             {selectedDocs.map(
                                               (doc, index) => (
                                                 <div
@@ -1869,7 +1866,7 @@ export default function WarehouseOrder() {
                                           </div>
 
                                           {/* Footer buttons */}
-                                          <Box
+                                          {/* <Box
                                             sx={{
                                               display: "flex",
                                               justifyContent: "flex-end",
@@ -1893,7 +1890,7 @@ export default function WarehouseOrder() {
                                     ) : (
                                       ""
                                     )}
-                                  </div>
+                                  </div> */} 
 
 
                                   <div className="d-flex justify-content-center mt-4">
@@ -1908,7 +1905,7 @@ export default function WarehouseOrder() {
 
                                   </div>
                                 </div>
-                              </form>
+                          
                             )}
                           </div>
                         </Box>

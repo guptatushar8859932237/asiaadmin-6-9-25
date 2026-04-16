@@ -4935,8 +4935,7 @@ td {
 .uploadIcon {
   border: unset;
   background: #fff;
-  padding: 3px 30px;
-  border-radius: 5px;
+
   color: #1b2245;
   font-size: 20px;
 }
@@ -4947,4 +4946,8 @@ td {
 
 .blueBtn:hover {
   background-color: var(--maroon) !important;
+}
+
+.blueText {
+  color: var(--blue);
 }

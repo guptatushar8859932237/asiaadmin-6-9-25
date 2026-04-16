@@ -40,7 +40,7 @@ export default function ShippingEstimate() {
     const payload = {
       freight_id: localFreigtId,
     };
-console.log(payload, "payload");
+    console.log(payload, "payload");
     try {
       const response = await axios.post(
         `${process.env.REACT_APP_BASE_URL}freight-list-byId`,
@@ -156,8 +156,8 @@ console.log(payload, "payload");
   const oriforewarding3 = parseFloat(freight.origin_pickup_forewarding_gp) || 0;
   const oriforewarding4 = freight.origin_pick_up_forewarding_unitType
     ? oriforewarding1 *
-      oriforewarding2 *
-      freight.origin_pick_up_forewarding_unitTypeQTY
+    oriforewarding2 *
+    freight.origin_pick_up_forewarding_unitTypeQTY
     : 0.0;
   let finalValueforewarding = 0;
   if (oriforewarding4 > 0) {
@@ -250,8 +250,8 @@ console.log(payload, "payload");
   const oriinsurance3 = parseFloat(freight.freightorigin_insurance_gp) || 0;
   const oriinsurance4 = freight.freight_currency_insurance_unittype
     ? oriinsurance1 *
-      oriindsurance2 *
-      freight.freight_currency_insurance_unittypeQTY
+    oriindsurance2 *
+    freight.freight_currency_insurance_unittypeQTY
     : 0.0;
   let finalValueinsurance = 0;
   if (oriinsurance4 > 0) {
@@ -421,8 +421,8 @@ console.log(payload, "payload");
     parseFloat(freight.transit_change_Documentation_gp) || 0;
   const oridocumentation4 = freight.transit_change_Documentation_unitType
     ? oridocumentation1 *
-      oridocumentation2 *
-      freight.transit_change_Documentation_unitTypeQTY
+    oridocumentation2 *
+    freight.transit_change_Documentation_unitTypeQTY
     : 0.0;
   let finalValuedocumantation = 0;
   if (oridocumentation4 > 0) {
@@ -472,8 +472,8 @@ console.log(payload, "payload");
   const destinationdocumentation4 =
     freight.Destination_freight_currency_unitType
       ? destinationdocumentation1 *
-        destinationdocumentation2 *
-        freight.Destination_freight_currency_unitTypeQTY
+      destinationdocumentation2 *
+      freight.Destination_freight_currency_unitTypeQTY
       : 0.0;
   let finalValuedestanion = 0;
   if (destinationdocumentation4 > 0) {
@@ -499,8 +499,8 @@ console.log(payload, "payload");
     parseFloat(freight.Destination_THC_currency_gp) || 0;
   const destinationTHCdocumentation4 = freight.Destination_THC_currency_unitType
     ? destinationTHCdocumentation1 *
-      destinationTHCdocumentation2 *
-      freight.Destination_THC_currency_unitTypeQTY
+    destinationTHCdocumentation2 *
+    freight.Destination_THC_currency_unitTypeQTY
     : 0.0;
   let finalValueTHCdestanion = 0;
   if (destinationTHCdocumentation4 > 0) {
@@ -527,8 +527,8 @@ console.log(payload, "payload");
   const destinationUnpackdocumentation4 =
     freight.Destination_Unpack_currency_unitType
       ? destinationUnpackdocumentation1 *
-        destinationUnpackdocumentation2 *
-        freight.Destination_Unpack_currency_unitTypeQTY
+      destinationUnpackdocumentation2 *
+      freight.Destination_Unpack_currency_unitTypeQTY
       : 0.0;
   let finalValueUnpackdestanion = 0;
   if (destinationUnpackdocumentation4 > 0) {
@@ -557,8 +557,8 @@ console.log(payload, "payload");
   const destinationfuelsurchargedocumentation4 =
     freight.Destination_fuelsurcharge_currency_typeUnit
       ? destinationfuelsurchargedocumentation1 *
-        destinationfuelsurchargedocumentation2 *
-        freight.Destination_fuelsurcharge_currency_typeUnitQTY
+      destinationfuelsurchargedocumentation2 *
+      freight.Destination_fuelsurcharge_currency_typeUnitQTY
       : 0.0;
   let finalValueFulesurchargedestanion = 0;
   if (destinationfuelsurchargedocumentation4 > 0) {
@@ -589,8 +589,8 @@ console.log(payload, "payload");
   const destinatiadminsurcharge4 =
     freight.Destination_adminsurcharge_currency_unitType
       ? destinatiadminsurcharge1 *
-        destinatiadminsurcharge2 *
-        freight.Destination_adminsurcharge_currency_unitTypeQTY
+      destinatiadminsurcharge2 *
+      freight.Destination_adminsurcharge_currency_unitTypeQTY
       : 0.0;
   let finalValueadminsurchargedestanion = 0;
   if (destinatiadminsurcharge4 > 0) {
@@ -617,8 +617,8 @@ console.log(payload, "payload");
     parseFloat(freight.Destination_portcargo_currency_gp) || 0;
   const destinatiportcargo4 = freight.Destination_portcargo_currency_unitType
     ? destinatiportcargo1 *
-      destinatiportcargo2 *
-      freight.Destination_portcargo_currency_unitTypeQTY
+    destinatiportcargo2 *
+    freight.Destination_portcargo_currency_unitTypeQTY
     : 0.0;
   let finalValueportcargostanion = 0;
   if (destinatiportcargo4 > 0) {
@@ -671,8 +671,8 @@ console.log(payload, "payload");
   const destinati3rdpartyload4 =
     freight.Destination_3rdpartyDesc_currency_unitType
       ? destinati3rdpartyDesc1 *
-        destinati3rdpartyDesc2 *
-        freight.Destination_3rdpartyDesc_currency_unitTypeQTY
+      destinati3rdpartyDesc2 *
+      freight.Destination_3rdpartyDesc_currency_unitTypeQTY
       : 0.0;
   let finalValue3rdpartyloadstanion = 0;
   if (destinati3rdpartyload4 > 0) {
@@ -700,8 +700,8 @@ console.log(payload, "payload");
     parseFloat(freight.Destination_delivery_currency_gp) || 0;
   const destindeliveryyDesc4 = freight.Destination_delivery_currency_unitType
     ? destindeliveryyDesc1 *
-      destindeliveryyDesc2 *
-      freight.Destination_delivery_currency_unitTypeQTY
+    destindeliveryyDesc2 *
+    freight.Destination_delivery_currency_unitTypeQTY
     : 0.0;
   let finaldeliveryrtyloadstanion = 0;
   if (destindeliveryyDesc4 > 0) {
@@ -729,8 +729,8 @@ console.log(payload, "payload");
   const destindfuelchangerDesc4 =
     freight.Destination_fuelcharge_currency_unitType
       ? destindfuelchangerDesc1 *
-        destindfuelchangerDesc2 *
-        freight.Destination_fuelcharge_currency_unitTypeQTY
+      destindfuelchangerDesc2 *
+      freight.Destination_fuelcharge_currency_unitTypeQTY
       : 0.0;
   let finalfuelchangertyloadstanion = 0;
   if (destindfuelchangerDesc4 > 0) {
@@ -784,8 +784,8 @@ console.log(payload, "payload");
     parseFloat(freight.Destination_AdminAgrncy_currency_gp) || 0;
   const deadminAgencyesc4 = freight.Destination_AdminAgrncy_currency_unitType
     ? deadminAgencyesc1 *
-      deadminAgencyesc2 *
-      freight.Destination_AdminAgrncy_currency_unitQTY
+    deadminAgencyesc2 *
+    freight.Destination_AdminAgrncy_currency_unitQTY
     : 0.0;
   let finaldminAgencyestanion = 0;
   if (deadminAgencyesc4 > 0) {
@@ -811,8 +811,8 @@ console.log(payload, "payload");
     parseFloat(freight.Destination_disbursemant_currency_gp) || 0;
   const deaddisbursemantc4 = freight.Destination_disbursemant_currenc_unitType1
     ? deaddisbursemantc1 *
-      deaddisbursemantc2 *
-      freight.Destination_disbursemant_currency_unitTypeQTY
+    deaddisbursemantc2 *
+    freight.Destination_disbursemant_currency_unitTypeQTY
     : 0.0;
   let finaladdisbursematanion = 0;
   if (deaddisbursemantc4 > 0) {
@@ -881,7 +881,7 @@ console.log(payload, "payload");
         product_desc: getdata.product_desc,
         type: getdata.type,
         freight: getdata.freight,
-user_type: user?.user_type,
+        user_type: user?.user_type,
         incoterm: getdata.incoterm,
         dimension: getdata.dimension,
         supplier_id: freight.supplier_id,
@@ -896,11 +896,11 @@ user_type: user?.user_type,
         origin_pick_up_fuel_cost: freight.origin_pick_up_fuel_cost,
         origin_pick_up_fuel_fees: freight.origin_pick_up_fuel_fees,
         origin_pick_fuelGP: freight.origin_pick_fuelGP,
-           pickup_freight_currency: freight.pickup_freight_currency,
-      freight_charge_currency: freight.freight_charge_currency,
-      Transit_currency: freight.Transit_currency,
-      Destination_freight_currency: freight.Destination_freight_currency,
-      admin_currency_charge: freight.admin_currency_charge,
+        pickup_freight_currency: freight.pickup_freight_currency,
+        freight_charge_currency: freight.freight_charge_currency,
+        Transit_currency: freight.Transit_currency,
+        Destination_freight_currency: freight.Destination_freight_currency,
+        admin_currency_charge: freight.admin_currency_charge,
         chargable_rate: freight.chargable_rate,
         orifuel4: orifuel4,
         finalfuel1: finalfuel1,
@@ -1567,33 +1567,23 @@ user_type: user?.user_type,
             <div className=" ">
               <div className="row">
                 <div className="col-12">
-                  <div className="d-flex justify-content-between align-items-center">
+                  <div className="d-flex justify-content-between align-items-center mb-4">
                     <div className="d-flex">
-                      <div>
-                        <ArrowBackIcon
-                          onClick={handleclicknav}
-                          style={{ cursor: "pointer" }}
-                        />
-                      </div>
-                      <div>
-                        <h4 className="freight_hd mt-0 ms-3">Admin Estimate Form</h4>
-                      </div>
+
+                      <ArrowBackIcon
+                        onClick={handleclicknav}
+                        style={{ cursor: "pointer" }}
+                      />
+
+                      <h4 className="freight_hd mb-0">Admin Estimate Form</h4>
+
                     </div>
-                    <button onClick={andlemodaloen} className="btn btn-success">
-                      Assign Supplier
-                    </button>
-                    
-                    <div>
-                      <MdDownloadForOffline
-                        onClick={() => downloadPDF1()}
-                        className="fs-2"
-                        style={{ color: "#1b2245", cursor: "pointer" }}
-                      />
-                      <RiFolderUserFill
-                        onClick={() => downloadPDF()}
-                        className="fs-2 mx-2"
-                        style={{ color: "#1b2245", cursor: "pointer" }}
-                      />
+                    <div className="d-flex gap-3 align-items-center blueText">
+                      <i onClick={() => downloadPDF1()} class="fa fa-download" aria-hidden="true"></i>
+                      <i class="fa fa-address-card" onClick={() => downloadPDF()}></i>
+                      <button onClick={andlemodaloen} className="blueBtn">
+                        Assign Supplier
+                      </button>
                     </div>
                   </div>
                 </div>
@@ -1603,14 +1593,14 @@ user_type: user?.user_type,
                 <div
                   style={{
                     width: "100%",
-                    padding: "20px",
+                    padding: "10px",
                     outline: "auto",
                     height: "auto",
                   }}
                   className="pdf-page"
                 >
                   <p>
-                    <table style={{ margin: "20px" }}>
+                    <table>
                       <tbody>
                         <tr>
                           <td style={{ width: "50%" }}>
@@ -1622,7 +1612,7 @@ user_type: user?.user_type,
                               />
                             </div>
                           </td>
-                          <td style={{ width: "50%", color: "#000" }}>
+                          <td style={{ width: "50%", color: "#000", paddingBottom: "10px" }}>
                             <p
                               style={{
                                 fontSize: 20,
@@ -1630,7 +1620,7 @@ user_type: user?.user_type,
                                 marginBottom: "unset",
                                 borderBottom: "1px solid #cb191e",
                                 display: "inline-block",
-                                paddingBottom: 5,
+
                               }}
                             >
                               Asia Direct - Africa
@@ -1653,36 +1643,18 @@ user_type: user?.user_type,
                               <br />
                               TEL: +27 10 448 0733
                             </p>
-                            <p> </p>
+
                           </td>
                         </tr>
                       </tbody>
                     </table>
-                    <table style={{ paddingTop: "20px", marginTop: "20px" }}>
-                      <tbody>
-                        <tr>
-                          <td
-                            style={{ fontSize: 14, textTransform: "lowercase" }}
-                          ></td>
-                          <td
-                            style={{
-                              fontSize: 14,
-                              padding: "0px 20px",
-                              textTransform: "lowercase",
-                            }}
-                          ></td>
-                          <td
-                            style={{ fontSize: 14, textTransform: "lowercase" }}
-                          ></td>
-                        </tr>
-                      </tbody>
-                    </table>
+
                     <table
                       style={{
                         border: "2px solid #1b2245",
                         padding: "10px 20px",
                         width: "100%",
-                        marginTop: 20,
+
                       }}
                     >
                       <tbody>
@@ -1722,7 +1694,7 @@ user_type: user?.user_type,
                                   <td
                                     style={{
                                       fontSize: 14,
-                                      padding: "0px 10px",
+                                      padding: "5px"
                                     }}
                                   >
                                     <strong>
@@ -1741,7 +1713,7 @@ user_type: user?.user_type,
                                 color: "white",
                                 fontSize: 14,
                                 textAlign: "center",
-                                margin: "10px 0px",
+
                                 padding: 2,
                               }}
                             >
@@ -1756,19 +1728,20 @@ user_type: user?.user_type,
                             <table style={{ width: "100%" }}>
                               <tbody>
                                 <tr>
-                                  {}
-                                  <td style={{ padding: "0px 10px" }}>
+                                  { }
+                                  <td style={{ padding: "10px" }}>
                                     <div
                                       style={{
                                         display: "flex",
                                         justifyContent: "space-between",
+
                                       }}
                                     >
                                       <p
                                         style={{
                                           fontSize: 14,
                                           marginBottom: "unset",
-                                          marginTop: 10,
+
                                         }}
                                       >
                                         <strong> No. of Packages</strong>
@@ -1777,7 +1750,6 @@ user_type: user?.user_type,
                                         style={{
                                           fontSize: 14,
                                           marginBottom: "unset",
-                                          marginTop: 10,
                                         }}
                                       >
                                         {getdata?.no_of_packages}
@@ -1793,7 +1765,7 @@ user_type: user?.user_type,
                                         style={{
                                           fontSize: 14,
                                           marginBottom: "unset",
-                                          marginTop: 10,
+                                          marginTop: 5,
                                         }}
                                       >
                                         <strong>Package Type</strong>
@@ -1802,7 +1774,7 @@ user_type: user?.user_type,
                                         style={{
                                           fontSize: 14,
                                           marginBottom: "unset",
-                                          marginTop: 10,
+                                          marginTop: 5,
                                         }}
                                       >
                                         {getdata?.package_type}
@@ -1818,7 +1790,7 @@ user_type: user?.user_type,
                                         style={{
                                           fontSize: 14,
                                           marginBottom: "unset",
-                                          marginTop: 10,
+                                          marginTop: 5,
                                         }}
                                       >
                                         <strong>Weight</strong>
@@ -1827,7 +1799,7 @@ user_type: user?.user_type,
                                         style={{
                                           fontSize: 14,
                                           marginBottom: "unset",
-                                          marginTop: 10,
+                                          marginTop: 5,
                                         }}
                                       >
                                         {getdata?.weight}
@@ -1843,7 +1815,7 @@ user_type: user?.user_type,
                                         style={{
                                           fontSize: 14,
                                           marginBottom: "unset",
-                                          marginTop: 10,
+                                          marginTop: 5,
                                         }}
                                       >
                                         <strong>M3</strong>
@@ -1852,7 +1824,7 @@ user_type: user?.user_type,
                                         style={{
                                           fontSize: 14,
                                           marginBottom: "unset",
-                                          marginTop: 10,
+                                          marginTop: 5,
                                         }}
                                       ></p>
                                     </div>
@@ -1866,7 +1838,7 @@ user_type: user?.user_type,
                                         style={{
                                           fontSize: 14,
                                           marginBottom: "unset",
-                                          marginTop: 10,
+                                          marginTop: 5,
                                         }}
                                       >
                                         <strong>Volumetric (kgs)</strong>
@@ -1875,7 +1847,7 @@ user_type: user?.user_type,
                                         style={{
                                           fontSize: 14,
                                           marginBottom: "unset",
-                                          marginTop: 10,
+                                          marginTop: 5,
                                         }}
                                       >
                                         {getdata?.volumetric_weight}
@@ -1891,7 +1863,7 @@ user_type: user?.user_type,
                                         style={{
                                           fontSize: 14,
                                           marginBottom: "unset",
-                                          marginTop: 10,
+                                          marginTop: 5,
                                         }}
                                       >
                                         <strong>Chargeable</strong>
@@ -1900,7 +1872,7 @@ user_type: user?.user_type,
                                         style={{
                                           fontSize: 14,
                                           marginBottom: "unset",
-                                          marginTop: 10,
+                                          marginTop: 5,
                                         }}
                                       >
                                         <input
@@ -1922,7 +1894,7 @@ user_type: user?.user_type,
                                         style={{
                                           fontSize: 14,
                                           marginBottom: "unset",
-                                          marginTop: 10,
+                                          marginTop: 5,
                                         }}
                                       >
                                         <strong>Commodity</strong>
@@ -1931,7 +1903,7 @@ user_type: user?.user_type,
                                         style={{
                                           fontSize: 14,
                                           marginBottom: "unset",
-                                          marginTop: 10,
+                                          marginTop: 5,
                                         }}
                                       >
                                         {getdata?.commodity}
@@ -1947,7 +1919,7 @@ user_type: user?.user_type,
                                         style={{
                                           fontSize: 14,
                                           marginBottom: "unset",
-                                          marginTop: 10,
+                                          marginTop: 5,
                                         }}
                                       >
                                         <strong>Hazardous</strong>
@@ -1956,7 +1928,7 @@ user_type: user?.user_type,
                                         style={{
                                           fontSize: 14,
                                           marginBottom: "unset",
-                                          marginTop: 10,
+                                          marginTop: 5,
                                         }}
                                       >
                                         {getdata?.hazardous}
@@ -1972,7 +1944,7 @@ user_type: user?.user_type,
                                         style={{
                                           fontSize: 14,
                                           marginBottom: "unset",
-                                          marginTop: 10,
+                                          marginTop: 5,
                                         }}
                                       >
                                         <strong>Incoterm</strong>
@@ -1981,7 +1953,7 @@ user_type: user?.user_type,
                                         style={{
                                           fontSize: 14,
                                           marginBottom: "unset",
-                                          marginTop: 10,
+                                          marginTop: 5,
                                         }}
                                       >
                                         {getdata?.incoterm}
@@ -1997,7 +1969,7 @@ user_type: user?.user_type,
                                         style={{
                                           fontSize: 14,
                                           marginBottom: "unset",
-                                          marginTop: 10,
+                                          marginTop: 5,
                                         }}
                                       >
                                         <strong> Freight</strong>
@@ -2006,7 +1978,7 @@ user_type: user?.user_type,
                                         style={{
                                           fontSize: 14,
                                           marginBottom: "unset",
-                                          marginTop: 10,
+                                          marginTop: 5,
                                         }}
                                       >
                                         {getdata?.freight}
@@ -2023,7 +1995,7 @@ user_type: user?.user_type,
                                 color: "white",
                                 fontSize: 14,
                                 textAlign: "center",
-                                margin: "10px 0px",
+                                margin: "0px",
                                 padding: 2,
                               }}
                             >
@@ -2038,19 +2010,19 @@ user_type: user?.user_type,
                             <table style={{ width: "100%" }}>
                               <tbody>
                                 <tr>
-                                  <td>
+                                  <td style={{ padding: "5px" }}>
                                     <div
                                       style={{
                                         display: "flex",
                                         justifyContent: "space-between",
-                                        padding: 10,
+
                                       }}
                                     >
                                       <p
                                         style={{
                                           fontSize: 14,
                                           marginBottom: "unset",
-                                          marginTop: 10,
+
                                         }}
                                       >
                                         <strong>Final Base Currency</strong>
@@ -2081,7 +2053,7 @@ user_type: user?.user_type,
                               </tbody>
                             </table>
                           </td>
-                          <td style={{ width: "50%", paddingTop: 10 }}>
+                          <td>
                             <table>
                               <tbody>
                                 <tr>
@@ -2089,14 +2061,14 @@ user_type: user?.user_type,
                                     style={{
                                       width: 170,
                                       display: "block",
-                                      padding: "0px 10px 10px 10px",
+                                      padding: "0px 10px 0px 10px",
                                       fontSize: 14,
                                     }}
                                   >
                                     <strong>Reference</strong>
                                   </td>
                                   <td
-                                    style={{ paddingBottom: 10, fontSize: 14 }}
+                                    style={{ fontSize: 14 }}
                                   >
                                     {getdata?.client_ref_name}
                                   </td>
@@ -2104,10 +2076,10 @@ user_type: user?.user_type,
                                 <tr>
                                   <td
                                     style={{
-                                      padding: "0px 10px 10px 10px",
+                                      padding: "0px 10px 0px 10px",
                                       width: 170,
                                       display: "block",
-                                      paddingBottom: 10,
+                                      paddingBottom: 0,
                                       fontSize: 14,
                                     }}
                                   >
@@ -2115,9 +2087,9 @@ user_type: user?.user_type,
                                   </td>
                                   <td
                                     style={{
-                                      paddingBottom: 15,
+
                                       fontSize: 14,
-                                      padding: "0px 10px 10px 10px",
+                                      padding: "0px 10px 0px 10px",
                                     }}
                                   >
                                     {new Date(getdata?.date).toLocaleDateString(
@@ -2134,7 +2106,7 @@ user_type: user?.user_type,
                                 color: "white",
                                 fontSize: 14,
                                 textAlign: "center",
-                                margin: "10px 0px",
+                                margin: "5px 0px",
                                 padding: 2,
                               }}
                             >
@@ -2160,7 +2132,7 @@ user_type: user?.user_type,
                                         style={{
                                           fontSize: 14,
                                           marginBottom: "unset",
-                                          marginTop: 10,
+                                          marginTop: 5,
                                         }}
                                       >
                                         <strong> Country of Origin</strong>
@@ -2169,7 +2141,7 @@ user_type: user?.user_type,
                                         style={{
                                           fontSize: 14,
                                           marginBottom: "unset",
-                                          marginTop: 10,
+                                          marginTop: 5,
                                         }}
                                       >
                                         {getdata?.collection_from_name}
@@ -2185,7 +2157,7 @@ user_type: user?.user_type,
                                         style={{
                                           fontSize: 14,
                                           marginBottom: "unset",
-                                          marginTop: 10,
+                                          marginTop: 5,
                                         }}
                                       >
                                         <strong> Place of Receipt</strong>
@@ -2194,7 +2166,7 @@ user_type: user?.user_type,
                                         style={{
                                           fontSize: 14,
                                           marginBottom: "unset",
-                                          marginTop: 10,
+                                          marginTop: 5,
                                         }}
                                       >
                                         {getdata?.port_of_loading}
@@ -2210,7 +2182,7 @@ user_type: user?.user_type,
                                         style={{
                                           fontSize: 14,
                                           marginBottom: "unset",
-                                          marginTop: 10,
+                                          marginTop: 5,
                                         }}
                                       >
                                         <strong>Port of Loading</strong>
@@ -2219,7 +2191,7 @@ user_type: user?.user_type,
                                         style={{
                                           fontSize: 14,
                                           marginBottom: "unset",
-                                          marginTop: 10,
+                                          marginTop: 5,
                                         }}
                                       >
                                         {getdata?.port_of_loading}
@@ -2235,7 +2207,7 @@ user_type: user?.user_type,
                                         style={{
                                           fontSize: 14,
                                           marginBottom: "unset",
-                                          marginTop: 10,
+                                          marginTop: 5,
                                         }}
                                       >
                                         <strong>Port of Discharge</strong>
@@ -2245,7 +2217,7 @@ user_type: user?.user_type,
                                         style={{
                                           fontSize: 14,
                                           marginBottom: "unset",
-                                          marginTop: 10,
+                                          marginTop: 5,
                                         }}
                                       >
                                         {getdata?.post_of_discharge}
@@ -2261,7 +2233,7 @@ user_type: user?.user_type,
                                         style={{
                                           fontSize: 14,
                                           marginBottom: "unset",
-                                          marginTop: 10,
+                                          marginTop: 5,
                                         }}
                                       >
                                         <strong> Place of Delivery</strong>
@@ -2270,7 +2242,7 @@ user_type: user?.user_type,
                                         style={{
                                           fontSize: 14,
                                           marginBottom: "unset",
-                                          marginTop: 10,
+                                          marginTop: 5,
                                         }}
                                       >
                                         {getdata?.delivery_to_name}
@@ -2286,7 +2258,7 @@ user_type: user?.user_type,
                                         style={{
                                           fontSize: 14,
                                           marginBottom: "unset",
-                                          marginTop: 10,
+                                          marginTop: 5,
                                         }}
                                       >
                                         <strong>
@@ -2298,7 +2270,7 @@ user_type: user?.user_type,
                                         style={{
                                           fontSize: 14,
                                           marginBottom: "unset",
-                                          marginTop: 10,
+                                          marginTop: 5,
                                         }}
                                       >
                                         {getdata?.quote_received}
@@ -2314,7 +2286,7 @@ user_type: user?.user_type,
                                         style={{
                                           fontSize: 14,
                                           marginBottom: "unset",
-                                          marginTop: 10,
+                                          marginTop: 5,
                                         }}
                                       >
                                         <strong> Date</strong>
@@ -2323,7 +2295,7 @@ user_type: user?.user_type,
                                         style={{
                                           fontSize: 14,
                                           marginBottom: "unset",
-                                          marginTop: 10,
+                                          marginTop: 5,
                                         }}
                                       >
                                         {new Date(
@@ -4128,7 +4100,7 @@ user_type: user?.user_type,
                             onKeyPress={handlepresss}
                             className="supplier_form"
                             onChange={handlechangecalc}
-                            
+
                             value={freight?.Transit_currency_Cost}
                             name="Transit_currency_Cost"
                             id="floatingInput"
@@ -6239,7 +6211,7 @@ user_type: user?.user_type,
                             //       : 0.0
                             //     : 0.0
                             // }
-                               value={
+                            value={
                               freight?.Destination_Unpack_currency_unitType
                                 ? destinationUnpackdocumentation2
                                   ? destinationUnpackdocumentation2
@@ -6464,7 +6436,7 @@ user_type: user?.user_type,
                             //     : 0.0
                             // }
 
-                             value={
+                            value={
                               freight?.Destination_fuelsurcharge_currency_typeUnit
                                 ? destinationfuelsurchargedocumentation2
                                   ? destinationfuelsurchargedocumentation2
@@ -6688,7 +6660,7 @@ user_type: user?.user_type,
                             //       : 0.0
                             //     : 0.0
                             // }
-                             value={
+                            value={
                               freight?.Destination_adminsurcharge_currency_unitType
                                 ? destinatiadminsurcharge2
                                   ? destinatiadminsurcharge2
@@ -8122,7 +8094,7 @@ user_type: user?.user_type,
                               border: 0,
                             }}
                             name="admin_currency_charge"
-                              onChange={handlechangecalc}
+                            onChange={handlechangecalc}
                             value={freight?.admin_currency_charge}
                           >
                             <option>Select</option>
@@ -8522,9 +8494,9 @@ user_type: user?.user_type,
                     </tbody>
                   </table>
                   <div className="text-center mt-3">
-                        <button className="ship_btn" onClick={estimateCalculate}>
-                        Get Quote
-                      </button>
+                    <button className="ship_btn" onClick={estimateCalculate}>
+                      Get Quote
+                    </button>
                   </div>
                 </div>
               </section>

@@ -1145,7 +1145,7 @@ const getNewDataapi = async () => {
                                           }}
                                         >
                                           Asia Direct, Unit 4 Villa Valencia 2 Anemoon Road
-                                          Glen Marais 1619 South Africa Mauritania
+                                          Glen Marais 1619 South Africa Web
                                           www.asiaDirect.africa{" "}
                                         </p>
                                         <p>

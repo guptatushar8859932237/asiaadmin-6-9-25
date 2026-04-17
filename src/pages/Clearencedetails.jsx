@@ -234,7 +234,7 @@ export default function Clearencedetails() {
                                         Lot 1644 Ext F nord Secteur 06, Tevragh
                                         Zeina Nouakchott , Mauritania
                                         www.asiaDirect.com */}
-Asia Direct, Unit 4 Villa Valencia 2 Anemoon Road Glen Marais 1619 South Africa Mauritania www.asiaDirect.africa<br  />
+Asia Direct, Unit 4 Villa Valencia 2 Anemoon Road Glen Marais 1619 South Africa Web www.asiaDirect.africa<br  />
 VAT Number: 4740280377
 TEL: +27 10 448 0733
                                       </p>

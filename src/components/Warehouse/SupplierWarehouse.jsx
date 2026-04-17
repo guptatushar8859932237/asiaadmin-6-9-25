@@ -866,8 +866,9 @@ export default function SupplierWarehouse() {
                                               className="client_nm"
                                               style={{ fontSize: "16px" }}
                                             >
-                                              {item?.warehouse_name} {item.supplier_name ? "/" : ""}{" "}
-                                              {item.supplier_name}
+                                              {item?.warehouse_name} 
+                                              {/* {item.supplier_name ? "/" : ""}{" "}
+                                              {item.supplier_name} */}
                                             </p>
                                           </div>
                                           <div className="col-md-2">
@@ -885,11 +886,7 @@ export default function SupplierWarehouse() {
                                             </p>
                                           </div>
                                           <div className="col-md-2 text-end">
-                                            <p className="port_date">
-                                              {new Date(
-                                                item.created_at,
-                                              ).toLocaleDateString("en-GB")}
-                                            </p>
+                                            
                                             <p className="port_date">
                                               <div className="ss text-end">
                                                 {item?.move_to_adminWarhouse ==
@@ -958,10 +955,18 @@ export default function SupplierWarehouse() {
                                           <div className="col-md-2">
                                             <div className="text-end">
                                               <p className="origin">
-                                                {item.nature_of_hazard}
+                                                {item.nature_of_hazard} 
+                                            <div className="text-end">
+                                             <p className="port_date">
+                                              {new Date(
+                                                item.created_at,
+                                              ).toLocaleDateString("en-GB")}
+                                            </p>
+                                          </div>
                                               </p>
                                             </div>
                                           </div>
+                                         
                                         </div>
                                         {/* third row */}
                                         <div className="row align-items-center">
@@ -1003,7 +1008,9 @@ export default function SupplierWarehouse() {
                                               </p>
                                             </div>
                                           </div>
-                                          <div className="col-md-4"></div>
+                                          <div className="col-md-4">
+                                            
+                                          </div>
                                           <div className="col-md-2">
                                             <p>
                                               <span>Packages:</span>{" "}
@@ -1360,7 +1367,8 @@ export default function SupplierWarehouse() {
                           <div className="newModalGap noFormaControl">
 
                             {selectedData && (
-                              <form onSubmit={handleSubmit}>
+                              <>
+                              
                                 <div container spacing={2}>
                                   <div className="row g-2">
                                     <div className="col-md-12">
@@ -2052,8 +2060,7 @@ export default function SupplierWarehouse() {
                                     Submit
                                   </button>
                                 </div>
-
-                              </form>
+</>
                             )}
                           </div>
                         </Box>

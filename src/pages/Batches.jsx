@@ -498,179 +498,221 @@ export default function Batches() {
                         <TableCell className="fw-bold">Action</TableCell>
                       </TableRow>
                     </TableHead>
-                    <TableBody>
-                      {datauser &&
-                        datauser.length > 0 &&
-                        datauser.map((item, index) => {
-                          console.log(item);
-                          return (
-                            <>
-                              <TableRow
-                                key={index + 1}
-                                className="border-bottom"
-                                style={{
-                                  backgroundColor:
-                                    item.track_status === "Customs released"
-                                      ? "#e0e0e0"
-                                      : "",
-                                  color:
-                                    item.track_status === "Customs released"
-                                      ? "#888"
-                                      : "",
-                                  pointerEvents:
-                                    item.track_status === "Customs released"
-                                      ? "none"
-                                      : "auto", // 👈 disable click
-                                  opacity:
-                                    item.track_status === "Customs released"
-                                      ? 0.7
-                                      : 1,
-                                }}
-                              >
-                                <TableCell>{item?.batch_number}</TableCell>
-                                <TableCell>{item?.freight}</TableCell>
+                   <TableBody>
+  {datauser &&
+    datauser.length > 0 &&
+    datauser.map((item, index) => {
+      const isDisabled = !!item.track_status; // 🔥 important
 
-                                <TableCell>
-                                  {item?.total_freight_dimension}
-                                </TableCell>
-                                <TableCell>
-                                  {item?.total_freight_weight}
-                                </TableCell>
-                                <TableCell>
-                                  {item?.total_freight_packages}
-                                </TableCell>
-                                <TableCell className="col-1">
-                                  {item?.origin_country_name}
-                                </TableCell>
-                                <TableCell>{item?.des_country_name}</TableCell>
-                                <TableCell>{item?.forwarding_agent}</TableCell>
-                                <TableCell
-                                  style={{ cursor: "pointer" }}
-                                  onClick={() => {
-                                    handleclickid(item.id);
-                                  }}
-                                >
-                                  {item?.count_freight}
-                                </TableCell>
-                                <TableCell>{item.track_status}</TableCell>
-                                <div className="dropdown">
-                                  <a
-                                    href=""
-                                    type="button"
-                                    className="act_btn dropdown-toggle mb-3"
-                                    data-bs-toggle="dropdown"
-                                    aria-expanded="false"
-                                  >
-                                    Action
-                                  </a>
-                                  <div className="dropdown-menu">
-                                    <a className="dropdown-item det_page">
-                                      <ul className="p-0 m-0">
-                                        <li
-                                          className="page_list"
-                                          style={{
-                                            cursor: "pointer",
-                                            fontSize: "15px",
-                                          }}
-                                          onClick={() => {
-                                            handleclickid(item.id);
-                                          }}
-                                        >
-                                          <RemoveRedEyeIcon /> View Details
-                                        </li>
-                                        <li
-                                          className="page_list"
-                                          style={{
-                                            cursor: "pointer",
-                                            fontSize: "15px",
-                                          }}
-                                          onClick={() => {
-                                            openModal2(item.id);
-                                          }}
-                                        >
-                                          <ContentCopyIcon /> Edit Batch
-                                        </li>
-                                        <li
-                                          className="page_list"
-                                          style={{
-                                            cursor: "pointer",
-                                            fontSize: "15px",
-                                          }}
-                                          onClick={() => {
-                                            copy1(item?.id);
-                                          }}
-                                        >
-                                          <CopyAll /> Copy
-                                        </li>
-                                        <li
-                                          className="page_list"
-                                          style={{
-                                            cursor: "pointer",
-                                            fontSize: "15px",
-                                          }}
-                                          onClick={() => {
-                                            track(item?.id);
-                                          }}
-                                        >
-                                          <RoomIcon /> Track Batch
-                                        </li>
-                                        <li
-                                          className="page_list"
-                                          style={{
-                                            cursor: "pointer",
-                                            fontSize: "15px",
-                                          }}
-                                          onClick={() => {
-                                            track123(item);
-                                          }}
-                                        >
-                                          <WarehouseIcon /> Assign Clearing
-                                        </li>
-                                        {/* <li
-                                          className="page_list"
-                                          style={{
-                                            cursor: "pointer",
-                                            fontSize: "15px",
-                                          }}
-                                          // onClick={() => {
-                                          //   handledelivery(item?.id);
-                                          // }}
-                                        >
-                                          <DownloadingIcon /> Loading Details
-                                        </li> */}
-                                        {/* <li
-                                          className="page_list"
-                                          style={{
-                                            cursor: "pointer",
-                                            fontSize: "15px",
-                                          }}
-                                          // onClick={() => {
-                                          //   handlenavival(item?.id);
-                                          // }}
-                                        >
-                                          <LocalShippingIcon /> Delivery details
-                                        </li> */}
-                                        <li
-                                          className="page_list"
-                                          style={{
-                                            cursor: "pointer",
-                                            fontSize: "15px",
-                                          }}
-                                          onClick={() => {
-                                            handleclickdelete(item?.id);
-                                          }}
-                                        >
-                                          <DeleteIcon /> Delete Batch
-                                        </li>
-                                      </ul>
-                                    </a>
-                                  </div>
-                                </div>
-                              </TableRow>
-                            </>
-                          );
-                        })}
-                    </TableBody>
+      return (
+        <TableRow
+          key={index + 1}
+          className="border-bottom"
+          style={{
+  backgroundColor: isDisabled ? "#f5f5f5" : "",
+}}
+        >
+          <TableCell style={{ color: isDisabled ? "#999" : "" }}>{item?.batch_number}</TableCell>
+          <TableCell style={{ color: isDisabled ? "#999" : "" }}>{item?.freight}</TableCell>
+
+          <TableCell style={{ color: isDisabled ? "#999" : "" }}>{item?.total_freight_dimension}</TableCell>
+          <TableCell style={{ color: isDisabled ? "#999" : "" }}>{item?.total_freight_weight}</TableCell>
+          <TableCell style={{ color: isDisabled ? "#999" : "" }}>{item?.total_freight_packages}</TableCell>
+          <TableCell style={{ color: isDisabled ? "#999" : "" }} className="col-1">
+            {item?.origin_country_name}
+          </TableCell>
+          <TableCell style={{ color: isDisabled ? "#999" : "" }}>{item?.des_country_name}</TableCell>
+          <TableCell style={{ color: isDisabled ? "#999" : "" }}>{item?.forwarding_agent}</TableCell>
+
+          {/* 🔒 Disable row click */}
+          <TableCell style={{ color: isDisabled ? "#999" : "" }}
+            style={{
+              cursor: isDisabled ? "not-allowed" : "pointer",
+            }}
+            onClick={() => {
+              if (!isDisabled) {
+                handleclickid(item.id);
+              }
+            }}
+          >
+            {item?.count_freight}
+          </TableCell>
+
+          <TableCell style={{ color: isDisabled ? "#999" : "" }}>{item.track_status}</TableCell>
+
+          {/* <div className="dropdown">
+            <a
+              href="#"
+              type="button"
+              className="act_btn dropdown-toggle mb-3"
+              data-bs-toggle="dropdown"
+              aria-expanded="false"
+              onClick={(e) => e.preventDefault()}
+            >
+              Action
+            </a>
+
+            <div className="dropdown-menu">
+              <a className="dropdown-item det_page">
+                <ul className="p-0 m-0">
+
+                  {/* ✅ ALWAYS ALLOWED */}
+                  {/* <li
+                    className="page_list"
+                    style={{ cursor: "pointer", fontSize: "15px" }}
+                    onClick={() => handleclickid(item.id)}
+                  >
+                    <RemoveRedEyeIcon /> View Details
+                  </li>
+
+                  <li
+                    className="page_list"
+                    style={{ cursor: "pointer", fontSize: "15px" }}
+                    onClick={() => openModal2(item.id)}
+                  >
+                    <ContentCopyIcon /> Edit Batch
+                  </li>
+
+                  {/* ❌ DISABLED WHEN STATUS EXISTS */}
+                {/* <li
+  className="page_list"
+  style={{
+    cursor: isDisabled ? "not-allowed" : "pointer",
+    fontSize: "15px",
+    color: isDisabled ? "#999" : "#000",
+    pointerEvents: isDisabled ? "none" : "auto",
+  }}
+  onClick={() => {
+    if (!isDisabled) copy1(item?.id);
+  }}
+>
+  <CopyAll /> Copy
+</li>
+
+                  <li
+                    className="page_list"
+                    style={{
+                      cursor: isDisabled ? "not-allowed" : "pointer",
+                      fontSize: "15px",
+                      opacity: isDisabled ? 0.5 : 1,
+                    }}
+                    onClick={() => {
+                      if (!isDisabled) track(item?.id);
+                    }}
+                  >
+                    <RoomIcon /> Track Batch
+                  </li>
+
+                  <li
+                    className="page_list"
+                    style={{
+                      cursor: isDisabled ? "not-allowed" : "pointer",
+                      fontSize: "15px",
+                      opacity: isDisabled ? 0.5 : 1,
+                    }}
+                    onClick={() => {
+                      if (!isDisabled) track123(item);
+                    }}
+                  >
+                    <WarehouseIcon /> Assign Clearing
+                  </li>
+
+                  <li
+                    className="page_list"
+                    style={{
+                      cursor: isDisabled ? "not-allowed" : "pointer",
+                      fontSize: "15px",
+                      opacity: isDisabled ? 0.5 : 1,
+                    }}
+                    onClick={() => {
+                      if (!isDisabled) handleclickdelete(item?.id);
+                    }}
+                  >
+                    <DeleteIcon /> Delete Batch
+                  </li>
+
+                </ul>
+              </a>
+            </div>
+          </div> */}
+          <div className="dropdown">
+  <a
+    href="#"
+    type="button"
+    className="act_btn dropdown-toggle mb-3"
+    data-bs-toggle="dropdown"
+    aria-expanded="false"
+    onClick={(e) => e.preventDefault()}
+  >
+    Action
+  </a>
+
+  <div className="dropdown-menu">
+    <a className="dropdown-item det_page">
+      <ul className="p-0 m-0">
+
+        {/* ✅ ALWAYS SHOW */}
+        <li
+          className="page_list"
+          style={{ cursor: "pointer", fontSize: "15px" }}
+          onClick={() => handleclickid(item.id)}
+        >
+          <RemoveRedEyeIcon /> View Details
+        </li>
+
+        <li
+          className="page_list"
+          style={{ cursor: "pointer", fontSize: "15px" }}
+          onClick={() => openModal2(item.id)}
+        >
+          <ContentCopyIcon /> Edit Batch
+        </li>
+
+        <li
+          className="page_list"
+          style={{ cursor: "pointer", fontSize: "15px" }}
+          onClick={() => track(item?.id)}
+        >
+          <RoomIcon /> Track Batch
+        </li>
+
+        {/* ❌ SHOW ONLY WHEN NOT DISABLED */}
+        {!isDisabled && (
+          <>
+            <li
+              className="page_list"
+              style={{ cursor: "pointer", fontSize: "15px" }}
+              onClick={() => copy1(item?.id)}
+            >
+              <CopyAll /> Copy
+            </li>
+
+            <li
+              className="page_list"
+              style={{ cursor: "pointer", fontSize: "15px" }}
+              onClick={() => track123(item)}
+            >
+              <WarehouseIcon /> Assign Clearing
+            </li>
+
+            <li
+              className="page_list"
+              style={{ cursor: "pointer", fontSize: "15px" }}
+              onClick={() => handleclickdelete(item?.id)}
+            >
+              <DeleteIcon /> Delete Batch
+            </li>
+          </>
+        )}
+
+      </ul>
+    </a>
+  </div>
+</div>
+        </TableRow>
+      );
+    })}
+</TableBody>
                   </Table>
                 </TableContainer>
               </div>

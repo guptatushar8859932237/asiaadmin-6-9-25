@@ -72,7 +72,7 @@ export default function Downloadprdf() {
                               >
                                 R.C 102069/GU/23078/342 N.I.F. 00619049 Lot 1644
                                 Ext F nord Secteur 06, Tevragh Zeina Nouakchott
-                                , Mauritania www.asiaDirect.com
+                                , Web www.asiaDirect.com
                               </p>
                             </td>
                           </tr>

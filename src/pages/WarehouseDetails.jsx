@@ -87,14 +87,6 @@ export default function WarehouseDetails() {
       });
   };
 
-  // const handleEditClick12 = (id) => {
-  //   const confirmDelete = window.confirm(
-  //     "Are you sure you want to delete this product?"
-  //   );
-  //   if (confirmDelete) {
-  //     deleteapi(id);
-  //   }
-  // };
   const handleEditClick12 = async (freightId) => {
     const result = await Swal.fire({
       title: "Are you sure?",
@@ -320,7 +312,7 @@ const totalDimension = apidata.reduce(
                                 <p className="client_para1">Groupage:</p>
                               </td>
                               <td>
-                                <p className="client_para1">{info?.order_id}</p>
+                                <p className="client_para1">{info?.batch_number}</p>
                               </td>
                             </tr>
                           </tbody>
@@ -491,38 +483,47 @@ const totalDimension = apidata.reduce(
                   <div key={groupIndex} className="mb-2">
                     <label>{groupName} :</label>
                     {documents[groupName]?.map((item, index) => (
-                      <div key={item.id} className="d-flex align-items-center">
-                        <a
-                          href={`${process.env.REACT_APP_BASE_URLdocument}${item?.document}`}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="view_docu ms-2"
-                        >
-                          View
-                        </a>
-                        <DeleteIcon
-                          onClick={() => deleteapi(item.id)}
-                          className="text-danger ms-2"
-                          style={{ cursor: "pointer" }}
-                        />
-                      </div>
+              <div className="image-box">
+  <img
+    src={`${process.env.REACT_APP_BASE_URLdocument}${item?.document}`}
+    alt="doc"
+    className="preview-img"
+    onClick={() =>
+      window.open(
+        `${process.env.REACT_APP_BASE_URLdocument}${item?.document}`,
+        "_blank"
+      )
+    }
+  />
+
+  <DeleteIcon
+    onClick={() => deleteapi(item.id)}
+    className="delete-icon"
+  />
+</div>
                     ))}
                   </div>
                 ))}
                 {/* Quotation (separate because it's not part of groups) */}
-                <div className="mb-2">
-                  <label>Attach Quotation :</label>
-                  {info.attachment_Estimate && (
-                    <a
-                      href={`${process.env.REACT_APP_BASE_URLdocument}${info?.attachment_Estimate}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="view_docu ms-2"
-                    >
-                      View
-                    </a>
-                  )}
-                </div>
+              <div className="mb-2">
+  <label>Attach Quotation :</label>
+
+  {info.attachment_Estimate && (
+    <div className="image-box ms-2">
+      <img
+        src={`${process.env.REACT_APP_BASE_URLdocument}${info?.attachment_Estimate}`}
+        alt="quotation"
+        className="preview-img"
+        onClick={() =>
+          window.open(
+            `${process.env.REACT_APP_BASE_URLdocument}${info?.attachment_Estimate}`,
+            "_blank"
+          )
+        }
+      />
+    </div>
+  )}
+</div>
               </div>
             </div>
           </div>

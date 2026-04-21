@@ -12,174 +12,179 @@ export default function Supplierwarhousproduct() {
   const location = useLocation();
   const info = location.state.data;
   console.log(info);
-   const [documents, setDocuments] = useState({});
-   const [productData, setProductData] = useState('');
-   const [productModalOpen1, setProductModalOpen1] = useState(false);
+  const [documents, setDocuments] = useState({});
+  const [productData, setProductData] = useState("");
+  const [productModalOpen1, setProductModalOpen1] = useState(false);
   const navigate = useNavigate();
   const [apidata, setApidata] = useState([]);
-  const postassiandata =async () => {
+  const postassiandata = async () => {
     try {
-       await  axios
-      .get(`${process.env.REACT_APP_BASE_URL}getSupplierWarehouseProducts?supplier_warehouse_id=${info.id}`)
-      .then((response) => {
-        console.log(response.data.data);
-        setApidata(response.data.data);
-      })
-      .catch((error) => {
-        console.log(error.response.data);
-      });
+      await axios
+        .get(
+          `${process.env.REACT_APP_BASE_URL}getSupplierWarehouseProducts?supplier_warehouse_id=${info.id}`,
+        )
+        .then((response) => {
+          console.log(response.data.data);
+          setApidata(response.data.data);
+        })
+        .catch((error) => {
+          console.log(error.response.data);
+        });
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
   };
   useEffect(() => {
     postassiandata();
   }, []);
   const getFileType = (fileName = "") => {
-  const ext = fileName.split(".").pop().toLowerCase();
-  if (["jpg", "jpeg", "png", "gif", "webp"].includes(ext)) return "image";
-  if (ext === "pdf") return "pdf";
-  if (["xls", "xlsx", "csv"].includes(ext)) return "excel";
-  if (["doc", "docx"].includes(ext)) return "doc";
-  return "other";
-};
+    const ext = fileName.split(".").pop().toLowerCase();
+    if (["jpg", "jpeg", "png", "gif", "webp"].includes(ext)) return "image";
+    if (ext === "pdf") return "pdf";
+    if (["xls", "xlsx", "csv"].includes(ext)) return "excel";
+    if (["doc", "docx"].includes(ext)) return "doc";
+    return "other";
+  };
   const handleclicknav = () => {
     navigate("/Admin/SupplierWarehouse");
   };
-   useEffect(() => {
-  postassiandata();
-  if (info?.files) {
-    setDocuments(info.files);
-  }
-}, []);
-
-const handlechangegetdatainput = (e) => {
-  const { name, value } = e.target;
-  setProductData((prev) => ({
-    ...prev,
-    [name]: value,
-  }));
-}
-
-const editproduct123 = async () => {
-  try {
-    const response = await axios.post(
-      `${process.env.REACT_APP_BASE_URL}updateSupplierWarehouseProduct`,  
-      productData
-    );  
-    if (response?.data?.success) {
-      Swal.fire("Success!", "Product updated successfully", "success");
-      setProductModalOpen1(false);
-      postassiandata(); // refresh data
-    } else {
-      Swal.fire("Error!", "Failed to update product", "error");
+  useEffect(() => {
+    postassiandata();
+    if (info?.files) {
+      setDocuments(info.files);
     }
-  } catch (error) {
-    console.log(error);
-    Swal.fire("Error!", "Something went wrong", "error");
-  } 
-}
+  }, []);
 
-useEffect(() => {
-  postassiandata();
-  if (info?.files) {
-    const grouped = info.files.reduce((acc, item) => {
-      const key = item.type || "other";
-      if (!acc[key]) acc[key] = [];
-      acc[key].push(item);
-      return acc;
-    }, {});
-    setDocuments(grouped);
-  }
-}, []);
-     const deleteapi = (id) => {
-        console.log(id);
-        const data11 = {
-          doc_id: id,
-        };
-        axios
-          .post(`${process.env.REACT_APP_BASE_URL}DeleteDocument`, data11)
-          .then((response) => {
-            // GetFreightImages();
-            toast.success(response.data.message);
-          })
-          .catch((error) => {
-            console.log(error.response.data);
-          });
-      };
-      const totals = apidata.reduce(
-  (acc, item) => {
-    acc.packages += Number(item.packages) || 0;
-    acc.weight += Number(item.weight) || 0;
-    // 🔥 Handle dimension safely
-    if (item.dimension && typeof item.dimension === "string") {
-      const dims = item.dimension.split("x").map(Number);
-      if (dims.length === 3) {
-        const volume = dims[0] * dims[1] * dims[2];
-        acc.dimension += volume || 0;
+  const handlechangegetdatainput = (e) => {
+    const { name, value } = e.target;
+    setProductData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  const editproduct123 = async () => {
+    try {
+      const response = await axios.post(
+        `${process.env.REACT_APP_BASE_URL}updateSupplierWarehouseProduct`,
+        productData,
+      );
+      if (response?.data?.success) {
+        Swal.fire("Success!", "Product updated successfully", "success");
+        setProductModalOpen1(false);
+        postassiandata(); // refresh data
+      } else {
+        Swal.fire("Error!", "Failed to update product", "error");
+      }
+    } catch (error) {
+      console.log(error);
+      Swal.fire("Error!", "Something went wrong", "error");
+    }
+  };
+
+  useEffect(() => {
+    postassiandata();
+    if (info?.files) {
+      const grouped = info.files.reduce((acc, item) => {
+        const key = item.type || "other";
+        if (!acc[key]) acc[key] = [];
+        acc[key].push(item);
+        return acc;
+      }, {});
+      setDocuments(grouped);
+    }
+  }, []);
+  const deleteapi = (id) => {
+    console.log(id);
+    const data11 = {
+      doc_id: id,
+    };
+    axios
+      .post(`${process.env.REACT_APP_BASE_URL}DeleteDocument`, data11)
+      .then((response) => {
+        // GetFreightImages();
+        toast.success(response.data.message);
+      })
+      .catch((error) => {
+        console.log(error.response.data);
+      });
+  };
+  const totals = apidata.reduce(
+    (acc, item) => {
+      acc.packages += Number(item.packages) || 0;
+      acc.weight += Number(item.weight) || 0;
+      // 🔥 Handle dimension safely
+      if (item.dimension && typeof item.dimension === "string") {
+        const dims = item.dimension.split("x").map(Number);
+        if (dims.length === 3) {
+          const volume = dims[0] * dims[1] * dims[2];
+          acc.dimension += volume || 0;
+        } else {
+          acc.dimension += Number(item.dimension) || 0;
+        }
       } else {
         acc.dimension += Number(item.dimension) || 0;
       }
-    } else {
-      acc.dimension += Number(item.dimension) || 0;
-    }
-    return acc;
-  },
-  { packages: 0, dimension: 0, weight: 0 }
-);
+      return acc;
+    },
+    { packages: 0, dimension: 0, weight: 0 },
+  );
 
-const handleEditClick =(freightId) => {
-  console.log(freightId);
-  const payload={
-    id: freightId,
-  }
-  try {
-    const response = axios.post(
-      `${process.env.REACT_APP_BASE_URL}getWarehouseProductById`,
-      payload
-    ).then((res) => {
-      console.log(res.data.data);
-      setProductData(res.data.data);
-      setProductModalOpen1(true);
+  const handleEditClick = (freightId) => {
+    console.log(freightId);
+    const payload = {
+      id: freightId,
+    };
+    try {
+      const response = axios
+        .post(
+          `${process.env.REACT_APP_BASE_URL}getWarehouseProductById`,
+          payload,
+        )
+        .then((res) => {
+          console.log(res.data.data);
+          setProductData(res.data.data);
+          setProductModalOpen1(true);
+        });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  const closeeditprocutmodal = () => {
+    setProductModalOpen1(false);
+    setProductData("");
+  };
+  const handleEditClick12 = async (freightId) => {
+    const result = await Swal.fire({
+      title: "Are you sure?",
+      text: "Do you want to delete this product?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "Yes, Delete",
+      cancelButtonText: "Cancel",
     });
-  } catch (error) {
-    console.log(error);
-  }
-}
-const closeeditprocutmodal = () => {
-  setProductModalOpen1(false);
-  setProductData('');
-}
-const handleEditClick12 = async (freightId) => {
-  const result = await Swal.fire({
-    title: "Are you sure?",
-    text: "Do you want to delete this product?",
-    icon: "warning",
-    showCancelButton: true,
-    confirmButtonText: "Yes, Delete",
-    cancelButtonText: "Cancel",
-  });
 
-  // ❌ Agar user cancel kare to yahin stop
-  if (!result.isConfirmed) return;
-  const payload={
-        id: freightId,
-  }
-  try {
-    const response = await axios.post(
-      `${process.env.REACT_APP_BASE_URL}DeleteWarehouseProduct`,payload
-    );
-    if (response?.data?.success) {
-      Swal.fire("Deleted!", "Product deleted successfully", "success");
-      postassiandata(); // refresh data
-    } else {
-      Swal.fire("Error!", "Failed to delete product", "error");
+    // ❌ Agar user cancel kare to yahin stop
+    if (!result.isConfirmed) return;
+    const payload = {
+      id: freightId,
+    };
+    try {
+      const response = await axios.post(
+        `${process.env.REACT_APP_BASE_URL}DeleteWarehouseProduct`,
+        payload,
+      );
+      if (response?.data?.success) {
+        Swal.fire("Deleted!", "Product deleted successfully", "success");
+        postassiandata(); // refresh data
+      } else {
+        Swal.fire("Error!", "Failed to delete product", "error");
+      }
+    } catch (error) {
+      console.log(error);
+      Swal.fire("Error!", "Something went wrong", "error");
     }
-  } catch (error) {
-    console.log(error);
-    Swal.fire("Error!", "Something went wrong", "error");
-  }
-};
+  };
   return (
     <div className="wpWrapper">
       <div className="container-fluid">
@@ -189,13 +194,16 @@ const handleEditClick12 = async (freightId) => {
               <div className="d-flex">
                 <div>
                   <ArrowBackIcon
+
                     onClick={handleclicknav}
                     className="text-dark"
                     style={{ cursor: "pointer" }}
                   />
                 </div>
                 <div>
-                  <h4 className="det_hd text-start ms-3">Warehouse Full Details</h4>
+                  <h4 className="det_hd text-start ms-3">
+                    Warehouse Full Details
+                  </h4>
                 </div>
               </div>
             </div>
@@ -215,11 +223,11 @@ const handleEditClick12 = async (freightId) => {
                           <tbody>
                             <tr>
                               <td className="fright_num">
-                                <p className="client_para1">Freight number:</p>
+                                <p className="client_para1">Order number:</p>
                               </td>
                               <td>
                                 <p className="client_para1">
-                                  {info.freight_number}
+                                 OR000 {info.order_id}
                                 </p>
                               </td>
                             </tr>
@@ -230,7 +238,7 @@ const handleEditClick12 = async (freightId) => {
                               <td>
                                 <p className="client_para1">
                                   {new Date(info.created_at).toLocaleDateString(
-                                    "en-GB"
+                                    "en-GB",
                                   )}
                                 </p>
                               </td>
@@ -241,7 +249,7 @@ const handleEditClick12 = async (freightId) => {
                               </td>
                               <td>
                                 <p className="client_para1">
-                                  {info.client_name}
+                                  {info.customer_name}
                                 </p>
                               </td>
                             </tr>
@@ -260,9 +268,7 @@ const handleEditClick12 = async (freightId) => {
                                 <p className="client_para1">Groupage:</p>
                               </td>
                               <td>
-                                <p className="client_para1">
-                                  {info?.order_id}
-                                </p>
+                                <p className="client_para1">{info?.batch_number}</p>
                               </td>
                             </tr>
                           </tbody>
@@ -331,7 +337,9 @@ const handleEditClick12 = async (freightId) => {
                             </tr>
                             <tr>
                               <td>
-                                <p className="client_para1 ">Origin On Carriage Costs</p>
+                                <p className="client_para1 ">
+                                  Origin On Carriage Costs
+                                </p>
                               </td>
                               <td>
                                 <p className="client_para1 "></p>
@@ -344,7 +352,9 @@ const handleEditClick12 = async (freightId) => {
                             </tr>
                             <tr>
                               <td>
-                                <p className="client_para1 ">Origin Incidental cost</p>
+                                <p className="client_para1 ">
+                                  Origin Incidental cost
+                                </p>
                               </td>
                               <td>
                                 <p className="client_para1 mb-3"></p>
@@ -362,7 +372,7 @@ const handleEditClick12 = async (freightId) => {
                   </div>
                 </div>
               </div>
-               <div className="col-md-4 pe-4">
+              <div className="col-md-4 pe-4">
                 <div className=" card desti_card">
                   <div className="card-body">
                     <div>
@@ -378,9 +388,7 @@ const handleEditClick12 = async (freightId) => {
                                 <p className="client_para1">Weight:</p>
                               </td>
                               <td>
-                                <p className="client_para1">
-                                  {totals.weight}
-                                </p>
+                                <p className="client_para1">{totals.weight}</p>
                               </td>
                             </tr>
                             <tr>
@@ -389,7 +397,7 @@ const handleEditClick12 = async (freightId) => {
                               </td>
                               <td>
                                 <p className="client_para1">
-                                 {totals.dimension}
+                                  {totals.dimension}
                                 </p>
                               </td>
                             </tr>
@@ -412,111 +420,111 @@ const handleEditClick12 = async (freightId) => {
               </div>
             </div>
           </div>
-            <div className="col-md-12">
+          <div className="col-md-12">
             <div className="card desti_card">
               <div className="card-body mb-3">
-               {Object.keys(documents).map((groupName, groupIndex) => (
-  <div key={groupIndex} className="mb-4">
-    <label className="fw-bold text-capitalize">
-      {groupName.replace("_", " ")} :
-    </label>
+                {Object.keys(documents).map((groupName, groupIndex) => (
+                  <div key={groupIndex} className="mb-4">
+                    <label className="fw-bold text-capitalize">
+                      {groupName.replace("_", " ")} :
+                    </label>
 
-    <div className="d-flex flex-wrap gap-3 mt-2">
-      {documents[groupName]?.map((item) => {
-        const fileUrl = `${process.env.REACT_APP_BASE_URLdocument}${item.file}`;
-        const fileType = getFileType(item.file);
+                    <div className="d-flex flex-wrap gap-3 mt-2">
+                      {documents[groupName]?.map((item) => {
+                        const fileUrl = `${process.env.REACT_APP_BASE_URLdocument}${item.file}`;
+                        const fileType = getFileType(item.file);
 
-        return (
-          <div
-            key={item.id}
-            style={{
-              width: "140px",
-              border: "1px solid #ddd",
-              borderRadius: "10px",
-              padding: "8px",
-              textAlign: "center",
-              background: "#fafafa",
-            }}
-          >
-            {/* ✅ IMAGE */}
-            {fileType === "image" && (
-              <img
-                src={fileUrl}
-                alt="file"
-                style={{
-                  width: "100%",
-                  height: "90px",
-                  objectFit: "cover",
-                  borderRadius: "6px",
-                  cursor: "pointer",
-                }}
-                onClick={() => window.open(fileUrl, "_blank")}
-              />
-            )}
+                        return (
+                          <div
+                            key={item.id}
+                            style={{
+                              width: "140px",
+                              border: "1px solid #ddd",
+                              borderRadius: "10px",
+                              padding: "8px",
+                              textAlign: "center",
+                              background: "#fafafa",
+                            }}
+                          >
+                            {/* ✅ IMAGE */}
+                            {fileType === "image" && (
+                              <img
+                                src={fileUrl}
+                                alt="file"
+                                style={{
+                                  width: "100%",
+                                  height: "90px",
+                                  objectFit: "cover",
+                                  borderRadius: "6px",
+                                  cursor: "pointer",
+                                }}
+                                onClick={() => window.open(fileUrl, "_blank")}
+                              />
+                            )}
 
-            {/* ✅ PDF */}
-            {fileType === "pdf" && (
-              <div
-                style={{ cursor: "pointer" }}
-                onClick={() => window.open(fileUrl, "_blank")}
-              >
-                📄 <br /> PDF File
-              </div>
-            )}
+                            {/* ✅ PDF */}
+                            {fileType === "pdf" && (
+                              <div
+                                style={{ cursor: "pointer" }}
+                                onClick={() => window.open(fileUrl, "_blank")}
+                              >
+                                📄 <br /> PDF File
+                              </div>
+                            )}
 
-            {/* ✅ EXCEL */}
-            {fileType === "excel" && (
-              <div
-                style={{ cursor: "pointer" }}
-                onClick={() => window.open(fileUrl, "_blank")}
-              >
-                📊 <br /> Excel File
-              </div>
-            )}
+                            {/* ✅ EXCEL */}
+                            {fileType === "excel" && (
+                              <div
+                                style={{ cursor: "pointer" }}
+                                onClick={() => window.open(fileUrl, "_blank")}
+                              >
+                                📊 <br /> Excel File
+                              </div>
+                            )}
 
-            {/* ✅ DOC */}
-            {fileType === "doc" && (
-              <div
-                style={{ cursor: "pointer" }}
-                onClick={() => window.open(fileUrl, "_blank")}
-              >
-                📝 <br /> Document
-              </div>
-            )}
+                            {/* ✅ DOC */}
+                            {fileType === "doc" && (
+                              <div
+                                style={{ cursor: "pointer" }}
+                                onClick={() => window.open(fileUrl, "_blank")}
+                              >
+                                📝 <br /> Document
+                              </div>
+                            )}
 
-            {/* ✅ OTHER */}
-            {fileType === "other" && (
-              <div
-                style={{ cursor: "pointer" }}
-                onClick={() => window.open(fileUrl, "_blank")}
-              >
-                📎 <br /> File
-              </div>
-            )}
+                            {/* ✅ OTHER */}
+                            {fileType === "other" && (
+                              <div
+                                style={{ cursor: "pointer" }}
+                                onClick={() => window.open(fileUrl, "_blank")}
+                              >
+                                📎 <br /> File
+                              </div>
+                            )}
 
-            {/* ✅ FILE NAME */}
-            <div
-              style={{
-                fontSize: "11px",
-                marginTop: "5px",
-                wordBreak: "break-word",
-              }}
-            >
-              {item.file.split("-").slice(1).join("-")}
-            </div>
+                            {/* ✅ FILE NAME */}
+                            <div
+                              style={{
+                                fontSize: "11px",
+                                marginTop: "5px",
+                                wordBreak: "break-word",
+                              }}
+                            >
+                              {item.file.split("-").slice(1).join("-")}
+                            </div>
 
-            {/* ✅ DELETE */}
-            <DeleteIcon
-              onClick={() => deleteapi(item.id)}
-              className="text-danger mt-1"
-              style={{ cursor: "pointer", fontSize: "18px" }}
-            />
-          </div>
-        );
-      })}
-    </div>
-  </div>
-))}
+                            {/* ✅ DELETE */}
+                            <DeleteIcon
+                              onClick={() => deleteapi(item.id)}
+                              className="text-danger mt-1"
+                              style={{ cursor: "pointer", fontSize: "18px" }}
+                            />
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                ))}
                 {/* Quotation (separate because it's not part of groups) */}
                 <div className="mb-2">
                   <label>Attach Quotation :</label>
@@ -548,209 +556,209 @@ const handleEditClick12 = async (freightId) => {
                   <th scope="col">Action</th>
                 </tr>
               </thead>
-           <tbody style={{ border: "none" }}>
-  {apidata && apidata.length > 0 ? (
-    apidata.map((item, index) => {
-      return (
-        <tr className="border-bottom" key={index}>
-          <td>{item.product_description}</td>
-          <td>{item.warehouse_ref}</td>
-          <td>
-            {new Date(item.date_received).toLocaleDateString("en-GB")}
-          </td>
-          <td>{item.package_type}</td>
-          <td>{item.packages}</td>
-          <td>{item.dimension}</td>
-          <td>{item.weight}</td>
-          <td>
-      {index !== 0 && (   // 👈 yaha condition lagayi
-        <FaEdit
-          onClick={() => handleEditClick(item.id)}
-          style={{ color: "#1d2044", cursor: "pointer" }}
-        />
-      )}
-    </td>
-        </tr>
-      );
-    })
-  ) : (
-    <tr>
-      <td colSpan="8" style={{ textAlign: "center", padding: "20px" }}>
-        No Data Found
-      </td>
-    </tr>
-  )}
-</tbody>
+              <tbody style={{ border: "none" }}>
+                {apidata && apidata.length > 0 ? (
+                  apidata.map((item, index) => {
+                    return (
+                      <tr className="border-bottom" key={index}>
+                        <td>{item.product_description}</td>
+                        <td>{item.warehouse_ref}</td>
+                        <td>
+                          {new Date(item.date_received).toLocaleDateString(
+                            "en-GB",
+                          )}
+                        </td>
+                        <td>{item.package_type}</td>
+                        <td>{item.packages}</td>
+                        <td>{item.dimension}</td>
+                        <td>{item.weight}</td>
+                        <td>
+                          {index !== 0 && ( // 👈 yaha condition lagayi
+                            <FaEdit
+                              onClick={() => handleEditClick(item.id)}
+                              style={{ color: "#1d2044", cursor: "pointer" }}
+                            />
+                          )}
+                        </td>
+                      </tr>
+                    );
+                  })
+                ) : (
+                  <tr>
+                    <td
+                      colSpan="8"
+                      style={{ textAlign: "center", padding: "20px" }}
+                    >
+                      No Data Found
+                    </td>
+                  </tr>
+                )}
+              </tbody>
             </table>
           </div>
         </div>
         <Modal
-                        open={productModalOpen1}
-                        onClose={closeeditprocutmodal}
-                        aria-labelledby="modal-modal-title"
-                        aria-describedby="modal-modal-description"
-                      >
-                        <Box
-                          sx={{
-                            position: "absolute",
-                            top: "50%",
-                            left: "50%",
-                            transform: "translate(-50%, -50%)",
-                            width: {
-                              xs: "95%", // mobile
-                              sm: "80%", // tablet
-                              md: "70%", // small laptop
-                              lg: "60%", // desktop
-                            },
-                          }}
-                        >
-                          <div className="modal-header">
-                            <h2 id="modal-modal-title">
-                              Edit Warehouse Product
-                            </h2>
-                            <button
-                              className="btn btn-close"
-                              onClick={closeeditprocutmodal}
-                            >
-                              <CloseIcon />
-                            </button>
-                          </div>
-                          <div className="newModalGap noFormaControl">
-                            <div className="row g-2">
-                              <div className="col-md-6">
-                                <label>Goods Description</label>
-                                <input
-                                  className="form-control"
-                                  name="product_description"
-                                  onChange={handlechangegetdatainput}
-                                  value={productData.product_description}
-                                  placeholder="warehouse name"
-                                ></input>
-                              </div>
-                              <div className="col-md-6">
-                                <label>Hazardous</label>
-                                <input
-                                  className="form-control"
-                                  name="hazardous"
-                                  onChange={handlechangegetdatainput}
-                                  value={productData.hazardous}
-                                  placeholder="warehouse name"
-                                ></input>
-                              </div>
+          open={productModalOpen1}
+          onClose={closeeditprocutmodal}
+          aria-labelledby="modal-modal-title"
+          aria-describedby="modal-modal-description"
+        >
+          <Box
+            sx={{
+              position: "absolute",
+              top: "50%",
+              left: "50%",
+              transform: "translate(-50%, -50%)",
+              width: {
+                xs: "95%", // mobile
+                sm: "80%", // tablet
+                md: "70%", // small laptop
+                lg: "60%", // desktop
+              },
+            }}
+          >
+            <div className="modal-header">
+              <h2 id="modal-modal-title">Edit Warehouse Product</h2>
+              <button className="btn btn-close" onClick={closeeditprocutmodal}>
+                <CloseIcon />
+              </button>
+            </div>
+            <div className="newModalGap noFormaControl">
+              <div className="row g-2">
+                <div className="col-md-6">
+                  <label>Goods Description</label>
+                  <input
+                    className="form-control"
+                    name="product_description"
+                    onChange={handlechangegetdatainput}
+                    value={productData.product_description}
+                    placeholder="warehouse name"
+                  ></input>
+                </div>
+                <div className="col-md-6">
+                  <label>Hazardous</label>
+                  <input
+                    className="form-control"
+                    name="hazardous"
+                    onChange={handlechangegetdatainput}
+                    value={productData.hazardous}
+                    placeholder="warehouse name"
+                  ></input>
+                </div>
 
-                              <div className="col-md-6">
-                                <label>Date Received</label>
-                                <input
-                                  type="date"
-                                  className="form-control"
-                                  name="date_received"
-                                  value={
-                                    productData.date_received
-                                      ? productData.date_received.split("T")[0]
-                                      : ""
-                                  }
-                                  onChange={handlechangegetdatainput}
-                                  placeholder="warehouse name"
-                                />
-                              </div>
-                              <div className="col-md-6">
-                                <label>Package Type</label>
-                                <input
-                                  className="form-control"
-                                  name="package_type"
-                                  value={productData.package_type}
-                                  onChange={handlechangegetdatainput}
-                                  placeholder="warehouse name"
-                                ></input>
-                              </div>
+                <div className="col-md-6">
+                  <label>Date Received</label>
+                  <input
+                    type="date"
+                    className="form-control"
+                    name="date_received"
+                    value={
+                      productData.date_received
+                        ? productData.date_received.split("T")[0]
+                        : ""
+                    }
+                    onChange={handlechangegetdatainput}
+                    placeholder="warehouse name"
+                  />
+                </div>
+                <div className="col-md-6">
+                  <label>Package Type</label>
+                  <input
+                    className="form-control"
+                    name="package_type"
+                    value={productData.package_type}
+                    onChange={handlechangegetdatainput}
+                    placeholder="warehouse name"
+                  ></input>
+                </div>
 
-                              <div className="col-md-6">
-                                <label>Packages</label>
-                                <input
-                                  className="form-control"
-                                  name="packages"
-                                  onChange={handlechangegetdatainput}
-                                  placeholder="warehouse name"
-                                  value={productData.packages}
-                                ></input>
-                              </div>
-                              <div className="col-md-6">
-                                <label>Dimension</label>
-                                <input
-                                  className="form-control"
-                                  name="dimension"
-                                  onChange={handlechangegetdatainput}
-                                  placeholder="warehouse name"
-                                  value={productData.dimension}
-                                ></input>
-                              </div>
+                <div className="col-md-6">
+                  <label>Packages</label>
+                  <input
+                    className="form-control"
+                    name="packages"
+                    onChange={handlechangegetdatainput}
+                    placeholder="warehouse name"
+                    value={productData.packages}
+                  ></input>
+                </div>
+                <div className="col-md-6">
+                  <label>Dimension</label>
+                  <input
+                    className="form-control"
+                    name="dimension"
+                    onChange={handlechangegetdatainput}
+                    placeholder="warehouse name"
+                    value={productData.dimension}
+                  ></input>
+                </div>
 
-                              <div className="col-md-6">
-                                <label>Weight</label>
-                                <input
-                                  className="form-control"
-                                  name="weight"
-                                  value={productData.weight}
-                                  onChange={handlechangegetdatainput}
-                                  placeholder="0.00"
-                                ></input>
-                              </div>
-                              <div className="col-md-6">
-                                <label>Warehouse Ref</label>
-                                <input
-                                  className="form-control"
-                                  name="warehouse_ref"
-                                  value={productData.warehouse_ref}
-                                  onChange={handlechangegetdatainput}
-                                  placeholder="warehouse name"
-                                ></input>
-                              </div>
+                <div className="col-md-6">
+                  <label>Weight</label>
+                  <input
+                    className="form-control"
+                    name="weight"
+                    value={productData.weight}
+                    onChange={handlechangegetdatainput}
+                    placeholder="0.00"
+                  ></input>
+                </div>
+                <div className="col-md-6">
+                  <label>Warehouse Ref</label>
+                  <input
+                    className="form-control"
+                    name="warehouse_ref"
+                    value={productData.warehouse_ref}
+                    onChange={handlechangegetdatainput}
+                    placeholder="warehouse name"
+                  ></input>
+                </div>
 
-                              <div className="col-md-6">
-                                <label>Freight</label>
-                                {/* <input
+                <div className="col-md-6">
+                  <label>Freight</label>
+                  {/* <input
                                   className="form-control"
                                   name="freight"
                                   value={productData.freight}
                                   onChange={handlechangegetdatainput}
                                   placeholder="warehouse name"
                                 ></input> */}
-                                <select
-                                  className="form-control"
-                                  name="freight"
-                                  value={productData.freight}
-                                  onChange={handlechangegetdatainput}
-                                >
-                                  <option>select</option>
-                                  <option value="Sea">Sea</option>
-                                  <option value="Air">Air</option>
-                                  <option value="Road">Road</option>
-                                </select>
-                              </div>
-                              <div className="col-md-6">
-                                <label>Groupage Batch Ref</label>
-                                <input
-                                  className="form-control"
-                                  name="groupage_batch_ref"
-                                  onChange={handlechangegetdatainput}
-                                  value={productData.groupage_batch_ref}
-                                  placeholder="warehouse name"
-                                ></input>
-                              </div>
+                  <select
+                    className="form-control"
+                    name="freight"
+                    value={productData.freight}
+                    onChange={handlechangegetdatainput}
+                  >
+                    <option>select</option>
+                    <option value="Sea">Sea</option>
+                    <option value="Air">Air</option>
+                    <option value="Road">Road</option>
+                  </select>
+                </div>
+                <div className="col-md-6">
+                  <label>Groupage Batch Ref</label>
+                  <input
+                    className="form-control"
+                    name="groupage_batch_ref"
+                    onChange={handlechangegetdatainput}
+                    value={productData.groupage_batch_ref}
+                    placeholder="warehouse name"
+                  ></input>
+                </div>
 
-                              <div className="col-md-6">
-                                <label>Warehouse Receipt Number</label>
-                                <input
-                                  className="form-control"
-                                  name="warehouse_receipt_number"
-                                  value={productData.warehouse_receipt_number}
-                                  onChange={handlechangegetdatainput}
-                                  placeholder="warehouse name"
-                                ></input>
-                              </div>
-                              <div className="col-md-6">
-                                <label>Date Dispatched</label>
-                                {/* <input
+                <div className="col-md-6">
+                  <label>Warehouse Receipt Number</label>
+                  <input
+                    className="form-control"
+                    name="warehouse_receipt_number"
+                    value={productData.warehouse_receipt_number}
+                    onChange={handlechangegetdatainput}
+                    placeholder="warehouse name"
+                  ></input>
+                </div>
+                <div className="col-md-6">
+                  <label>Date Dispatched</label>
+                  {/* <input
                                   className="form-control"
                                   type="date"
                                   name="date_dspatched"
@@ -758,139 +766,137 @@ const handleEditClick12 = async (freightId) => {
                                   onChange={handlechangegetdatainput}
                                   placeholder="warehouse name"
                                 ></input> */}
-                                <input
-                                  type="date"
-                                  className="form-control"
-                                  name="date_dispatched"
-                                  value={
-                                    productData.date_dispatched
-                                      ? productData.date_dispatched.split(
-                                          "T",
-                                        )[0]
-                                      : ""
-                                  }
-                                  onChange={handlechangegetdatainput}
-                                  placeholder="warehouse name"
-                                />
-                              </div>
+                  <input
+                    type="date"
+                    className="form-control"
+                    name="date_dispatched"
+                    value={
+                      productData.date_dispatched
+                        ? productData.date_dispatched.split("T")[0]
+                        : ""
+                    }
+                    onChange={handlechangegetdatainput}
+                    placeholder="warehouse name"
+                  />
+                </div>
 
-                              <div className="col-md-6">
-                                <label>Supplier Address</label>
-                                <input
-                                  className="form-control"
-                                  name="supplier_address"
-                                  value={productData.supplier_address}
-                                  onChange={handlechangegetdatainput}
-                                  placeholder="warehouse name"
-                                ></input>
-                              </div>
-                              <div className="col-md-6">
-                                <label>Warehouse Collect</label>
-                                <input
-                                  className="form-control"
-                                  name="warehouse_collect"
-                                  value={productData.warehouse_collect}
-                                  onChange={handlechangegetdatainput}
-                                  placeholder="warehouse name"
-                                ></input>
-                              </div>
+                <div className="col-md-6">
+                  <label>Supplier Address</label>
+                  <input
+                    className="form-control"
+                    name="supplier_address"
+                    value={productData.supplier_address}
+                    onChange={handlechangegetdatainput}
+                    placeholder="warehouse name"
+                  ></input>
+                </div>
+                <div className="col-md-6">
+                  <label>Warehouse Collect</label>
+                  <input
+                    className="form-control"
+                    name="warehouse_collect"
+                    value={productData.warehouse_collect}
+                    onChange={handlechangegetdatainput}
+                    placeholder="warehouse name"
+                  ></input>
+                </div>
 
-                              <div className="col-md-6">
-                                <label>Costs To Collect</label>
-                                <input
-                                  className="form-control"
-                                  name="costs_to_collect"
-                                  value={productData.costs_to_collect}
-                                  onChange={handlechangegetdatainput}
-                                  placeholder="warehouse name"
-                                ></input>
-                              </div>
-                              <div className="col-md-6">
-                                <label>Port Of Loading</label>
-                                <input
-                                  className="form-control"
-                                  name="port_of_loading"
-                                  value={productData.port_of_loading}
-                                  onChange={handlechangegetdatainput}
-                                  placeholder="warehouse name"
-                                ></input>
-                              </div>
+                <div className="col-md-6">
+                  <label>Costs To Collect</label>
+                  <input
+                    className="form-control"
+                    name="costs_to_collect"
+                    value={productData.costs_to_collect}
+                    onChange={handlechangegetdatainput}
+                    placeholder="warehouse name"
+                  ></input>
+                </div>
+                <div className="col-md-6">
+                  <label>Port Of Loading</label>
+                  <input
+                    className="form-control"
+                    name="port_of_loading"
+                    value={productData.port_of_loading}
+                    onChange={handlechangegetdatainput}
+                    placeholder="warehouse name"
+                  ></input>
+                </div>
 
-                              <div className="col-md-6">
-                                <label>Warehouse Dispatch</label>
-                                <input
-                                  className="form-control"
-                                  name="warehouse_dispatch"
-                                  value={productData.warehouse_dispatch}
-                                  onChange={handlechangegetdatainput}
-                                  placeholder="warehouse name"
-                                ></input>
-                              </div>
-                              <div className="col-md-6">
-                                <label>Warehouse Cost</label>
-                                <input
-                                  className="form-control"
-                                  name="warehouse_cost"
-                                  value={productData.warehouse_cost}
-                                  onChange={handlechangegetdatainput}
-                                  placeholder="warehouse name"
-                                ></input>
-                              </div>
+                <div className="col-md-6">
+                  <label>Warehouse Dispatch</label>
+                  <input
+                    className="form-control"
+                    name="warehouse_dispatch"
+                    value={productData.warehouse_dispatch}
+                    onChange={handlechangegetdatainput}
+                    placeholder="warehouse name"
+                  ></input>
+                </div>
+                <div className="col-md-6">
+                  <label>Warehouse Cost</label>
+                  <input
+                    className="form-control"
+                    name="warehouse_cost"
+                    value={productData.warehouse_cost}
+                    onChange={handlechangegetdatainput}
+                    placeholder="warehouse name"
+                  ></input>
+                </div>
 
-                              <div className="col-md-6">
-                                <label>Cost To Dispatch</label>
-                                <input
-                                  className="form-control"
-                                  name="cost_to_dispatch"
-                                  value={productData.cost_to_dispatch}
-                                  onChange={handlechangegetdatainput}
-                                  placeholder="warehouse name"
-                                ></input>
-                              </div>
-                              <div className="col-md-6">
-                                <label>Waybill Ref</label>
-                                <input
-                                  className="form-control"
-                                  name="waybill_ref"
-                                  value={productData.waybill_ref}
-                                  onChange={handlechangegetdatainput}
-                                  placeholder="warehouse name"
-                                ></input>
-                              </div>
+                <div className="col-md-6">
+                  <label>Cost To Dispatch</label>
+                  <input
+                    className="form-control"
+                    name="cost_to_dispatch"
+                    value={productData.cost_to_dispatch}
+                    onChange={handlechangegetdatainput}
+                    placeholder="warehouse name"
+                  ></input>
+                </div>
+                <div className="col-md-6">
+                  <label>Waybill Ref</label>
+                  <input
+                    className="form-control"
+                    name="waybill_ref"
+                    value={productData.waybill_ref}
+                    onChange={handlechangegetdatainput}
+                    placeholder="warehouse name"
+                  ></input>
+                </div>
 
-                              <div className="col-md-6">
-                                <label>Supplier Email</label>
-                                <input
-                                  className="form-control"
-                                  name="supplier_Email"
-                                  value={productData.supplier_Email}
-                                  onChange={handlechangegetdatainput}
-                                  placeholder="warehouse name"
-                                ></input>
-                              </div>
-                              <div className="col-md-6">
-                                <label>Supplier Contact</label>
-                                <input
-                                  className="form-control"
-                                  name="Supplier_Contact"
-                                  value={productData.Supplier_Contact}
-                                  onChange={handlechangegetdatainput}
-                                  placeholder="warehouse name"
-                                ></input>
-                              </div>
-                            </div>
-                            <button
-                              className="blueBtn mt-3"
-                              variant="contained"
-                              onClick={() => {
-                                editproduct123();
-                              }}
-                            >
-                              Edit Product
-                            </button>
-                          </div>
-                        </Box>
-                      </Modal>
+                <div className="col-md-6">
+                  <label>Supplier Email</label>
+                  <input
+                    className="form-control"
+                    name="supplier_Email"
+                    value={productData.supplier_Email}
+                    onChange={handlechangegetdatainput}
+                    placeholder="warehouse name"
+                  ></input>
+                </div>
+                <div className="col-md-6">
+                  <label>Supplier Contact</label>
+                  <input
+                    className="form-control"
+                    name="Supplier_Contact"
+                    value={productData.Supplier_Contact}
+                    onChange={handlechangegetdatainput}
+                    placeholder="warehouse name"
+                  ></input>
+                </div>
+              </div>
+              <button
+                className="blueBtn mt-3"
+                variant="contained"
+                onClick={() => {
+                  editproduct123();
+                }}
+              >
+                Edit Product
+              </button>
+            </div>
+          </Box>
+        </Modal>
       </div>
     </div>
   );

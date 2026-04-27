@@ -1383,7 +1383,6 @@ export default function ShippingEstimate() {
       });
   };
   // asiadirect pr fieight list mai add edit
-
   const getNewDataapi = async () => {
     // console.log(getdata);
     const data123456 = {
@@ -1408,12 +1407,12 @@ export default function ShippingEstimate() {
   };
   const handleclicknav = () => {
     // navigate("/Admin/managefreight");
-    window.history.back();
+    window.history.back(); 
   };
   const closemodal = () => {
     setOpenmodal(false);
   };
-  const getdata1 = () => {
+  const getdata1 = () => { 
     axios
       .get(`${process.env.REACT_APP_BASE_URL}supplier-list`)
       .then((response) => {
@@ -1421,6 +1420,7 @@ export default function ShippingEstimate() {
       })
       .catch((error) => {
         console.log(error);
+        test(error.response.data);
       });
   };
   useEffect(() => {

@@ -35,13 +35,11 @@ export default function Downlaodestimate() {
     const payload = {
       freight_id: getdata122.freight_id,
     };
-
     try {
       const response = await axios.post(
         `${process.env.REACT_APP_BASE_URL}freight-list-byId`,
         payload
       );
-
       if (response?.data?.data?.length > 0) {
         setGetdata(response.data.data[0]);
       }
@@ -168,7 +166,6 @@ export default function Downlaodestimate() {
   const finalvlaueoforewarding =
     finalforewarding1 * parseInt(freight?.roe_origin_forewarding);
   const oricustome1 = parseFloat(freight.origin_pick_up_custome_cost) || 0;
-  // const oricustome2 = parseFloat(freight.origin_pick_up_custome_clearance) || 0;
   const oricustome2 = parseFloat(
     freight.origin_pick_up_custome_unitType === "1" ? 1 : freight.chargable_rate
   );
@@ -1273,7 +1270,6 @@ export default function Downlaodestimate() {
       console.log(error.data);
     }
   };
-
   const supplier = () => {
     axios
       .post(`${process.env.REACT_APP_BASE_URL}get-suppler-selected`, {
@@ -1287,19 +1283,16 @@ export default function Downlaodestimate() {
         toast.error(error.response.data);
       });
   };
-
   useEffect(() => {
     supplier();
     supplierSelected();
   }, []);
-
   const handlepresss = (e) => {
     if (e.charCode < 42 || e.charCode > 57) {
       e.preventDefault();
     }
   };
   // ////////////////////////////////////////////////////supplier selected
-
   const supplierSelected = async () => {
     try {
       const response = await axios.post(
@@ -1317,7 +1310,6 @@ export default function Downlaodestimate() {
       console.log("Something went wrong:", error);
     }
   };
-
   const dateformate = new Date(getdata?.date).toLocaleDateString("en-GB");
   const getTodayDate = () => {
     const today = new Date();
@@ -1326,7 +1318,6 @@ export default function Downlaodestimate() {
     const day = String(today.getDate()).padStart(2, "0");
     return `${year}-${month}-${day}`;
   };
-
   useEffect(() => {
     getsupplier();
   }, 1000);
@@ -1367,16 +1358,13 @@ export default function Downlaodestimate() {
       });
   };
   // asiadirect pr fieight list mai add edit
-
   const getNewDataapi = async () => {
-    // console.log(getdata);
     const data123456 = {
       quote_estimate_id: getdata122?.quote_estimate_id
         ? getdata122?.quote_estimate_id
         : getdata122?.quote_estimate_id,
       freight_id: getdata122?.freight_id,
     };
-    // console.log(data123456);
     await axios
       .post(
         `${process.env.REACT_APP_BASE_URL}GetQuoteShipEstimateById`,
@@ -1391,11 +1379,8 @@ export default function Downlaodestimate() {
       });
   };
   const handleclicknav = () => {
-    navigate("/Admin/managefreight");
+    window.history.back();
   };
-  //   const closemodal = () => {
-  //     setOpenmodal(false);
-  //   };
   const getdata1 = () => {
     axios
       .get(`${process.env.REACT_APP_BASE_URL}supplier-list`)

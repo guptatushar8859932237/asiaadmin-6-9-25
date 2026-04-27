@@ -581,12 +581,34 @@ export default function WarehouseOrder() {
         toast.error(error.response.data.message);
       });
   };
-  const handleSearch = (e) => {
-    const value = e.target.value;
-    setSearchQuery(value);
-    setCurrentPage(1);
-    throttledSearch(value); // ✅ throttled call
+ const handleSearch = (e) => {
+  const value = e.target.value;
+  setSearchQuery(value);
+  setCurrentPage(1);
+
+  if (value.length < 3) {
+    getData(1); // default data load
+    return;
+  }
+
+  debouncedSearch(value);
+};
+
+const debounce = (func, delay) => {
+  let timer;
+  return (...args) => {
+    clearTimeout(timer);
+    timer = setTimeout(() => {
+      func(...args);
+    }, delay);
   };
+};
+
+const debouncedSearch = useRef(
+  debounce((value) => {
+    getdata11(value);
+  }, 500)
+).current;
   const throttle = (func, delay) => {
     let lastCall = 0;
     return (...args) => {
@@ -608,7 +630,7 @@ export default function WarehouseOrder() {
     try {
       const response = await axios.post(
         `${process.env.REACT_APP_BASE_URL}GetWarehouseOrders`,
-        { user_id: userid, user_type: usertype, search: value },
+        { user_id: userid, user_type: usertype,  search: value.trim(), },
       );
       setLoader(false);
       if (response.data && response.data.data) {

@@ -45,7 +45,8 @@ export default function WarehouseDetails() {
     postassiandata();
   }, []);
   const handleclicknav = () => {
-    navigate("/Admin/WarehouseOrder");
+    // navigate("/Admin/WarehouseOrder");
+    window.history.back();
   };
   const GetFreightImages = () => {
     const data = {

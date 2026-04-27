@@ -653,12 +653,32 @@ export default function SupplierWarehouse() {
         toast.error(error.response.data.message);
       });
   };
-  const handleSearch = (e) => {
-    const value = e.target.value;
-    setSearchQuery(value);
-    setCurrentPage(1);
-    throttledSearch(value); // ✅ throttled call
+
+  const debounce = (func, delay) => {
+  let timer;
+  return (...args) => {
+    clearTimeout(timer);
+    timer = setTimeout(() => {
+      func(...args);
+    }, delay);
   };
+};
+const debouncedSearch = useRef(
+  debounce((value) => {
+    getdata11(value);
+  }, 500)
+).current;
+ const handleSearch = (e) => {
+  const value = e.target.value;
+  setSearchQuery(value);
+  setCurrentPage(1);
+
+  if (value.trim() === "") {
+    getData(1); // 🔥 reset to original data
+  } else {
+    debouncedSearch(value);
+  }
+};
   const throttle = (func, delay) => {
     let lastCall = 0;
     return (...args) => {

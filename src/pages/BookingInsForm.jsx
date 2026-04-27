@@ -1,3 +1,4 @@
+import { ArrowBack } from "@mui/icons-material";
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { Button } from "react-bootstrap";
@@ -186,6 +187,10 @@ export default function BookingInsForm() {
       console.error("Error submitting booking instruction:", error);
     }
   };
+  const backbutton =()=>{
+    // navigate("/Admin/WarehouseOrder");
+    window.history.back();
+  }
 
   return (
     <div>
@@ -194,6 +199,7 @@ export default function BookingInsForm() {
           <section className="bookingInsForm">
             <div className="container">
               <div className="row">
+                <ArrowBack  style={{ cursor: "pointer" }} onClick={backbutton} />
                 <div className="col-lg-6">
                   <form action="">
                     <div className="borderShipRight">

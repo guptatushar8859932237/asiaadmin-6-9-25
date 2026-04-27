@@ -46,7 +46,8 @@ export default function Supplierwarhousproduct() {
     return "other";
   };
   const handleclicknav = () => {
-    navigate("/Admin/SupplierWarehouse");
+    window.history.back();
+    // navigate("/Admin/SupplierWarehouse");
   };
   useEffect(() => {
     postassiandata();

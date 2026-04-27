@@ -1407,7 +1407,8 @@ export default function ShippingEstimate() {
       });
   };
   const handleclicknav = () => {
-    navigate("/Admin/managefreight");
+    // navigate("/Admin/managefreight");
+    window.history.back();
   };
   const closemodal = () => {
     setOpenmodal(false);

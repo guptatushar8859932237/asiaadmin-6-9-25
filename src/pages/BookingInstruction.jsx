@@ -2420,7 +2420,7 @@ import "./CustomIns.css";
 import logo from ".././Assests/logo.png";
 import { usePDF } from "react-to-pdf";
 import { useLocation, useNavigate } from "react-router-dom";
-import { DownloadForOffline } from "@mui/icons-material";
+import { ArrowBack, DownloadForOffline } from "@mui/icons-material";
 import { data } from "jquery";
 import axios from "axios";
 const BookingInstruction = () => {
@@ -2460,12 +2460,18 @@ const BookingInstruction = () => {
   useEffect(() => {
     getdata();
   }, []);
+
+  const backbutton = () => {
+    // navigate("/Admin/WarehouseOrder");
+    window.history.back();
+  };
   return (
     <div className="wpWrapper">
       <div className="container-fluid">
         <div className="d-flex justify-content-between">
           <div className="mb-2">
             <div className="d-flex">
+              <ArrowBack style={{ cursor: "pointer" }} onClick={backbutton} />
               <h4 class="freight_hd">
                 Shipping and Custom Clearance Instruction
               </h4>

@@ -1,3 +1,4 @@
+import { ArrowBack } from "@mui/icons-material";
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -42,7 +43,10 @@ export default function SupplierEstimation() {
       state: { data: item, freight_id: location.state },
     });
   };
-
+  const handleclicknav = () => {
+    // navigate("/Admin/FreightSupplier");
+    window.history.back();
+  }
 
    const querryinQChat = (item) => {
     console.log("item", item);
@@ -52,6 +56,7 @@ export default function SupplierEstimation() {
     <div className="wpWrapper ">
       <div className="container-fluid">
         <div className="table-responsive mt-3">
+        <ArrowBack  style={{ cursor: "pointer" }} onClick={handleclicknav} />
           <table className="table table-striped tableICon">
             <thead>
               <tr>

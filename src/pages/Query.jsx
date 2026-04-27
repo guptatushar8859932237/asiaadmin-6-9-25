@@ -115,47 +115,38 @@ const [loader, setLoader] = useState(false);
       toast.error("Something went wrong, please try again.");
     }
   };
-
   const handleclickopen = () => {
     setModalOpendAdd(true);
   };
   const handleclickclose = () => {
     setModalOpendAdd(false);
   };
-
   const handleChange = (e) => {
     const { name, value } = e.target;
     setDataDispute({ ...dataDispute, [name]: value });
   };
-
  useEffect(() => {
   if (!clientSearch) {
     setClientList([]);
     return;
   }
-
   const delayDebounce = setTimeout(() => {
     fetchClients(clientSearch);
   }, 500);
-
   return () => clearTimeout(delayDebounce);
 }, [clientSearch]);
-
-
 const fetchClients = async (searchText) => {
   try {
     const response = await axios.post(
       `${process.env.REACT_APP_BASE_URL}client-list`,
       { search: searchText }
     );
-
     setClientList(response.data.data || []);
     setShowDropdown(true);
   } catch (error) {
     console.log(error);
   }
 };
-
 const handleclickapi1 = async () => {
   try {
     // Basic validation
@@ -168,7 +159,6 @@ const handleclickapi1 = async () => {
       toast.error("Please fill all required fields");
       return;
     }
-
     const payload = {
       message: dataDispute.message,
       freight_no: dataDispute.phone_no,
@@ -471,7 +461,7 @@ const handleclickapi1 = async () => {
                   >
                     <div className="modal-header">
                       <h2>
-                        <h2 id="modal-modal-title">Filter</h2>
+                        <h2 id="modal-modal-title">Update Request</h2>
                       </h2>
                       <button className="btn btn-close" onClick={closeModal1}>
                         <Close />{" "}

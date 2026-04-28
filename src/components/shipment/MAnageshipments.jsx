@@ -133,7 +133,6 @@ export default function MAnageshipments() {
       }
     }
   };
-
   useEffect(() => {
     getcountry();
   }, []);
@@ -151,7 +150,6 @@ useEffect(() => {
   console.log("API HIT:", activeTab);
   getwarehouse(currentPage, searchQuery, activeTab);
 }, [currentPage, searchQuery, activeTab]);
-
   // const getwarehouse = (page = 1, search = "") => {
   //   setLoader(true);
 
@@ -173,7 +171,6 @@ useEffect(() => {
   //       console.log(error?.response?.data?.message);
   //     });
   // };
-  
   const openModal2 = (id) => {
     setShipmentID(id);
     const postshipmentpost = {
@@ -206,7 +203,6 @@ useEffect(() => {
       [name]: value,
     }));
   };
-
   const combinedDetails = [
     ...tindexdata.map((i) => ({ ...i, type: "freight" })),
     ...tindexdClearance.map((i) => ({ ...i, type: "clearance" })),

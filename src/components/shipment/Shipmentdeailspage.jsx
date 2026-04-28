@@ -10,7 +10,7 @@ export default function Shipmentdeailspage() {
   const [tabledata, setTabledata] = useState([]);
   const [tabledata1, setTabledata1] = useState([]);
   const location = useLocation();
-    const [documents, setDocuments] = useState({});
+  const [documents, setDocuments] = useState({});
   const datat = location.state.data[0];
   console.log("datat", datat);
   const handleclick = () => {
@@ -25,7 +25,7 @@ export default function Shipmentdeailspage() {
         shipment_id: location.state.data[0].id,
       })
       .then((response) => {
-        console.log(response.data)
+        console.log(response.data);
         setDatat1(response.data.shipment);
         setTabledata(response.data.details);
         setTabledata1(response.data.clearance);
@@ -35,36 +35,35 @@ export default function Shipmentdeailspage() {
       });
   };
   const GetFreightImages = () => {
-      const data = { shipment_id: datat.id,uploaded_by:"1" };
-      axios
-        .post(`${process.env.REACT_APP_BASE_URL}GetFreightImages`, data)
-        .then((response) => {
-          console.log(response.data.data);
-          setDocuments(response.data.data);
-        })
-        .catch((error) => {
-          console.log(error.response?.data);
-        });
+    const data = { shipment_id: datat.id, uploaded_by: "1" };
+    axios
+      .post(`${process.env.REACT_APP_BASE_URL}GetFreightImages`, data)
+      .then((response) => {
+        console.log(response.data.data);
+        setDocuments(response.data.data);
+      })
+      .catch((error) => {
+        console.log(error.response?.data);
+      });
+  };
+  useEffect(() => {
+    GetFreightImages();
+  }, []);
+  const deleteapi = (id) => {
+    console.log(id);
+    const data11 = {
+      doc_id: id,
     };
-      useEffect(() => {
+    axios
+      .post(`${process.env.REACT_APP_BASE_URL}ShipmentDocument`, data11)
+      .then((response) => {
         GetFreightImages();
-      }, []);
-
-        const deleteapi = (id) => {
-          console.log(id);
-          const data11 = {
-            doc_id: id,
-          };
-          axios
-            .post(`${process.env.REACT_APP_BASE_URL}ShipmentDocument`, data11)
-            .then((response) => {
-              GetFreightImages();
-              toast.success(response.data.message);
-            })
-            .catch((error) => {
-              console.log(error.response.data);
-            });
-        };
+        toast.success(response.data.message);
+      })
+      .catch((error) => {
+        console.log(error.response.data);
+      });
+  };
   return (
     <div className="wpWrapper">
       <div className="container-fluid">
@@ -76,7 +75,7 @@ export default function Shipmentdeailspage() {
                   <div className="d-flex">
                     <div>
                       <ArrowBackIcon
-                      style={{ cursor: "pointer" }}
+                        style={{ cursor: "pointer" }}
                         onClick={handleclick}
                         className="mt-2 me-2"
                       />
@@ -128,7 +127,6 @@ export default function Shipmentdeailspage() {
                             <p>{datat1?.container}</p>
                           </div>
                         </div>
-
                         <div className="parentShipDetail">
                           <div>
                             <strong>House Bill</strong>
@@ -180,7 +178,7 @@ export default function Shipmentdeailspage() {
                           <div>
                             <p>
                               {new Date(datat1?.ATD).toLocaleDateString(
-                                "en-GB"
+                                "en-GB",
                               )}
                             </p>
                           </div>
@@ -193,7 +191,6 @@ export default function Shipmentdeailspage() {
                             <h6>{datat1?.destination_agent}</h6>
                           </div>
                         </div>
-
                         <div className="parentShipDetail">
                           <div>
                             <strong>Country of Destination</strong>
@@ -217,7 +214,7 @@ export default function Shipmentdeailspage() {
                           <div>
                             <p>
                               {new Date(datat1?.ETD).toLocaleDateString(
-                                "en-GB"
+                                "en-GB",
                               )}
                             </p>
                           </div>
@@ -275,31 +272,36 @@ export default function Shipmentdeailspage() {
                         </div>
                       </div>
                     </div>
-                     <div className="col-md-4">
+                    <div className="col-md-4">
                       <div className="card desti_card">
                         <div className="card-body mb-3">
-                          {Object.keys(documents).map((groupName, groupIndex) => (
-                            <div key={groupIndex} className="mb-2">
-                              <label>{groupName} :</label>
-                              {documents[groupName]?.map((item, index) => (
-                                <div key={item.id} className="d-flex align-items-center">
-                                  <a
-                                    href={`${process.env.REACT_APP_BASE_URLdocument}${item?.document}`}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="view_docu ms-2"
+                          {Object.keys(documents).map(
+                            (groupName, groupIndex) => (
+                              <div key={groupIndex} className="mb-2">
+                                <label>{groupName} :</label>
+                                {documents[groupName]?.map((item, index) => (
+                                  <div
+                                    key={item.id}
+                                    className="d-flex align-items-center"
                                   >
-                                    View Document
-                                  </a>
-                                  <DeleteIcon
-                                    onClick={() => deleteapi(item.id)}
-                                    className="text-danger ms-2"
-                                    style={{ cursor: "pointer" }}
-                                  />
-                                </div>
-                              ))}
-                            </div>
-                          ))}
+                                    <a
+                                      href={`${process.env.REACT_APP_BASE_URLdocument}${item?.document}`}
+                                      target="_blank"
+                                      rel="noopener noreferrer"
+                                      className="view_docu ms-2"   
+                                    >
+                                      View Document
+                                    </a>
+                                    <DeleteIcon
+                                      onClick={() => deleteapi(item.id)}
+                                      className="text-danger ms-2"
+                                      style={{ cursor: "pointer" }}
+                                    />
+                                  </div>
+                                ))}
+                              </div>
+                            ),
+                          )}
                           <div className="mb-2">
                             <label>Attach Quotation :</label>
                             {datat.attachment_Estimate && (
@@ -462,35 +464,34 @@ export default function Shipmentdeailspage() {
                     ))}
                   </tbody>
                 </table>
-               <table className="table mt-4 table-striped tableICon">
-  <thead>
-    <tr>
-      <th>Sr.No.</th>
-      <th>Freight / Order No.</th>
-      <th>Client Name</th>
-      <th>Total Weight</th>
-      <th>Port of Loading</th>
-      <th>Port of Discharge</th>
-      <th>Nature of Goods</th>
-    </tr>
-  </thead>
-  <tbody>
-    {tabledata1
-      ?.filter(item => item?.clearance_id)   // ✅ ONLY clearance data
-      .map((item, index) => (
-        <tr key={index}>
-          <td>{index + 1}</td>
-          <td>{item?.clearance_number} </td>
-          <td>{item?.client_name}</td>
-          <td>{item?.total_weight}</td>
-          <td>{item?.port_of_loading}</td>
-          <td>{item?.port_of_discharge}</td>
-          <td>{item?.nature_of_goods}</td>
-        </tr>
-      ))}
-  </tbody>
-</table>
-
+                <table className="table mt-4 table-striped tableICon">
+                  <thead>
+                    <tr>
+                      <th>Sr.No.</th>
+                      <th>Freight / Order No.</th>
+                      <th>Client Name</th>
+                      <th>Total Weight</th>
+                      <th>Port of Loading</th>
+                      <th>Port of Discharge</th>
+                      <th>Nature of Goods</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {tabledata1
+                      ?.filter((item) => item?.clearance_id) // ✅ ONLY clearance data
+                      .map((item, index) => (
+                        <tr key={index}>
+                          <td>{index + 1}</td>
+                          <td>{item?.clearance_number} </td>
+                          <td>{item?.client_name}</td>
+                          <td>{item?.total_weight}</td>
+                          <td>{item?.port_of_loading}</td>
+                          <td>{item?.port_of_discharge}</td>
+                          <td>{item?.nature_of_goods}</td>
+                        </tr>
+                      ))}
+                  </tbody>
+                </table>
               </div>
             </div>
           </div>

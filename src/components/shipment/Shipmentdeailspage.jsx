@@ -76,6 +76,7 @@ export default function Shipmentdeailspage() {
                   <div className="d-flex">
                     <div>
                       <ArrowBackIcon
+                      style={{ cursor: "pointer" }}
                         onClick={handleclick}
                         className="mt-2 me-2"
                       />

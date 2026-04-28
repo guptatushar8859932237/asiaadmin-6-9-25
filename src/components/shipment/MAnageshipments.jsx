@@ -31,6 +31,7 @@ export default function MAnageshipments() {
   const [countries, setcountries] = useState([]);
   const [inputdata, setInputdata] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
+  const [activeTab, setActiveTab] = useState("active");
   const [tindexdata, setTindexdata] = useState([]);
   const [tindexdClearance, setTindexdClearance] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -74,6 +75,29 @@ export default function MAnageshipments() {
     });
     handleClose();
   };
+
+  const getwarehouse = (page = 1, search = "", status = "active") => {
+  setLoader(true);
+
+  const payload = {
+    user_id: userid,
+    page: page,
+    search: search,
+    type: status, // 👈 important
+  };
+
+  axios
+    .post(`${process.env.REACT_APP_BASE_URL}getShipment`, payload)
+    .then((response) => {
+      setLoader(false);
+      setData(response.data.data || []);
+      setPagenatedData(response.data || {});
+    })
+    .catch((error) => {
+      setLoader(false);
+      console.log(error?.response?.data?.message);
+    });
+};
   const closeModal = () => {
     setIsModalOpen(false);
   };
@@ -123,41 +147,18 @@ export default function MAnageshipments() {
         console.log(error.response.data.data);
       });
   };
-  useEffect(() => {
-    const delay = setTimeout(() => {
-      getwarehouse(currentPage, searchQuery);
-    }, 800); // debounce
+useEffect(() => {
+  console.log("API HIT:", activeTab);
+  getwarehouse(currentPage, searchQuery, activeTab);
+}, [currentPage, searchQuery, activeTab]);
 
-    return () => clearTimeout(delay);
-  }, [currentPage, searchQuery]);
-
-  const getwarehouse = (page = 1, search = "") => {
-    setLoader(true);
-
-    const payload = {
-      user_id: userid,
-      page: page,
-      search: search, // ✅ ADD THIS
-    };
-
-    axios
-      .post(`${process.env.REACT_APP_BASE_URL}getShipment`, payload)
-      .then((response) => {
-        setLoader(false);
-        setData(response.data.data || []);
-        setPagenatedData(response.data || {});
-      })
-      .catch((error) => {
-        setLoader(false);
-        console.log(error?.response?.data?.message);
-      });
-  };
-  //  const getwarehouse = (page = 1) => {
+  // const getwarehouse = (page = 1, search = "") => {
   //   setLoader(true);
 
   //   const payload = {
   //     user_id: userid,
   //     page: page,
+  //     search: search, // ✅ ADD THIS
   //   };
 
   //   axios
@@ -172,6 +173,7 @@ export default function MAnageshipments() {
   //       console.log(error?.response?.data?.message);
   //     });
   // };
+  
   const openModal2 = (id) => {
     setShipmentID(id);
     const postshipmentpost = {
@@ -417,153 +419,6 @@ export default function MAnageshipments() {
     }));
   };
 
-  // const handleFileChange12 = (e) => {
-  //   const { name, value } = e.target;
-
-  //   if (name === "assign_shipment") {
-  //     setData1({
-  //       assign_shipment: value,
-  //       assign_shipment_id: "",
-  //       clearance_id: "",
-  //     });
-
-  //     // ❌ DO NOT CLEAR OLD DATA
-  //     return;
-  //   }
-
-  //   setData1((prev) => ({
-  //     ...prev,
-  //     [name]: value,
-  //   }));
-  // };
-
-  // const handleFileChange12 = (e) => {
-  //   const { name, value } = e.target;
-  //   if (name === "assign_shipment") {
-  //     setData1({
-  //       assign_shipment: value,
-  //       assign_shipment_id: "",
-  //       clearance_id: "",
-  //     });
-  //     // setTindexdata([]);
-  //     // setTindexdClearance([]);
-  //     // return;
-  //   }
-  //   setData1((prev) => ({
-  //     ...prev,
-  //     [name]: value,
-  //   }));
-  // };
-  // const addbuttonclick = async () => {
-  //   try {
-  //     if (!data1.assign_shipment) {
-  //       toast.error("Please select assign shipment type");
-  //       return;
-  //     }
-
-  //     let payload = {
-  //       type: data1.assign_shipment,
-  //       origin_country_id: inputdata.origin_country_id,
-  //       des_country_id: inputdata.des_country_id,
-  //     };
-
-  //     // TYPE BASED ID
-  //     if (data1.assign_shipment === "1" || data1.assign_shipment === "2") {
-  //       payload.id = parseInt(data1.assign_shipment_id);
-  //     }
-
-  //     if (data1.assign_shipment === "3") {
-  //       payload.id = parseInt(data1.clearance_id);
-  //     }
-
-  //     console.log("FINAL PAYLOAD 👉", payload);
-
-  //     const response = await axios.post(
-  //       `${process.env.REACT_APP_BASE_URL}getAssignShipmentList`,
-  //       payload
-  //     );
-
-  //     toast.success(response.data.message);
-
-  //     // REPLACE DATA — NOT APPEND
-  //     if (data1.assign_shipment === "3") {
-  //      setTindexdClearance((prev) => [...prev, ...response.data.data]);
-  //     } else {
-  //      setTindexdata((prev) => [...prev, ...response.data.data]);
-  //     }
-  //   } catch (error) {
-  //     toast.error(error.response?.data?.message || "Something went wrong");
-  //   }
-  // };
-  // const addbuttonclick = async () => {
-  //   try {
-  //     if (!data1.assign_shipment) {
-  //       toast.error("Please select assign shipment type");
-  //       return;
-  //     }
-
-  //     let payload = {
-  //       type: data1.assign_shipment,
-  //       origin_country_id: inputdata.origin_country_id,
-  //       des_country_id: inputdata.des_country_id,
-  //     };
-
-  //     // TYPE BASED ID
-  //     if (data1.assign_shipment === "1" || data1.assign_shipment === "2") {
-  //       payload.id = parseInt(data1.assign_shipment_id);
-  //     }
-
-  //     if (data1.assign_shipment === "3") {
-  //       payload.id = parseInt(data1.clearance_id);
-  //     }
-
-  //     console.log("FINAL PAYLOAD 👉", payload);
-
-  //     const response = await axios.post(
-  //       `${process.env.REACT_APP_BASE_URL}getAssignShipmentList`,
-  //       payload
-  //     );
-
-  //     const newData = response.data.data || [];
-
-  //     toast.success(response.data.message);
-
-  //     // ✅ CLEARANCE CASE
-  //     if (data1.assign_shipment === "3") {
-  //       setTindexdClearance((prev) => {
-  //         const merged = [...prev, ...newData];
-
-  //         const unique = merged.filter(
-  //           (item, index, self) =>
-  //             index ===
-  //             self.findIndex(
-  //               (t) => t.clearance_id === item.clearance_id
-  //             )
-  //         );
-
-  //         return unique;
-  //       });
-  //     } else {
-  //       // ✅ FREIGHT / BATCH CASE
-  //       setTindexdata((prev) => {
-  //         const merged = [...prev, ...newData];
-
-  //         const unique = merged.filter(
-  //           (item, index, self) =>
-  //             index ===
-  //             self.findIndex(
-  //               (t) => t.shipment_details_id === item.shipment_details_id
-  //             )
-  //         );
-
-  //         return unique;
-  //       });
-  //     }
-  //   } catch (error) {
-  //     toast.error(error.response?.data?.message || "Something went wrong");
-  //   }
-  // };
-
   const addbuttonclick = async () => {
     try {
       if (!data1.assign_shipment) {
@@ -664,30 +519,23 @@ export default function MAnageshipments() {
       console.error(error.response?.data || error.message);
     }
   };
-
   const handleclickdeleteClearence = async (item) => {
-    // ✅ new item → no API
     if (item.isNew) {
       setTindexdClearance((prev) =>
         prev.filter((row) => row.clearance_id !== item.clearance_id),
       );
       return;
     }
-
-    // ❗ old item → API call
     try {
       const payload = {
         shipment_detail_id: shipmentID,
         clearance_id: item.clearance_id,
       };
-
       const response = await axios.post(
         `${process.env.REACT_APP_BASE_URL}DeleteShipmentDetailsByClearance`,
         payload,
       );
-
       toast.success(response.data.message);
-
       setTindexdClearance((prev) =>
         prev.filter((row) => row.clearance_id !== item.clearance_id),
       );
@@ -695,32 +543,6 @@ export default function MAnageshipments() {
       console.error(error.response?.data || error.message);
     }
   };
-  // const handleclickdeleteClearence = async (item, id) => {
-  //   console.log(item);
-  //   const payload = {
-  //     shipment_detail_id: shipmentID,
-  //     clearance_id: item.clearance_id,
-  //   };
-  //   console.log(payload);
-  //   try {
-  //     console.log(tindexdata);
-  //     const response = await axios.post(
-  //       `${process.env.REACT_APP_BASE_URL}DeleteShipmentDetailsByClearance`,
-  //       payload
-  //     );
-  //     toast.success(response.data.message);
-  //     const updatedData = tindexdClearance.filter(
-  //       (item) => item.shipment_details_id !== item.shipment_details_id
-  //     );
-  //     setTindexdClearance(updatedData);
-  //     getwarehouse();
-  //   } catch (error) {
-  //     console.error(
-  //       "Error deleting shipment details:",
-  //       error.response?.data || error.message
-  //     );
-  //   }
-  // };
   const handlclickposterror = () => {
     toast.error("Shipment requires at least one batch or freight.");
   };
@@ -770,6 +592,27 @@ export default function MAnageshipments() {
                 </div>
               </div>
             </div>
+            <div className="d-flex mb-3">
+ <button
+  className={activeTab === "active" ? "btn btn-primary me-2" : "btn btn-light me-2"}
+  onClick={() => {
+    setActiveTab("active");
+    setCurrentPage(1);
+  }}
+>
+  Active Shipments
+</button>
+
+<button
+  className={activeTab === "released" ? "btn btn-primary" : "btn btn-light"}
+  onClick={() => {
+    setActiveTab("released");
+    setCurrentPage(1);
+  }}
+>
+  Customs Released
+</button>
+</div>
             <div className="table-responsive mt-2">
               <table className="table table-striped tableICon">
                 <tbody>

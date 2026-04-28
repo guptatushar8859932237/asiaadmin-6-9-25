@@ -3,6 +3,7 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import { useParams } from "react-router-dom";
 export default function SupplierEstimation() {
   const [data, setData] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
@@ -10,12 +11,15 @@ export default function SupplierEstimation() {
   const pageSize = 10;
   const navigate = useNavigate();
   const location = useLocation();
-  console.log("location", location.state.data);
+    const { id } = useParams();
+
+  console.log(id);
+  // console.log("location", location.state.data);
   const frightData = async () => {
     try {
       const response = await axios.post(
         `${process.env.REACT_APP_BASE_URL}get-suppler-selected`,
-        { freight_id: location.state.data }
+        { freight_id: id }
       );
       console.log("frightDataresponse", response.data);
       setData(response.data.data);
@@ -40,7 +44,7 @@ export default function SupplierEstimation() {
   const currentData = filterdata.slice(startIndex, endIndex);
   const handleclicknanvi = (item) => {
     navigate("/Admin/supplier-estimation-view", {
-      state: { data: item, freight_id: location.state },
+      state: { data: item, freight_id: id },
     });
   };
   const handleclicknav = () => {

@@ -5,10 +5,14 @@ import { ToastContainer } from "react-bootstrap";
 import axios from "axios";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { toast } from "react-toastify";
+import { useParams } from "react-router-dom";
 export default function MAnageFreightDetails() {
   const infolocation = useLocation();
   const navigate = useNavigate();
   const [documents, setDocuments] = useState({});
+   const { id } = useParams();
+
+  console.log(id); // yaha mil jayegi id
   const [data, setData] = useState({
     documentName: "",
     licenses: "",
@@ -31,7 +35,7 @@ export default function MAnageFreightDetails() {
     navigate("/Admin/managefreight");
   };
   const GetFreightImages = () => {
-    const data = { freight_id: info1.freight_id, uploaded_by: "1" };
+    const data = { freight_id: id, uploaded_by: "1" };
     axios
       .post(`${process.env.REACT_APP_BASE_URL}GetFreightImages`, data)
       .then((response) => {
@@ -62,7 +66,7 @@ export default function MAnageFreightDetails() {
   };
 const getFreightDataById = async () => {
   const payload = {
-    freight_id: info1?.freight_id,
+    freight_id:id,
   };
 
   try {

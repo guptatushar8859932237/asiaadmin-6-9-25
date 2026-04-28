@@ -114,7 +114,6 @@ export default function Supplierwarhousproduct() {
     (acc, item) => {
       acc.packages += Number(item.packages) || 0;
       acc.weight += Number(item.weight) || 0;
-      // 🔥 Handle dimension safely
       if (item.dimension && typeof item.dimension === "string") {
         const dims = item.dimension.split("x").map(Number);
         if (dims.length === 3) {
@@ -130,7 +129,6 @@ export default function Supplierwarhousproduct() {
     },
     { packages: 0, dimension: 0, weight: 0 },
   );
-
   const handleEditClick = (freightId) => {
     console.log(freightId);
     const payload = {
@@ -153,7 +151,7 @@ export default function Supplierwarhousproduct() {
   };
   const closeeditprocutmodal = () => {
     setProductModalOpen1(false);
-    setProductData("");
+    setProductData("");  
   };
   const handleEditClick12 = async (freightId) => {
     const result = await Swal.fire({
@@ -164,7 +162,6 @@ export default function Supplierwarhousproduct() {
       confirmButtonText: "Yes, Delete",
       cancelButtonText: "Cancel",
     });
-
     // ❌ Agar user cancel kare to yahin stop
     if (!result.isConfirmed) return;
     const payload = {

@@ -504,7 +504,10 @@ useEffect(() => {
     const alldtaaa = data.filter((item) => {
       return item?.freight_id === freight_id;
     });
-    navigate("/Admin/MAnageFreightDetails", { state: { data: alldtaaa } });
+    // navigate("/Admin/MAnageFreightDetails", { state: { data: alldtaaa } });
+    // const handlelcickseedata = (freight_id) => {
+  navigate(`/Admin/MAnageFreightDetails/${freight_id}`);
+// };
   };
   const handlelcickseedata1212 = async (item) => {
     const datapost = {
@@ -570,6 +573,7 @@ useEffect(() => {
     console.log(freight_id);
     JSON.stringify(localStorage.setItem("freightid", freight_id));
     navigate("/Admin/SupplierEstimation", { state: { data: freight_id } });
+    
   };
 
   ///////////////////////pegenation//////////////////////////////////////////

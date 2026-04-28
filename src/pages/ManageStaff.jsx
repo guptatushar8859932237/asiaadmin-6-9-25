@@ -128,27 +128,60 @@ export default function ManageStaff() {
       });
   };
   const handlevalidate = (value) => {
-    let error = {};
-    if (!value.staff_email) {
-      error.staff_email = "Email is required";
-    }
-    if (!value.staff_name) {
-      error.staff_name = "Name is required";
-    }
-    if (!value.new_password) {
-      error.new_password = "Password is required";
-    }
-    if (!value.country) {
-      error.country = "Country is required";
-    }
-    if (selectedRoles.length === 0) {
-      error.roles = "Please select at least one role";
-    }
-    setError(error);
-    if (Object.keys(error).length === 0) {
-      handleapi();
-    }
-  };
+  let error = {};
+
+  // Email
+  if (!value.staff_email) {
+    error.staff_email = "Email is required";
+  } else if (!/\S+@\S+\.\S+/.test(value.staff_email)) {
+    error.staff_email = "Invalid email format";
+  }
+
+  // Name
+  if (!value.staff_name) {
+    error.staff_name = "Name is required";
+  }
+
+  // Password
+  if (!value.new_password) {
+    error.new_password = "Password is required";
+  } else if (value.new_password.length < 6) {
+    error.new_password = "Password must be at least 6 characters";
+  }
+
+  // Country
+  if (!value.country) {
+    error.country = "Country is required";
+  }
+
+  // Country Code
+  if (!value.country_code) {
+    error.country_code = "Country code is required";
+  }
+
+  // Phone Number
+  if (!value.phone_no) {
+    error.phone_no = "Phone number is required";
+  } else if (!/^[0-9]{7,15}$/.test(value.phone_no)) {
+    error.phone_no = "Invalid phone number";
+  }
+
+  // Roles
+  if (selectedRoles.length === 0) {
+    error.roles = "Please select at least one role";
+  }
+
+  // Access Country
+  if (selectedCountries.length === 0) {
+    error.access_country = "Select at least one country";
+  }
+
+  setError(error);
+
+  if (Object.keys(error).length === 0) {
+    handleapi();
+  }
+};
   const roleOptions = [
     { value: "0", label: "No Role Assign" },
     { value: "1", label: "Quoting Team" },
@@ -466,6 +499,7 @@ export default function ManageStaff() {
                                   );
                                 })}
                             </select>
+                            <p className="text-danger">{error.country}</p>
                           </div>
                           <div className="mb-3 col-6 position-relative">
                             <label className="mb-1">Select Country Data</label>
@@ -483,6 +517,7 @@ export default function ManageStaff() {
                               </span>
                               <span>▾</span>
                             </div>
+                          <p className="text-danger">{error.access_country}</p>
 
                             {/* Dropdown menu */}
                             {open && (
@@ -536,6 +571,7 @@ export default function ManageStaff() {
                                   );
                                 })}
                             </select>
+                            <p className="text-danger">{error.country_code}</p>
                           </div>
                           <div className="mb-3 col-md-8">
                             <label>Phone Number</label>
@@ -545,9 +581,9 @@ export default function ManageStaff() {
                               onChange={handlechange}
                               className="w-100 border p-2 rounded form-control"
                             />
+                          <p className="text-danger">{error.phone_no}</p>
                           </div>
                         </div>
-
                         <div className="row">
                           <div className="mb-3 col-6">
                             <label

@@ -251,18 +251,23 @@ export default function WarehouseOrder() {
   };
   const handleEditClick = (freight_ID, warehouse_assign_order_id, order_id) => {
     console.log(freight_ID, warehouse_assign_order_id, order_id);
+    console.log(data)
     setOrderID(order_id);
     setErd(warehouse_assign_order_id);
-    const selectedData = data.find((item) => item.freight_ID === freight_ID);
+   const selectedData = data.find(
+  (item) => (item.freight_ID ?? item.freight_id) === freight_ID
+);
     console.log(selectedData);
     setSelectedData(selectedData);
-    // handleOpenModal();
+    handleOpenModal();
   };
   const handleEditClickAssign = (freight_ID, order_id) => {
     console.log(freight_ID, order_id);
     setOrderID(order_id);
     setFreightIdPass(freight_ID);
-    const selectedData = data.find((item) => item.freight_ID === freight_ID);
+   const selectedData = data.find(
+  (item) => (item.freight_ID ?? item.freight_id) === freight_ID
+);
     console.log(selectedData);
     setSelectedData(selectedData);
     setHandleassignsupplier(true);

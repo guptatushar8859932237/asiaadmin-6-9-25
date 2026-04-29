@@ -75,29 +75,26 @@ export default function MAnageshipments() {
     });
     handleClose();
   };
-
   const getwarehouse = (page = 1, search = "", status = "active") => {
-  setLoader(true);
-
-  const payload = {
-    user_id: userid,
-    page: page,
-    search: search,
-    type: status, // 👈 important
+    setLoader(true);
+    const payload = {
+      user_id: userid,
+      page: page,
+      search: search,
+      type: status, // 👈 important
+    };
+    axios
+      .post(`${process.env.REACT_APP_BASE_URL}getShipment`, payload)
+      .then((response) => {
+        setLoader(false);
+        setData(response.data.data || []);
+        setPagenatedData(response.data || {});
+      })
+      .catch((error) => {
+        setLoader(false);
+        console.log(error?.response?.data?.message);
+      });
   };
-
-  axios
-    .post(`${process.env.REACT_APP_BASE_URL}getShipment`, payload)
-    .then((response) => {
-      setLoader(false);
-      setData(response.data.data || []);
-      setPagenatedData(response.data || {});
-    })
-    .catch((error) => {
-      setLoader(false);
-      console.log(error?.response?.data?.message);
-    });
-};
   const closeModal = () => {
     setIsModalOpen(false);
   };
@@ -146,10 +143,10 @@ export default function MAnageshipments() {
         console.log(error.response.data.data);
       });
   };
-useEffect(() => {
-  console.log("API HIT:", activeTab);
-  getwarehouse(currentPage, searchQuery, activeTab);
-}, [currentPage, searchQuery, activeTab]);
+  useEffect(() => {
+    console.log("API HIT:", activeTab);
+    getwarehouse(currentPage, searchQuery, activeTab);
+  }, [currentPage, searchQuery, activeTab]);
   // const getwarehouse = (page = 1, search = "") => {
   //   setLoader(true);
 
@@ -396,10 +393,8 @@ useEffect(() => {
     });
     navigate("/Admin/addshipment", { state: { id: dataget[0] } });
   };
-
   const handleFileChange12 = (e) => {
     const { name, value } = e.target;
-
     if (name === "assign_shipment") {
       setData1({
         assign_shipment: value,
@@ -408,26 +403,22 @@ useEffect(() => {
       });
       return;
     }
-
     setData1((prev) => ({
       ...prev,
       [name]: value,
     }));
   };
-
   const addbuttonclick = async () => {
     try {
       if (!data1.assign_shipment) {
         toast.error("Please select assign shipment type");
         return;
       }
-
       let payload = {
         type: data1.assign_shipment,
         origin_country_id: inputdata.origin_country_id,
         des_country_id: inputdata.des_country_id,
       };
-
       if (data1.assign_shipment === "1" || data1.assign_shipment === "2") {
         if (!data1.assign_shipment_id) {
           toast.error("Please select freight/batch");
@@ -435,7 +426,6 @@ useEffect(() => {
         }
         payload.id = Number(data1.assign_shipment_id);
       }
-
       if (data1.assign_shipment === "3") {
         if (!data1.clearance_id) {
           toast.error("Please select clearance");
@@ -443,15 +433,11 @@ useEffect(() => {
         }
         payload.id = Number(data1.clearance_id);
       }
-
       const response = await axios.post(
         `${process.env.REACT_APP_BASE_URL}getAssignShipmentList`,
         payload,
       );
-
       const newData = response.data.data || [];
-
-      // ✅ STEP 1: FLAG ADD KARO
       const newDataWithFlag = newData.map((item) => ({
         ...item,
         isNew: true,
@@ -589,26 +575,32 @@ useEffect(() => {
               </div>
             </div>
             <div className="d-flex mb-3">
- <button
-  className={activeTab === "active" ? "btn btn-primary me-2" : "btn btn-light me-2"}
-  onClick={() => {
-    setActiveTab("active");
-    setCurrentPage(1);
-  }}
->
-  Active Shipments
-</button>
+              <button
+                className={
+                  activeTab === "active"
+                    ? "btn btn-primary me-2"
+                    : "btn btn-light me-2"
+                }
+                onClick={() => {
+                  setActiveTab("active");
+                  setCurrentPage(1);
+                }}
+              >
+                Active Shipments
+              </button>
 
-<button
-  className={activeTab === "released" ? "btn btn-primary" : "btn btn-light"}
-  onClick={() => {
-    setActiveTab("released");
-    setCurrentPage(1);
-  }}
->
-  Customs Released
-</button>
-</div>
+              <button
+                className={
+                  activeTab === "released" ? "btn btn-primary" : "btn btn-light"
+                }
+                onClick={() => {
+                  setActiveTab("released");
+                  setCurrentPage(1);
+                }}
+              >
+                Customs Released
+              </button>
+            </div>
             <div className="table-responsive mt-2">
               <table className="table table-striped tableICon">
                 <tbody>

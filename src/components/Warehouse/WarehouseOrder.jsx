@@ -79,7 +79,6 @@ export default function WarehouseOrder() {
     freightType: "",
     freightSpeed: "",
   });
-
   const [show1, setShow1] = useState(false);
   const [selectedDocs, setSelectedDocs] = useState([]);
   useEffect(() => {
@@ -95,7 +94,6 @@ export default function WarehouseOrder() {
         console.log(error.response.data.data);
       });
   };
-
     useEffect(() => {
       getclientdata();
     }, []);
@@ -160,11 +158,9 @@ export default function WarehouseOrder() {
     setIsModalOpen(false);
     handleOpenModal3();
   };
-
   const handleCloseModalpopup = () => {
     setIsModalOpen(false);
   };
-
   const handleOpenModal2 = () => setIsModalOpen2(true);
   const handleOpenModal3 = () => setIsModalOpen3(true);
   const handleCloseModal2 = () => setIsModalOpen2(false);
@@ -172,10 +168,8 @@ export default function WarehouseOrder() {
   useEffect(() => {
     getData();
   }, []);
-
   const userid = JSON.parse(localStorage.getItem("data123"))?.id;
   const usertype = JSON.parse(localStorage.getItem("data123"))?.user_type;
-
   const getData = async (page) => {
     try {
       const datapost = {
@@ -225,7 +219,6 @@ export default function WarehouseOrder() {
       }
     }
   };
-
   const getAllBatch = (item) => {
     console.log(item);
     const payload = {
@@ -327,7 +320,6 @@ export default function WarehouseOrder() {
         toast.error(error.response.data.message);
       });
   };
-
   const totalPage = Math.ceil(pagenationData.total / pagenationData.limit);
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -434,7 +426,6 @@ export default function WarehouseOrder() {
       console.log("No file selected");
     }
   };
-
   const handleclicknavi = async (item) => {
     console.log(item);
     try {

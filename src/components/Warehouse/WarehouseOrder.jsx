@@ -56,7 +56,7 @@ export default function WarehouseOrder() {
   const [searchQuery, setSearchQuery] = useState("");
   const [isModalOpen1, setIsModalOpen1] = useState(false);
   const [prodata, setProdata] = useState("");
-    const [clientData, setClientData] = useState([]);
+  const [clientData, setClientData] = useState([]);
   const [orderID, setOrderID] = useState("");
   const [freightIdPass, setFreightIdPass] = useState("");
   const [responseData, setResponseData] = useState("");
@@ -67,7 +67,7 @@ export default function WarehouseOrder() {
   const [batchidsdsd, setBatchidsdsd] = useState();
   const [loader, setLoader] = useState(false);
   const [isModalOpen2, setIsModalOpen2] = useState(false);
-    const [nameData, setNameData] = useState("");
+  const [nameData, setNameData] = useState("");
   const [isModalOpen3, setIsModalOpen3] = useState(false);
   const [updatedata, setUpdatedata] = useState(false);
   const [pagenationData, setPagenationData] = useState(1);
@@ -94,29 +94,29 @@ export default function WarehouseOrder() {
         console.log(error.response.data.data);
       });
   };
-    useEffect(() => {
-      getclientdata();
-    }, []);
-    const getclientdata = async () => {
-      try {
-        const response = await axios.get(
-          `${process.env.REACT_APP_BASE_URL}client-list`,
-        );
-        if (response.data.success) {
-          setClientData(response.data.data);
-        }
-      } catch (error) {
-        console.log(error);
+  useEffect(() => {
+    getclientdata();
+  }, []);
+  const getclientdata = async () => {
+    try {
+      const response = await axios.get(
+        `${process.env.REACT_APP_BASE_URL}client-list`,
+      );
+      if (response.data.success) {
+        setClientData(response.data.data);
       }
-    };
-     const filterOptions = (options, { inputValue }) => {
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  const filterOptions = (options, { inputValue }) => {
     console.log("Filtering options with input:", inputValue);
     return options.filter(
       (option) =>
         option.full_name?.toLowerCase().startsWith(inputValue.toLowerCase()), // 👈 strict match
     );
   };
-     const handlechangewarehouse = (e) => {
+  const handlechangewarehouse = (e) => {
     const { name, value } = e.target;
     setNameData({ ...nameData, [name]: value });
   };
@@ -244,12 +244,12 @@ export default function WarehouseOrder() {
   };
   const handleEditClick = (freight_ID, warehouse_assign_order_id, order_id) => {
     console.log(freight_ID, warehouse_assign_order_id, order_id);
-    console.log(data)
+    console.log(data);
     setOrderID(order_id);
     setErd(warehouse_assign_order_id);
-   const selectedData = data.find(
-  (item) => (item.freight_ID ?? item.freight_id) === freight_ID
-);
+    const selectedData = data.find(
+      (item) => (item.freight_ID ?? item.freight_id) === freight_ID,
+    );
     console.log(selectedData);
     setSelectedData(selectedData);
     handleOpenModal();
@@ -258,9 +258,9 @@ export default function WarehouseOrder() {
     console.log(freight_ID, order_id);
     setOrderID(order_id);
     setFreightIdPass(freight_ID);
-   const selectedData = data.find(
-  (item) => (item.freight_ID ?? item.freight_id) === freight_ID
-);
+    const selectedData = data.find(
+      (item) => (item.freight_ID ?? item.freight_id) === freight_ID,
+    );
     console.log(selectedData);
     setSelectedData(selectedData);
     setHandleassignsupplier(true);
@@ -577,34 +577,30 @@ export default function WarehouseOrder() {
         toast.error(error.response.data.message);
       });
   };
- const handleSearch = (e) => {
-  const value = e.target.value;
-  setSearchQuery(value);
-  setCurrentPage(1);
-
-  if (value.length < 3) {
-    getData(1); // default data load
-    return;
-  }
-
-  debouncedSearch(value);
-};
-
-const debounce = (func, delay) => {
-  let timer;
-  return (...args) => {
-    clearTimeout(timer);
-    timer = setTimeout(() => {
-      func(...args);
-    }, delay);
+  const handleSearch = (e) => {
+    const value = e.target.value;
+    setSearchQuery(value);
+    setCurrentPage(1);
+    if (value.length < 3) {
+      getData(1); // default data load
+      return;
+    }
+    debouncedSearch(value);
   };
-};
-
-const debouncedSearch = useRef(
-  debounce((value) => {
-    getdata11(value);
-  }, 500)
-).current;
+  const debounce = (func, delay) => {
+    let timer;
+    return (...args) => {
+      clearTimeout(timer);
+      timer = setTimeout(() => {
+        func(...args);
+      }, delay);
+    };
+  };
+  const debouncedSearch = useRef(
+    debounce((value) => {
+      getdata11(value);
+    }, 500),
+  ).current;
   const throttle = (func, delay) => {
     let lastCall = 0;
     return (...args) => {
@@ -620,13 +616,12 @@ const debouncedSearch = useRef(
       getdata11(value);
     }, 1000),
   ).current;
-
   const getdata11 = async (value) => {
     setLoader(true);
     try {
       const response = await axios.post(
         `${process.env.REACT_APP_BASE_URL}GetWarehouseOrders`,
-        { user_id: userid, user_type: usertype,  search: value.trim(), },
+        { user_id: userid, user_type: usertype, search: value.trim() },
       );
       setLoader(false);
       if (response.data && response.data.data) {
@@ -647,11 +642,9 @@ const debouncedSearch = useRef(
       }
     }
   };
-
   useEffect(() => {
     getSupplier();
   }, []);
-
   const getSupplier = async () => {
     try {
       const response = await axios.get(
@@ -670,53 +663,42 @@ const debouncedSearch = useRef(
       );
     }
   };
-
   const handleChangeSupplier = (e) => {
     setResponseData(e.target.value);
   };
-
   const AssignSupplier = async () => {
     if (!responseData) {
       toast.error("Please select a supplier");
       return;
     }
-
     const payload = {
       supplier_id: parseInt(responseData, 10),
       freight_id: freightIdPass,
       order_id: orderID,
     };
-
     console.log("Payload:", payload);
-
     try {
       const response = await axios.post(
         `${process.env.REACT_APP_BASE_URL}assignWarehouseOrderToSupplier`,
         payload,
       );
-
       toast.success(response.data?.message || "Supplier assigned successfully");
       handleclose();
     } catch (error) {
-      // 🔥 HANDLE ALL POSSIBLE ERRORS
       if (error.response) {
-        // ✅ Server responded with error status (400, 401, 403, 404, 409, 500)
         toast.error(
           error.response.data?.message ||
             `Request failed with status ${error.response.status}`,
         );
       } else if (error.request) {
-        // ✅ Request sent but no response (server down / CORS / network issue)
         toast.error("Server not responding. Please try again later.");
       } else {
         // ✅ Something else went wrong
         toast.error(error.message || "Something went wrong");
       }
-
       console.error("AssignSupplier Error:", error);
     }
   };
-
   return (
     <>
       <div className="wpWrapper">

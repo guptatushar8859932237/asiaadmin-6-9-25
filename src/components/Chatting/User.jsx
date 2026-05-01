@@ -27,7 +27,7 @@ export default function User() {
   }, [messages]);
   // ================= SOCKET =================
   useEffect(() => {
-    socketRef.current = io(process.env.REACT_APP_BASE_URL, {
+    socketRef.current = io(process.env.REACT_APP_BASE_URLSoket, {
       transports: ["websocket"],
     });
     const socket = socketRef.current;

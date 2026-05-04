@@ -33,8 +33,6 @@ export default function User() {
     const socket = socketRef.current;
    socket.on("connect", () => {
   console.log("Connected:", socket.id);
- 
-  // 🔥 JOIN ALL ROOMS ON CONNECT
   users.forEach((chat) => {
     socket.emit("joinConversation", chat.conversation_id);
   });
@@ -71,18 +69,14 @@ setMessages((prev) => {
             ? { ...chat, last_message: data.message }
             : chat
         );
-
         const current = updated.find(
           (c) => c.conversation_id === data.conversation_id
         );
-
         const rest = updated.filter(
           (c) => c.conversation_id !== data.conversation_id
         );
-
         return current ? [current, ...rest] : updated;
       });
-
       // 👉 STAFF SIDEBAR UPDATE
       setStaff((prev) => {
         return prev.map((s) =>
@@ -92,19 +86,16 @@ setMessages((prev) => {
         );
       });
     });
-
     return () => {
       socket.disconnect();
     };
   }, []);
-
   // ================= JOIN ROOM =================
   useEffect(() => {
     if (selectedChat && socketRef.current) {
       socketRef.current.emit("joinConversation", selectedChat.conversation_id);
     }
   }, [selectedChat]);
-
   // ================= API =================
   const initiateChat = async () => {
     try {
@@ -113,7 +104,6 @@ setMessages((prev) => {
         { admin_id: userId },
         { headers: { Authorization: `Bearer ${token}` } }
       );
-
       if (res.data.success) {
         setUsers(res.data.inbox);
       }
@@ -121,13 +111,11 @@ setMessages((prev) => {
       console.log(err);
     }
   };
-
   const staffList = async () => {
     try {
       const res = await axios.get(
         `${process.env.REACT_APP_BASE_URL}staff-list`
       );
-
       if (res.data.success) {
         setStaff(res.data.data);
       }
@@ -135,7 +123,6 @@ setMessages((prev) => {
       console.log(err);
     }
   };
-
   useEffect(() => {
     initiateChat();
     staffList();
@@ -143,17 +130,14 @@ setMessages((prev) => {
 useEffect(() => {
   if (socketRef.current && users.length > 0) {
     console.log("📡 Joining all user conversations");
- 
     users.forEach((chat) => {
       socketRef.current.emit("joinConversation", chat.conversation_id);
     });
   }
 }, [users]);
-  // ================= GET MESSAGES =================
   const getMessages1 = async (chat) => {
     setSelectedChat(chat);
     setMessages([]);
-
     try {
       const res = await axios.post(
         `${process.env.REACT_APP_BASE_URL}chat/getMessages`,
@@ -163,7 +147,6 @@ useEffect(() => {
         },
         { headers: { Authorization: `Bearer ${token}` } }
       );
-
       if (res.data.success) {
         setMessages(res.data.messages);
       }
@@ -171,7 +154,6 @@ useEffect(() => {
       console.log(err);
     }
   };
-
   // ================= START STAFF CHAT =================
   const startStaffChat = async (staffData) => {
     try {
@@ -185,14 +167,12 @@ useEffect(() => {
         },
         { headers: { Authorization: `Bearer ${token}` } }
       );  
-
       if (res.data.success) {
         const chat = {
           conversation_id: res.data.conversation_id,
           sender_id: staffData.id,
           sender_name: staffData.full_name,
         };
-
         setSelectedChat(chat);
         getMessages1(chat);
       }
@@ -222,7 +202,6 @@ const truncateMessage = (text, limit = 20) => {
         },
         { headers: { Authorization: `Bearer ${token}` } }
       );
-
       if (res.data.success) {
         const newMsg = {
           ...res.data.data,
@@ -231,30 +210,24 @@ const truncateMessage = (text, limit = 20) => {
           message: messageText,
           conversation_id: selectedChat.conversation_id,
         };
-
-        setMessages((prev) => [...prev, newMsg]);
-
+        // setMessages((prev) => [...prev, newMsg]);
         // socketRef.current.emit("sendMessage", newMsg);
-
         setMessageText("");
-        initiateChat()
+        // initiateChat()
       }
     } catch (err) {
       console.log(err);
     }
   };
-
   // ================= UI =================
   return (
     <div className="container-fluid chat-app">
       <div className="row g-0">
-
         {/* SIDEBAR */}
         <div className="col-md-3 chat-sidebar">
           <div className="chat-header">
             <h5>Chats</h5>
           </div>
-
           {/* TABS */}
           <ul className="nav nav-tabs">
             <li className="nav-item">
@@ -267,7 +240,6 @@ const truncateMessage = (text, limit = 20) => {
                 Users
               </button>
             </li>
-
             <li className="nav-item">
               <button
                 className={`nav-link ${
@@ -279,9 +251,7 @@ const truncateMessage = (text, limit = 20) => {
               </button>
             </li>
           </ul>
-
           <div className="chat-list">
-
             {/* USERS */}
             {activeTab === "users" &&
               users.map((chat) => (
@@ -305,7 +275,6 @@ const truncateMessage = (text, limit = 20) => {
                   </div>
                 </div>
               ))}
-
             {/* STAFF */}
             {activeTab === "staff" &&
               staff.map((item) => (
@@ -330,7 +299,6 @@ const truncateMessage = (text, limit = 20) => {
               ))}
           </div>
         </div>
-
         {/* CHAT AREA */}
         <div className="col-md-9 chat-main">
           <div className="chat-top">
@@ -338,11 +306,9 @@ const truncateMessage = (text, limit = 20) => {
               ? selectedChat.sender_name
               : "Select Chat"}
           </div>
-
           <div className="chat-messages">
             {messages.map((msg, i) => {
               const isMe = msg.sender_id === userId;
-
               return (
                 <div
                   key={i}
@@ -359,10 +325,8 @@ const truncateMessage = (text, limit = 20) => {
                 </div>
               );
             })}
-
             <div ref={messagesEndRef} />
           </div>
-
           <div className="chat-input d-flex gap-2 p-2">
             <input
               type="text"
@@ -376,7 +340,6 @@ const truncateMessage = (text, limit = 20) => {
                 e.key === "Enter" && sendMessage1()
               }
             />
-
             <button
               className="btn btn-primary"
               onClick={sendMessage1}

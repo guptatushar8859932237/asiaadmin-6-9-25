@@ -2669,7 +2669,7 @@
 //     </>
 //   );
 // }
- // import React from "react";
+// import React from "react";
 // import image from "../Assests/favicon.png";
 // import image2 from "../Assests/img2.png";
 // import { useLocation, useNavigate } from "react-router-dom";
@@ -3420,7 +3420,7 @@ export default function Waybill() {
                   padding: "1mm",
                   boxSizing: "border-box",
                   background: "#fff",
-                  margin:"auto"
+                  margin: "auto"
                 }}
               >
                 <div
@@ -3458,7 +3458,7 @@ export default function Waybill() {
                                     }}
                                   />
                                 </td>
-                                <td style={{ width: "60%", paddingBottom: 20 }}>
+                                <td style={{ width: "60%" }}>
                                   <table>
                                     <tbody>
                                       <tr style={{ verticalAlign: "sub" }}>
@@ -3528,45 +3528,43 @@ export default function Waybill() {
                         </td>
                       </tr>
                       <tr>
-                        <td>
+                        <td style={{ verticalAlign: "top" }}>
                           <table
                             style={{
-                              borderTop: "1px solid black",
                               width: "100%",
-                              marginTop: 10,
                             }}
                           >
                             <tbody>
                               <tr>
-                                <td style={{ verticalAlign: "sub" }}>
+                                <td style={{ verticalAlign: "top" }}>
                                   <table
                                     style={{
                                       width: "100%",
                                       height: 130,
-                                      borderBottom: "1px solid black",
-                                      marginBottom: 10,
+
                                     }}
                                   >
                                     <tbody>
-                                      <tr style={{ verticalAlign: "sub" }}>
+                                      <tr style={{ verticalAlign: "top" }}>
                                         <td
                                           style={{
                                             fontSize: 12,
                                             fontWeight: 700,
                                             paddingRight: "1mm",
                                             paddingLeft: "1mm",
+                                            verticalAlign: "top",
                                           }}
                                         >
-                                          <strong style={{paddingBottom:"2mm"}}> Consignee:</strong>
-                                          <br />
-                                          {getdat?.client_name}
+                                          <strong style={{ paddingBottom: "2mm" }}> Consignee:</strong>
+
+                                          {" "}    {getdat?.client_name}
                                           {/* <br /> */}
                                           {/* {getdat.client_email} */}
-                                          <br />
+
                                           {getdat?.address_1}
-                                          <br />
+
                                           {getdat?.city}
-                                          <br />
+
                                         </td>
                                       </tr>
                                     </tbody>
@@ -3630,7 +3628,7 @@ export default function Waybill() {
                                                       backgroundColor:
                                                         "lightgrey",
                                                       color: "black",
-                                                      padding: "0px 20px",
+                                                      padding: "0px 5px",
                                                       border: 0,
                                                       borderRadius: 20,
                                                       width: "100%",
@@ -3651,7 +3649,7 @@ export default function Waybill() {
                                     style={{
                                       borderTop: "1px solid black",
                                       width: "100%",
-                                      marginBottom: 35,
+
                                     }}
                                   >
                                     <tbody>
@@ -3660,33 +3658,34 @@ export default function Waybill() {
                                           style={{
                                             fontSize: 14,
                                             fontWeight: 700,
-                                            paddingRight: "1mm",
+                                            padding: "1mm",
                                             textDecorationLine: "underline",
                                             fontStyle: "italic",
-                                            paddingLeft: "1mm",
+
                                           }}
                                         >
                                           Delivery Instructions:
                                         </td>
                                       </tr>
-                                      <tr>
+                                      {/* <tr>
                                         <td
                                           style={{
-                                            borderBottom: "2px solid black",
+                                            borderBottom: "1px solid black",
                                             width: "100%",
                                             paddingTop: 20,
                                           }}
                                         >
                                           <span />
                                         </td>
-                                      </tr>
+                                      </tr> */}
                                       <tr>
                                         <td
                                           style={{
-                                            borderBottom: "2px solid black",
+                                            borderTop: "1px solid black",
+                                            borderBottom: "1px solid black",
                                             width: "100%",
                                             paddingTop: 20,
-                                            paddingLeft:"1mm",
+                                            paddingLeft: "1mm",
                                           }}
                                         >
                                           {data?.special_comments}
@@ -3696,7 +3695,7 @@ export default function Waybill() {
                                       <tr>
                                         <td
                                           style={{
-                                            borderBottom: "2px solid black",
+                                            borderBottom: "1px solid black",
                                             width: "100%",
                                             paddingTop: 20,
                                           }}
@@ -3707,7 +3706,7 @@ export default function Waybill() {
                                       <tr>
                                         <td
                                           style={{
-                                            borderBottom: "2px solid black",
+                                            borderBottom: "1px solid black",
                                             width: "100%",
                                             paddingTop: 20,
                                           }}
@@ -3718,7 +3717,7 @@ export default function Waybill() {
                                       <tr>
                                         <td
                                           style={{
-                                            borderBottom: "2px solid black",
+                                            borderBottom: "1px solid black",
                                             width: "100%",
                                             paddingTop: 20,
                                           }}
@@ -3729,7 +3728,6 @@ export default function Waybill() {
                                       <tr>
                                         <td
                                           style={{
-                                            borderBottom: "2px solid black",
                                             width: "100%",
                                             paddingTop: 20,
                                           }}
@@ -3743,15 +3741,16 @@ export default function Waybill() {
                                 <td
                                   style={{
                                     borderLeft: "1px solid black",
-                                    width:'210px'
+                                    width: '210px',
+                                    verticalAlign: "top",
                                   }}
                                 >
                                   <table
                                     style={{
                                       width: "100%",
-                                      height: 160,
+
                                       borderBottom: "1px solid black",
-                                      marginBottom: 10,
+                                      marginBottom: 5,
                                     }}
                                   >
                                     <tbody>
@@ -3779,11 +3778,11 @@ export default function Waybill() {
                                           {new Date(
                                             data.date_dispatched
                                           ).toLocaleDateString("en-GB") ==
-                                          "01/01/1970"
+                                            "01/01/1970"
                                             ? ""
                                             : new Date(
-                                                data.date_dispatched
-                                              ).toLocaleDateString("en-GB")}
+                                              data.date_dispatched
+                                            ).toLocaleDateString("en-GB")}
                                         </td>
                                       </tr>
                                       <tr style={{ verticalAlign: "sub" }}>
@@ -3944,7 +3943,6 @@ export default function Waybill() {
                                   </table>
                                   <table
                                     style={{
-                                      borderTop: "1px solid black",
                                       width: "100%",
                                     }}
                                   >
@@ -3966,8 +3964,8 @@ export default function Waybill() {
                                           <p
                                             style={{
                                               fontSize: 12,
-                                              marginBottom: 27,
-                                              marginTop: 15,
+                                              marginBottom: 5,
+                                              marginTop: 5,
                                               fontWeight: 500,
                                               paddingLeft: "1mm",
                                             }}
@@ -3996,7 +3994,6 @@ export default function Waybill() {
                                             src={image2}
                                             style={{
                                               width: "100px",
-                                              height: 130,
                                               objectFit: "contain",
                                             }}
                                           />

@@ -3477,8 +3477,8 @@ export default function Waybill() {
                                             paddingRight: "1mm",
                                           }}
                                         >
-                                          {/* {getdat?.shipper_address} */}
-                                          Asia Direct
+                                          {getdat?.shipper}
+                                          {/* Asia Direct */}
                                         </td>
                                       </tr>
                                       <tr style={{ verticalAlign: "sub" }}>
@@ -3488,7 +3488,7 @@ export default function Waybill() {
                                             fontWeight: 600,
                                           }}
                                         >
-                                          Email
+                                          Email:
                                         </td>
                                         <td
                                           style={{
@@ -3497,7 +3497,8 @@ export default function Waybill() {
                                             paddingRight: "1mm",
                                           }}
                                         >
-                                          sa@asiadirect.africa
+                                          {getdat?.shipper_email}
+                                          {/* sa@asiadirect.africa */}
                                         </td>
                                       </tr>
                                       <tr style={{ verticalAlign: "sub" }}>
@@ -3507,7 +3508,7 @@ export default function Waybill() {
                                             fontWeight: 600,
                                           }}
                                         >
-                                          Telephone
+                                          Telephone:
                                         </td>
                                         <td
                                           style={{
@@ -3516,7 +3517,8 @@ export default function Waybill() {
                                             paddingRight: "1mm",
                                           }}
                                         >
-                                          +27 10 448 0733
+                                          {getdat?.shipper_tel}
+                                          {/* +27 10 448 0733 */}
                                         </td>
                                       </tr>
                                     </tbody>
@@ -3561,7 +3563,7 @@ export default function Waybill() {
                                           {/* <br /> */}
                                           {/* {getdat.client_email} */}
 
-                                          {getdat?.address_1}
+                                        <strong style={{ paddingBottom: "2mm" }}> Address:</strong>  {getdat?.address_1}
 
                                           {getdat?.city}
 
@@ -3776,12 +3778,12 @@ export default function Waybill() {
                                           }}
                                         >
                                           {new Date(
-                                            data.date_dispatched
+                                            data.order_created_date
                                           ).toLocaleDateString("en-GB") ==
                                             "01/01/1970"
                                             ? ""
                                             : new Date(
-                                              data.date_dispatched
+                                              data.order_created_date
                                             ).toLocaleDateString("en-GB")}
                                         </td>
                                       </tr>

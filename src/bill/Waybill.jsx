@@ -3347,7 +3347,7 @@ export default function Waybill() {
 
       const response = await axios.post(
         `${process.env.REACT_APP_BASE_URL}OrderDetailsById`,
-        postData
+        postData,
       );
 
       console.log(response.data.data[0]);
@@ -3415,12 +3415,12 @@ export default function Waybill() {
               <section
                 ref={sectionRef}
                 style={{
-                  width: "115mm",
+                  width: "125mm",
                   minHeight: "148mm",
                   padding: "1mm",
                   boxSizing: "border-box",
                   background: "#fff",
-                  margin: "auto"
+                  margin: "auto",
                 }}
               >
                 <div
@@ -3543,30 +3543,41 @@ export default function Waybill() {
                                     style={{
                                       width: "100%",
                                       height: 130,
-
                                     }}
                                   >
                                     <tbody>
                                       <tr style={{ verticalAlign: "top" }}>
                                         <td
                                           style={{
-                                            fontSize: 12,
+                                            fontSize: 10,
                                             fontWeight: 700,
                                             paddingRight: "1mm",
                                             paddingLeft: "1mm",
                                             verticalAlign: "top",
                                           }}
                                         >
-                                          <strong style={{ paddingBottom: "2mm" }}> Consignee:</strong>
+                                          <div className="wayConAdd">
+                                            <strong
+                                              style={{ paddingBottom: "2mm" }}
+                                            >
+                                              {" "}
+                                              Consignee:
+                                            </strong>
+                                            <div>
 
-                                          {" "}    {getdat?.client_name}
+                                              <span>{getdat?.client_name}</span>
+                                              <span>{getdat?.address_1}</span>
+                                              <span>
+                                                {" "}
+                                                {getdat?.city}{" "}
+                                                {getdat?.province}{" "}
+                                                {data?.user_country_name}{" "}
+                                                {getdat?.code}{" "}
+                                              </span>
+                                            </div>
+                                          </div>{" "}
                                           {/* <br /> */}
                                           {/* {getdat.client_email} */}
-
-                                        <strong style={{ paddingBottom: "2mm" }}> Address:</strong>  {getdat?.address_1}
-
-                                          {getdat?.city}
-
                                         </td>
                                       </tr>
                                     </tbody>
@@ -3651,7 +3662,6 @@ export default function Waybill() {
                                     style={{
                                       borderTop: "1px solid black",
                                       width: "100%",
-
                                     }}
                                   >
                                     <tbody>
@@ -3663,7 +3673,6 @@ export default function Waybill() {
                                             padding: "1mm",
                                             textDecorationLine: "underline",
                                             fontStyle: "italic",
-
                                           }}
                                         >
                                           Delivery Instructions:
@@ -3743,7 +3752,7 @@ export default function Waybill() {
                                 <td
                                   style={{
                                     borderLeft: "1px solid black",
-                                    width: '210px',
+                                    width: "210px",
                                     verticalAlign: "top",
                                   }}
                                 >
@@ -3778,13 +3787,13 @@ export default function Waybill() {
                                           }}
                                         >
                                           {new Date(
-                                            data.order_created_date
+                                            data.order_created_date,
                                           ).toLocaleDateString("en-GB") ==
-                                            "01/01/1970"
+                                          "01/01/1970"
                                             ? ""
                                             : new Date(
-                                              data.order_created_date
-                                            ).toLocaleDateString("en-GB")}
+                                                data.order_created_date,
+                                              ).toLocaleDateString("en-GB")}
                                         </td>
                                       </tr>
                                       <tr style={{ verticalAlign: "sub" }}>

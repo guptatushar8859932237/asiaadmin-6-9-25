@@ -4975,3 +4975,10 @@ td {
 .blueText {
   color: var(--blue);
 }
+.wayConAdd{
+  display: flex;
+  gap: 10px;
+}
+.wayConAdd span{
+  display: block;
+}

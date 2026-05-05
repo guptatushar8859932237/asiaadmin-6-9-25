@@ -89,7 +89,7 @@
 // // //                                         <td
 // // //                                           style={{
 // // //                                             fontSize: 12,
-// // //                                             fontWeight: 600,
+// // //                                            
 // // //                                           }}
 // // //                                         >
 // // //                                           Consignor:
@@ -97,7 +97,7 @@
 // // //                                         <td
 // // //                                           style={{
 // // //                                             fontSize: 12,
-// // //                                             fontWeight: 700,
+// // //                                             
 // // //                                             paddingLeft: 10,
 // // //                                           }}
 // // //                                         >
@@ -109,7 +109,7 @@
 // // //                                         <td
 // // //                                           style={{
 // // //                                             fontSize: 12,
-// // //                                             fontWeight: 600,
+// // //                                            
 // // //                                           }}
 // // //                                         >
 // // //                                           Email
@@ -117,7 +117,7 @@
 // // //                                         <td
 // // //                                           style={{
 // // //                                             fontSize: 12,
-// // //                                             fontWeight: 700,
+// // //                                             
 // // //                                             paddingLeft: 10,
 // // //                                           }}
 // // //                                         >
@@ -128,7 +128,7 @@
 // // //                                         <td
 // // //                                           style={{
 // // //                                             fontSize: 12,
-// // //                                             fontWeight: 600,
+// // //                                            
 // // //                                           }}
 // // //                                         >
 // // //                                           Telephone
@@ -136,7 +136,7 @@
 // // //                                         <td
 // // //                                           style={{
 // // //                                             fontSize: 12,
-// // //                                             fontWeight: 700,
+// // //                                             
 // // //                                             paddingLeft: 10,
 // // //                                           }}
 // // //                                         >
@@ -176,7 +176,7 @@
 // // //                                         <td
 // // //                                           style={{
 // // //                                             fontSize: 12,
-// // //                                             fontWeight: 600,
+// // //                                            
 // // //                                             paddingLeft: 10,
 // // //                                             width: "20%",
 // // //                                             verticalAlign: "baseline",
@@ -187,7 +187,7 @@
 // // //                                         <td
 // // //                                           style={{
 // // //                                             fontSize: 12,
-// // //                                             fontWeight: 700,
+// // //                                             
 // // //                                             paddingLeft: 10,
 // // //                                           }}
 // // //                                         >
@@ -231,7 +231,7 @@
 // // //                                           <p
 // // //                                             style={{
 // // //                                               textAlign: "center",
-// // //                                               fontWeight: 600,
+// // //                                              
 // // //                                               margin: 0,
 // // //                                             }}
 // // //                                           ></p>
@@ -248,7 +248,7 @@
 // // //                                                 <td
 // // //                                                   style={{
 // // //                                                     fontSize: 15,
-// // //                                                     fontWeight: 700,
+// // //                                                     
 // // //                                                     paddingLeft: 10,
 // // //                                                   }}
 // // //                                                 >
@@ -290,7 +290,7 @@
 // // //                                         <td
 // // //                                           style={{
 // // //                                             fontSize: 14,
-// // //                                             fontWeight: 700,
+// // //                                             
 // // //                                             paddingLeft: 10,
 // // //                                             textDecorationLine: "underline",
 // // //                                             fontStyle: "italic",
@@ -388,7 +388,7 @@
 // // //                                         <td
 // // //                                           style={{
 // // //                                             fontSize: 12,
-// // //                                             fontWeight: 700,
+// // //                                             
 // // //                                             paddingLeft: 10,
 // // //                                             textAlign: "start",
 // // //                                             width: "20%",
@@ -399,7 +399,7 @@
 // // //                                         <td
 // // //                                           style={{
 // // //                                             fontSize: 12,
-// // //                                             fontWeight: 600,
+// // //                                            
 // // //                                             paddingRight: 30,
 // // //                                             textAlign: "end",
 // // //                                           }}
@@ -413,7 +413,7 @@
 // // //                                         <td
 // // //                                           style={{
 // // //                                             fontSize: 12,
-// // //                                             fontWeight: 700,
+// // //                                             
 // // //                                             paddingLeft: 10,
 // // //                                             textAlign: "start",
 // // //                                             width: "20%",
@@ -424,7 +424,7 @@
 // // //                                         <td
 // // //                                           style={{
 // // //                                             fontSize: 12,
-// // //                                             fontWeight: 600,
+// // //                                            
 // // //                                             paddingRight: 30,
 // // //                                             textAlign: "end",
 // // //                                           }}
@@ -436,7 +436,7 @@
 // // //                                         <td
 // // //                                           style={{
 // // //                                             fontSize: 12,
-// // //                                             fontWeight: 700,
+// // //                                             
 // // //                                             paddingLeft: 10,
 // // //                                             textAlign: "start",
 // // //                                             width: "20%",
@@ -447,7 +447,7 @@
 // // //                                         <td
 // // //                                           style={{
 // // //                                             fontSize: 12,
-// // //                                             fontWeight: 600,
+// // //                                            
 // // //                                             paddingRight: 30,
 // // //                                             textAlign: "end",
 // // //                                           }}
@@ -459,7 +459,7 @@
 // // //                                         <td
 // // //                                           style={{
 // // //                                             fontSize: 12,
-// // //                                             fontWeight: 700,
+// // //                                             
 // // //                                             paddingLeft: 10,
 // // //                                             textAlign: "start",
 // // //                                             width: "20%",
@@ -470,7 +470,7 @@
 // // //                                         <td
 // // //                                           style={{
 // // //                                             fontSize: 12,
-// // //                                             fontWeight: 600,
+// // //                                            
 // // //                                             paddingRight: 30,
 // // //                                             textAlign: "end",
 // // //                                           }}
@@ -482,7 +482,7 @@
 // // //                                         <td
 // // //                                           style={{
 // // //                                             fontSize: 12,
-// // //                                             fontWeight: 700,
+// // //                                             
 // // //                                             paddingLeft: 10,
 // // //                                             textAlign: "start",
 // // //                                             width: "20%",
@@ -493,7 +493,7 @@
 // // //                                         <td
 // // //                                           style={{
 // // //                                             fontSize: 12,
-// // //                                             fontWeight: 600,
+// // //                                            
 // // //                                             paddingRight: 30,
 // // //                                             textAlign: "end",
 // // //                                           }}
@@ -506,7 +506,7 @@
 // // //                                                                 <td
 // // //                                                                     style={{
 // // //                                                                         fontSize: 12,
-// // //                                                                         fontWeight: 700,
+// // //                                                                         
 // // //                                                                         paddingLeft: 10,
 // // //                                                                         textAlign: "end",
 // // //                                                                         width: "20%"
@@ -517,7 +517,7 @@
 // // //                                                                 <td
 // // //                                                                     style={{
 // // //                                                                         fontSize: 12,
-// // //                                                                         fontWeight: 600,
+// // //                                                                        
 // // //                                                                         paddingRight: 30,
 // // //                                                                         textAlign: "end"
 // // //                                                                     }}
@@ -540,7 +540,7 @@
 // // //                                                                 <td
 // // //                                                                     style={{
 // // //                                                                         fontSize: 12,
-// // //                                                                         fontWeight: 700,
+// // //                                                                         
 // // //                                                                         paddingLeft: 10,
 // // //                                                                         textAlign: "end",
 // // //                                                                         width: "20%"
@@ -551,7 +551,7 @@
 // // //                                                                 <td
 // // //                                                                     style={{
 // // //                                                                         fontSize: 12,
-// // //                                                                         fontWeight: 600,
+// // //                                                                        
 // // //                                                                         paddingRight: 30,
 // // //                                                                         textAlign: "end"
 // // //                                                                     }}
@@ -572,7 +572,7 @@
 // // //                                         <td
 // // //                                           style={{
 // // //                                             fontSize: 12,
-// // //                                             fontWeight: 700,
+// // //                                             
 // // //                                             textDecorationLine: "underline",
 // // //                                             paddingLeft: "10px",
 // // //                                           }}
@@ -756,7 +756,7 @@
 // //                                         <td
 // //                                           style={{
 // //                                             fontSize: 12,
-// //                                             fontWeight: 600,
+// //                                            
 // //                                           }}
 // //                                         >
 // //                                           Consignor:
@@ -764,7 +764,7 @@
 // //                                         <td
 // //                                           style={{
 // //                                             fontSize: 12,
-// //                                             fontWeight: 700,
+// //                                             
 // //                                             paddingLeft: 10,
 // //                                           }}
 // //                                         >
@@ -776,7 +776,7 @@
 // //                                         <td
 // //                                           style={{
 // //                                             fontSize: 12,
-// //                                             fontWeight: 600,
+// //                                            
 // //                                           }}
 // //                                         >
 // //                                           Email
@@ -784,7 +784,7 @@
 // //                                         <td
 // //                                           style={{
 // //                                             fontSize: 12,
-// //                                             fontWeight: 700,
+// //                                             
 // //                                             paddingLeft: 10,
 // //                                           }}
 // //                                         >
@@ -795,7 +795,7 @@
 // //                                         <td
 // //                                           style={{
 // //                                             fontSize: 12,
-// //                                             fontWeight: 600,
+// //                                            
 // //                                           }}
 // //                                         >
 // //                                           Telephone
@@ -803,7 +803,7 @@
 // //                                         <td
 // //                                           style={{
 // //                                             fontSize: 12,
-// //                                             fontWeight: 700,
+// //                                             
 // //                                             paddingLeft: 10,
 // //                                           }}
 // //                                         >
@@ -843,7 +843,7 @@
 // //                                         <td
 // //                                           style={{
 // //                                             fontSize: 12,
-// //                                             fontWeight: 600,
+// //                                            
 // //                                             paddingLeft: 10,
 // //                                             width: "20%",
 // //                                             verticalAlign: "baseline",
@@ -854,7 +854,7 @@
 // //                                         <td
 // //                                           style={{
 // //                                             fontSize: 12,
-// //                                             fontWeight: 700,
+// //                                             
 // //                                             paddingLeft: 10,
 // //                                           }}
 // //                                         >
@@ -898,7 +898,7 @@
 // //                                           <p
 // //                                             style={{
 // //                                               textAlign: "center",
-// //                                               fontWeight: 600,
+// //                                              
 // //                                               margin: 0,
 // //                                             }}
 // //                                           ></p>
@@ -915,7 +915,7 @@
 // //                                                 <td
 // //                                                   style={{
 // //                                                     fontSize: 15,
-// //                                                     fontWeight: 700,
+// //                                                     
 // //                                                     paddingLeft: 10,
 // //                                                   }}
 // //                                                 >
@@ -957,7 +957,7 @@
 // //                                         <td
 // //                                           style={{
 // //                                             fontSize: 14,
-// //                                             fontWeight: 700,
+// //                                             
 // //                                             paddingLeft: 10,
 // //                                             textDecorationLine: "underline",
 // //                                             fontStyle: "italic",
@@ -1055,7 +1055,7 @@
 // //                                         <td
 // //                                           style={{
 // //                                             fontSize: 12,
-// //                                             fontWeight: 700,
+// //                                             
 // //                                             paddingLeft: 10,
 // //                                             textAlign: "start",
 // //                                             width: "20%",
@@ -1066,7 +1066,7 @@
 // //                                         <td
 // //                                           style={{
 // //                                             fontSize: 12,
-// //                                             fontWeight: 600,
+// //                                            
 // //                                             paddingRight: 30,
 // //                                             textAlign: "end",
 // //                                           }}
@@ -1082,7 +1082,7 @@
 // //                                         <td
 // //                                           style={{
 // //                                             fontSize: 12,
-// //                                             fontWeight: 700,
+// //                                             
 // //                                             paddingLeft: 10,
 // //                                             textAlign: "start",
 // //                                             width: "20%",
@@ -1093,7 +1093,7 @@
 // //                                         <td
 // //                                           style={{
 // //                                             fontSize: 12,
-// //                                             fontWeight: 600,
+// //                                            
 // //                                             paddingRight: 30,
 // //                                             textAlign: "end",
 // //                                           }}
@@ -1105,7 +1105,7 @@
 // //                                         <td
 // //                                           style={{
 // //                                             fontSize: 12,
-// //                                             fontWeight: 700,
+// //                                             
 // //                                             paddingLeft: 10,
 // //                                             textAlign: "start",
 // //                                             width: "20%",
@@ -1116,7 +1116,7 @@
 // //                                         <td
 // //                                           style={{
 // //                                             fontSize: 12,
-// //                                             fontWeight: 600,
+// //                                            
 // //                                             paddingRight: 30,
 // //                                             textAlign: "end",
 // //                                           }}
@@ -1128,7 +1128,7 @@
 // //                                         <td
 // //                                           style={{
 // //                                             fontSize: 12,
-// //                                             fontWeight: 700,
+// //                                             
 // //                                             paddingLeft: 10,
 // //                                             textAlign: "start",
 // //                                             width: "20%",
@@ -1139,7 +1139,7 @@
 // //                                         <td
 // //                                           style={{
 // //                                             fontSize: 12,
-// //                                             fontWeight: 600,
+// //                                            
 // //                                             paddingRight: 30,
 // //                                             textAlign: "end",
 // //                                           }}
@@ -1151,7 +1151,7 @@
 // //                                         <td
 // //                                           style={{
 // //                                             fontSize: 12,
-// //                                             fontWeight: 700,
+// //                                             
 // //                                             paddingLeft: 10,
 // //                                             textAlign: "start",
 // //                                             width: "20%",
@@ -1162,7 +1162,7 @@
 // //                                         <td
 // //                                           style={{
 // //                                             fontSize: 12,
-// //                                             fontWeight: 600,
+// //                                            
 // //                                             paddingRight: 30,
 // //                                             textAlign: "end",
 // //                                           }}
@@ -1175,7 +1175,7 @@
 // //                                                                 <td
 // //                                                                     style={{
 // //                                                                         fontSize: 12,
-// //                                                                         fontWeight: 700,
+// //                                                                         
 // //                                                                         paddingLeft: 10,
 // //                                                                         textAlign: "end",
 // //                                                                         width: "20%"
@@ -1186,7 +1186,7 @@
 // //                                                                 <td
 // //                                                                     style={{
 // //                                                                         fontSize: 12,
-// //                                                                         fontWeight: 600,
+// //                                                                        
 // //                                                                         paddingRight: 30,
 // //                                                                         textAlign: "end"
 // //                                                                     }}
@@ -1209,7 +1209,7 @@
 // //                                                                 <td
 // //                                                                     style={{
 // //                                                                         fontSize: 12,
-// //                                                                         fontWeight: 700,
+// //                                                                         
 // //                                                                         paddingLeft: 10,
 // //                                                                         textAlign: "end",
 // //                                                                         width: "20%"
@@ -1220,7 +1220,7 @@
 // //                                                                 <td
 // //                                                                     style={{
 // //                                                                         fontSize: 12,
-// //                                                                         fontWeight: 600,
+// //                                                                        
 // //                                                                         paddingRight: 30,
 // //                                                                         textAlign: "end"
 // //                                                                     }}
@@ -1241,7 +1241,7 @@
 // //                                         <td
 // //                                           style={{
 // //                                             fontSize: 12,
-// //                                             fontWeight: 700,
+// //                                             
 // //                                             textDecorationLine: "underline",
 // //                                             paddingLeft: "10px",
 // //                                           }}
@@ -1400,7 +1400,7 @@
 // //                                         <td
 // //                                           style={{
 // //                                             fontSize: 12,
-// //                                             fontWeight: 600,
+// //                                            
 // //                                           }}
 // //                                         >
 // //                                           Consignor:
@@ -1408,7 +1408,7 @@
 // //                                         <td
 // //                                           style={{
 // //                                             fontSize: 12,
-// //                                             fontWeight: 700,
+// //                                             
 // //                                              paddingRight:"1mm",
 // //                                           }}
 // //                                         >
@@ -1420,7 +1420,7 @@
 // //                                         <td
 // //                                           style={{
 // //                                             fontSize: 12,
-// //                                             fontWeight: 600,
+// //                                            
 // //                                           }}
 // //                                         >
 // //                                           Email
@@ -1428,7 +1428,7 @@
 // //                                         <td
 // //                                           style={{
 // //                                             fontSize: 12,
-// //                                             fontWeight: 700,
+// //                                             
 // //                                              paddingRight:"1mm",
 // //                                           }}
 // //                                         >
@@ -1439,7 +1439,7 @@
 // //                                         <td
 // //                                           style={{
 // //                                             fontSize: 12,
-// //                                             fontWeight: 600,
+// //                                            
 // //                                           }}
 // //                                         >
 // //                                           Telephone
@@ -1447,7 +1447,7 @@
 // //                                         <td
 // //                                           style={{
 // //                                             fontSize: 12,
-// //                                             fontWeight: 700,
+// //                                             
 // //                                              paddingRight:"1mm",
 // //                                           }}
 // //                                         >
@@ -1487,7 +1487,7 @@
 // //                                         <td
 // //                                           style={{
 // //                                             fontSize: 12,
-// //                                             fontWeight: 600,
+// //                                            
 // //                                              paddingRight:"1mm",
 // //                                             width: "20%",
 // //                                             verticalAlign: "baseline",
@@ -1498,7 +1498,7 @@
 // //                                         <td
 // //                                           style={{
 // //                                             fontSize: 12,
-// //                                             fontWeight: 700,
+// //                                             
 // //                                              paddingRight:"1mm",
 // //                                           }}
 // //                                         >
@@ -1542,7 +1542,7 @@
 // //                                           <p
 // //                                             style={{
 // //                                               textAlign: "center",
-// //                                               fontWeight: 600,
+// //                                              
 // //                                               margin: 0,
 // //                                             }}
 // //                                           ></p>
@@ -1559,7 +1559,7 @@
 // //                                                 <td
 // //                                                   style={{
 // //                                                     fontSize: 15,
-// //                                                     fontWeight: 700,
+// //                                                     
 // //                                                      paddingRight:"1mm",
 // //                                                   }}
 // //                                                 >
@@ -1601,7 +1601,7 @@
 // //                                         <td
 // //                                           style={{
 // //                                             fontSize: 14,
-// //                                             fontWeight: 700,
+// //                                             
 // //                                              paddingRight:"1mm",
 // //                                             textDecorationLine: "underline",
 // //                                             fontStyle: "italic",
@@ -1699,7 +1699,7 @@
 // //                                         <td
 // //                                           style={{
 // //                                             fontSize: 12,
-// //                                             fontWeight: 700,
+// //                                             
 // //                                              paddingRight:"1mm",
 // //                                             textAlign: "start",
 // //                                             width: "20%",
@@ -1710,7 +1710,7 @@
 // //                                         <td
 // //                                           style={{
 // //                                             fontSize: 12,
-// //                                             fontWeight: 600,
+// //                                            
 // //                                             paddingRight:" 1mm",
 // //                                             textAlign: "end",
 // //                                           }}
@@ -1724,7 +1724,7 @@
 // //                                         <td
 // //                                           style={{
 // //                                             fontSize: 12,
-// //                                             fontWeight: 700,
+// //                                             
 // //                                              paddingRight:"1mm",
 // //                                             textAlign: "start",
 // //                                             width: "20%",
@@ -1735,7 +1735,7 @@
 // //                                         <td
 // //                                           style={{
 // //                                             fontSize: 12,
-// //                                             fontWeight: 600,
+// //                                            
 // //                                             paddingRight:" 1mm",
 // //                                             textAlign: "end",
 // //                                           }}
@@ -1747,7 +1747,7 @@
 // //                                         <td
 // //                                           style={{
 // //                                             fontSize: 12,
-// //                                             fontWeight: 700,
+// //                                             
 // //                                              paddingRight:"1mm",
 // //                                             textAlign: "start",
 // //                                             width: "20%",
@@ -1758,7 +1758,7 @@
 // //                                         <td
 // //                                           style={{
 // //                                             fontSize: 12,
-// //                                             fontWeight: 600,
+// //                                            
 // //                                             paddingRight:" 1mm",
 // //                                             textAlign: "end",
 // //                                           }}
@@ -1770,7 +1770,7 @@
 // //                                         <td
 // //                                           style={{
 // //                                             fontSize: 12,
-// //                                             fontWeight: 700,
+// //                                             
 // //                                              paddingRight:"1mm",
 // //                                             textAlign: "start",
 // //                                             width: "20%",
@@ -1781,7 +1781,7 @@
 // //                                         <td
 // //                                           style={{
 // //                                             fontSize: 12,
-// //                                             fontWeight: 600,
+// //                                            
 // //                                             paddingRight:" 1mm",
 // //                                             textAlign: "end",
 // //                                           }}
@@ -1793,7 +1793,7 @@
 // //                                         <td
 // //                                           style={{
 // //                                             fontSize: 12,
-// //                                             fontWeight: 700,
+// //                                             
 // //                                              paddingRight:"1mm",
 // //                                             textAlign: "start",
 // //                                             width: "20%",
@@ -1804,7 +1804,7 @@
 // //                                         <td
 // //                                           style={{
 // //                                             fontSize: 12,
-// //                                             fontWeight: 600,
+// //                                            
 // //                                             paddingRight:" 1mm",
 // //                                             textAlign: "end",
 // //                                           }}
@@ -1817,7 +1817,7 @@
 // //                                                                 <td
 // //                                                                     style={{
 // //                                                                         fontSize: 12,
-// //                                                                         fontWeight: 700,
+// //                                                                         
 // //                                                                          paddingRight:"1mm",
 // //                                                                         textAlign: "end",
 // //                                                                         width: "20%"
@@ -1828,7 +1828,7 @@
 // //                                                                 <td
 // //                                                                     style={{
 // //                                                                         fontSize: 12,
-// //                                                                         fontWeight: 600,
+// //                                                                        
 // //                                                                         paddingRight:" 1mm",
 // //                                                                         textAlign: "end"
 // //                                                                     }}
@@ -1851,7 +1851,7 @@
 // //                                                                 <td
 // //                                                                     style={{
 // //                                                                         fontSize: 12,
-// //                                                                         fontWeight: 700,
+// //                                                                         
 // //                                                                          paddingRight:"1mm",
 // //                                                                         textAlign: "end",
 // //                                                                         width: "20%"
@@ -1862,7 +1862,7 @@
 // //                                                                 <td
 // //                                                                     style={{
 // //                                                                         fontSize: 12,
-// //                                                                         fontWeight: 600,
+// //                                                                        
 // //                                                                         paddingRight:" 1mm",
 // //                                                                         textAlign: "end"
 // //                                                                     }}
@@ -1883,7 +1883,7 @@
 // //                                         <td
 // //                                           style={{
 // //                                             fontSize: 12,
-// //                                             fontWeight: 700,
+// //                                             
 // //                                             textDecorationLine: "underline",
 // //                                             paddingLeft: "1mm",
 // //                                           }}
@@ -2105,7 +2105,7 @@
 //                                         <td
 //                                           style={{
 //                                             fontSize: 12,
-//                                             fontWeight: 600,
+//                                            
 //                                           }}
 //                                         >
 //                                           Consignor:
@@ -2113,7 +2113,7 @@
 //                                         <td
 //                                           style={{
 //                                             fontSize: 12,
-//                                             fontWeight: 700,
+//                                             
 //                                             paddingRight: "1mm",
 //                                           }}
 //                                         >
@@ -2125,7 +2125,7 @@
 //                                         <td
 //                                           style={{
 //                                             fontSize: 12,
-//                                             fontWeight: 600,
+//                                            
 //                                           }}
 //                                         >
 //                                           Email
@@ -2133,7 +2133,7 @@
 //                                         <td
 //                                           style={{
 //                                             fontSize: 12,
-//                                             fontWeight: 700,
+//                                             
 //                                             paddingRight: "1mm",
 //                                           }}
 //                                         >
@@ -2144,7 +2144,7 @@
 //                                         <td
 //                                           style={{
 //                                             fontSize: 12,
-//                                             fontWeight: 600,
+//                                            
 //                                           }}
 //                                         >
 //                                           Telephone
@@ -2152,7 +2152,7 @@
 //                                         <td
 //                                           style={{
 //                                             fontSize: 12,
-//                                             fontWeight: 700,
+//                                             
 //                                             paddingRight: "1mm",
 //                                           }}
 //                                         >
@@ -2192,7 +2192,7 @@
 //                                         <td
 //                                           style={{
 //                                             fontSize: 12,
-//                                             fontWeight: 600,
+//                                            
 //                                             paddingRight: "1mm",
 //                                             paddingLeft: "1mm",
 //                                             width: "20%",
@@ -2204,7 +2204,7 @@
 //                                         <td
 //                                           style={{
 //                                             fontSize: 12,
-//                                             fontWeight: 700,
+//                                             
 //                                             paddingRight: "1mm",
 //                                           }}
 //                                         >
@@ -2248,7 +2248,7 @@
 //                                           <p
 //                                             style={{
 //                                               textAlign: "center",
-//                                               fontWeight: 600,
+//                                              
 //                                               margin: 0,
 //                                             }}
 //                                           ></p>
@@ -2265,7 +2265,7 @@
 //                                                 <td
 //                                                   style={{
 //                                                     fontSize: 15,
-//                                                     fontWeight: 700,
+//                                                     
 //                                                     paddingRight: "1mm",
 //                                                     paddingLeft: "1mm",
 //                                                   }}
@@ -2308,7 +2308,7 @@
 //                                         <td
 //                                           style={{
 //                                             fontSize: 14,
-//                                             fontWeight: 700,
+//                                             
 //                                             paddingRight: "1mm",
 //                                             textDecorationLine: "underline",
 //                                             fontStyle: "italic",
@@ -2407,7 +2407,7 @@
 //                                         <td
 //                                           style={{
 //                                             fontSize: 12,
-//                                             fontWeight: 700,
+//                                             
 //                                             paddingRight: "1mm",
 //                                             textAlign: "start",
 //                                             width: "20%",
@@ -2419,7 +2419,7 @@
 //                                         <td
 //                                           style={{
 //                                             fontSize: 12,
-//                                             fontWeight: 600,
+//                                            
 //                                             paddingRight: " 1mm",
 //                                             textAlign: "end",
 //                                           }}
@@ -2438,7 +2438,7 @@
 //                                         <td
 //                                           style={{
 //                                             fontSize: 12,
-//                                             fontWeight: 700,
+//                                             
 //                                             paddingRight: "1mm",
 //                                             textAlign: "start",
 //                                             width: "20%",
@@ -2450,7 +2450,7 @@
 //                                         <td
 //                                           style={{
 //                                             fontSize: 12,
-//                                             fontWeight: 600,
+//                                            
 //                                             paddingRight: " 1mm",
 //                                             textAlign: "end",
 //                                           }}
@@ -2462,7 +2462,7 @@
 //                                         <td
 //                                           style={{
 //                                             fontSize: 12,
-//                                             fontWeight: 700,
+//                                             
 //                                             paddingRight: "1mm",
 //                                             textAlign: "start",
 //                                             width: "20%",
@@ -2474,7 +2474,7 @@
 //                                         <td
 //                                           style={{
 //                                             fontSize: 12,
-//                                             fontWeight: 600,
+//                                            
 //                                             paddingRight: " 1mm",
 //                                             textAlign: "end",
 //                                           }}
@@ -2486,7 +2486,7 @@
 //                                         <td
 //                                           style={{
 //                                             fontSize: 12,
-//                                             fontWeight: 700,
+//                                             
 //                                             paddingRight: "1mm",
 //                                             textAlign: "start",
 //                                             width: "20%",
@@ -2498,7 +2498,7 @@
 //                                         <td
 //                                           style={{
 //                                             fontSize: 12,
-//                                             fontWeight: 600,
+//                                            
 //                                             paddingRight: " 1mm",
 //                                             textAlign: "end",
 //                                           }}
@@ -2510,7 +2510,7 @@
 //                                         <td
 //                                           style={{
 //                                             fontSize: 12,
-//                                             fontWeight: 700,
+//                                             
 //                                             paddingRight: "1mm",
 //                                             textAlign: "start",
 //                                             width: "20%",
@@ -2522,7 +2522,7 @@
 //                                         <td
 //                                           style={{
 //                                             fontSize: 12,
-//                                             fontWeight: 600,
+//                                            
 //                                             paddingRight: " 1mm",
 //                                             textAlign: "end",
 //                                           }}
@@ -2535,7 +2535,7 @@
 //                                                                 <td
 //                                                                     style={{
 //                                                                         fontSize: 12,
-//                                                                         fontWeight: 700,
+//                                                                         
 //                                                                          paddingRight:"1mm",
 //                                                                         textAlign: "end",
 //                                                                         width: "20%"
@@ -2546,7 +2546,7 @@
 //                                                                 <td
 //                                                                     style={{
 //                                                                         fontSize: 12,
-//                                                                         fontWeight: 600,
+//                                                                        
 //                                                                         paddingRight:" 1mm",
 //                                                                         textAlign: "end"
 //                                                                     }}
@@ -2569,7 +2569,7 @@
 //                                                                 <td
 //                                                                     style={{
 //                                                                         fontSize: 12,
-//                                                                         fontWeight: 700,
+//                                                                         
 //                                                                          paddingRight:"1mm",
 //                                                                         textAlign: "end",
 //                                                                         width: "20%"
@@ -2580,7 +2580,7 @@
 //                                                                 <td
 //                                                                     style={{
 //                                                                         fontSize: 12,
-//                                                                         fontWeight: 600,
+//                                                                        
 //                                                                         paddingRight:" 1mm",
 //                                                                         textAlign: "end"
 //                                                                     }}
@@ -2601,7 +2601,7 @@
 //                                         <td
 //                                           style={{
 //                                             fontSize: 12,
-//                                             fontWeight: 700,
+//                                             
 //                                             textDecorationLine: "underline",
 //                                             paddingLeft: "1mm",
 //                                           }}
@@ -2760,7 +2760,7 @@
 //                                         <td
 //                                           style={{
 //                                             fontSize: 12,
-//                                             fontWeight: 600,
+//                                            
 //                                           }}
 //                                         >
 //                                           Consignor:
@@ -2768,7 +2768,7 @@
 //                                         <td
 //                                           style={{
 //                                             fontSize: 12,
-//                                             fontWeight: 700,
+//                                             
 //                                              paddingRight:"1mm",
 //                                           }}
 //                                         >
@@ -2780,7 +2780,7 @@
 //                                         <td
 //                                           style={{
 //                                             fontSize: 12,
-//                                             fontWeight: 600,
+//                                            
 //                                           }}
 //                                         >
 //                                           Email
@@ -2788,7 +2788,7 @@
 //                                         <td
 //                                           style={{
 //                                             fontSize: 12,
-//                                             fontWeight: 700,
+//                                             
 //                                              paddingRight:"1mm",
 //                                           }}
 //                                         >
@@ -2799,7 +2799,7 @@
 //                                         <td
 //                                           style={{
 //                                             fontSize: 12,
-//                                             fontWeight: 600,
+//                                            
 //                                           }}
 //                                         >
 //                                           Telephone
@@ -2807,7 +2807,7 @@
 //                                         <td
 //                                           style={{
 //                                             fontSize: 12,
-//                                             fontWeight: 700,
+//                                             
 //                                              paddingRight:"1mm",
 //                                           }}
 //                                         >
@@ -2847,7 +2847,7 @@
 //                                         <td
 //                                           style={{
 //                                             fontSize: 12,
-//                                             fontWeight: 600,
+//                                            
 //                                              paddingRight:"1mm",
 //                                             width: "20%",
 //                                             verticalAlign: "baseline",
@@ -2858,7 +2858,7 @@
 //                                         <td
 //                                           style={{
 //                                             fontSize: 12,
-//                                             fontWeight: 700,
+//                                             
 //                                              paddingRight:"1mm",
 //                                           }}
 //                                         >
@@ -2902,7 +2902,7 @@
 //                                           <p
 //                                             style={{
 //                                               textAlign: "center",
-//                                               fontWeight: 600,
+//                                              
 //                                               margin: 0,
 //                                             }}
 //                                           ></p>
@@ -2919,7 +2919,7 @@
 //                                                 <td
 //                                                   style={{
 //                                                     fontSize: 15,
-//                                                     fontWeight: 700,
+//                                                     
 //                                                      paddingRight:"1mm",
 //                                                   }}
 //                                                 >
@@ -2961,7 +2961,7 @@
 //                                         <td
 //                                           style={{
 //                                             fontSize: 14,
-//                                             fontWeight: 700,
+//                                             
 //                                              paddingRight:"1mm",
 //                                             textDecorationLine: "underline",
 //                                             fontStyle: "italic",
@@ -3059,7 +3059,7 @@
 //                                         <td
 //                                           style={{
 //                                             fontSize: 12,
-//                                             fontWeight: 700,
+//                                             
 //                                              paddingRight:"1mm",
 //                                             textAlign: "start",
 //                                             width: "20%",
@@ -3070,7 +3070,7 @@
 //                                         <td
 //                                           style={{
 //                                             fontSize: 12,
-//                                             fontWeight: 600,
+//                                            
 //                                             paddingRight:" 1mm",
 //                                             textAlign: "end",
 //                                           }}
@@ -3084,7 +3084,7 @@
 //                                         <td
 //                                           style={{
 //                                             fontSize: 12,
-//                                             fontWeight: 700,
+//                                             
 //                                              paddingRight:"1mm",
 //                                             textAlign: "start",
 //                                             width: "20%",
@@ -3095,7 +3095,7 @@
 //                                         <td
 //                                           style={{
 //                                             fontSize: 12,
-//                                             fontWeight: 600,
+//                                            
 //                                             paddingRight:" 1mm",
 //                                             textAlign: "end",
 //                                           }}
@@ -3107,7 +3107,7 @@
 //                                         <td
 //                                           style={{
 //                                             fontSize: 12,
-//                                             fontWeight: 700,
+//                                             
 //                                              paddingRight:"1mm",
 //                                             textAlign: "start",
 //                                             width: "20%",
@@ -3118,7 +3118,7 @@
 //                                         <td
 //                                           style={{
 //                                             fontSize: 12,
-//                                             fontWeight: 600,
+//                                            
 //                                             paddingRight:" 1mm",
 //                                             textAlign: "end",
 //                                           }}
@@ -3130,7 +3130,7 @@
 //                                         <td
 //                                           style={{
 //                                             fontSize: 12,
-//                                             fontWeight: 700,
+//                                             
 //                                              paddingRight:"1mm",
 //                                             textAlign: "start",
 //                                             width: "20%",
@@ -3141,7 +3141,7 @@
 //                                         <td
 //                                           style={{
 //                                             fontSize: 12,
-//                                             fontWeight: 600,
+//                                            
 //                                             paddingRight:" 1mm",
 //                                             textAlign: "end",
 //                                           }}
@@ -3153,7 +3153,7 @@
 //                                         <td
 //                                           style={{
 //                                             fontSize: 12,
-//                                             fontWeight: 700,
+//                                             
 //                                              paddingRight:"1mm",
 //                                             textAlign: "start",
 //                                             width: "20%",
@@ -3164,7 +3164,7 @@
 //                                         <td
 //                                           style={{
 //                                             fontSize: 12,
-//                                             fontWeight: 600,
+//                                            
 //                                             paddingRight:" 1mm",
 //                                             textAlign: "end",
 //                                           }}
@@ -3177,7 +3177,7 @@
 //                                                                 <td
 //                                                                     style={{
 //                                                                         fontSize: 12,
-//                                                                         fontWeight: 700,
+//                                                                         
 //                                                                          paddingRight:"1mm",
 //                                                                         textAlign: "end",
 //                                                                         width: "20%"
@@ -3188,7 +3188,7 @@
 //                                                                 <td
 //                                                                     style={{
 //                                                                         fontSize: 12,
-//                                                                         fontWeight: 600,
+//                                                                        
 //                                                                         paddingRight:" 1mm",
 //                                                                         textAlign: "end"
 //                                                                     }}
@@ -3211,7 +3211,7 @@
 //                                                                 <td
 //                                                                     style={{
 //                                                                         fontSize: 12,
-//                                                                         fontWeight: 700,
+//                                                                         
 //                                                                          paddingRight:"1mm",
 //                                                                         textAlign: "end",
 //                                                                         width: "20%"
@@ -3222,7 +3222,7 @@
 //                                                                 <td
 //                                                                     style={{
 //                                                                         fontSize: 12,
-//                                                                         fontWeight: 600,
+//                                                                        
 //                                                                         paddingRight:" 1mm",
 //                                                                         textAlign: "end"
 //                                                                     }}
@@ -3243,7 +3243,7 @@
 //                                         <td
 //                                           style={{
 //                                             fontSize: 12,
-//                                             fontWeight: 700,
+//                                             
 //                                             textDecorationLine: "underline",
 //                                             paddingLeft: "1mm",
 //                                           }}
@@ -3459,21 +3459,22 @@ export default function Waybill() {
                                   />
                                 </td>
                                 <td style={{ width: "60%" }}>
-                                  <table>
+                                  <table className="spaceRight">
                                     <tbody>
                                       <tr style={{ verticalAlign: "sub" }}>
                                         <td
                                           style={{
                                             fontSize: 12,
-                                            fontWeight: 600,
+
                                           }}
                                         >
-                                          Consignor:
+                                          <strong> Consignor:</strong>
+
                                         </td>
                                         <td
                                           style={{
                                             fontSize: 12,
-                                            fontWeight: 700,
+
                                             paddingRight: "1mm",
                                           }}
                                         >
@@ -3485,15 +3486,15 @@ export default function Waybill() {
                                         <td
                                           style={{
                                             fontSize: 12,
-                                            fontWeight: 600,
+
                                           }}
                                         >
-                                          Email:
+                                          <strong>Email:</strong>
                                         </td>
                                         <td
                                           style={{
                                             fontSize: 12,
-                                            fontWeight: 700,
+
                                             paddingRight: "1mm",
                                           }}
                                         >
@@ -3505,15 +3506,15 @@ export default function Waybill() {
                                         <td
                                           style={{
                                             fontSize: 12,
-                                            fontWeight: 600,
+
                                           }}
                                         >
-                                          Telephone:
+                                          <strong>Telephone:</strong>
                                         </td>
                                         <td
                                           style={{
                                             fontSize: 12,
-                                            fontWeight: 700,
+
                                             paddingRight: "1mm",
                                           }}
                                         >
@@ -3550,7 +3551,7 @@ export default function Waybill() {
                                         <td
                                           style={{
                                             fontSize: 10,
-                                            fontWeight: 700,
+
                                             paddingRight: "1mm",
                                             paddingLeft: "1mm",
                                             verticalAlign: "top",
@@ -3565,14 +3566,25 @@ export default function Waybill() {
                                             </strong>
                                             <div>
 
-                                              <span>{getdat?.client_name}</span>
+                                              <span>  {getdat?.client_name
+                                                ?.toLowerCase()
+                                                .split(" ")
+                                                .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+                                                .join(" ")}
+                                              </span>
                                               <span>{getdat?.address_1}</span>
                                               <span>
-                                                {" "}
-                                                {getdat?.city}{" "}
-                                                {getdat?.province}{" "}
-                                                {data?.user_country_name}{" "}
-                                                {getdat?.code}{" "}
+                                                {getdat?.city}
+
+
+                                              </span>
+                                              <span> {getdat?.province} </span>
+                                              <span>
+
+                                                {data?.user_country_name}
+                                              </span>
+                                              <span>
+                                                {getdat?.code}
                                               </span>
                                             </div>
                                           </div>{" "}
@@ -3587,6 +3599,7 @@ export default function Waybill() {
                                       borderTop: "1px solid black",
                                       width: "100%",
                                     }}
+                                    className="spaceRight"
                                   >
                                     <tbody>
                                       <tr>
@@ -3610,7 +3623,7 @@ export default function Waybill() {
                                           <p
                                             style={{
                                               textAlign: "center",
-                                              fontWeight: 600,
+
                                               margin: 0,
                                             }}
                                           ></p>
@@ -3618,8 +3631,7 @@ export default function Waybill() {
                                             style={{
                                               borderTop: "1px solid black",
                                               width: "100%",
-                                              borderBottom: "1px solid black",
-                                              marginBottom: 10,
+
                                             }}
                                           >
                                             <tbody>
@@ -3627,12 +3639,12 @@ export default function Waybill() {
                                                 <td
                                                   style={{
                                                     fontSize: 15,
-                                                    fontWeight: 700,
+
                                                     paddingRight: "1mm",
                                                     paddingLeft: "1mm",
                                                   }}
                                                 >
-                                                  Order No:
+                                                  <strong> Order No:</strong>
                                                 </td>
                                                 <td>
                                                   <button
@@ -3663,19 +3675,20 @@ export default function Waybill() {
                                       borderTop: "1px solid black",
                                       width: "100%",
                                     }}
+                                    className="spaceRight"
                                   >
                                     <tbody>
                                       <tr>
                                         <td
                                           style={{
                                             fontSize: 14,
-                                            fontWeight: 700,
+
                                             padding: "1mm",
-                                            textDecorationLine: "underline",
+
                                             fontStyle: "italic",
                                           }}
                                         >
-                                          Delivery Instructions:
+                                          <strong> Delivery Instructions:</strong>
                                         </td>
                                       </tr>
                                       {/* <tr>
@@ -3695,7 +3708,7 @@ export default function Waybill() {
                                             borderTop: "1px solid black",
                                             borderBottom: "1px solid black",
                                             width: "100%",
-                                            paddingTop: 20,
+
                                             paddingLeft: "1mm",
                                           }}
                                         >
@@ -3763,25 +3776,26 @@ export default function Waybill() {
                                       borderBottom: "1px solid black",
                                       marginBottom: 5,
                                     }}
+                                    className="spaceRight"
                                   >
                                     <tbody>
                                       <tr>
                                         <td
                                           style={{
                                             fontSize: 12,
-                                            fontWeight: 700,
+
                                             paddingRight: "1mm",
                                             textAlign: "start",
                                             width: "20%",
                                             paddingLeft: "1mm",
                                           }}
                                         >
-                                          Ship Date:
+                                          <strong> Ship Date:</strong>
                                         </td>
                                         <td
                                           style={{
                                             fontSize: 12,
-                                            fontWeight: 600,
+
                                             paddingRight: " 1mm",
                                             textAlign: "end",
                                           }}
@@ -3789,30 +3803,30 @@ export default function Waybill() {
                                           {new Date(
                                             data.order_created_date,
                                           ).toLocaleDateString("en-GB") ==
-                                          "01/01/1970"
+                                            "01/01/1970"
                                             ? ""
                                             : new Date(
-                                                data.order_created_date,
-                                              ).toLocaleDateString("en-GB")}
+                                              data.order_created_date,
+                                            ).toLocaleDateString("en-GB")}
                                         </td>
                                       </tr>
                                       <tr style={{ verticalAlign: "sub" }}>
                                         <td
                                           style={{
                                             fontSize: 12,
-                                            fontWeight: 700,
+
                                             paddingRight: "1mm",
                                             textAlign: "start",
                                             width: "20%",
                                             paddingLeft: "1mm",
                                           }}
                                         >
-                                          Recipt Ref:
+                                          <strong> Freight No:</strong>
                                         </td>
                                         <td
                                           style={{
                                             fontSize: 12,
-                                            fontWeight: 600,
+
                                             paddingRight: " 1mm",
                                             textAlign: "end",
                                           }}
@@ -3824,19 +3838,19 @@ export default function Waybill() {
                                         <td
                                           style={{
                                             fontSize: 12,
-                                            fontWeight: 700,
+
                                             paddingRight: "1mm",
                                             textAlign: "start",
                                             width: "20%",
                                             paddingLeft: "1mm",
                                           }}
                                         >
-                                          Weight(kgs):
+                                          <strong> Weight(kgs):</strong>
                                         </td>
                                         <td
                                           style={{
                                             fontSize: 12,
-                                            fontWeight: 600,
+
                                             paddingRight: " 1mm",
                                             textAlign: "end",
                                           }}
@@ -3848,19 +3862,19 @@ export default function Waybill() {
                                         <td
                                           style={{
                                             fontSize: 12,
-                                            fontWeight: 700,
+
                                             paddingRight: "1mm",
                                             textAlign: "start",
                                             width: "20%",
                                             paddingLeft: "1mm",
                                           }}
                                         >
-                                          Dims(cbm):
+                                          <strong> Dims(cbm):</strong>
                                         </td>
                                         <td
                                           style={{
                                             fontSize: 12,
-                                            fontWeight: 600,
+
                                             paddingRight: " 1mm",
                                             textAlign: "end",
                                           }}
@@ -3872,19 +3886,19 @@ export default function Waybill() {
                                         <td
                                           style={{
                                             fontSize: 12,
-                                            fontWeight: 700,
+
                                             paddingRight: "1mm",
                                             textAlign: "start",
                                             width: "20%",
                                             paddingLeft: "1mm",
                                           }}
                                         >
-                                          Carton(qty):
+                                          <strong> Carton(qty):</strong>
                                         </td>
                                         <td
                                           style={{
                                             fontSize: 12,
-                                            fontWeight: 600,
+
                                             paddingRight: " 1mm",
                                             textAlign: "end",
                                           }}
@@ -3897,7 +3911,7 @@ export default function Waybill() {
                                                                 <td
                                                                     style={{
                                                                         fontSize: 12,
-                                                                        fontWeight: 700,
+                                                                        
                                                                          paddingRight:"1mm",
                                                                         textAlign: "end",
                                                                         width: "20%"
@@ -3908,7 +3922,7 @@ export default function Waybill() {
                                                                 <td
                                                                     style={{
                                                                         fontSize: 12,
-                                                                        fontWeight: 600,
+                                                                       
                                                                         paddingRight:" 1mm",
                                                                         textAlign: "end"
                                                                     }}
@@ -3931,7 +3945,7 @@ export default function Waybill() {
                                                                 <td
                                                                     style={{
                                                                         fontSize: 12,
-                                                                        fontWeight: 700,
+                                                                        
                                                                          paddingRight:"1mm",
                                                                         textAlign: "end",
                                                                         width: "20%"
@@ -3942,7 +3956,7 @@ export default function Waybill() {
                                                                 <td
                                                                     style={{
                                                                         fontSize: 12,
-                                                                        fontWeight: 600,
+                                                                       
                                                                         paddingRight:" 1mm",
                                                                         textAlign: "end"
                                                                     }}
@@ -3956,18 +3970,18 @@ export default function Waybill() {
                                     style={{
                                       width: "100%",
                                     }}
+                                    className="spaceRight"
                                   >
                                     <tbody>
                                       <tr>
                                         <td
                                           style={{
                                             fontSize: 12,
-                                            fontWeight: 700,
-                                            textDecorationLine: "underline",
+
                                             paddingLeft: "1mm",
                                           }}
                                         >
-                                          Warehouse Details
+                                          <strong>Warehouse Details</strong>
                                         </td>
                                       </tr>
                                       <tr>

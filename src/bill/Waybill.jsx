@@ -3551,7 +3551,6 @@ export default function Waybill() {
                                         <td
                                           style={{
                                             fontSize: 10,
-
                                             paddingRight: "1mm",
                                             paddingLeft: "1mm",
                                             verticalAlign: "top",
@@ -3565,7 +3564,6 @@ export default function Waybill() {
                                               Consignee:
                                             </strong>
                                             <div>
-
                                               <span>  {getdat?.client_name
                                                 ?.toLowerCase()
                                                 .split(" ")
@@ -3575,12 +3573,9 @@ export default function Waybill() {
                                               <span>{getdat?.address_1}</span>
                                               <span>
                                                 {getdat?.city}
-
-
                                               </span>
                                               <span> {getdat?.province} </span>
                                               <span>
-
                                                 {data?.user_country_name}
                                               </span>
                                               <span>
@@ -3588,8 +3583,6 @@ export default function Waybill() {
                                               </span>
                                             </div>
                                           </div>{" "}
-                                          {/* <br /> */}
-                                          {/* {getdat.client_email} */}
                                         </td>
                                       </tr>
                                     </tbody>
@@ -3772,7 +3765,6 @@ export default function Waybill() {
                                   <table
                                     style={{
                                       width: "100%",
-
                                       borderBottom: "1px solid black",
                                       marginBottom: 5,
                                     }}
@@ -3783,7 +3775,6 @@ export default function Waybill() {
                                         <td
                                           style={{
                                             fontSize: 12,
-
                                             paddingRight: "1mm",
                                             textAlign: "start",
                                             width: "20%",
@@ -3795,7 +3786,6 @@ export default function Waybill() {
                                         <td
                                           style={{
                                             fontSize: 12,
-
                                             paddingRight: " 1mm",
                                             textAlign: "end",
                                           }}
@@ -3814,7 +3804,6 @@ export default function Waybill() {
                                         <td
                                           style={{
                                             fontSize: 12,
-
                                             paddingRight: "1mm",
                                             textAlign: "start",
                                             width: "20%",
@@ -3826,7 +3815,6 @@ export default function Waybill() {
                                         <td
                                           style={{
                                             fontSize: 12,
-
                                             paddingRight: " 1mm",
                                             textAlign: "end",
                                           }}
@@ -3838,7 +3826,6 @@ export default function Waybill() {
                                         <td
                                           style={{
                                             fontSize: 12,
-
                                             paddingRight: "1mm",
                                             textAlign: "start",
                                             width: "20%",
@@ -3850,7 +3837,6 @@ export default function Waybill() {
                                         <td
                                           style={{
                                             fontSize: 12,
-
                                             paddingRight: " 1mm",
                                             textAlign: "end",
                                           }}
@@ -3862,7 +3848,6 @@ export default function Waybill() {
                                         <td
                                           style={{
                                             fontSize: 12,
-
                                             paddingRight: "1mm",
                                             textAlign: "start",
                                             width: "20%",
@@ -3874,7 +3859,6 @@ export default function Waybill() {
                                         <td
                                           style={{
                                             fontSize: 12,
-
                                             paddingRight: " 1mm",
                                             textAlign: "end",
                                           }}
@@ -3906,64 +3890,6 @@ export default function Waybill() {
                                           {data?.cartons}
                                         </td>
                                       </tr>
-
-                                      {/* <tr style={{ verticalAlign: "sub" }}>
-                                                                <td
-                                                                    style={{
-                                                                        fontSize: 12,
-                                                                        
-                                                                         paddingRight:"1mm",
-                                                                        textAlign: "end",
-                                                                        width: "20%"
-                                                                    }}
-                                                                >
-                                                                    Handling:
-                                                                </td>
-                                                                <td
-                                                                    style={{
-                                                                        fontSize: 12,
-                                                                       
-                                                                        paddingRight:" 1mm",
-                                                                        textAlign: "end"
-                                                                    }}
-                                                                >
-                                                                    <button
-                                                                        type="button"
-                                                                        style={{
-                                                                            backgroundColor: "lightgrey",
-                                                                            color: "black",
-                                                                            padding: "0px 15px",
-                                                                            border: 0,
-                                                                            borderRadius: 20
-                                                                        }}
-                                                                    >
-                                                                        Handle With Care
-                                                                    </button>
-                                                                </td>
-                                                            </tr>
-                                                            <tr style={{ verticalAlign: "sub" }}>
-                                                                <td
-                                                                    style={{
-                                                                        fontSize: 12,
-                                                                        
-                                                                         paddingRight:"1mm",
-                                                                        textAlign: "end",
-                                                                        width: "20%"
-                                                                    }}
-                                                                >
-                                                                    Consolidate:
-                                                                </td>
-                                                                <td
-                                                                    style={{
-                                                                        fontSize: 12,
-                                                                       
-                                                                        paddingRight:" 1mm",
-                                                                        textAlign: "end"
-                                                                    }}
-                                                                >
-                                                                    Asia Direct-Africa
-                                                                </td>
-                                                            </tr>  */}
                                     </tbody>
                                   </table>
                                   <table
@@ -3999,7 +3925,6 @@ export default function Waybill() {
                                             <br />
                                             {data.warehouse_address}
                                             <br />
-
                                             <br />
                                           </p>
                                         </td>

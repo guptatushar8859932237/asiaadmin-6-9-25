@@ -704,7 +704,7 @@ export default function UserFreight() {
       .then((response) => {
         if (response.data.success === true) {
           closeModal();
-           setPagenationdata(response.data);
+          setPagenationdata(response.data);
           setData(response.data.data);
         }
       })
@@ -802,14 +802,14 @@ export default function UserFreight() {
   };
 
 
-   const hanldeclicknavi = async (freight_id) => {
+  const hanldeclicknavi = async (freight_id) => {
     console.log(freight_id);
-        const alldata = data.filter((item) => item.freight_id === freight_id);
-        console.log(alldata)
-          navigate("/Admin/user-shipping-estimate", { state: { data: alldata } });
-    };
+    const alldata = data.filter((item) => item.freight_id === freight_id);
+    console.log(alldata)
+    navigate("/Admin/user-shipping-estimate", { state: { data: alldata } });
+  };
 
-    const hanldeclicknavi11 = async (freight_id) => {
+  const hanldeclicknavi11 = async (freight_id) => {
     navigate("/Admin/SupplierEstimation", { state: { data: freight_id } });
   };
   return (
@@ -828,9 +828,14 @@ export default function UserFreight() {
               top: "50%",
               left: "50%",
               transform: "translate(-50%, -50%)",
-              minWidth: 450,
               bgcolor: "background.paper",
               boxShadow: 24,
+              width: {
+                xs: "95%",   // mobile
+                sm: "80%",   // tablet
+                md: "60%",   // small laptop
+                lg: "40%",   // desktop
+              },
             }}
           >
             <div className="modal-header">
@@ -843,11 +848,11 @@ export default function UserFreight() {
             </div>
 
             <div className="newModalGap">
-              <div className="row my-3  "></div>
+
               <div className="col-12 ">
                 <label>Assign Staff</label>
                 <select
-                  className="form-cuntrol col-12 border px-3 py-2 mb-2"
+                  className="form-select col-12"
                   value={supplierName}
                   onChange={(e) => {
                     setSupplierName(e.target.value);
@@ -862,13 +867,16 @@ export default function UserFreight() {
                   ))}
                 </select>
               </div>
-              <Button
-                variant="contained"
-                className="text-center"
-                onClick={AssignFreightToSupplier}
-              >
-                Add Staff
-              </Button>
+              <div className="text-center mt-3">
+                <button
+                  variant="contained"
+                  className="blueBtn"
+                  onClick={AssignFreightToSupplier}
+                >
+                  Add Staff
+                </button>
+
+              </div>
             </div>
           </Box>
         </Modal>
@@ -1045,7 +1053,7 @@ export default function UserFreight() {
                                                     width: "20px",
                                                   }}
                                                 />
-                                           Supplier Estimation
+                                                Supplier Estimation
                                               </a>
                                               <a
                                                 className="dropdown-item li_icon"
@@ -1061,13 +1069,13 @@ export default function UserFreight() {
                                                     width: "20px",
                                                   }}
                                                 />
-                                            Estimate Quote
+                                                Estimate Quote
                                               </a>
                                               <a
                                                 className="dropdown-item li_icon"
-                                                // onClick={() => {
-                                                //   handleclick(item.freight_id);
-                                                // }}
+                                              // onClick={() => {
+                                              //   handleclick(item.freight_id);
+                                              // }}
                                               >
                                                 <SupportAgentSharpIcon
                                                   style={{
@@ -1357,205 +1365,244 @@ export default function UserFreight() {
                                       </div>
                                       <div className="modal-body">
                                         <div className=" ">
-                                          <div className="container">
-                                            <div className="borderShip mt-3">
-                                              <h4>Freight Details</h4>
-                                              <div className="row">
-                                                <div className="col-lg-6">
-                                                  <label>Freight Type</label>
-                                                  <select
-                                                    name="freight"
-                                                    value={inputdata.freight}
-                                                    onChange={handleupdateapi}
-                                                    id="freightOption"
-                                                  >
-                                                    <option value="">
-                                                      Select...
-                                                    </option>
-                                                    <option value="Sea">
-                                                      Sea
-                                                    </option>
-                                                    <option value="Air">
-                                                      Air
-                                                    </option>
-                                                    <option value="Road">
-                                                      Road
-                                                    </option>
-                                                    <option value="Rail">
-                                                      Rail
-                                                    </option>
-                                                  </select>
-                                                  <p className="text-danger" />
-                                                </div>
-                                                <div className="col-lg-6">
-                                                  <label>Freight Option</label>
-                                                  <select
-                                                    name="freight_type"
-                                                    onChange={handleupdateapi}
+
+                                          <div className="borderShip mt-3">
+                                            <h4>Freight Details</h4>
+                                            <div className="row g-3">
+                                              <div className="col-lg-6 col-md-6">
+                                                <label>Freight Type</label>
+                                                <select
+                                                  className="form-select"
+                                                  name="freight"
+                                                  value={inputdata.freight}
+                                                  onChange={handleupdateapi}
+                                                  id="freightOption"
+                                                >
+                                                  <option value="">
+                                                    Select...
+                                                  </option>
+                                                  <option value="Sea">
+                                                    Sea
+                                                  </option>
+                                                  <option value="Air">
+                                                    Air
+                                                  </option>
+                                                  <option value="Road">
+                                                    Road
+                                                  </option>
+                                                  <option value="Rail">
+                                                    Rail
+                                                  </option>
+                                                </select>
+                                                <p className="text-danger" />
+                                              </div>
+                                              <div className="col-lg-6 col-md-6">
+                                                <label>Freight Option</label>
+                                                <select
+                                                  className="form-select"
+                                                  name="freight_type"
+                                                  onChange={handleupdateapi}
+                                                  value={
+                                                    inputdata.freight_type
+                                                  }
+                                                >
+                                                  <option value="">
+                                                    Select...
+                                                  </option>
+                                                  <option value="express">
+                                                    Express
+                                                  </option>
+                                                  <option value="normal">
+                                                    Normal
+                                                  </option>
+                                                </select>
+                                              </div>
+                                            </div>
+                                          </div>
+                                          <div className="borderShip">
+                                            <h4>Shipment details</h4>
+                                            <div className="row g-3">
+                                              <div className="col-lg-6 col-md-6">
+                                                <label>Origin</label>
+                                                <FormControl>
+                                                  <FormLabel id="demo-radio-buttons-group-label"></FormLabel>
+                                                  <RadioGroup
+                                                    aria-labelledby="demo-radio-buttons-group-label"
+                                                    name="shipment_origin"
                                                     value={
-                                                      inputdata.freight_type
+                                                      inputdata.shipment_origin
+                                                    }
+                                                    onChange={
+                                                      handlechangeradioOrigin
                                                     }
                                                   >
-                                                    <option value="">
-                                                      Select...
-                                                    </option>
-                                                    <option value="express">
-                                                      Express
-                                                    </option>
-                                                    <option value="normal">
-                                                      Normal
-                                                    </option>
-                                                  </select>
-                                                </div>
+                                                    <FormControlLabel
+                                                      value="Shipper will deliver at Asia Direct - Africa warehouse"
+                                                      control={<Radio />}
+                                                      label="Shipper will deliver at Asia Direct - Africa warehouse"
+                                                    />
+                                                    <FormControlLabel
+                                                      value="Asia Direct will collect from shipper address"
+                                                      control={<Radio />}
+                                                      label="Asia Direct will collect from shipper address"
+                                                    />
+                                                    <FormControlLabel
+                                                      value="Shipper will deliver to the port of loading"
+                                                      control={<Radio />}
+                                                      label="Shipper will deliver to the port of loading"
+                                                    />
+                                                    <FormControlLabel
+                                                      value="Shipper will deliver and facilitate export at the Port of loading"
+                                                      control={<Radio />}
+                                                      label="Shipper will deliver and facilitate export at the Port of loading"
+                                                    />
+                                                  </RadioGroup>
+                                                </FormControl>
+                                                <p className="text-danger" />
+                                              </div>
+                                              <div className="col-lg-6 col-md-6">
+                                                <label>Destination</label>
+                                                <FormControl>
+                                                  <FormLabel id="demo-radio-buttons-group-label"></FormLabel>
+                                                  <RadioGroup
+                                                    aria-labelledby="demo-radio-buttons-group-label"
+                                                    name="shipment_des"
+                                                    value={
+                                                      inputdata.shipment_des
+                                                    }
+                                                    onChange={
+                                                      handlechangeradioDestination
+                                                    }
+                                                  >
+                                                    <FormControlLabel
+                                                      value="Asia Direct will deliver to the Address"
+                                                      control={<Radio />}
+                                                      label="Asia Direct will deliver to the Address"
+                                                    />
+                                                    <FormControlLabel
+                                                      value="Consignee will collect at Asia Direct - Africa warehouse"
+                                                      control={<Radio />}
+                                                      label="Consignee will collect at Asia Direct - Africa warehouse"
+                                                    />
+                                                    <FormControlLabel
+                                                      value="Consignee will collect at the nearest port"
+                                                      control={<Radio />}
+                                                      label="Consignee will collect at the nearest port"
+                                                    />
+                                                    <FormControlLabel
+                                                      value="Consignee will collect and facilitate import at destination portn"
+                                                      control={<Radio />}
+                                                      label="Consignee will collect and facilitate import at destination portn"
+                                                    />
+                                                  </RadioGroup>
+                                                </FormControl>
+                                                <p className="text-danger" />
                                               </div>
                                             </div>
-                                            <div className="borderShip">
-                                              <h4>Shipment details</h4>
-                                              <div className="row">
-                                                <div className="col-lg-6">
-                                                  <label>Origin</label>
-                                                  <FormControl>
-                                                    <FormLabel id="demo-radio-buttons-group-label"></FormLabel>
-                                                    <RadioGroup
-                                                      aria-labelledby="demo-radio-buttons-group-label"
-                                                      name="shipment_origin"
-                                                      value={
-                                                        inputdata.shipment_origin
-                                                      }
-                                                      onChange={
-                                                        handlechangeradioOrigin
-                                                      }
-                                                    >
-                                                      <FormControlLabel
-                                                        value="Shipper will deliver at Asia Direct - Africa warehouse"
-                                                        control={<Radio />}
-                                                        label="Shipper will deliver at Asia Direct - Africa warehouse"
-                                                      />
-                                                      <FormControlLabel
-                                                        value="Asia Direct will collect from shipper address"
-                                                        control={<Radio />}
-                                                        label="Asia Direct will collect from shipper address"
-                                                      />
-                                                      <FormControlLabel
-                                                        value="Shipper will deliver to the port of loading"
-                                                        control={<Radio />}
-                                                        label="Shipper will deliver to the port of loading"
-                                                      />
-                                                      <FormControlLabel
-                                                        value="Shipper will deliver and facilitate export at the Port of loading"
-                                                        control={<Radio />}
-                                                        label="Shipper will deliver and facilitate export at the Port of loading"
-                                                      />
-                                                    </RadioGroup>
-                                                  </FormControl>
-                                                  <p className="text-danger" />
-                                                </div>
-                                                <div className="col-lg-6">
-                                                  <label>Destination</label>
-                                                  <FormControl>
-                                                    <FormLabel id="demo-radio-buttons-group-label"></FormLabel>
-                                                    <RadioGroup
-                                                      aria-labelledby="demo-radio-buttons-group-label"
-                                                      name="shipment_des"
-                                                      value={
-                                                        inputdata.shipment_des
-                                                      }
-                                                      onChange={
-                                                        handlechangeradioDestination
-                                                      }
-                                                    >
-                                                      <FormControlLabel
-                                                        value="Asia Direct will deliver to the Address"
-                                                        control={<Radio />}
-                                                        label="Asia Direct will deliver to the Address"
-                                                      />
-                                                      <FormControlLabel
-                                                        value="Consignee will collect at Asia Direct - Africa warehouse"
-                                                        control={<Radio />}
-                                                        label="Consignee will collect at Asia Direct - Africa warehouse"
-                                                      />
-                                                      <FormControlLabel
-                                                        value="Consignee will collect at the nearest port"
-                                                        control={<Radio />}
-                                                        label="Consignee will collect at the nearest port"
-                                                      />
-                                                      <FormControlLabel
-                                                        value="Consignee will collect and facilitate import at destination portn"
-                                                        control={<Radio />}
-                                                        label="Consignee will collect and facilitate import at destination portn"
-                                                      />
-                                                    </RadioGroup>
-                                                  </FormControl>
-                                                  <p className="text-danger" />
-                                                </div>
+                                          </div>
+                                          <div className="borderShip ">
+                                            <h4>Your Shipment reference</h4>
+                                            <div className="row g-3">
+                                              <div className="col-lg-6 col-md-6">
+                                                <FormControl>
+                                                  <FormLabel id="demo-radio-buttons-group-label">
+                                                    <label>
+                                                      Client refrence
+                                                    </label>
+                                                  </FormLabel>
+                                                  <RadioGroup
+                                                    aria-labelledby="demo-radio-buttons-group-label"
+                                                    name="user_type"
+                                                    value={
+                                                      inputdata.user_type
+                                                    }
+                                                    onChange={
+                                                      handlechangeradiouserTyoe
+                                                    }
+                                                  >
+                                                    <FormControlLabel
+                                                      // value={inputdata.user_type==="shipper"}
+                                                      control={<Radio />}
+                                                      value="shipper"
+                                                      label="Shipper"
+                                                    />
+                                                    <FormControlLabel
+                                                      // value={inputdata.user_type=="consignee"}
+                                                      control={<Radio />}
+                                                      value="consignee"
+                                                      label="Consignee"
+                                                    />
+                                                  </RadioGroup>
+                                                </FormControl>
                                               </div>
-                                            </div>
-                                            <div className="borderShip ">
-                                              <h4>Your Shipment reference</h4>
-                                              <div className="row d-flex">
-                                                <div className="col-lg-6">
+                                              <div>
+                                                <FormControl>
+                                                  <FormLabel id="demo-radio-buttons-group-label">
+                                                    <label>
+                                                      Assign clearing
+                                                    </label>
+                                                  </FormLabel>
+                                                  <RadioGroup
+                                                    aria-labelledby="demo-radio-buttons-group-label"
+                                                    name="assign_to_clearing"
+                                                    value={
+                                                      inputdata.assign_to_clearing
+                                                    }
+                                                    onChange={
+                                                      handlechangeradiouser11
+                                                    }
+                                                  >
+                                                    <FormControlLabel
+                                                      value="Yes"
+                                                      control={<Radio />}
+                                                      checked={
+                                                        inputdata.assign_to_clearing ===
+                                                        "Yes"
+                                                      }
+                                                      label="Yes"
+                                                    />
+                                                    <FormControlLabel
+                                                      value="No"
+                                                      control={<Radio />}
+                                                      checked={
+                                                        inputdata.assign_to_clearing ===
+                                                        "No"
+                                                      }
+                                                      label="No"
+                                                    />
+                                                  </RadioGroup>
+                                                </FormControl>
+                                              </div>
+                                              <div>
+                                                <div className="col-lg-6 col-md-6">
                                                   <FormControl>
                                                     <FormLabel id="demo-radio-buttons-group-label">
-                                                      <label>
-                                                        Client refrence
-                                                      </label>
+                                                      <label>Insurance</label>
                                                     </FormLabel>
                                                     <RadioGroup
                                                       aria-labelledby="demo-radio-buttons-group-label"
-                                                      name="user_type"
+                                                      name="insurance"
                                                       value={
-                                                        inputdata.user_type
+                                                        inputdata.insurance
                                                       }
                                                       onChange={
-                                                        handlechangeradiouserTyoe
-                                                      }
-                                                    >
-                                                      <FormControlLabel
-                                                        // value={inputdata.user_type==="shipper"}
-                                                        control={<Radio />}
-                                                        value="shipper"
-                                                        label="Shipper"
-                                                      />
-                                                      <FormControlLabel
-                                                        // value={inputdata.user_type=="consignee"}
-                                                        control={<Radio />}
-                                                        value="consignee"
-                                                        label="Consignee"
-                                                      />
-                                                    </RadioGroup>
-                                                  </FormControl>
-                                                </div>
-                                                <div>
-                                                  <FormControl>
-                                                    <FormLabel id="demo-radio-buttons-group-label">
-                                                      <label>
-                                                        Assign clearing
-                                                      </label>
-                                                    </FormLabel>
-                                                    <RadioGroup
-                                                      aria-labelledby="demo-radio-buttons-group-label"
-                                                      name="assign_to_clearing"
-                                                      value={
-                                                        inputdata.assign_to_clearing
-                                                      }
-                                                      onChange={
-                                                        handlechangeradiouser11
+                                                        handlechangeradiouser22
                                                       }
                                                     >
                                                       <FormControlLabel
                                                         value="Yes"
-                                                        control={<Radio />}
                                                         checked={
-                                                          inputdata.assign_to_clearing ===
+                                                          inputdata.insurance ===
                                                           "Yes"
                                                         }
+                                                        control={<Radio />}
                                                         label="Yes"
                                                       />
                                                       <FormControlLabel
                                                         value="No"
                                                         control={<Radio />}
                                                         checked={
-                                                          inputdata.assign_to_clearing ===
+                                                          inputdata.insurance ===
                                                           "No"
                                                         }
                                                         label="No"
@@ -1563,456 +1610,424 @@ export default function UserFreight() {
                                                     </RadioGroup>
                                                   </FormControl>
                                                 </div>
-                                                <div>
-                                                  <div className="col-lg-6">
-                                                    <FormControl>
-                                                      <FormLabel id="demo-radio-buttons-group-label">
-                                                        <label>Insurance</label>
-                                                      </FormLabel>
-                                                      <RadioGroup
-                                                        aria-labelledby="demo-radio-buttons-group-label"
-                                                        name="insurance"
-                                                        value={
-                                                          inputdata.insurance
-                                                        }
-                                                        onChange={
-                                                          handlechangeradiouser22
-                                                        }
-                                                      >
-                                                        <FormControlLabel
-                                                          value="Yes"
-                                                          checked={
-                                                            inputdata.insurance ===
-                                                            "Yes"
-                                                          }
-                                                          control={<Radio />}
-                                                          label="Yes"
-                                                        />
-                                                        <FormControlLabel
-                                                          value="No"
-                                                          control={<Radio />}
-                                                          checked={
-                                                            inputdata.insurance ===
-                                                            "No"
-                                                          }
-                                                          label="No"
-                                                        />
-                                                      </RadioGroup>
-                                                    </FormControl>
-                                                  </div>
+                                              </div>
+                                            </div>
+
+                                          </div>
+                                          <div className="borderShip1 pb-3 mt-3">
+                                            <h4>Location details</h4>
+                                            <div className="row">
+                                              <div className="col-lg-6 col-md-6">
+                                                <label>
+                                                  Collection from
+                                                </label>
+                                                <select
+                                                  className="form-select"
+                                                  value={
+                                                    inputdata.collection_from
+                                                  }
+                                                  name="collection_from"
+                                                  onChange={handleupdateapi}
+                                                >
+                                                  {updatedata.map(
+                                                    (option, index) => {
+                                                      return (
+                                                        <>
+                                                          <option
+                                                            key={index}
+                                                            value={
+                                                              option.id
+                                                            }
+                                                          >
+                                                            {option.name}
+                                                          </option>
+                                                        </>
+                                                      );
+                                                    }
+                                                  )}
+                                                </select>
+                                                <p className="text-danger" />
+                                              </div>
+                                              <div className="col-lg-6 col-md-6">
+                                                <label>
+                                                  Collection Address
+                                                </label>
+                                                <input
+                                                  type="text"
+                                                  name="collection_address"
+                                                  onChange={handleupdateapi}
+                                                  value={
+                                                    inputdata.collection_address
+                                                  }
+                                                />
+                                              </div>
+                                            </div>
+                                            <div className="row">
+                                              <div className="col-lg-6 col-md-6">
+                                                <div className="mb-3">
+                                                  <label>
+                                                    Port of Loading
+                                                  </label>
+                                                  <input
+                                                    type="text"
+                                                    name="port_of_loading"
+                                                    onChange={
+                                                      handleupdateapi
+                                                    }
+                                                    value={
+                                                      inputdata.port_of_loading
+                                                    }
+                                                  />
                                                 </div>
                                               </div>
-                                              <div className="borderShip1 pb-3">
-                                                <h4>Location details</h4>
-                                                <div className="row">
-                                                  <div className="col-lg-6">
-                                                    <label>
-                                                      Collection from
-                                                    </label>
-                                                    <select
-                                                      value={
-                                                        inputdata.collection_from
-                                                      }
-                                                      name="collection_from"
-                                                      onChange={handleupdateapi}
-                                                    >
-                                                      {updatedata.map(
-                                                        (option, index) => {
-                                                          return (
-                                                            <>
-                                                              <option
-                                                                key={index}
-                                                                value={
-                                                                  option.id
-                                                                }
-                                                              >
-                                                                {option.name}
-                                                              </option>
-                                                            </>
-                                                          );
-                                                        }
-                                                      )}
-                                                    </select>
-                                                    <p className="text-danger" />
-                                                  </div>
-                                                  <div className="col-lg-6">
-                                                    <label>
-                                                      Collection Address
-                                                    </label>
-                                                    <input
-                                                      type="text"
-                                                      name="collection_address"
-                                                      onChange={handleupdateapi}
-                                                      value={
-                                                        inputdata.collection_address
-                                                      }
-                                                    />
-                                                  </div>
-                                                </div>
-                                                <div className="row">
-                                                  <div className="col-lg-6">
-                                                    <div className="mb-3">
-                                                      <label>
-                                                        Port of Loading
-                                                      </label>
-                                                      <input
-                                                        type="text"
-                                                        name="port_of_loading"
-                                                        onChange={
-                                                          handleupdateapi
-                                                        }
-                                                        value={
-                                                          inputdata.port_of_loading
-                                                        }
-                                                      />
-                                                    </div>
-                                                  </div>
-                                                  <div className="col-lg-6">
-                                                    <div className="mb-3">
-                                                      <label>
-                                                        Port of Discharge
-                                                      </label>
-                                                      <input
-                                                        type="text"
-                                                        name="post_of_discharge"
-                                                        onChange={
-                                                          handleupdateapi
-                                                        }
-                                                        value={
-                                                          inputdata.post_of_discharge
-                                                        }
-                                                      />
-                                                    </div>
-                                                  </div>
-                                                </div>
-                                                <div className="row">
-                                                  <div className="col-lg-6">
-                                                    <label>Delivery To</label>
-                                                    <select
-                                                      value={
-                                                        inputdata.delivery_to
-                                                      }
-                                                      name="delivery_to"
-                                                      onChange={handleupdateapi}
-                                                    >
-                                                      {updatedata.map(
-                                                        (option, index) => {
-                                                          return (
-                                                            <>
-                                                              <option
-                                                                key={index}
-                                                                value={
-                                                                  option.id
-                                                                }
-                                                              >
-                                                                {option.name}
-                                                              </option>
-                                                            </>
-                                                          );
-                                                        }
-                                                      )}
-                                                    </select>
-                                                    <p className="text-danger" />
-                                                  </div>
-                                                  <div className="col-lg-6">
-                                                    <label>
-                                                      Delivery Address
-                                                    </label>
-                                                    <input
-                                                      type="text"
-                                                      name="delivery_address"
-                                                      onChange={handleupdateapi}
-                                                      value={
-                                                        inputdata.delivery_address
-                                                      }
-                                                    />
-                                                  </div>
+                                              <div className="col-lg-6 col-md-6">
+                                                <div className="mb-3">
+                                                  <label>
+                                                    Port of Discharge
+                                                  </label>
+                                                  <input
+                                                    type="text"
+                                                    name="post_of_discharge"
+                                                    onChange={
+                                                      handleupdateapi
+                                                    }
+                                                    value={
+                                                      inputdata.post_of_discharge
+                                                    }
+                                                  />
                                                 </div>
                                               </div>
                                             </div>
-                                            <div className="borderShip">
-                                              <div className="row mb-3 mt-4">
-                                                <div className="col-9 mt-3">
-                                                  <h4 className="freight_hd">
-                                                    Document Section
-                                                  </h4>
-                                                  <span class="line"></span>
-                                                </div>
-                                                <div className="col-3">
-                                                  <Button
-                                                    className="btn  btn-primary"
-                                                    onClick={handleShow}
-                                                  >
-                                                    Upload Documents
-                                                  </Button>
+                                            <div className="row">
+                                              <div className="col-lg-6 col-md-6">
+                                                <label>Delivery To</label>
+                                                <select
+                                                  className="form-select"
+                                                  value={
+                                                    inputdata.delivery_to
+                                                  }
+                                                  name="delivery_to"
+                                                  onChange={handleupdateapi}
+                                                >
+                                                  {updatedata.map(
+                                                    (option, index) => {
+                                                      return (
+                                                        <>
+                                                          <option
+                                                            key={index}
+                                                            value={
+                                                              option.id
+                                                            }
+                                                          >
+                                                            {option.name}
+                                                          </option>
+                                                        </>
+                                                      );
+                                                    }
+                                                  )}
+                                                </select>
+                                                <p className="text-danger" />
+                                              </div>
+                                              <div className="col-lg-6 col-md-6">
+                                                <label>
+                                                  Delivery Address
+                                                </label>
+                                                <input
+                                                  type="text"
+                                                  name="delivery_address"
+                                                  onChange={handleupdateapi}
+                                                  value={
+                                                    inputdata.delivery_address
+                                                  }
+                                                />
+                                              </div>
+                                            </div>
+                                          </div>
+                                          <div className="borderShip">
+                                            <div className="row mb-3 mt-4">
+                                              <div className="col-md-6">
+                                                <h4 className="freight_hd">
+                                                  Document Section
+                                                </h4>
+                                                <span class="line"></span>
+                                              </div>
+                                              <div className="col-md-6 text-end">
+                                                <button
+                                                  className="redBtn"
+                                                  onClick={handleShow}
+                                                >
+                                                  Upload Documents
+                                                </button>
 
-                                                  {show1 ? (
-                                                    <Modal
-                                                      open={show1}
-                                                      onClose={handleClose}
-                                                      slotProps={{
-                                                        backdrop: {
-                                                          sx: {
-                                                            backgroundColor:
-                                                              "rgba(0,0,0,0.2)",
-                                                          }, // lighter background
-                                                        },
+                                                {show1 ? (
+                                                  <Modal
+                                                    open={show1}
+                                                    onClose={handleClose}
+                                                    slotProps={{
+                                                      backdrop: {
+                                                        sx: {
+                                                          backgroundColor:
+                                                            "rgba(0,0,0,0.2)",
+                                                        }, // lighter background
+                                                      },
+                                                    }}
+                                                  >
+                                                    <Box
+                                                      sx={{
+                                                        p: 3,
+                                                        bgcolor:
+                                                          "background.paper",
+                                                        borderRadius: 2,
+                                                        width: 500,
+                                                        mx: "auto",
+                                                        mt: 10,
                                                       }}
                                                     >
-                                                      <Box
-                                                        sx={{
-                                                          p: 3,
-                                                          bgcolor:
-                                                            "background.paper",
-                                                          borderRadius: 2,
-                                                          width: 500,
-                                                          mx: "auto",
-                                                          mt: 10,
-                                                        }}
+                                                      <h2>
+                                                        Upload Documents
+                                                      </h2>
+
+                                                      {/* Dropdown */}
+                                                      <FormControl
+                                                        fullWidth
+                                                        sx={{ mt: 2 }}
                                                       >
-                                                        <h2>
-                                                          Upload Documents
-                                                        </h2>
-
-                                                        {/* Dropdown */}
-                                                        <FormControl
-                                                          fullWidth
-                                                          sx={{ mt: 2 }}
+                                                        <InputLabel id="doc-select-label">
+                                                          Select Document Type
+                                                        </InputLabel>
+                                                        <Select
+                                                          labelId="doc-select-label"
+                                                          // value={selected}
+                                                          onChange={
+                                                            handleSelect
+                                                          }
                                                         >
-                                                          <InputLabel id="doc-select-label">
-                                                            Select Document Type
-                                                          </InputLabel>
-                                                          <Select
-                                                            labelId="doc-select-label"
-                                                            // value={selected}
-                                                            onChange={
-                                                              handleSelect
-                                                            }
-                                                          >
-                                                            {docOptions.map(
-                                                              (option) => (
-                                                                <MenuItem
-                                                                  key={
-                                                                    option.id
-                                                                  }
-                                                                  value={
-                                                                    option.id
-                                                                  }
-                                                                >
-                                                                  {option.label}
-                                                                </MenuItem>
-                                                              )
-                                                            )}
-                                                          </Select>
-                                                        </FormControl>
-
-                                                        {/* Dynamic file inputs */}
-                                                        <div className="mt-3">
-                                                          {selectedDocs.map(
-                                                            (doc, index) => (
-                                                              <div
-                                                                key={index}
-                                                                className="mb-3"
+                                                          {docOptions.map(
+                                                            (option) => (
+                                                              <MenuItem
+                                                                key={
+                                                                  option.id
+                                                                }
+                                                                value={
+                                                                  option.id
+                                                                }
                                                               >
-                                                                <label className="fw-bold">
-                                                                  {doc.name}
-                                                                </label>
-                                                                <input
-                                                                  type="file"
-                                                                  className="form-control"
-                                                                  multiple
-                                                                  accept="image/*,application/pdf"
-                                                                  onChange={(
-                                                                    e
-                                                                  ) =>
-                                                                    handleFileChangefil(
-                                                                      e,
-                                                                      doc.name
-                                                                    )
-                                                                  }
-                                                                />
-                                                              </div>
+                                                                {option.label}
+                                                              </MenuItem>
                                                             )
                                                           )}
-                                                        </div>
+                                                        </Select>
+                                                      </FormControl>
 
-                                                        {/* Footer buttons */}
-                                                        <Box
-                                                          sx={{
-                                                            display: "flex",
-                                                            justifyContent:
-                                                              "flex-end",
-                                                            gap: 2,
-                                                            mt: 3,
-                                                          }}
+                                                      {/* Dynamic file inputs */}
+                                                      <div className="mt-3">
+                                                        {selectedDocs.map(
+                                                          (doc, index) => (
+                                                            <div
+                                                              key={index}
+                                                              className="mb-3"
+                                                            >
+                                                              <label className="fw-bold">
+                                                                {doc.name}
+                                                              </label>
+                                                              <input
+                                                                type="file"
+                                                                className="form-control"
+                                                                multiple
+                                                                accept="image/*,application/pdf"
+                                                                onChange={(
+                                                                  e
+                                                                ) =>
+                                                                  handleFileChangefil(
+                                                                    e,
+                                                                    doc.name
+                                                                  )
+                                                                }
+                                                              />
+                                                            </div>
+                                                          )
+                                                        )}
+                                                      </div>
+
+                                                      {/* Footer buttons */}
+                                                      <Box
+                                                        sx={{
+                                                          display: "flex",
+                                                          justifyContent:
+                                                            "flex-end",
+                                                          gap: 2,
+                                                          mt: 3,
+                                                        }}
+                                                      >
+                                                        <Button
+                                                          onClick={
+                                                            handleClose
+                                                          }
                                                         >
-                                                          <Button
-                                                            onClick={
-                                                              handleClose
-                                                            }
-                                                          >
-                                                            Cancel
-                                                          </Button>
-                                                          <Button
-                                                            variant="contained"
-                                                            color="success"
-                                                            onClick={handleSave}
-                                                          >
-                                                            Save Documents
-                                                          </Button>
-                                                        </Box>
+                                                          Cancel
+                                                        </Button>
+                                                        <Button
+                                                          variant="contained"
+                                                          color="success"
+                                                          onClick={handleSave}
+                                                        >
+                                                          Save Documents
+                                                        </Button>
                                                       </Box>
-                                                    </Modal>
-                                                  ) : (
-                                                    ""
-                                                  )}
-                                                </div>
+                                                    </Box>
+                                                  </Modal>
+                                                ) : (
+                                                  ""
+                                                )}
                                               </div>
-                                              <h4>Cargo details</h4>
+                                            </div>
+                                            <h4>Cargo details</h4>
 
-                                              <div className="row">
-                                                <div className="col-lg-6">
-                                                  <div className="mb-3">
-                                                    <label>
-                                                      Product Description
-                                                    </label>
-                                                    <input
-                                                      type="text"
-                                                      name="product_desc"
-                                                      className="w-100"
-                                                      onChange={handleupdateapi}
-                                                      value={
-                                                        inputdata.product_desc
-                                                      }
-                                                    />
-                                                  </div>
-                                                </div>
-                                                <div className="col-lg-6">
-                                                  <div className="mb-3">
-                                                    <label>
-                                                      Nature of Goods
-                                                    </label>
-                                                    <select
-                                                      name="nature_of_goods"
-                                                      onChange={handleupdateapi}
-                                                      value={
-                                                        inputdata.nature_of_goods
-                                                      }
-                                                    >
-                                                      <option value="">
-                                                        Select...
-                                                      </option>
-                                                      <option value="generalCargo">
-                                                        General cargo
-                                                      </option>
-                                                      <option value="battery">
-                                                        Battery
-                                                      </option>
-                                                      <option value="liquids">
-                                                        Liquids
-                                                      </option>
-                                                      <option value="powders">
-                                                        Powders
-                                                      </option>
-                                                      <option value="hazardous">
-                                                        Hazardous
-                                                      </option>
-                                                    </select>
-                                                  </div>
+                                            <div className="row">
+                                              <div className="col-lg-6 col-md-6">
+                                                <div className="mb-3">
+                                                  <label>
+                                                    Product Description
+                                                  </label>
+                                                  <input
+                                                    type="text"
+                                                    name="product_desc"
+                                                    className="w-100"
+                                                    onChange={handleupdateapi}
+                                                    value={
+                                                      inputdata.product_desc
+                                                    }
+                                                  />
                                                 </div>
                                               </div>
-                                              <div className="row">
-                                                <div className="col-lg-6">
-                                                  <div className="mb-3">
-                                                    <label>Package Type</label>
-                                                    <select
-                                                      name="package_type"
-                                                      onChange={handleupdateapi}
-                                                      value={
-                                                        inputdata.package_type
-                                                      }
-                                                    >
-                                                      <option value="">
-                                                        Select...
-                                                      </option>
-                                                      <option value="box">
-                                                        Box
-                                                      </option>
-                                                      <option value="crate">
-                                                        Crate
-                                                      </option>
-                                                      <option value="pallet">
-                                                        Pallet
-                                                      </option>
-                                                      <option value="bags">
-                                                        Bags
-                                                      </option>
-                                                    </select>
-                                                  </div>
-                                                </div>
-                                                <div className="col-lg-6">
-                                                  <div className="mb-3">
-                                                    <label>
-                                                      Total Packages
-                                                    </label>
-                                                    <input
-                                                      type="text"
-                                                      onKeyPress={handlekey}
-                                                      name="no_of_packages"
-                                                      onChange={handleupdateapi}
-                                                      value={
-                                                        inputdata.no_of_packages
-                                                      }
-                                                    />
-                                                  </div>
+                                              <div className="col-lg-6 col-md-6">
+                                                <div className="mb-3">
+                                                  <label>
+                                                    Nature of Goods
+                                                  </label>
+                                                  <select
+                                                    className="form-select"
+                                                    name="nature_of_goods"
+                                                    onChange={handleupdateapi}
+                                                    value={
+                                                      inputdata.nature_of_goods
+                                                    }
+                                                  >
+                                                    <option value="">
+                                                      Select...
+                                                    </option>
+                                                    <option value="generalCargo">
+                                                      General cargo
+                                                    </option>
+                                                    <option value="battery">
+                                                      Battery
+                                                    </option>
+                                                    <option value="liquids">
+                                                      Liquids
+                                                    </option>
+                                                    <option value="powders">
+                                                      Powders
+                                                    </option>
+                                                    <option value="hazardous">
+                                                      Hazardous
+                                                    </option>
+                                                  </select>
                                                 </div>
                                               </div>
-                                              <div className="row">
-                                                <div className="col-lg-6">
-                                                  <div className="mb-3">
-                                                    <label>
-                                                      Total Dimension
-                                                    </label>
-                                                    <input
-                                                      type="text"
-                                                      onKeyPress={handlekey}
-                                                      name="dimension"
-                                                      onChange={handleupdateapi}
-                                                      value={
-                                                        inputdata.dimension
-                                                      }
-                                                    />
-                                                  </div>
+                                            </div>
+                                            <div className="row">
+                                              <div className="col-lg-6 col-md-6">
+                                                <div className="mb-3">
+                                                  <label>Package Type</label>
+                                                  <select
+                                                    className="form-select"
+                                                    name="package_type"
+                                                    onChange={handleupdateapi}
+                                                    value={
+                                                      inputdata.package_type
+                                                    }
+                                                  >
+                                                    <option value="">
+                                                      Select...
+                                                    </option>
+                                                    <option value="box">
+                                                      Box
+                                                    </option>
+                                                    <option value="crate">
+                                                      Crate
+                                                    </option>
+                                                    <option value="pallet">
+                                                      Pallet
+                                                    </option>
+                                                    <option value="bags">
+                                                      Bags
+                                                    </option>
+                                                  </select>
                                                 </div>
-                                                <div className="col-lg-6">
-                                                  <div className="mb-3">
-                                                    <label>Total Weight</label>
-                                                    <input
-                                                      type="text"
-                                                      onKeyPress={handlekey}
-                                                      name="weight"
-                                                      onChange={handleupdateapi}
-                                                      value={inputdata.weight}
-                                                    />
-                                                  </div>
+                                              </div>
+                                              <div className="col-lg-6 col-md-6">
+                                                <div className="mb-3">
+                                                  <label>
+                                                    Total Packages
+                                                  </label>
+                                                  <input
+                                                    type="text"
+                                                    onKeyPress={handlekey}
+                                                    name="no_of_packages"
+                                                    onChange={handleupdateapi}
+                                                    value={
+                                                      inputdata.no_of_packages
+                                                    }
+                                                  />
                                                 </div>
-                                                <div className="col-lg-6">
-                                                  <div className="mb-3">
-                                                    <label>
-                                                      Auto Calculate
-                                                    </label>
-                                                    <input
-                                                      type="text"
-                                                      onKeyPress={handlekey}
-                                                      name="auto_calculate"
-                                                      onChange={handleupdateapi}
-                                                      value={
-                                                        inputdata.auto_calculate
-                                                      }
-                                                    />
-                                                  </div>
+                                              </div>
+                                            </div>
+                                            <div className="row">
+                                              <div className="col-lg-6 col-md-6">
+                                                <div className="mb-3">
+                                                  <label>
+                                                    Total Dimension
+                                                  </label>
+                                                  <input
+                                                    type="text"
+                                                    onKeyPress={handlekey}
+                                                    name="dimension"
+                                                    onChange={handleupdateapi}
+                                                    value={
+                                                      inputdata.dimension
+                                                    }
+                                                  />
                                                 </div>
-                                                {/* <div className="col-6">
+                                              </div>
+                                              <div className="col-lg-6 col-md-6">
+                                                <div className="mb-3">
+                                                  <label>Total Weight</label>
+                                                  <input
+                                                    type="text"
+                                                    onKeyPress={handlekey}
+                                                    name="weight"
+                                                    onChange={handleupdateapi}
+                                                    value={inputdata.weight}
+                                                  />
+                                                </div>
+                                              </div>
+                                              <div className="col-lg-6 col-md-6">
+                                                <div className="mb-3">
+                                                  <label>
+                                                    Auto Calculate
+                                                  </label>
+                                                  <input
+                                                    type="text"
+                                                    onKeyPress={handlekey}
+                                                    name="auto_calculate"
+                                                    onChange={handleupdateapi}
+                                                    value={
+                                                      inputdata.auto_calculate
+                                                    }
+                                                  />
+                                                </div>
+                                              </div>
+                                              {/* <div className="col-md-6">
                           <label>Select Document </label>
                           <select name="documentName" onChange={handleupdateapi}>
                             <option value="">Select...</option>
@@ -2028,7 +2043,7 @@ export default function UserFreight() {
                           </select>
                         </div> */}
 
-                                                {/* <div className="col-lg-6">
+                                              {/* <div className="col-lg-6 col-md-6">
                                                   <div className="mb-3">
                                                     <label>Document Name</label>
                                                     <select
@@ -2058,74 +2073,76 @@ export default function UserFreight() {
                                                     </select>
                                                   </div>
                                                 </div> */}
-                                                <div className="col-lg-6">
-                                                  <div className="mb-3">
-                                                    <label>Type</label>
-                                                    <select
-                                                      name="fcl_lcl"
-                                                      onChange={handleupdateapi}
-                                                      value={inputdata.fcl_lcl}
-                                                    >
-                                                      <option value="">
-                                                        Select...
-                                                      </option>
+                                              <div className="col-lg-6 col-md-6">
+                                                <div className="mb-3">
+                                                  <label>Type</label>
+                                                  <select
+                                                    className="form-select"
+                                                    name="fcl_lcl"
+                                                    onChange={handleupdateapi}
+                                                    value={inputdata.fcl_lcl}
+                                                  >
+                                                    <option value="">
+                                                      Select...
+                                                    </option>
 
-                                                      <option value="FCL">
-                                                        FCL
-                                                      </option>
-                                                      <option value="LCL">
-                                                        LCL
-                                                      </option>
-                                                    </select>
-                                                  </div>
+                                                    <option value="FCL">
+                                                      FCL
+                                                    </option>
+                                                    <option value="LCL">
+                                                      LCL
+                                                    </option>
+                                                  </select>
                                                 </div>
-                                                <div className="col-lg-6">
-                                                  <div className="mb-3">
-                                                    <label>Comment</label>
-                                                    <input
-                                                      type="text"
-                                                      name="comment"
-                                                      onChange={handleupdateapi}
-                                                      value={inputdata.comment}
-                                                      className="mb-3"
-                                                    />
-                                                  </div>
+                                              </div>
+                                              <div className="col-lg-6 col-md-6">
+                                                <div className="mb-3">
+                                                  <label>Comment</label>
+                                                  <input
+                                                    type="text"
+                                                    name="comment"
+                                                    onChange={handleupdateapi}
+                                                    value={inputdata.comment}
+                                                    className="mb-3"
+                                                  />
                                                 </div>
-                                                <div className="col-lg-6">
-                                                  <div>
-                                                    <label>Commodity</label>
-                                                    <select
-                                                      type="text"
-                                                      name="commodity"
-                                                      onChange={handleupdateapi}
-                                                      value={
-                                                        inputdata.commodity
-                                                      }
-                                                    >
-                                                      <option>Select...</option>
-                                                      {apidata &&
-                                                        apidata.length > 0 &&
-                                                        apidata.map(
-                                                          (item, index) => {
-                                                            return (
-                                                              <>
-                                                                <option
-                                                                  key={index}
-                                                                  value={
-                                                                    item.id
-                                                                  }
-                                                                >
-                                                                  {item.name}
-                                                                </option>
-                                                              </>
-                                                            );
-                                                          }
-                                                        )}
-                                                    </select>
-                                                  </div>
+                                              </div>
+                                              <div className="col-lg-6 col-md-6">
+                                                <div>
+                                                  <label>Commodity</label>
+                                                  <select
+                                                    className="form-select"
+                                                    type="text"
+                                                    name="commodity"
+                                                    onChange={handleupdateapi}
+                                                    value={
+                                                      inputdata.commodity
+                                                    }
+                                                  >
+                                                    <option>Select...</option>
+                                                    {apidata &&
+                                                      apidata.length > 0 &&
+                                                      apidata.map(
+                                                        (item, index) => {
+                                                          return (
+                                                            <>
+                                                              <option
+                                                                key={index}
+                                                                value={
+                                                                  item.id
+                                                                }
+                                                              >
+                                                                {item.name}
+                                                              </option>
+                                                            </>
+                                                          );
+                                                        }
+                                                      )}
+                                                  </select>
                                                 </div>
-                                                {/* <div className="row">
-                                                    <div className="col-6 mt-3">
+                                              </div>
+                                              {/* <div className="row">
+                                                    <div className="col-md-6 mt-3">
                                                       <h5>licenses</h5>
                                                       <input
                                                         type="file"
@@ -2139,9 +2156,9 @@ export default function UserFreight() {
                                                     </div>
                                                    
                                                   </div> */}
-                                              </div>
                                             </div>
                                           </div>
+
                                         </div>
                                       </div>
                                       <div className="Toastify" />
@@ -2263,22 +2280,23 @@ export default function UserFreight() {
               </button>
             </div>
             <div className="newModalGap">
-              <div className="row my-3">
-                <div className="col-6">
+              <div className="row g-3">
+                <div className="col-md-6">
                   <label>Delivery Type</label>
                   <select
+                    className="form-select"
                     name="type"
                     onChange={handlechange}
-                    className="form-control"
+
                   >
                     <option value="">Select</option>
                     <option value="express">Express</option>
                     <option value="normal">Consolidation</option>
                   </select>
                 </div>
-                <div className="col-6">
+                <div className="col-md-6">
                   <label>Priority </label>
-                  <div className="shipRefer1 d-flex">
+                  <div className="radioBtn d-flex gap-3">
                     <div>
                       <input
                         type="radio"
@@ -2314,14 +2332,14 @@ export default function UserFreight() {
                     </div>
                   </div>
                 </div>
-              </div>
-              <div className="row mb-3">
-                <div className="col-6">
+
+                <div className="col-md-6">
                   <label>Country of Origin</label>
                   <select
+                    className="form-select"
                     name="origin"
                     onChange={handlechange}
-                    className="form-control"
+
                   >
                     <option value="">Select</option>
                     {updatedata &&
@@ -2335,12 +2353,12 @@ export default function UserFreight() {
                       })}
                   </select>
                 </div>
-                <div className="col-6">
+                <div className="col-md-6">
                   <label>Delivery to Country </label>
                   <select
                     name="destination"
                     onChange={handlechange}
-                    className="form-control"
+                    className="form-select"
                   >
                     <option value="">Select</option>
                     {updatedata &&
@@ -2354,9 +2372,8 @@ export default function UserFreight() {
                       })}
                   </select>
                 </div>
-              </div>
-              <div className="row mb-3">
-                <div className="col-6">
+
+                <div className="col-md-6">
                   <label>Start Date</label>
                   <input
                     type="date"
@@ -2367,7 +2384,7 @@ export default function UserFreight() {
                     onChange={handlechange}
                   />
                 </div>
-                <div className="col-6">
+                <div className="col-md-6">
                   <label>End Date </label>
                   <input
                     type="date"
@@ -2378,14 +2395,14 @@ export default function UserFreight() {
                     onChange={handlechange}
                   />
                 </div>
-              </div>
-              <div className="row mb-3">
-                <div className="col-6">
+
+                <div className="col-md-6">
                   <label>Freight</label>
                   <select
+                    className="form-select"
                     name="freight"
                     onChange={handlechange}
-                    className="form-control"
+
                   >
                     <option value="">Select...</option>
                     <option value="Sea">Sea</option>
@@ -2393,12 +2410,12 @@ export default function UserFreight() {
                     <option value="Road">Road</option>
                   </select>
                 </div>
-                <div className="col-6">
+                <div className="col-md-6">
                   <label>freight Type </label>
                   <select
                     name="type"
                     onChange={handlechange}
-                    className="form-control"
+                    className="form-select"
                   >
                     <option value="">Select...</option>
                     <option value="express">Express</option>
@@ -2408,9 +2425,9 @@ export default function UserFreight() {
               </div>
             </div>
             <div className="modal-footer mb-3">
-              <Button variant="contained" onClick={postData}>
+              <button className="blueBtn" variant="contained" onClick={postData}>
                 Apply
-              </Button>
+              </button>
             </div>
           </Box>
         </Modal>

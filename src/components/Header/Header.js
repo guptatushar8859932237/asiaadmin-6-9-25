@@ -8,6 +8,8 @@ import { useNavigate } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 import { useContext } from 'react';
 import { MyContext1 } from '../../Context/MyContext';
+import logoMob from "../../Assests/logo.png";
+import SideBar from '../Sidebar/SideBar';
 const Header = () => {
   const navigate = useNavigate();
   const [anchorEl, setAnchorEl] = useState(null);
@@ -58,62 +60,78 @@ const Header = () => {
     navigate('/');
   };
   const dataget = JSON.parse(localStorage.getItem("data123"))
+  // pp
+
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   return (
     <header className='header' style={{ backgroundColor: "#f0f2f5" }}>
-      <div className='d-flex justify-content-end align-items-center gap-4 pt-4'>
-        <div className=''>
-          <Dropdown>
-            <Dropdown.Toggle variant="" id="dropdown-basic">
-              <NotificationsActiveIcon className='fs-3' />
-              {count > 0 && <Badge bg="danger">{count}</Badge>}
-            </Dropdown.Toggle>
-            <Dropdown.Menu className='sidebar123 pt-0'>
-              <p className=' ps-3 notiHead mb-0 py-2'>Notifications</p>
-              <div className='notificationScroll'>
-                {notifications.length > 0 ? (
-                  notifications.map((notification, index) => (
-                    <div className='bg-light border-bottom notificationAsiaBack' onClick={handleNotificationClick} key={index}>
-                      <Dropdown.Item>
-                        <h6 className='mt-2'>{notification.title}</h6>
-                        <p className='description'><small>{notification.description}</small></p>
-                      </Dropdown.Item>
-                    </div>
-                  ))
-                ) : (
-                  <p className='text-center'>No new notifications</p>
-                )}
-              </div>
-            </Dropdown.Menu>
-          </Dropdown>
+      <div className='headerSide'>
+        <div className='d-flex h-100 py-2 justify-content-between justify-content-md-end align-items-center px-4'>
+          <div class="d-block d-md-none"><img src={logoMob} alt="Logo" height="50" />
+          </div>
+          <div className='d-flex justify-content-end align-items-center gap-4'>
+
+            <div className=''>
+              <Dropdown>
+                <Dropdown.Toggle variant="" id="dropdown-basic">
+                  <NotificationsActiveIcon className='fs-3' />
+                  {count > 0 && <Badge bg="danger">{count}</Badge>}
+                </Dropdown.Toggle>
+                <Dropdown.Menu className='sidebar123 pt-0'>
+                  <p className=' ps-3 notiHead mb-0 py-2'>Notifications</p>
+                  <div className='notificationScroll'>
+                    {notifications.length > 0 ? (
+                      notifications.map((notification, index) => (
+                        <div className='bg-light border-bottom notificationAsiaBack' onClick={handleNotificationClick} key={index}>
+                          <Dropdown.Item>
+                            <h6 className='mt-2'>{notification.title}</h6>
+                            <p className='description'><small>{notification.description}</small></p>
+                          </Dropdown.Item>
+                        </div>
+                      ))
+                    ) : (
+                      <p className='text-center'>No new notifications</p>
+                    )}
+                  </div>
+                </Dropdown.Menu>
+              </Dropdown>
+            </div>
+            <div style={{ width: '35px', height: '35px' }} className='me-0 me-md-5'>
+              <img
+                src={text ? `${process.env.REACT_APP_BASE_URL_image}${text}` : `${process.env.REACT_APP_BASE_URL_image}${image}`}
+                alt="User Profile"
+                id="basic-button"
+                aria-controls={anchorEl ? 'basic-menu' : undefined}
+                aria-haspopup="true"
+                aria-expanded={anchorEl ? 'true' : undefined}
+                onClick={(e) => setAnchorEl(e.currentTarget)}
+                style={{ cursor: 'pointer', width: '100%', height: '100%', borderRadius: '50%' }}
+              />
+            </div>
+            <Menu
+              id="basic-menu"
+              anchorEl={anchorEl}
+              open={Boolean(anchorEl)}
+              onClose={() => setAnchorEl(null)}
+              MenuListProps={{ 'aria-labelledby': 'basic-button' }}
+            >
+              <MenuItem onClick={() => { navigate('/Admin/profile'); setAnchorEl(null); }}>Profile</MenuItem>
+              <MenuItem onClick={() => { navigate('/Admin/changepassword'); setAnchorEl(null); }}>Change Password</MenuItem>
+              <MenuItem onClick={() => { navigate('/Admin/User'); setAnchorEl(null); }}>Messages</MenuItem>
+              {
+                dataget.id == "1" ?
+                  "" : <MenuItem onClick={() => { navigate('/Admin/Profilesection'); setAnchorEl(null); }}>Manage Leave</MenuItem>
+              }
+              <MenuItem onClick={() => { handleLogout(); setAnchorEl(null); }}>Logout</MenuItem>
+            </Menu>
+            <button class="d-none barBtn" onClick={() => setSidebarOpen(!sidebarOpen)}><i class="fa fa-bars" aria-hidden="true"></i></button>
+          </div>
         </div>
-        <div style={{ width: '35px', height: '35px' }} className='me-5'>
-          <img
-            src={text ? `${process.env.REACT_APP_BASE_URL_image}${text}` : `${process.env.REACT_APP_BASE_URL_image}${image}`}
-            alt="User Profile"
-            id="basic-button"
-            aria-controls={anchorEl ? 'basic-menu' : undefined}
-            aria-haspopup="true"
-            aria-expanded={anchorEl ? 'true' : undefined}
-            onClick={(e) => setAnchorEl(e.currentTarget)}
-            style={{ cursor: 'pointer', width: '100%', height: '100%', borderRadius: '50%' }}
-          />
+        <div className={sidebarOpen ? "sidebarShow" : "sidebarHide"}>
+          <i class="fa fa-times closeSideMob " aria-hidden="true" onClick={() => setSidebarOpen(false)}></i>
+          <SideBar />
+
         </div>
-        <Menu
-          id="basic-menu"
-          anchorEl={anchorEl}
-          open={Boolean(anchorEl)}
-          onClose={() => setAnchorEl(null)}
-          MenuListProps={{ 'aria-labelledby': 'basic-button' }}
-        >
-          <MenuItem onClick={() => { navigate('/Admin/profile'); setAnchorEl(null); }}>Profile</MenuItem>
-          <MenuItem onClick={() => { navigate('/Admin/changepassword'); setAnchorEl(null); }}>Change Password</MenuItem>
-          <MenuItem onClick={() => { navigate('/Admin/User'); setAnchorEl(null); }}>Messages</MenuItem>
-         {
-dataget.id=="1" ?
-          "":<MenuItem onClick={() => { navigate('/Admin/Profilesection'); setAnchorEl(null); }}>Manage Leave</MenuItem>
-         }
-          <MenuItem onClick={() => { handleLogout(); setAnchorEl(null); }}>Logout</MenuItem>
-        </Menu>
       </div>
       <ToastContainer />
     </header>

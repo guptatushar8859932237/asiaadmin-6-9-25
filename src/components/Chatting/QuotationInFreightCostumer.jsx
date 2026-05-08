@@ -3,6 +3,7 @@ import { useLocation } from "react-router-dom";
 import axios from "axios";
 import { io } from "socket.io-client";
 import { toast } from "react-toastify";
+import chatBg from "../../Assests/messgae.png";
 const LOGGED_IN_USER_ID = JSON.parse(localStorage.getItem("data123"))?.id;
 export default function QuotationInFreightCostumer() {
   const location = useLocation();
@@ -23,10 +24,10 @@ export default function QuotationInFreightCostumer() {
     //   reconnection: true,
     // });
     socketRef.current = io("https://sisccltd.com", {
-  path: "/socket.io",
-  transports: ["websocket"],
-  reconnection: true,
-});
+      path: "/socket.io",
+      transports: ["websocket"],
+      reconnection: true,
+    });
     socketRef.current.on("connect", () => {
       console.log("✅ Socket connected");
       setSocketConnected(true);
@@ -39,7 +40,7 @@ export default function QuotationInFreightCostumer() {
     });
     socketRef.current.on("connect_error", (err) => {
       console.log("⚠️ Socket error:", err.message);
-      setSocketConnected(false);    
+      setSocketConnected(false);
     });
     socketRef.current.on("receiveMessage", (data) => {
       setMessages((prev) => [
@@ -56,57 +57,57 @@ export default function QuotationInFreightCostumer() {
     };
   }, []);
   /* ================= CREATE CONVERSATION ================= */
-//   const createConversation = async () => {
-//     try {
-//       if (!LOGGED_IN_USER_ID || !RECEIVER_ID) return;
+  //   const createConversation = async () => {
+  //     try {
+  //       if (!LOGGED_IN_USER_ID || !RECEIVER_ID) return;
 
-//       const res = await axios.post(
-//         `${process.env.REACT_APP_BASE_URL}chat/createConversation`,
-//         {
-//           sender_id: LOGGED_IN_USER_ID,
-//           receiver_id: RECEIVER_ID,
-//         }
-//       );
-//       console.log(res.data.conversation_id)
-//        setConversationId(res.data.conversation_id.trim());
-//       if (res?.data?.conversation_id) {
-//         console.log("work")
-//        setConversationId(res.data.conversation_id.trim());
-//       }
-//     } catch (error) {
-//       toast.error("Failed to create conversation");
-//     }
-//   };
-const createConversation = async () => {
-  try {
-    if (!LOGGED_IN_USER_ID || !RECEIVER_ID) return;
-    const res = await axios.post(
-      `${process.env.REACT_APP_BASE_URL}chat/createConversation`,
-      {
-        sender_type: "user",
-        receiver_type: "user",
-        sender_id: LOGGED_IN_USER_ID,
-        receiver_id: RECEIVER_ID,
+  //       const res = await axios.post(
+  //         `${process.env.REACT_APP_BASE_URL}chat/createConversation`,
+  //         {
+  //           sender_id: LOGGED_IN_USER_ID,
+  //           receiver_id: RECEIVER_ID,
+  //         }
+  //       );
+  //       console.log(res.data.conversation_id)
+  //        setConversationId(res.data.conversation_id.trim());
+  //       if (res?.data?.conversation_id) {
+  //         console.log("work")
+  //        setConversationId(res.data.conversation_id.trim());
+  //       }
+  //     } catch (error) {
+  //       toast.error("Failed to create conversation");
+  //     }
+  //   };
+  const createConversation = async () => {
+    try {
+      if (!LOGGED_IN_USER_ID || !RECEIVER_ID) return;
+      const res = await axios.post(
+        `${process.env.REACT_APP_BASE_URL}chat/createConversation`,
+        {
+          sender_type: "user",
+          receiver_type: "user",
+          sender_id: LOGGED_IN_USER_ID,
+          receiver_id: RECEIVER_ID,
+        }
+      );
+      const conversationId = res?.data?.conversation_id;
+      if (res.status === 200) {
+        console.log(res.data)
+        setConversationId(conversationId);
       }
-    );
-    const conversationId = res?.data?.conversation_id;
-if(res.status===200){
-    console.log(res.data)
-      setConversationId(conversationId);
-}
-    if (!conversationId) {
-      toast.error("Conversation ID not received");
-      return;
+      if (!conversationId) {
+        toast.error("Conversation ID not received");
+        return;
+      }
+      if (res.data.success === true) {
+        setConversationId(conversationId);
+      }
+    } catch (error) {
+      toast.error(
+        error?.response?.data?.message || "Failed to create conversation"
+      );
     }
-if(res.data.success===true){
-    setConversationId(conversationId);
-}
-  } catch (error) {
-    toast.error(
-      error?.response?.data?.message || "Failed to create conversation"
-    );
-  }
-};
+  };
   useEffect(() => {
     if (!conversationId && RECEIVER_ID) {
       createConversation();
@@ -125,13 +126,13 @@ if(res.data.success===true){
   /* ================= LOAD MESSAGES ================= */
   useEffect(() => {
     if (!conversationId) return;
-    const payload ={
+    const payload = {
       conversation_id: conversationId,
       receiver_id: RECEIVER_ID
     }
     axios
       .post(
-        `${process.env.REACT_APP_BASE_URL}chat/getMessages/`,payload
+        `${process.env.REACT_APP_BASE_URL}chat/getMessages/`, payload
       )
       .then((res) => {
         console.log("Loaded messages:", res.data.messages);
@@ -162,7 +163,7 @@ if(res.data.success===true){
         sender: "me",
       },
     ]);
-console.log(payload)
+    console.log(payload)
     const res = await axios.post(
       `${process.env.REACT_APP_BASE_URL}chat/sendMessage`,
       payload
@@ -179,53 +180,62 @@ console.log(payload)
   }, [messages]);
   if (!activeChat) return <div>Select chat</div>;
   return (
-    <div style={{ height: "100vh" }}>
-      {!socketConnected && (
-        <div className="text-center bg-warning p-1">
-          ⚠️ Chat disconnected. Reconnecting...
-        </div>
-      )}
-      <div className="d-flex flex-column h-100">
-        <div style={{ flex: 1, overflowY: "auto", padding: 12 }}>
-          {messages.map((msg) => (
-            <div
-              key={msg.key}
-              style={{
-                textAlign: msg.sender === "me" ? "right" : "left",
-                marginBottom: 8,
-              }}
-            >
-              <span
-                style={{
-                  background: msg.sender === "me" ? "#0d6efd" : "#eee",
-                  color: msg.sender === "me" ? "#fff" : "#000",
-                  padding: "8px 12px",
-                  borderRadius: 12,
-                  display: "inline-block",
-                }}
-              >
-                {msg.text}
-              </span>
+    <div className="wpWrapper">
+      <div className="container-fluid">
+        <div className="row">
+          <div className="col-md-12">
+            <div style={{ height: "100vh", background: `url(${chatBg})`, borderRadius: 12 }} className="p-3 d-flex flex-column gap-3">
+              {!socketConnected && (
+                <div className="text-center bg-warning p-1">
+                  ⚠️ Chat disconnected. Reconnecting...
+                </div>
+              )}
+              <div className="d-flex flex-column h-100">
+                <div style={{ flex: 1, overflowY: "auto", padding: 12 }}>
+                  {messages.map((msg) => (
+                    <div
+                      key={msg.key}
+                      style={{
+                        textAlign: msg.sender === "me" ? "right" : "left",
+                        marginBottom: 8,
+                      }}
+                    >
+                      <span
+                        style={{
+                          background: msg.sender === "me" ? "#1b2245" : "rgb(215, 215, 215)",
+                          color: msg.sender === "me" ? "#fff" : "#000",
+                          padding: "8px 12px",
+                          borderRadius: 12,
+                          display: "inline-block",
+                        }}
+                      >
+                        {msg.text}
+                      </span>
+                    </div>
+                  ))}
+                  <div ref={messagesEndRef} />
+                </div>
+                <div className="p-2 d-flex gap-2">
+                  <input
+                    className="form-control"
+                    value={message}
+                    onChange={(e) => setMessage(e.target.value)}
+                    onKeyDown={(e) => e.key === "Enter" && sendMessage()}
+                  />
+                  <button
+                    className="blueBtn"
+                    onClick={sendMessage}
+                    disabled={!socketConnected}
+                  >
+                    {socketConnected ? "Send" : "Connecting..."}
+                  </button>
+                </div>
+              </div>
             </div>
-          ))}
-          <div ref={messagesEndRef} />
-        </div>
-        <div className="p-2 d-flex gap-2">
-          <input
-            className="form-control"
-            value={message}
-            onChange={(e) => setMessage(e.target.value)}
-            onKeyDown={(e) => e.key === "Enter" && sendMessage()}
-          />
-          <button
-            className="btn btn-primary"
-            onClick={sendMessage}
-            disabled={!socketConnected}
-          >
-            {socketConnected ? "Send" : "Connecting..."}
-          </button>
+          </div>
         </div>
       </div>
+
     </div>
   );
 }

@@ -14,8 +14,8 @@ export default function Clearencedetails() {
   const [calculation1, setCalculation1] = useState("");
   const [calculation2, setCalculation2] = useState("");
   const [calculation3, setCalculation3] = useState("");
-   const [rows, setRows] = useState([]);
-   const [finalAmount, setFinalAmount] = useState(0);
+  const [rows, setRows] = useState([]);
+  const [finalAmount, setFinalAmount] = useState(0);
   const [extrachange, setExtrachange] = useState("");
   const [hfCode, setHfCode] = useState("");
   const [data, setData] = useState({});
@@ -28,9 +28,9 @@ export default function Clearencedetails() {
   console.log(getdatallestimate);
 
   const handleclicknav = () => {
-    location?.state?.data1 ==="update"
-    ? navigate("/Admin/calculation-order")
-    : navigate("/Admin/custom-clearance-order")
+    location?.state?.data1 === "update"
+      ? navigate("/Admin/calculation-order")
+      : navigate("/Admin/custom-clearance-order")
   };
   const getdatainthispage = () => {
     axios
@@ -76,57 +76,57 @@ export default function Clearencedetails() {
     }
   };
 
-   const handleClickHf = () => {
-      if (rows.length >= 3) {
-        toast.error('You can only add up to 3 rows.');
-        return;
-      }
-      const hfcoede = { hs_code: hfCode };
-  
-      axios
-        .post(`${process.env.REACT_APP_BASE_URL}find-hs-code`, hfcoede)
-        .then((response) => {
-          console.log(response.data.data)
-          setData(response.data.data);
-          setRows([...rows, {
-            hs_code: hfCode,
-            hs_cod_desc: response.data.data.hs_cod_desc,
-            valueofgoods: '',
-            quotedRate: '',
-            csercount: 0,
-            datavalttac: 0,
-            datavat: 0,
-            estimate: 0
-          }]);
-          setHfCode('');
-        })
-        .catch((error) => {
-          toast.error(error.response.data.message);
-        });
-    };
-    const handleChangeValueOfGood = (e, index) => {
-      const { name, value } = e.target;
-      const newRows = [...rows];
-      newRows[index][name] = value;
-      setRows(newRows);
-    };
+  const handleClickHf = () => {
+    if (rows.length >= 3) {
+      toast.error('You can only add up to 3 rows.');
+      return;
+    }
+    const hfcoede = { hs_code: hfCode };
 
-    const handleClickValue = (index) => {
-      const finalVal = rows[index].valueofgoods;
-      const calculate10 = finalVal * 0.1;
-      const overall = parseFloat(finalVal) + calculate10;
-      const finalRes = overall * parseFloat(rows[index].quotedRate);
-  
-      const newRows = [...rows];
-      newRows[index].csercount = finalRes;
-      newRows[index].datavalttac = (finalRes * 0.1).toFixed(2);
-      newRows[index].datavat = ((parseFloat(newRows[index].datavalttac) + finalRes) * 0.15).toFixed(2);
-      newRows[index].estimate = (parseFloat(newRows[index].datavat) + parseFloat(newRows[index].datavalttac)).toFixed(2);
-      setRows(newRows);
-  
-      const totalEstimate = newRows.reduce((acc, row) => acc + parseFloat(row.estimate), 0);
-      setFinalAmount(totalEstimate);
-    };
+    axios
+      .post(`${process.env.REACT_APP_BASE_URL}find-hs-code`, hfcoede)
+      .then((response) => {
+        console.log(response.data.data)
+        setData(response.data.data);
+        setRows([...rows, {
+          hs_code: hfCode,
+          hs_cod_desc: response.data.data.hs_cod_desc,
+          valueofgoods: '',
+          quotedRate: '',
+          csercount: 0,
+          datavalttac: 0,
+          datavat: 0,
+          estimate: 0
+        }]);
+        setHfCode('');
+      })
+      .catch((error) => {
+        toast.error(error.response.data.message);
+      });
+  };
+  const handleChangeValueOfGood = (e, index) => {
+    const { name, value } = e.target;
+    const newRows = [...rows];
+    newRows[index][name] = value;
+    setRows(newRows);
+  };
+
+  const handleClickValue = (index) => {
+    const finalVal = rows[index].valueofgoods;
+    const calculate10 = finalVal * 0.1;
+    const overall = parseFloat(finalVal) + calculate10;
+    const finalRes = overall * parseFloat(rows[index].quotedRate);
+
+    const newRows = [...rows];
+    newRows[index].csercount = finalRes;
+    newRows[index].datavalttac = (finalRes * 0.1).toFixed(2);
+    newRows[index].datavat = ((parseFloat(newRows[index].datavalttac) + finalRes) * 0.15).toFixed(2);
+    newRows[index].estimate = (parseFloat(newRows[index].datavat) + parseFloat(newRows[index].datavalttac)).toFixed(2);
+    setRows(newRows);
+
+    const totalEstimate = newRows.reduce((acc, row) => acc + parseFloat(row.estimate), 0);
+    setFinalAmount(totalEstimate);
+  };
   return (
     <>
       <div className="wpWrapper">
@@ -136,7 +136,7 @@ export default function Clearencedetails() {
               <div className="row manageFreight">
                 <div className="col-12">
                   <div className="d-flex justify-content-between align-items-center">
-                    <div className="d-flex jystify-content-between">
+                    <div className="d-flex gap-3">
                       <div>
                         <ArrowBackIcon
                           onClick={handleclicknav}
@@ -146,38 +146,41 @@ export default function Clearencedetails() {
                       </div>
 
                       <div>
-                        <h4 className="freight_hd ms-3 mt-0 ">Estimate PDF</h4>
+                        <h4 className="freight_hd mt-0 ">Estimate PDF</h4>
                       </div>
                     </div>
-                    <div>
-                      {getdatallestimate.attachment_Estimate === null ? (
-                        ""
-                      ) : (
-                        <a
-                          href={`${process.env.REACT_APP_BASE_URLdocument}${getdatallestimate?.attachment_Estimate}`}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="view_docu ms-2"
-                        >
-                          View Document
-                        </a>
-                      )}
-                    </div>
-                    <div className="d-flex justify-content-between align-items-center">
-                      <div className="mx-2">
-                        {/* {location?.state?.data1 === "update" ? ( */}
+                    <div className="d-flex gap-3">
+                      <div>
+                        {getdatallestimate.attachment_Estimate === null ? (
+                          ""
+                        ) : (
+                          <a
+                            href={`${process.env.REACT_APP_BASE_URLdocument}${getdatallestimate?.attachment_Estimate}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="view_docu ms-2"
+                          >
+                            View Document
+                          </a>
+                        )}
+                      </div>
+                      <div className="d-flex justify-content-between align-items-center">
+                        <div className="mx-2">
+                          {/* {location?.state?.data1 === "update" ? ( */}
                           {/* // <button onClick={handleclick}>Edit</button>""
                         // ) : (
                           // ""
                         // )} */}
+                        </div>
+                        <div>
+                          <MdDownloadForOffline
+                            className="fs-2 "
+                            onClick={() => toPDF()}
+                            style={{ color: "#1b2245" }}
+                          />
+                        </div>
                       </div>
-                      <div>
-                        <MdDownloadForOffline
-                          className="fs-2 "
-                          onClick={() => toPDF()}
-                          style={{ color: "#1b2245" }}
-                        />
-                      </div>
+
                     </div>
                   </div>
                 </div>
@@ -196,7 +199,7 @@ export default function Clearencedetails() {
                         <tbody>
                           <tr>
                             <td>
-                              <table style={{ margin: "20px" }}>
+                              <table>
                                 <tbody>
                                   <tr>
                                     <td style={{ width: "50%" }}>
@@ -216,75 +219,75 @@ export default function Clearencedetails() {
                                           marginBottom: "unset",
                                           borderBottom: "1px solid #cb191e",
                                           display: "inline-block",
-                                          paddingBottom: 5,
+
                                         }}
                                       >
-                                       Asia Direct - Africa
+                                        Asia Direct - Africa
                                       </p>
                                       <p
                                         style={{
-                                          fontSize: 15,
+                                          fontSize: 14,
                                           fontWeight: 500,
                                           marginBottom: "unset",
                                           lineHeight: "1.5",
-                                          marginTop: 10,
+                                          marginTop: 5,
                                         }}
                                       >
                                         {/* R.C 102069/GU/23078/342 N.I.F. 00619049
                                         Lot 1644 Ext F nord Secteur 06, Tevragh
                                         Zeina Nouakchott , Mauritania
                                         www.asiaDirect.com */}
-Asia Direct, Unit 4 Villa Valencia 2 Anemoon Road Glen Marais 1619 South Africa Web www.asiaDirect.africa<br  />
-VAT Number: 4740280377
-TEL: +27 10 448 0733
+                                        Asia Direct, Unit 4 Villa Valencia 2 Anemoon Road Glen Marais 1619 South Africa Web www.asiaDirect.africa<br />
+                                        VAT Number: 4740280377
+                                        TEL: +27 10 448 0733
                                       </p>
                                     </td>
                                   </tr>
                                 </tbody>
                               </table>
-                              <table
+                              {/* <table
                                 style={{
-                                  paddingTop: "20px",
-                                  marginTop: "20px",
+
+                                  marginTop: "5px",
                                 }}
                               >
                                 <tbody>
                                   <tr>
                                     <td
                                       style={{
-                                        fontSize: 15,
+                                        fontSize: 14,
                                         textTransform: "lowercase",
                                       }}
                                     >
-                                      {/* PO Box 16600 ATLASVILLE */}
+                                      PO Box 16600 ATLASVILLE
                                     </td>
                                     <td
                                       style={{
-                                        fontSize: 15,
+                                        fontSize: 14,
                                         padding: "0px 20px",
                                         textTransform: "lowercase",
                                       }}
                                     >
-                                      {/* 41 Yaldwyn Road Corner Yaldwyn And Tudor
-                                      Road Jet Park */}
+                                      41 Yaldwyn Road Corner Yaldwyn And Tudor
+                                      Road Jet Park
                                     </td>
                                     <td
                                       style={{
-                                        fontSize: 15,
+                                        fontSize: 14,
                                         textTransform: "lowercase",
                                       }}
                                     >
-                                      {/* TEL: ++27-11-820 8000 WWW.SACOCFR.CO.ZA */}
+                                      TEL: ++27-11-820 8000 WWW.SACOCFR.CO.ZA
                                     </td>
                                   </tr>
                                 </tbody>
-                              </table>
+                              </table> */}
                               <table
                                 style={{
                                   border: "2px solid #1b2245",
                                   padding: "10px 20px",
                                   width: "100%",
-                                  marginTop: 20,
+                                  marginTop: 5,
                                 }}
                               >
                                 <tbody>
@@ -292,7 +295,7 @@ TEL: +27 10 448 0733
                                     <td
                                       style={{
                                         textAlign: "center",
-                                        fontSize: 15,
+                                        fontSize: 14,
                                         fontWeight: 600,
                                         width: "100%",
                                       }}
@@ -324,12 +327,12 @@ TEL: +27 10 448 0733
                                           <tr>
                                             <td
                                               style={{
-                                                fontSize: 15,
+                                                fontSize: 14,
                                                 padding: "0px 10px",
                                               }}
                                             >
                                               <strong>
-                                              Asia Direct - Africa
+                                                Asia Direct - Africa
                                               </strong>
                                             </td>
                                           </tr>
@@ -340,9 +343,9 @@ TEL: +27 10 448 0733
                                           background: "#1b2245",
                                           width: "100%",
                                           color: "white",
-                                          fontSize: 15,
+                                          fontSize: 14,
                                           textAlign: "center",
-                                          margin: "10px 0px",
+                                          margin: "5px 0px",
                                           padding: 2,
                                         }}
                                       >
@@ -367,18 +370,18 @@ TEL: +27 10 448 0733
                                               >
                                                 <p
                                                   style={{
-                                                    fontSize: 15,
+                                                    fontSize: 14,
                                                     marginBottom: "unset",
-                                                    marginTop: 10,
+
                                                   }}
                                                 >
                                                   <strong>Customer Ref</strong>
                                                 </p>
                                                 <p
                                                   style={{
-                                                    fontSize: 15,
+                                                    fontSize: 14,
                                                     marginBottom: "unset",
-                                                    marginTop: 10,
+                                                    marginTop: 5,
                                                   }}
                                                 >
                                                   {
@@ -395,18 +398,18 @@ TEL: +27 10 448 0733
                                               >
                                                 <p
                                                   style={{
-                                                    fontSize: 15,
+                                                    fontSize: 14,
                                                     marginBottom: "unset",
-                                                    marginTop: 10,
+
                                                   }}
                                                 >
                                                   <strong>Destination</strong>
                                                 </p>
                                                 <p
                                                   style={{
-                                                    fontSize: 15,
+                                                    fontSize: 14,
                                                     marginBottom: "unset",
-                                                    marginTop: 10,
+                                                    marginTop: 5,
                                                   }}
                                                 >
                                                   {
@@ -423,9 +426,9 @@ TEL: +27 10 448 0733
                                               >
                                                 <p
                                                   style={{
-                                                    fontSize: 15,
+                                                    fontSize: 14,
                                                     marginBottom: "unset",
-                                                    marginTop: 10,
+                                                    marginTop: 5,
                                                   }}
                                                 >
                                                   <strong>
@@ -434,9 +437,9 @@ TEL: +27 10 448 0733
                                                 </p>
                                                 <p
                                                   style={{
-                                                    fontSize: 15,
+                                                    fontSize: 14,
                                                     marginBottom: "unset",
-                                                    marginTop: 10,
+                                                    marginTop: 5,
                                                   }}
                                                 >
                                                   {getdatallestimate.goods_desc}
@@ -451,15 +454,15 @@ TEL: +27 10 448 0733
                                           background: "#1b2245",
                                           width: "100%",
                                           color: "white",
-                                          fontSize: 15,
+                                          fontSize: 14,
                                           textAlign: "center",
-                                          margin: "10px 0px",
+                                          margin: "5px  0px",
                                           padding: 2,
                                         }}
                                       >
                                         <tbody>
                                           <tr>
-                                            <td style={{ fontSize: 15 }}>
+                                            <td style={{ fontSize: 15, }}>
                                               Rate of Exchange
                                             </td>
                                           </tr>
@@ -474,13 +477,14 @@ TEL: +27 10 448 0733
                                                   display: "flex",
                                                   justifyContent:
                                                     "space-between",
+                                                  padding: "0px 10px",
                                                 }}
                                               >
                                                 <p
                                                   style={{
-                                                    fontSize: 15,
+                                                    fontSize: 14,
                                                     marginBottom: "unset",
-                                                    marginTop: 10,
+                                                    marginTop: 5,
                                                   }}
                                                 >
                                                   <strong>
@@ -490,9 +494,9 @@ TEL: +27 10 448 0733
                                                 </p>
                                                 <p
                                                   style={{
-                                                    fontSize: 15,
+                                                    fontSize: 14,
                                                     marginBottom: "unset",
-                                                    marginTop: 10,
+                                                    marginTop: 5,
                                                   }}
                                                 >
                                                   <p>{wuotedrate}</p>
@@ -504,7 +508,7 @@ TEL: +27 10 448 0733
                                       </table>
                                     </td>
                                     <td
-                                      style={{ width: "50%", paddingTop: 10 }}
+                                      style={{ width: "50%", paddingTop: 5 }}
                                     >
                                       <table>
                                         <tbody>
@@ -513,16 +517,16 @@ TEL: +27 10 448 0733
                                               style={{
                                                 width: 170,
                                                 display: "block",
-                                                padding: "0px 10px 10px 10px",
-                                                fontSize: 15,
+                                                padding: "0px 10px 5px 10px",
+
                                               }}
                                             >
-                                              <strong>Clearance Number</strong>
+                                              <strong style={{ fontSize: 14, }}>Clearance Number</strong>
                                             </td>
                                             <td
                                               style={{
-                                                paddingBottom: 10,
-                                                fontSize: 15,
+                                                paddingBottom: 5,
+                                                fontSize: 14,
                                               }}
                                             >
                                               {
@@ -536,16 +540,16 @@ TEL: +27 10 448 0733
                                                 padding: "0px 10px 10px 10px",
                                                 width: 170,
                                                 display: "block",
-                                                paddingBottom: 10,
-                                                fontSize: 15,
+                                                paddingBottom: 5,
+                                                fontSize: 14,
                                               }}
                                             >
-                                              <strong>Clearing Status</strong>
+                                              <strong style={{ fontSize: 14, }}>Clearing Status</strong>
                                             </td>
                                             <td
                                               style={{
-                                                paddingBottom: 15,
-                                                fontSize: 15,
+                                                paddingBottom: 5,
+                                                fontSize: 14,
                                                 padding: "0px 0px 0px 0px",
                                               }}
                                             >
@@ -560,16 +564,16 @@ TEL: +27 10 448 0733
                                                 padding: "0px 10px 10px 10px",
                                                 width: 170,
                                                 display: "block",
-                                                paddingBottom: 10,
-                                                fontSize: 15,
+                                                paddingBottom: 0,
+                                                fontSize: 14,
                                               }}
                                             >
-                                              <strong>Comment On Docs</strong>
+                                              <strong style={{ fontSize: 14, }}>Comment On Docs</strong>
                                             </td>
                                             <td
                                               style={{
-                                                paddingBottom: 15,
-                                                fontSize: 15,
+                                                paddingBottom: 0,
+                                                fontSize: 14,
                                               }}
                                             >
                                               {
@@ -584,9 +588,9 @@ TEL: +27 10 448 0733
                                           background: "#1b2245",
                                           width: "100%",
                                           color: "white",
-                                          fontSize: 15,
+                                          fontSize: 14,
                                           textAlign: "center",
-                                          margin: "10px 0px",
+                                          margin: "5px 0px",
                                           padding: 2,
                                         }}
                                       >
@@ -611,18 +615,18 @@ TEL: +27 10 448 0733
                                               >
                                                 <p
                                                   style={{
-                                                    fontSize: 15,
+                                                    fontSize: 14,
                                                     marginBottom: "unset",
-                                                    marginTop: 10,
+                                                    marginTop: 0,
                                                   }}
                                                 >
                                                   <strong> Goods Desc</strong>
                                                 </p>
                                                 <p
                                                   style={{
-                                                    fontSize: 15,
+                                                    fontSize: 14,
                                                     marginBottom: "unset",
-                                                    marginTop: 10,
+                                                    marginTop: 5,
                                                   }}
                                                 >
                                                   {getdatallestimate.goods_desc}
@@ -637,18 +641,18 @@ TEL: +27 10 448 0733
                                               >
                                                 <p
                                                   style={{
-                                                    fontSize: 15,
+                                                    fontSize: 14,
                                                     marginBottom: "unset",
-                                                    marginTop: 10,
+
                                                   }}
                                                 >
                                                   <strong>Port of Entry</strong>
                                                 </p>
                                                 <p
                                                   style={{
-                                                    fontSize: 15,
+                                                    fontSize: 14,
                                                     marginBottom: "unset",
-                                                    marginTop: 10,
+
                                                   }}
                                                 >
                                                   {
@@ -665,18 +669,18 @@ TEL: +27 10 448 0733
                                               >
                                                 <p
                                                   style={{
-                                                    fontSize: 15,
-                                                    marginBottom: "unset",
-                                                    marginTop: 10,
+                                                    fontSize: 14,
+                                                    marginBottom: 5,
+                                                    marginTop: 5,
                                                   }}
                                                 >
                                                   <strong>Port of Exit</strong>
                                                 </p>
                                                 <p
                                                   style={{
-                                                    fontSize: 15,
-                                                    marginBottom: "unset",
-                                                    marginTop: 10,
+                                                    fontSize: 14,
+                                                    marginBottom: 5,
+                                                    marginTop: 5,
                                                   }}
                                                 >
                                                   {
@@ -714,7 +718,7 @@ TEL: +27 10 448 0733
                                       <span
                                         style={{
                                           paddingRight: 20,
-                                          fontSize: 15,
+                                          fontSize: 14,
                                           fontWeight: 600,
                                         }}
                                       >
@@ -735,7 +739,7 @@ TEL: +27 10 448 0733
                                       style={{
                                         padding: 5,
                                         border: "1px solid #1a2142",
-                                        fontSize: 15,
+                                        fontSize: 14,
                                         width: 150,
                                       }}
                                     >
@@ -746,7 +750,7 @@ TEL: +27 10 448 0733
                                       style={{
                                         padding: 5,
                                         border: "1px solid #1a2142",
-                                        fontSize: 15,
+                                        fontSize: 14,
                                         width: 200,
                                       }}
                                     >
@@ -756,7 +760,7 @@ TEL: +27 10 448 0733
                                       style={{
                                         padding: 5,
                                         border: "1px solid #1a2142",
-                                        fontSize: 15,
+                                        fontSize: 14,
                                         width: 200,
                                       }}
                                     >
@@ -766,7 +770,7 @@ TEL: +27 10 448 0733
                                       style={{
                                         padding: 5,
                                         border: "1px solid #1a2142",
-                                        fontSize: 15,
+                                        fontSize: 14,
                                         width: 200,
                                       }}
                                     >
@@ -776,7 +780,7 @@ TEL: +27 10 448 0733
                                       style={{
                                         padding: 5,
                                         border: "1px solid #1a2142",
-                                        fontSize: 15,
+                                        fontSize: 14,
                                         width: 200,
                                       }}
                                     >
@@ -786,7 +790,7 @@ TEL: +27 10 448 0733
                                       style={{
                                         padding: 5,
                                         border: "1px solid #1a2142",
-                                        fontSize: 15,
+                                        fontSize: 14,
                                       }}
                                     >
                                       Values of Good
@@ -795,7 +799,7 @@ TEL: +27 10 448 0733
                                       style={{
                                         padding: 5,
                                         border: "1px solid #1a2142",
-                                        fontSize: 15,
+                                        fontSize: 14,
                                       }}
                                     >
                                       Vat
@@ -804,16 +808,16 @@ TEL: +27 10 448 0733
                                       style={{
                                         padding: 5,
                                         border: "1px solid #1a2142",
-                                        fontSize: 15,
+                                        fontSize: 14,
                                       }}
                                     >
-                                   Final Amount 
+                                      Final Amount
                                     </th>
                                     {/* <th
                                       style={{
                                         padding: 5,
                                         border: "1px solid #1a2142",
-                                        fontSize: 15,
+                                        fontSize: 14,
                                       }}
                                     >
                                      
@@ -830,7 +834,7 @@ TEL: +27 10 448 0733
                                                 padding: 5,
                                                 border: "1px solid #1a2142",
                                                 textAlign: "left",
-                                                fontSize: 15,
+                                                fontSize: 14,
                                               }}
                                             >
                                               {item.HS_tariff_code}
@@ -847,7 +851,7 @@ TEL: +27 10 448 0733
                                               style={{
                                                 padding: 5,
                                                 border: "1px solid #1a2142",
-                                                fontSize: 15,
+                                                fontSize: 14,
                                               }}
                                             >
                                               {item.goods_value}
@@ -856,7 +860,7 @@ TEL: +27 10 448 0733
                                               style={{
                                                 padding: 5,
                                                 border: "1px solid #1a2142",
-                                                fontSize: 15,
+                                                fontSize: 14,
                                               }}
                                             >
                                               {item.import_duty}
@@ -865,7 +869,7 @@ TEL: +27 10 448 0733
                                               style={{
                                                 padding: 5,
                                                 border: "1px solid #1a2142",
-                                                fontSize: 15,
+                                                fontSize: 14,
                                               }}
                                             >
                                               {item.import_duty_per}
@@ -874,18 +878,18 @@ TEL: +27 10 448 0733
                                               style={{
                                                 padding: 5,
                                                 border: "1px solid #1a2142",
-                                                fontSize: 15,
+                                                fontSize: 14,
                                               }}
                                             >
                                               {item.values_of_good}
                                             </td>
-                                           
-                                           
+
+
                                             <td
                                               style={{
                                                 padding: 5,
                                                 border: "1px solid #1a2142",
-                                                fontSize: 15,
+                                                fontSize: 14,
                                               }}
                                             >
                                               {item.vat}
@@ -894,7 +898,7 @@ TEL: +27 10 448 0733
                                               style={{
                                                 padding: 5,
                                                 border: "1px solid #1a2142",
-                                                fontSize: 15,
+                                                fontSize: 14,
                                               }}
                                             >
                                               {item.total_amount}
@@ -903,12 +907,12 @@ TEL: +27 10 448 0733
                                               style={{
                                                 padding: 5,
                                                 border: "1px solid #1a2142",
-                                                fontSize: 15,
+                                                fontSize: 14,
                                               }}
                                             >
                                              {/* <button>Edit</button> */}
-                                            {/* </td> */} 
-                                            
+                                            {/* </td> */}
+
                                           </tr>
                                         </>
                                       );
@@ -919,67 +923,67 @@ TEL: +27 10 448 0733
                                       style={{
                                         padding: 5,
                                         border: "1px solid #1a2142",
-                                        fontSize: 15,
+                                        fontSize: 14,
                                       }}
                                     />
                                     <th
                                       style={{
                                         padding: 5,
                                         border: "1px solid #1a2142",
-                                        fontSize: 15,
+                                        fontSize: 14,
                                       }}
                                     >
-                                    Extra Charge
+                                      Extra Charge
                                     </th>
                                     <td
                                       style={{
                                         padding: 5,
                                         border: "1px solid #1a2142",
-                                        fontSize: 15,
+                                        fontSize: 14,
                                       }}
                                     />
                                     <th
                                       style={{
                                         padding: 5,
                                         border: "1px solid #1a2142",
-                                        fontSize: 15,
+                                        fontSize: 14,
                                       }}
                                     ></th>
                                     <th
                                       style={{
                                         padding: 5,
                                         border: "1px solid #1a2142",
-                                        fontSize: 15,
+                                        fontSize: 14,
                                       }}
                                     ></th>
                                     <th
                                       style={{
                                         padding: 5,
                                         border: "1px solid #1a2142",
-                                        fontSize: 15,
+                                        fontSize: 14,
                                       }}
                                     ></th>
                                     <th
                                       style={{
                                         padding: 5,
                                         border: "1px solid #1a2142",
-                                        fontSize: 15,
+                                        fontSize: 14,
                                       }}
                                     >
-                                    {extrachange ? extrachange : 0}
+                                      {extrachange ? extrachange : 0}
                                     </th>
                                     {/* <th
                                       style={{
                                         padding: 5,
                                         border: "1px solid #1a2142",
-                                        fontSize: 15,
+                                        fontSize: 14,
                                       }}
                                     ></th>
                                     <th
                                       style={{
                                         padding: 5,
                                         border: "1px solid #1a2142",
-                                        fontSize: 15,
+                                        fontSize: 14,
                                       }}
                                     ></th> */}
                                   </tr>
@@ -998,7 +1002,7 @@ TEL: +27 10 448 0733
                                         color: "black",
                                       }}
                                     >
-                                    Total Charge
+                                      Total Charge
                                     </td>
                                     <td
                                       style={{
@@ -1035,8 +1039,8 @@ TEL: +27 10 448 0733
                                         color: "black",
                                       }}
                                     >
-                                    {totalcalcualtion.toFixed(2)}
-                                      </td>
+                                      {totalcalcualtion.toFixed(2)}
+                                    </td>
                                   </tr>
                                 </tbody>
                               </table>
@@ -1075,88 +1079,88 @@ TEL: +27 10 448 0733
           </div>
           <div className="newModalGap">
             <div className="row my-3  ">
-                <h4>Enter HS code</h4>
+              <h4>Enter HS code</h4>
               <div className="d-flex ms-2">
-              <div className="my-3">
-                <input onChange={handleInputChange} onKeyPress={handleValidate} value={hfCode}></input>
-              </div>
-              <div>
-              {hfCode && (
-                  <button className=" my-3 btn btn-secondary ms-2 rounded-100" onClick={handleClickHf}>
-                    +
-                  </button>
-                )}
-              </div>
+                <div className="my-3">
+                  <input onChange={handleInputChange} onKeyPress={handleValidate} value={hfCode}></input>
+                </div>
+                <div>
+                  {hfCode && (
+                    <button className=" my-3 btn btn-secondary ms-2 rounded-100" onClick={handleClickHf}>
+                      +
+                    </button>
+                  )}
+                </div>
               </div>
               <div className="table-responsive">
-              <table className="table border">
-                <thead className="esti_thead">
-                  <tr>
-                    <th>HS Code</th>
-                    <th>Description</th>
-                    <th>VAT%</th>
-                    <th>Value of Goods</th>
-                    <th>Quoted Rate</th>
-                    <th></th>
-                    <th>Value Of Goods</th>
-                    <th>VAT</th>
-                    <th>Import Duty</th>
-                    <th>Calculate</th>
-                  </tr>
-                </thead>
-                <tbody className='esti_tbody'>
-                  {rows.map((row, index) => (
-                    <tr key={index}>
-                      <th>{row.hs_code}</th>
-                      <td>{row.hs_cod_desc}</td>
-                      <td>15%</td>
-                      <td>
-                        <input
-                          onKeyPress={handleValidate}
-                          name="valueofgoods"
-                          className='form-control'
-                          value={row.valueofgoods}
-                          onChange={(e) => handleChangeValueOfGood(e, index)}
-                        />
-                      </td>
-                      <td>
-                        <input
-                          onKeyPress={handleValidate}
-                          name="quotedRate"
-                          className='form-control'
-                          value={row.quotedRate}
-                          onChange={(e) => handleChangeValueOfGood(e, index)} />
-                      </td>
-                      <td><button
-                        className="ms-2 py-1 btn rounded"
-                        onClick={() => handleClickValue(index)}
-                        style={{ backgroundColor: 'red', color: 'white' }}
-                      >
-                        Add
-                      </button></td>
-                      <td>{row.csercount}</td>
-                      <td>{row.datavalttac}</td>
-                      <td>{row.datavat}</td>
-                      <td>{row.estimate}</td>
+                <table className="table border">
+                  <thead className="esti_thead">
+                    <tr>
+                      <th>HS Code</th>
+                      <th>Description</th>
+                      <th>VAT%</th>
+                      <th>Value of Goods</th>
+                      <th>Quoted Rate</th>
+                      <th></th>
+                      <th>Value Of Goods</th>
+                      <th>VAT</th>
+                      <th>Import Duty</th>
+                      <th>Calculate</th>
                     </tr>
-                  ))}
-                  {rows.length > 0 && (
-                    <>
-                      <tr>
-                        <td colSpan="10" className="text-end">
-                          <strong>Final Amount: </strong> {finalAmount.toFixed(2)}
+                  </thead>
+                  <tbody className='esti_tbody'>
+                    {rows.map((row, index) => (
+                      <tr key={index}>
+                        <th>{row.hs_code}</th>
+                        <td>{row.hs_cod_desc}</td>
+                        <td>15%</td>
+                        <td>
+                          <input
+                            onKeyPress={handleValidate}
+                            name="valueofgoods"
+                            className='form-control'
+                            value={row.valueofgoods}
+                            onChange={(e) => handleChangeValueOfGood(e, index)}
+                          />
                         </td>
+                        <td>
+                          <input
+                            onKeyPress={handleValidate}
+                            name="quotedRate"
+                            className='form-control'
+                            value={row.quotedRate}
+                            onChange={(e) => handleChangeValueOfGood(e, index)} />
+                        </td>
+                        <td><button
+                          className="ms-2 py-1 btn rounded"
+                          onClick={() => handleClickValue(index)}
+                          style={{ backgroundColor: 'red', color: 'white' }}
+                        >
+                          Add
+                        </button></td>
+                        <td>{row.csercount}</td>
+                        <td>{row.datavalttac}</td>
+                        <td>{row.datavat}</td>
+                        <td>{row.estimate}</td>
                       </tr>
-                    </>
-                  )}
-                </tbody>
-              </table>
-            </div>
+                    ))}
+                    {rows.length > 0 && (
+                      <>
+                        <tr>
+                          <td colSpan="10" className="text-end">
+                            <strong>Final Amount: </strong> {finalAmount.toFixed(2)}
+                          </td>
+                        </tr>
+                      </>
+                    )}
+                  </tbody>
+                </table>
+              </div>
             </div>
             <Button
               variant="contained"
               className="text-center"
-              // onClick={postattachquote}
+            // onClick={postattachquote}
             >
               Add Estimate
             </Button>

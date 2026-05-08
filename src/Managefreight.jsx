@@ -225,11 +225,11 @@ export default function Managefreight() {
       toast.error("You don't have permission to access this page");
     }
   };
-useEffect(() => {
-  if (userid && usertype) {
-    frightData(currentPage);
-  }
-}, [userid, usertype, currentPage]);
+  useEffect(() => {
+    if (userid && usertype) {
+      frightData(currentPage);
+    }
+  }, [userid, usertype, currentPage]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -272,7 +272,7 @@ useEffect(() => {
             })
             .then((response) => {
               toast.success(response.data.message);
-               frightData(currentPage);
+              frightData(currentPage);
             })
             .catch((error) => {
               toast.error(error.response.data.message);
@@ -310,9 +310,9 @@ useEffect(() => {
   const handleupdateapi = (e) => {
     const { name, value } = e.target;
     setInputdata((prev) => ({
-  ...prev,
-  [name]: value,
-}));
+      ...prev,
+      [name]: value,
+    }));
   };
   let today = new Date();
   let year = today.getFullYear();
@@ -320,7 +320,7 @@ useEffect(() => {
   let day = String(today.getDate()).padStart(2, "0");
   let formattedDate = `${year}-${month}-${day}`;
 
-   const handleupdateapipost = (freight_id) => {
+  const handleupdateapipost = (freight_id) => {
     console.log(inputdata.client_ref);
     const formdata = new FormData();
     formdata.append("date", formattedDate);
@@ -371,13 +371,13 @@ useEffect(() => {
     formdata.append("cargo_pickup", inputdata.cargo_pickup);
     formdata.append("sales_representative", inputdata.sales_representative);
     formdata.append("documentName", inputdata.documentName);
-     selectedDocs.forEach((doc) => {
-       doc.files.forEach((file) => {
-         formdata.append(doc.name, file);  
-         console.log("File:", file.name, "| Size:", file.size, "bytes");
-       });
-     });
-  
+    selectedDocs.forEach((doc) => {
+      doc.files.forEach((file) => {
+        formdata.append(doc.name, file);
+        console.log("File:", file.name, "| Size:", file.size, "bytes");
+      });
+    });
+
     console.log(formdata);
     axios
       .post(`${process.env.REACT_APP_BASE_URL}edit-freight`, formdata)
@@ -467,7 +467,7 @@ useEffect(() => {
   //         setLoader(false);
   //         toast.success(response.data.message);
   //       }
-        
+
   //     })
   //     .catch((error) => {
   //       console.error(error.response);
@@ -506,8 +506,8 @@ useEffect(() => {
     });
     // navigate("/Admin/MAnageFreightDetails", { state: { data: alldtaaa } });
     // const handlelcickseedata = (freight_id) => {
-  navigate(`/Admin/MAnageFreightDetails/${freight_id}`);
-// };
+    navigate(`/Admin/MAnageFreightDetails/${freight_id}`);
+    // };
   };
   const handlelcickseedata1212 = async (item) => {
     const datapost = {
@@ -573,7 +573,7 @@ useEffect(() => {
     console.log(freight_id);
     JSON.stringify(localStorage.setItem("freightid", freight_id));
     navigate("/Admin/SupplierEstimation", { state: { data: freight_id } });
-    
+
   };
 
   ///////////////////////pegenation//////////////////////////////////////////
@@ -971,9 +971,14 @@ useEffect(() => {
             top: "50%",
             left: "50%",
             transform: "translate(-50%, -50%)",
-            minWidth: 450,
             bgcolor: "background.paper",
             boxShadow: 24,
+            width: {
+              xs: "95%",
+              sm: "80%",
+              md: "60%",
+              lg: "40%",
+            },
           }}
         >
           <div className="modal-header">
@@ -985,32 +990,37 @@ useEffect(() => {
             </button>
           </div>
           <div className="newModalGap">
-            <div className="row my-3  "></div>
-            <div className="col-12 ">
-              <label>Assign Staff</label>
-              <select
-                className="form-cuntrol col-12 border px-3 py-2 mb-2"
-                value={supplierName}
-                onChange={(e) => {
-                  setSupplierName(e.target.value);
-                }}
-                name="attachdoc"
-              >
-                <option>Select</option>
-                {supplierData.map((item, index) => (
-                  <option key={index} value={item.id}>
-                    {item.full_name}
-                  </option>
-                ))}
-              </select>
+            <div className="row">
+
+              <div className="col-md-12 ">
+                <label>Assign Staff</label>
+                <select
+                  className="form-select col-12"
+                  value={supplierName}
+                  onChange={(e) => {
+                    setSupplierName(e.target.value);
+                  }}
+                  name="attachdoc"
+                >
+                  <option>Select</option>
+                  {supplierData.map((item, index) => (
+                    <option key={index} value={item.id}>
+                      {item.full_name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div className=" col-md-12 text-center mt-4">
+                <Button
+                  variant="contained"
+                  className="blueBtn"
+                  onClick={AssignFreightToSupplier}
+                >
+                  Add Staff
+                </Button>
+              </div>
+
             </div>
-            <Button
-              variant="contained"
-              className="text-center"
-              onClick={AssignFreightToSupplier}
-            >
-              Add Staff
-            </Button>
           </div>
         </Box>
       </Modal>
@@ -1019,11 +1029,9 @@ useEffect(() => {
           <div className="row manageFreight">
             <div className="col-12">
               <div className="d-flex justify-content-between">
-                <div className="">
-                  <h4 className="freight_hd">Freight By Admin</h4>
-                </div>
-                <div className="d-flex justify-content-end">
-                  <div className="me-2 searchManageFre">
+                <h4 className="freight_hd">Freight By Admin</h4>
+                <div className="d-flex gap-2 flex-wrap">
+                  <div className="searchManageFre">
                     <input
                       className="py-1 rounded ps-1"
                       type="text"
@@ -1033,14 +1041,13 @@ useEffect(() => {
                     ></input>
                   </div>
                   <button
-                    className="me-2"
                     onClick={() => freightData1(searchQuery)}
                   >
                     Search
                   </button>
                   <div className="dropdown">
                     <button
-                      className="dropdown-toggle me-2"
+                      className="dropdown-toggle"
                       type="button"
                       data-bs-toggle="dropdown"
                       aria-expanded="false"
@@ -1083,12 +1090,12 @@ useEffect(() => {
                     </ul>
                   </div>
 
-                  <div className="me-2">
+                  <div>
                     <button type="button" onClick={handleclickopenmodal}>
                       Filter
                     </button>
                   </div>
-                  <div className="">
+                  <div>
                     <button
                       type="button"
                       onClick={() => {
@@ -1494,7 +1501,7 @@ useEffect(() => {
                                         <div>
                                           {" "}
                                           {item?.supplier_name === "null" ||
-                                          !item?.supplier_name
+                                            !item?.supplier_name
                                             ? ""
                                             : item?.supplier_name}{" "}
                                         </div>
@@ -1538,7 +1545,7 @@ useEffect(() => {
                                               </div>
                                               <div className=" mt-3">
                                                 <div className="row borderShip">
-                                                  <div className="col-lg-6 mb-3 ">
+                                                  <div className="col-md-6 mb-3 ">
                                                     <label>Date</label>
                                                     <input
                                                       type="date"
@@ -1546,9 +1553,10 @@ useEffect(() => {
                                                       name="date"
                                                     />
                                                   </div>
-                                                  <div className="col-lg-6 mb-3">
+                                                  <div className="col-md-6 mb-3">
                                                     <label>Client</label>
                                                     <select
+                                                      className="form-select"
                                                       value={
                                                         inputdata.client_ref
                                                       }
@@ -1578,9 +1586,10 @@ useEffect(() => {
                                                         )}
                                                     </select>
                                                   </div>
-                                                  <div className=" col-lg-6  mb-3">
+                                                  <div className=" col-md-6  mb-3">
                                                     <label>Freight</label>
                                                     <select
+                                                      className="form-select"
                                                       name="type"
                                                       value={inputdata.type}
                                                       onChange={handleupdateapi}
@@ -1596,9 +1605,10 @@ useEffect(() => {
                                                       </option>
                                                     </select>
                                                   </div>
-                                                  <div className=" col-lg-6  mb-3">
+                                                  <div className=" col-md-6  mb-3">
                                                     <label>Freight Type</label>
                                                     <select
+                                                      className="form-select"
                                                       name="freight"
                                                       value={inputdata.freight}
                                                       onChange={handleupdateapi}
@@ -1617,7 +1627,7 @@ useEffect(() => {
                                                       </option>
                                                     </select>
                                                   </div>
-                                                  <div className=" col-lg-6  mb-3">
+                                                  <div className=" col-md-6  mb-3">
                                                     <label>
                                                       Client Reference
                                                     </label>
@@ -1629,7 +1639,7 @@ useEffect(() => {
                                                       onChange={handleupdateapi}
                                                     ></input>
                                                   </div>
-                                                  <div className=" col-lg-6  mb-3">
+                                                  <div className=" col-md-6  mb-3">
                                                     <label>
                                                       Product Description
                                                     </label>
@@ -1656,7 +1666,7 @@ useEffect(() => {
                                                       name="transit_time"
                                                     />
                                                   </div>
-                                                  <div className="col-lg-6 mb-3 spaceAssignEst">
+                                                  <div className="col-md-6 mb-3 shipRefer  spaceAssignEst">
                                                     <FormControl>
                                                       <FormLabel id="demo-row-radio-buttons-group-label">
                                                         <label>Priority</label>
@@ -1689,7 +1699,7 @@ useEffect(() => {
                                                       </RadioGroup>
                                                     </FormControl>
                                                   </div>
-                                                  <div className="col-lg-6 mb-3 spaceAssignEst">
+                                                  <div className="col-md-6 mb-3 shipRefer  spaceAssignEst">
                                                     <FormControl>
                                                       <FormLabel id="demo-row-radio-buttons-group-label">
                                                         <label>
@@ -1726,11 +1736,12 @@ useEffect(() => {
                                               </div>
                                               <div className="">
                                                 <div className="row borderShip">
-                                                  <div className="col-lg-6 mb-3">
+                                                  <div className="col-md-6 mb-3">
                                                     <label>
                                                       Country of Origin
                                                     </label>
                                                     <select
+                                                      className="form-select"
                                                       name="country_of_origin"
                                                       onChange={handleupdateapi}
                                                       value={
@@ -1754,12 +1765,13 @@ useEffect(() => {
                                                         )}
                                                     </select>
                                                   </div>
-                                                  <div className=" col-lg-6  mb-3">
+                                                  <div className=" col-md-6  mb-3">
                                                     <label>
                                                       {" "}
                                                       Destination Country
                                                     </label>
                                                     <select
+                                                      className="form-select"
                                                       name="destination_country"
                                                       onChange={handleupdateapi}
                                                       value={
@@ -1790,7 +1802,7 @@ useEffect(() => {
                                                         )}
                                                     </select>
                                                   </div>
-                                                  <div className="col-lg-6 mb-3">
+                                                  <div className="col-md-6 mb-3">
                                                     <label>
                                                       Port of Loading
                                                     </label>
@@ -1804,7 +1816,7 @@ useEffect(() => {
                                                       placeholder="Port of Loading"
                                                     />
                                                   </div>
-                                                  <div className="col-lg-6 mb-3">
+                                                  <div className="col-md-6 mb-3">
                                                     <label>
                                                       {" "}
                                                       Port of Discharge
@@ -1819,7 +1831,7 @@ useEffect(() => {
                                                       placeholder="Port of Discharge"
                                                     />
                                                   </div>
-                                                  <div className="col-lg-6 mb-3">
+                                                  <div className="col-md-6 mb-3">
                                                     <label>
                                                       Place of Delivery
                                                     </label>
@@ -1833,9 +1845,10 @@ useEffect(() => {
                                                       placeholder="Place of Delivery"
                                                     />
                                                   </div>
-                                                  <div className="col-lg-6">
+                                                  <div className="col-md-6">
                                                     <label> Incoterm </label>
                                                     <select
+                                                      className="form-select"
                                                       name="incoterm"
                                                       onChange={handleupdateapi}
                                                       value={inputdata.incoterm}
@@ -1869,7 +1882,7 @@ useEffect(() => {
                                                       </option>
                                                     </select>
                                                   </div>
-                                                  <div className="col-lg-6 mb-3">
+                                                  <div className="col-md-6 mb-3">
                                                     <label>Shipper Name</label>
                                                     <input
                                                       type="text"
@@ -1881,7 +1894,7 @@ useEffect(() => {
                                                       placeholder="Shipper Name"
                                                     />
                                                   </div>
-                                                  <div className="col-lg-6">
+                                                  <div className="col-md-6">
                                                     <label>
                                                       {" "}
                                                       Supplier Address
@@ -1896,7 +1909,7 @@ useEffect(() => {
                                                       placeholder="Shipper Name"
                                                     />
                                                   </div>
-                                                  <div className="col-lg-6 mb-3">
+                                                  <div className="col-md-6 mb-3">
                                                     <label>
                                                       Place of Receipt/ Supplier
                                                       Address
@@ -1911,10 +1924,11 @@ useEffect(() => {
                                                       placeholder="Supplier Address"
                                                     />
                                                   </div>
-                                                  <div className="col-lg-6 mb-3">
+                                                  <div className="col-md-6 mb-3">
                                                     <label>Type</label>
 
                                                     <select
+                                                      className="form-select"
                                                       name="fcl_lcl"
                                                       onChange={handleupdateapi}
                                                       value={inputdata.fcl_lcl}
@@ -1930,7 +1944,7 @@ useEffect(() => {
                                                   </div>
                                                   <div>
                                                     <div className="row">
-                                                      <div className="col-lg-6">
+                                                      <div className="col-md-6 updateFreList">
                                                         <FormControl>
                                                           <FormLabel id="demo-row-radio-buttons-group-label">
                                                             <label>
@@ -1978,7 +1992,7 @@ useEffect(() => {
                                                           </RadioGroup>
                                                         </FormControl>
                                                       </div>
-                                                      <div className="col-lg-6">
+                                                      <div className="col-md-6  updateFreList">
                                                         <label>
                                                           Destination
                                                         </label>
@@ -2033,7 +2047,7 @@ useEffect(() => {
                                               </div>
                                               <div className="">
                                                 <div className="row borderShip">
-                                                  <div className=" col-lg-6  mb-3">
+                                                  <div className=" col-md-6  mb-3">
                                                     <label>
                                                       Product Description
                                                     </label>
@@ -2045,10 +2059,11 @@ useEffect(() => {
                                                       onChange={handleupdateapi}
                                                     ></input>
                                                   </div>
-                                                  <div className="col-lg-6 mb-3">
+                                                  <div className="col-md-6 mb-3">
                                                     <label>Package Type</label>
                                                     <br />
                                                     <select
+                                                      className="form-select"
                                                       name="package_type"
                                                       value={
                                                         inputdata.package_type
@@ -2073,7 +2088,7 @@ useEffect(() => {
                                                       </option>
                                                     </select>
                                                   </div>
-                                                  <div className="col-lg-6 mb-3">
+                                                  <div className="col-md-6 mb-3">
                                                     <label>
                                                       {" "}
                                                       No. of Packages
@@ -2089,9 +2104,10 @@ useEffect(() => {
                                                       placeholder="Num.. of Package"
                                                     />
                                                   </div>
-                                                  <div className="col-lg-6 mb-3">
+                                                  <div className="col-md-6 mb-3">
                                                     <label>Commodity</label>
                                                     <select
+                                                      className="form-select"
                                                       name="commodity"
                                                       onChange={handleupdateapi}
                                                       value={
@@ -2120,7 +2136,7 @@ useEffect(() => {
                                                         )}
                                                     </select>
                                                   </div>
-                                                  <div className="col-lg-6 mb-3">
+                                                  <div className="col-md-6 mb-3">
                                                     <label> Dimension</label>
                                                     <input
                                                       type="text"
@@ -2133,7 +2149,7 @@ useEffect(() => {
                                                       placeholder="Dimension"
                                                     />
                                                   </div>
-                                                  <div className="col-lg-6 mb-3">
+                                                  <div className="col-md-6 mb-3">
                                                     <label> Weight</label>
                                                     <input
                                                       type="text"
@@ -2144,7 +2160,7 @@ useEffect(() => {
                                                       placeholder="Weight"
                                                     />
                                                   </div>
-                                                  <div className="col-lg-6 mb-3">
+                                                  <div className="col-md-6 mb-3">
                                                     <label>
                                                       {" "}
                                                       Volumetric Weight
@@ -2157,157 +2173,157 @@ useEffect(() => {
                                                       value={
                                                         inputdata.dimension
                                                           ? 167 *
-                                                            inputdata.dimension
+                                                          inputdata.dimension
                                                           : inputdata.volumetric_weight
                                                       }
                                                       placeholder="Volumetric Weight"
                                                     />
                                                   </div>
-                                                  <div className="row mb-3 mt-4">
-                                                    <div className="col-9 mt-3">
-                                                      <h4 className="freight_hd">
-                                                        Document Section
-                                                      </h4>
-                                                      <span class="line"></span>
-                                                    </div>
-                                                    <div className="col-3">
-                                                      <Button
-                                                        className="btn  btn-primary"
-                                                        onClick={handleShow}
-                                                      >
-                                                        Upload Documents
-                                                      </Button>
+                                                  <div className="col-md-6"></div>
+                                                  <div className="col-md-6">
+                                                    <h4 className="freight_hd">
+                                                      Document Section
+                                                    </h4>
+                                                    <span class="line"></span>
+                                                  </div>
+                                                  <div className="col-md-6 text-end">
+                                                    <button
+                                                      className="blueBtn"
+                                                      onClick={handleShow}
+                                                    >
+                                                      Upload Documents
+                                                    </button>
 
-                                                      {show1 ? (
-                                                        <Modal
-                                                          open={show1}
-                                                          onClose={handleClose}
-                                                          slotProps={{
-                                                            backdrop: {
-                                                              sx: {
-                                                                backgroundColor:
-                                                                  "rgba(0,0,0,0.2)",
-                                                              }, // lighter background
-                                                            },
+                                                    {show1 ? (
+                                                      <Modal
+                                                        open={show1}
+                                                        onClose={handleClose}
+                                                        slotProps={{
+                                                          backdrop: {
+                                                            sx: {
+                                                              backgroundColor:
+                                                                "rgba(0,0,0,0.2)",
+                                                            }, // lighter background
+                                                          },
+                                                        }}
+                                                      >
+                                                        <Box
+                                                          sx={{
+                                                            p: 3,
+                                                            bgcolor:
+                                                              "background.paper",
+                                                            borderRadius: 2,
+                                                            width: 500,
+                                                            mx: "auto",
+                                                            mt: 10,
                                                           }}
                                                         >
-                                                          <Box
-                                                            sx={{
-                                                              p: 3,
-                                                              bgcolor:
-                                                                "background.paper",
-                                                              borderRadius: 2,
-                                                              width: 500,
-                                                              mx: "auto",
-                                                              mt: 10,
-                                                            }}
+                                                          <h2>
+                                                            Upload Documents
+                                                          </h2>
+
+                                                          {/* Dropdown */}
+                                                          <FormControl
+                                                            fullWidth
+                                                            sx={{ mt: 2 }}
                                                           >
-                                                            <h2>
-                                                              Upload Documents
-                                                            </h2>
-
-                                                            {/* Dropdown */}
-                                                            <FormControl
-                                                              fullWidth
-                                                              sx={{ mt: 2 }}
+                                                            <InputLabel id="doc-select-label">
+                                                              Select Document
+                                                              Type
+                                                            </InputLabel>
+                                                            <Select
+                                                              labelId="doc-select-label"
+                                                              // value={selected}
+                                                              onChange={
+                                                                handleSelect
+                                                              }
                                                             >
-                                                              <InputLabel id="doc-select-label">
-                                                                Select Document
-                                                                Type
-                                                              </InputLabel>
-                                                              <Select
-                                                                labelId="doc-select-label"
-                                                                // value={selected}
-                                                                onChange={
-                                                                  handleSelect
-                                                                }
-                                                              >
-                                                                {docOptions.map(
-                                                                  (option) => (
-                                                                    <MenuItem
-                                                                      key={
-                                                                        option.id
-                                                                      }
-                                                                      value={
-                                                                        option.id
-                                                                      }
-                                                                    >
-                                                                      {
-                                                                        option.label
-                                                                      }
-                                                                    </MenuItem>
-                                                                  ),
-                                                                )}
-                                                              </Select>
-                                                            </FormControl>
-
-                                                            {/* Dynamic file inputs */}
-                                                            <div className="mt-3">
-                                                              {selectedDocs.map(
-                                                                (
-                                                                  doc,
-                                                                  index,
-                                                                ) => (
-                                                                  <div
-                                                                    key={index}
-                                                                    className="mb-3"
+                                                              {docOptions.map(
+                                                                (option) => (
+                                                                  <MenuItem
+                                                                    key={
+                                                                      option.id
+                                                                    }
+                                                                    value={
+                                                                      option.id
+                                                                    }
                                                                   >
-                                                                    <label className="fw-bold">
-                                                                      {doc.name}
-                                                                    </label>
-                                                                    <input
-                                                                      type="file"
-                                                                      className="form-control"
-                                                                      multiple
-                                                                      accept="image/*,application/pdf"
-                                                                      onChange={(
-                                                                        e,
-                                                                      ) =>
-                                                                        handleFileChangefil(
-                                                                          e,
-                                                                          doc.name,
-                                                                        )
-                                                                      }
-                                                                    />
-                                                                  </div>
+                                                                    {
+                                                                      option.label
+                                                                    }
+                                                                  </MenuItem>
                                                                 ),
                                                               )}
-                                                            </div>
+                                                            </Select>
+                                                          </FormControl>
 
-                                                            {/* Footer buttons */}
-                                                            <Box
-                                                              sx={{
-                                                                display: "flex",
-                                                                justifyContent:
-                                                                  "flex-end",
-                                                                gap: 2,
-                                                                mt: 3,
-                                                              }}
+                                                          {/* Dynamic file inputs */}
+                                                          <div className="mt-3">
+                                                            {selectedDocs.map(
+                                                              (
+                                                                doc,
+                                                                index,
+                                                              ) => (
+                                                                <div
+                                                                  key={index}
+                                                                  className="mb-3"
+                                                                >
+                                                                  <label className="fw-bold">
+                                                                    {doc.name}
+                                                                  </label>
+                                                                  <input
+                                                                    type="file"
+                                                                    className="form-control"
+                                                                    multiple
+                                                                    accept="image/*,application/pdf"
+                                                                    onChange={(
+                                                                      e,
+                                                                    ) =>
+                                                                      handleFileChangefil(
+                                                                        e,
+                                                                        doc.name,
+                                                                      )
+                                                                    }
+                                                                  />
+                                                                </div>
+                                                              ),
+                                                            )}
+                                                          </div>
+
+                                                          {/* Footer buttons */}
+                                                          <Box
+                                                            sx={{
+                                                              display: "flex",
+                                                              justifyContent:
+                                                                "flex-end",
+                                                              gap: 2,
+                                                              mt: 3,
+                                                            }}
+                                                          >
+                                                            <Button
+                                                              onClick={
+                                                                handleClose
+                                                              }
                                                             >
-                                                              <Button
-                                                                onClick={
-                                                                  handleClose
-                                                                }
-                                                              >
-                                                                Cancel
-                                                              </Button>
-                                                              <Button
-                                                                variant="contained"
-                                                                color="success"
-                                                                onClick={
-                                                                  handleSave
-                                                                }
-                                                              >
-                                                                Save Documents
-                                                              </Button>
-                                                            </Box>
+                                                              Cancel
+                                                            </Button>
+                                                            <Button
+                                                              variant="contained"
+                                                              color="success"
+                                                              onClick={
+                                                                handleSave
+                                                              }
+                                                            >
+                                                              Save Documents
+                                                            </Button>
                                                           </Box>
-                                                        </Modal>
-                                                      ) : (
-                                                        ""
-                                                      )}
-                                                    </div>
+                                                        </Box>
+                                                      </Modal>
+                                                    ) : (
+                                                      ""
+                                                    )}
                                                   </div>
+
                                                   <div className="mt-3">
                                                     {selectedDocs.map(
                                                       (doc, index) => (
@@ -2336,13 +2352,14 @@ useEffect(() => {
                                                   </div>
 
                                                   {inputdata.hazardous ===
-                                                  "yes" ? (
-                                                    <div className=" col-lg-6  mb-3">
+                                                    "yes" ? (
+                                                    <div className=" col-md-6  mb-3">
                                                       <label>
                                                         {" "}
                                                         Nature of hazard
                                                       </label>
                                                       <select
+                                                        className="form-select"
                                                         name="nature_of_hazard"
                                                         onChange={
                                                           handleupdateapi
@@ -2437,7 +2454,7 @@ useEffect(() => {
                                                   ) : (
                                                     ""
                                                   )}
-                                                  <div className="col-lg-6 mb-3">
+                                                  <div className="col-lg-12 mb-3">
                                                     <label> Comment</label>
                                                     <textarea
                                                       name="comment"
@@ -2511,33 +2528,36 @@ useEffect(() => {
                                                       </RadioGroup>
                                                     </FormControl>
                                                   </div>
-                                                  <div className=" col-lg-6 mb-3">
-                                                    <FormControl>
-                                                      <FormLabel id="demo-row-radio-buttons-group-label">
-                                                        <label>Hazardous</label>
-                                                      </FormLabel>
-                                                      <RadioGroup
-                                                        aria-labelledby="demo-row-radio-buttons-group-label"
-                                                        value={
-                                                          inputdata.hazardous
-                                                        }
-                                                        name="hazardous"
-                                                        onChange={
-                                                          handlereadyhazardous
-                                                        }
-                                                      >
-                                                        <FormControlLabel
-                                                          value="yes"
-                                                          control={<Radio />}
-                                                          label="Yes"
-                                                        />
-                                                        <FormControlLabel
-                                                          value="no"
-                                                          control={<Radio />}
-                                                          label="No"
-                                                        />
-                                                      </RadioGroup>
-                                                    </FormControl>
+                                                  <div className=" col-md-6 mb-3">
+                                                    <div className="shipRefer">
+                                                      <FormControl>
+                                                        <FormLabel id="demo-row-radio-buttons-group-label">
+                                                          <label>Hazardous</label>
+                                                        </FormLabel>
+                                                        <RadioGroup
+                                                          aria-labelledby="demo-row-radio-buttons-group-label"
+                                                          value={
+                                                            inputdata.hazardous
+                                                          }
+                                                          name="hazardous"
+                                                          onChange={
+                                                            handlereadyhazardous
+                                                          }
+                                                        >
+                                                          <FormControlLabel
+                                                            value="yes"
+                                                            control={<Radio />}
+                                                            label="Yes"
+                                                          />
+                                                          <FormControlLabel
+                                                            value="no"
+                                                            control={<Radio />}
+                                                            label="No"
+                                                          />
+                                                        </RadioGroup>
+                                                      </FormControl>
+
+                                                    </div>
                                                   </div>
                                                 </div>
                                                 <div className="borderShip mt-4">
@@ -2548,6 +2568,7 @@ useEffect(() => {
                                                     </label>
 
                                                     <select
+                                                      className="form-select"
                                                       name="assign_to_transporter"
                                                       onChange={handleupdateapi}
                                                       value={
@@ -2571,34 +2592,37 @@ useEffect(() => {
                                                       </option>
                                                     </select>
                                                   </div>
-                                                  <div className="shipRefer mb-3">
+                                                  <div className="shipRefer d-flex flex-column mb-3">
                                                     <label>
                                                       Send to Warehouse
                                                     </label>
-                                                    <FormControl>
-                                                      <FormLabel id="demo-row-radio-buttons-group-label"></FormLabel>
-                                                      <RadioGroup
-                                                        aria-labelledby="demo-row-radio-buttons-group-label"
-                                                        value={
-                                                          inputdata.send_to_warehouse
-                                                        }
-                                                        name="send_to_warehouse"
-                                                        onChange={
-                                                          send_to_warehouse
-                                                        }
-                                                      >
-                                                        <FormControlLabel
-                                                          value="Yes"
-                                                          control={<Radio />}
-                                                          label="Yes"
-                                                        />
-                                                        <FormControlLabel
-                                                          value="No"
-                                                          control={<Radio />}
-                                                          label="No"
-                                                        />
-                                                      </RadioGroup>
-                                                    </FormControl>
+                                                    <div>
+                                                      <FormControl>
+                                                        <FormLabel id="demo-row-radio-buttons-group-label"></FormLabel>
+                                                        <RadioGroup
+                                                          aria-labelledby="demo-row-radio-buttons-group-label"
+                                                          value={
+                                                            inputdata.send_to_warehouse
+                                                          }
+                                                          name="send_to_warehouse"
+                                                          onChange={
+                                                            send_to_warehouse
+                                                          }
+                                                        >
+                                                          <FormControlLabel
+                                                            value="Yes"
+                                                            control={<Radio />}
+                                                            label="Yes"
+                                                          />
+                                                          <FormControlLabel
+                                                            value="No"
+                                                            control={<Radio />}
+                                                            label="No"
+                                                          />
+                                                        </RadioGroup>
+                                                      </FormControl>
+
+                                                    </div>
                                                   </div>
                                                 </div>
                                                 <div className="borderShip mt-4">
@@ -2607,6 +2631,7 @@ useEffect(() => {
                                                       Assign Warehouse
                                                     </label>
                                                     <select
+                                                      className="form-select"
                                                       name="assign_warehouse"
                                                       onChange={handleupdateapi}
                                                       value={
@@ -2634,7 +2659,7 @@ useEffect(() => {
                                                       </option>
                                                     </select>
                                                   </div>
-                                                  <div className="shipRefer mb-3">
+                                                  <div className="shipRefer mb-3 d-flex flex-column">
                                                     <label>
                                                       Assign to Clearing
                                                     </label>
@@ -2734,9 +2759,15 @@ useEffect(() => {
                 top: "50%",
                 left: "50%",
                 transform: "translate(-50%, -50%)",
-                minWidth: 450,
+
                 bgcolor: "background.paper",
                 boxShadow: 24,
+                width: {
+                  xs: "95%",
+                  sm: "80%",
+                  md: "60%",
+                  lg: "40%",
+                },
               }}
             >
               <div className="modal-header">
@@ -2748,7 +2779,7 @@ useEffect(() => {
                 </button>
               </div>
               <div className="newModalGap">
-                <div className="row my-3  ">
+                <div className="row">
                   <div className="col-12 ">
                     <label>Attach Quote</label>
                     <input
@@ -2759,13 +2790,15 @@ useEffect(() => {
                     ></input>
                   </div>
                 </div>
-                <Button
-                  variant="contained"
-                  className="text-center"
-                  onClick={postattachquote}
-                >
-                  Add Quote
-                </Button>
+                <div className="text-center mt-4">
+                  <button
+                    variant="contained"
+                    className="blueBtn"
+                    onClick={postattachquote}
+                  >
+                    Add Quote
+                  </button>
+                </div>
               </div>
             </Box>
           </Modal>
@@ -2785,6 +2818,12 @@ useEffect(() => {
                   transform: "translate(-50%, -50%)",
                   bgcolor: "background.paper",
                   boxShadow: 24,
+                  width: {
+                    xs: "95%",   // mobile
+                    sm: "80%",   // tablet
+                    md: "60%",   // small laptop
+                    lg: "40%",   // desktop
+                  },
                 }}
               >
                 <div className="modal-header">
@@ -2795,18 +2834,18 @@ useEffect(() => {
                 </div>
                 {/*header end */}
                 <div className="newModalGap noFormaControl">
-                  <div className="row my-3  ">
-                    <div className="col-6">
+                  <div className="row g-3">
+                    <div className="col-md-6">
                       <label>Delivery Type</label>
-                      <select name="type" onChange={handlechange}>
+                      <select name="type" onChange={handlechange} className="form-select">
                         <option value="">Select</option>
                         <option value="express">Express</option>
                         <option value="normal">Consolidation</option>
                       </select>
                     </div>
-                    <div className="col-6">
+                    <div className="col-md-6">
                       <label>Priority </label>
-                      <div className="shipRefer1 d-flex">
+                      <div className="shipRefer1 radioBtn d-flex gap-4">
                         <div>
                           <input
                             type="radio"
@@ -2842,11 +2881,11 @@ useEffect(() => {
                         </div>
                       </div>
                     </div>
-                  </div>
-                  <div className="row mb-3">
-                    <div className="col-6">
+
+
+                    <div className="col-md-6">
                       <label>Country of Origin</label>
-                      <select name="origin" onChange={handlechange}>
+                      <select name="origin" onChange={handlechange} className="form-select">
                         <option value="">Select</option>
                         {updatedata &&
                           updatedata.length > 0 &&
@@ -2859,9 +2898,9 @@ useEffect(() => {
                           })}
                       </select>
                     </div>
-                    <div className="col-6">
+                    <div className="col-md-6">
                       <label>Delivery to Country </label>
-                      <select name="destination" onChange={handlechange}>
+                      <select name="destination" onChange={handlechange} className="form-select">
                         <option value="">Select</option>
                         {updatedata &&
                           updatedata.length > 0 &&
@@ -2874,9 +2913,9 @@ useEffect(() => {
                           })}
                       </select>
                     </div>
-                  </div>
-                  <div className="row mb-3">
-                    <div className="col-6">
+
+
+                    <div className="col-md-6 col-sm-6">
                       <label>Start Date</label>
                       <input
                         type="date"
@@ -2887,7 +2926,7 @@ useEffect(() => {
                         onChange={handlechange}
                       />
                     </div>
-                    <div className="col-6">
+                    <div className="col-md-6 col-sm-6">
                       <label>End Date </label>
                       <input
                         type="date"
@@ -2898,11 +2937,11 @@ useEffect(() => {
                         onChange={handlechange}
                       />
                     </div>
-                  </div>
-                  <div className="row mb-3">
-                    <div className="col-12">
+
+
+                    <div className="col-md-12">
                       <label>Freight</label>
-                      <select name="freight" onChange={handlechange}>
+                      <select name="freight" onChange={handlechange} className="form-select">
                         <option value="">Select...</option>
                         <option value="Sea">Sea</option>
                         <option value="Air">Air</option>
@@ -2910,17 +2949,20 @@ useEffect(() => {
                       </select>
                     </div>
                   </div>
-                  <Button variant="contained" onClick={postData}>
-                    Apply
-                  </Button>
+                  <div className="text-center mt-4">
+                    <button className="blueBtn " variant="contained" onClick={postData}>
+                      Apply
+                    </button>
+
+                  </div>
                 </div>
               </Box>
             </Modal>
             {/* )} */}
             <ToastContainer />
-          </div>
-        </div>
-      </div>
+          </div >
+        </div >
+      </div >
     </>
   );
 }

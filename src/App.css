@@ -127,7 +127,7 @@ th {
 .sidebar {
   width: 5px;
   background: var(--blue);
-  height: 100%;
+
 }
 
 .sidebar svg {
@@ -205,8 +205,6 @@ th {
   margin: 15px 0;
   display: flex;
   flex-direction: column;
-  /* gap: 4px; */
-  height: 83vh;
   overflow-y: auto;
 }
 
@@ -814,7 +812,7 @@ ul.navbar-nav i {
 }
 
 .iconGrad i {
-  font-size: 40px;
+  font-size: 35px;
 }
 
 .iconParent {
@@ -829,7 +827,6 @@ ul.navbar-nav i {
 .cardDash {
   box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
   position: relative;
-  margin: 12px 20px 30px 0px;
   cursor: pointer;
 }
 
@@ -866,15 +863,15 @@ ul.navbar-nav i {
 }
 
 .bg1 {
-  background-color: #f2f2f3;
+  background-color: #ff112f0f;
 }
 
 .bg2 {
-  background-color: #f2f2f3;
+  background-color: #8fa1ff1a;
 }
 
 .bg3 {
-  background-color: #f2f2f3;
+  background-color: #b7e9ff3d;
 }
 
 .card {
@@ -1053,8 +1050,9 @@ p.text-primary {
 }
 
 .modal-title {
-  font-weight: 600;
+  font-weight: 500;
   margin: 0px;
+  font-size: 20px;
 }
 
 button.btn-close {
@@ -2278,8 +2276,8 @@ input[type="number"] {
   border: 1px solid #bbbbbb;
   padding: 10px;
   width: 100%;
-  height: 45px;
   border-radius: 5px;
+  font-size: 14px;
 }
 
 .frightFormSec textarea {
@@ -2288,6 +2286,7 @@ input[type="number"] {
   width: 100%;
   height: 60px;
   border-radius: 5px;
+  font-size: 14px;
 }
 
 .frightFormSec h3 {
@@ -3287,8 +3286,9 @@ a.dropdown-item.li_icon.NewDropdown {
   display: none; 
 } */
 .para_dash {
-  font-size: 30px;
+  font-size: 25px;
   margin-bottom: 0px;
+  font-weight: 700;
 }
 
 .hd_dash {
@@ -3782,7 +3782,8 @@ div:where(.swal2-container) button:where(.swal2-styled).swal2-cancel {
   color: white;
   padding: 5px 15px;
   line-height: normal !important;
-  margin-top: 17px;
+  height: 25px;
+  width: 25px;
 }
 
 .bg_page {
@@ -3873,6 +3874,7 @@ a.link.active svg {
   font-weight: 500;
   background-color: var(--maroon);
   font-size: 20px;
+  border-radius: 8px 8px 0px 0px;
 }
 
 .sidebar123 {
@@ -4072,10 +4074,12 @@ th.MuiTableCell-root {
 
 .searchManageFre input {
   border: 2px solid #1b2245;
+  padding: 6px 10px !important;
 }
 
 .manageFreight input {
   border: 1px solid #1b2245;
+
 }
 
 tr.MuiTableRow-root.border-bottom {
@@ -4147,9 +4151,7 @@ button.btn-close i {
   overflow: auto;
 }
 
-.table-responsive {
-  overflow: visible;
-}
+
 
 .main_det i {
   color: var(--black);
@@ -4209,8 +4211,9 @@ button.btn-close svg {
   width: 25px;
 }
 
-.newModal .MuiBox-root {
-  border-radius: 5px !important;
+.newModal .MuiBox-root,
+.MuiModal-root .MuiBox-root {
+  border-radius: 12px !important;
 }
 
 .newModal input {
@@ -4689,7 +4692,19 @@ button.bg_page {
   padding: 9px 20px !important;
   border-radius: 5px;
   font-size: 15px !important;
-  font-weight: 600 !important;
+  font-weight: 500 !important;
+  text-transform: none !important;
+  line-height: normal !important;
+}
+
+.redBtn {
+  background-color: var(--maroon) !important;
+  color: #fff;
+  border: unset;
+  padding: 9px 20px !important;
+  border-radius: 5px;
+  font-size: 15px !important;
+  font-weight: 500 !important;
   text-transform: none !important;
   line-height: normal !important;
 }
@@ -4996,4 +5011,162 @@ td {
 .spaceRight strong {
   margin-right: 5px;
   font-weight: 700;
+}
+
+.headerSide .sidebar {
+  display: none;
+}
+
+.headerSide {
+  height: 100%;
+}
+
+.closeSideMob {
+  display: none;
+}
+
+/*  */
+@media(min-width:1600px) {
+  .sidebar {
+    height: 100vh;
+  }
+}
+
+.chartWrapper>div {
+  width: 100%;
+  height: 400px;
+}
+
+
+
+/* mobile */
+@media (max-width: 767px) {
+  .chartWrapper>div {
+    height: 300px;
+  }
+
+  .barBtn {
+    display: block !important;
+    border: unset;
+  }
+
+  .sideBarpageMain .sidebar {
+    width: 0px !important;
+    display: none;
+  }
+
+  .top_section {
+    display: none;
+  }
+
+  .main_div {
+    width: 100% !important;
+  }
+
+  /* sidebar mobile */
+  .barBtn i {
+    color: rgb(27, 34, 68);
+    font-size: 23px;
+  }
+
+  .headerSide .sidebar {
+    position: fixed;
+    transition: 0.3s ease;
+    top: 0px;
+    height: 100vh;
+    overflow-y: auto;
+    z-index: 99;
+  }
+
+  .headerSide .sidebar.show {
+    left: 0;
+  }
+
+  .headerSide .sidebar.hide {
+    left: -250px;
+  }
+
+  .sidebarShow .sidebar {
+    display: block;
+    width: 250px !important;
+  }
+
+  .sidebarShow .closeSideMob {
+    position: fixed;
+    top: 5px;
+    left: 230px;
+    color: var(--red);
+    z-index: 9999999999;
+    display: block;
+  }
+}
+
+@media (max-width: 576px) {
+  .chartWrapper>div {
+    height: 250px;
+  }
+}
+
+/* mobile end */
+.radioBtn>div {
+  display: flex;
+  gap: 5px;
+}
+
+.radioBtn input,
+.radioBtn label {
+  margin: unset;
+}
+
+.modal-content {
+  border-radius: 12px;
+}
+
+.updateFreList span,
+.borderShip .MuiTypography-root {
+  font-size: 14px;
+}
+
+.modal-body input,
+.modal-body select {
+  padding: 10px !important;
+}
+
+.borderShip h4 {
+  font-size: 20px;
+  font-weight: 500;
+}
+
+.modal-content {
+  background: var(--blue);
+}
+
+.modal-body,
+.modal-footer {
+  background: #fff;
+  border-radius: 0px 0px 12px 12px;
+}
+
+.table-border th,
+.table-border td {
+  padding: 5px 10px !important;
+}
+
+.hsCodeParent .add_hscode {
+  height: 38px;
+  width: 55px;
+  border-radius: 0px 5px 5px 0px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-left: unset;
+}
+
+.hsCodeParent input {
+  border-radius: 5px 0px 0px 5px;
+  border-right: unset;
+}
+
+.hsCodeParent input:focus {
+  box-shadow: unset !important;
 }

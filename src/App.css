@@ -3782,8 +3782,7 @@ div:where(.swal2-container) button:where(.swal2-styled).swal2-cancel {
   color: white;
   padding: 5px 15px;
   line-height: normal !important;
-  height: 25px;
-  width: 25px;
+
 }
 
 .bg_page {
@@ -4050,12 +4049,7 @@ table.table.table-striped.tableICon input {
   font-size: 13px !important;
 }
 
-button.btn.btn-secondary {
-  background: var(--blue);
-  border: unset;
-  font-size: 15px !important;
-  padding: 5px 21px;
-}
+
 
 button.bg_page i {
   position: relative;
@@ -4685,14 +4679,15 @@ button.bg_page {
 
 
 .manageFreight button,
-.blueBtn {
+.blueBtn,
+button.btn.btn-secondary {
   background-color: #1b2245 !important;
   color: #fff;
   border: unset;
   padding: 9px 20px !important;
   border-radius: 5px;
-  font-size: 15px !important;
-  font-weight: 500 !important;
+  font-size: 13px !important;
+  font-weight: 600 !important;
   text-transform: none !important;
   line-height: normal !important;
 }
@@ -4703,8 +4698,8 @@ button.bg_page {
   border: unset;
   padding: 9px 20px !important;
   border-radius: 5px;
-  font-size: 15px !important;
-  font-weight: 500 !important;
+  font-size: 13px !important;
+  font-weight: 600 !important;
   text-transform: none !important;
   line-height: normal !important;
 }
@@ -5137,9 +5132,7 @@ td {
   font-weight: 500;
 }
 
-.modal-content {
-  background: var(--blue);
-}
+
 
 .modal-body,
 .modal-footer {
@@ -5165,6 +5158,7 @@ td {
 .hsCodeParent input {
   border-radius: 5px 0px 0px 5px;
   border-right: unset;
+  height: 38px;
 }
 
 .hsCodeParent input:focus {

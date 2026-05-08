@@ -407,9 +407,9 @@ export default function Editpdfclearance() {
     <div className="wpWrapper">
       <div className="container-fluid">
         <div className="row  manageFreight">
-          <div className="col-12">
+          <div className="col-md-12">
             <div className="d-flex justify-content-between align-items-center">
-              <div className="d-flex">
+              <div className="d-flex gap-3">
                 <div>
                   <ArrowBackIcon
                     onClick={handleclicknav}
@@ -418,7 +418,25 @@ export default function Editpdfclearance() {
                   />
                 </div>
                 <div>
-                  <h4 className="freight_hd ms-3 mt-0">Estimate</h4>
+                  <h4 className="freight_hd mt-0">Estimate</h4>
+                </div>
+              </div>
+              <div className="d-flex gap-3">
+                <div>
+                  <button
+                    className="btn btn-secondary"
+                    onClick={handleclickopenmodal}
+                  >
+                    Add Data
+                  </button>
+                </div>
+                <div>
+                  <button
+                    className="btn btn-secondary"
+                    onClick={handleclickopenbutton}
+                  >
+                    Add Extra charges
+                  </button>
                 </div>
               </div>
             </div>
@@ -426,24 +444,7 @@ export default function Editpdfclearance() {
         </div>
         <div className="mt-4">
           <div>
-            <div className="d-flex justify-content-between align-items-end mb-3">
-              <div>
-                <button
-                  className="btn btn-secondary"
-                  onClick={handleclickopenmodal}
-                >
-                  Add Data
-                </button>
-              </div>
-              <div>
-                <button
-                  className="btn btn-secondary"
-                  onClick={handleclickopenbutton}
-                >
-                  Add Extra charges
-                </button>
-              </div>
-            </div>
+
             <div className="table-responsive">
               <table className="table border">
                 <thead className="esti_thead">
@@ -572,11 +573,11 @@ export default function Editpdfclearance() {
                     </button>
                   </div>
                   <div className="modal-body editEstimate px-2 py-2">
-                    <div className="mt-4">
+                    <div className="mt-2">
                       <div>
                         <div className="updateLoading">
                           <div className="row">
-                            <div className="col-md-4">
+                            <div className="col-md-6">
                               <label htmlFor="importer_vat">Import VAT</label>
                               <input
                                 type="number"
@@ -587,7 +588,7 @@ export default function Editpdfclearance() {
                                 onKeyPress={hanldekeypress}
                               />
                             </div>
-                            <div className="col-md-4">
+                            <div className="col-md-6">
                               <label htmlFor="Customs_Duty">Customs Duty</label>
                               <input
                                 type="number"
@@ -598,7 +599,7 @@ export default function Editpdfclearance() {
                                 onKeyPress={hanldekeypress}
                               />
                             </div>
-                            <div className="col-md-4">
+                            <div className="col-md-6">
                               <label htmlFor="Agency_surcharge">
                                 Agency Surcharge
                               </label>
@@ -611,9 +612,8 @@ export default function Editpdfclearance() {
                                 onKeyPress={hanldekeypress}
                               />
                             </div>
-                          </div>
-                          <div className="row">
-                            <div className="col-md-4">
+
+                            <div className="col-md-6">
                               <label htmlFor="Disbursement_fee">
                                 Disbursement Fee
                               </label>
@@ -626,68 +626,70 @@ export default function Editpdfclearance() {
                                 onKeyPress={hanldekeypress}
                               />
                             </div>
-                            <div className="col-md-4">
+                            <div className="col-md-6">
                               <label htmlFor="Customs_Clearing_fee">
                                 Customs Clearing Fee
                               </label>
                               <input
                                 type="number"
-                                className="form-control"
+                                className="form-control mb-0"
                                 id="Customs_Clearing_fee"
                                 name="Customs_Clearing_fee"
                                 onChange={handleChange}
                                 onKeyPress={hanldekeypress}
                               />
                             </div>
-                            <div className="col-md-4">
+                            <div className="col-md-6">
                               <label htmlFor="Document_Fee">Document Fee</label>
                               <input
                                 type="number"
-                                className="form-control"
+                                className="form-control mb-0"
                                 id="Document_Fee"
                                 name="Document_Fee"
                                 onChange={handleChange}
                                 onKeyPress={hanldekeypress}
                               />
                             </div>
-                          </div>
-                          <div className="row mt-1">
-                            <div className="col-md-7">
-                              <div className="text-end me-5">
-                                <button
-                                  className="btn btn-primary btn-block"
-                                  onClick={() => {
-                                    handlepostvalue();
-                                  }}
-                                >
-                                  Calculate
-                                </button>
+                            <div className="col-md-12 mb-4 mt-2">
+                              <div className="d-flex justify-content-between">
+                                <div>
+                                  <button
+                                    className="btn btn-primary btn-block"
+                                    onClick={() => {
+                                      handlepostvalue();
+                                    }}
+                                  >
+                                    Calculate
+                                  </button>
+                                </div>
+                                <div>
+                                  <h6 className="fw-semibold">
+                                    Overall Value:
+                                    {" "}   <span className="text-success">
+                                      {finalVal}
+                                    </span>
+                                  </h6>
+                                </div>
                               </div>
+
                             </div>
-                            <div className="col-md-5">
-                              <div className="text-end">
-                                <h5>
-                                  Overall Value:
-                                  <span className="text-success">
-                                    {finalVal}
-                                  </span>
-                                </h5>
-                              </div>
-                            </div>
+
                           </div>
+
+
                         </div>
                       </div>
                     </div>
                   </div>
-                  <div className="modal-footer pb-2">
-                    {/* <button
+                  {/* <div className="modal-footer pb-2">
+                    <button
                                 type="button"
                                 className="btn btn-primary"
                                 onClick={updateapi}
                               >
                                 Update
-                              </button> */}
-                  </div>
+                              </button>
+                  </div> */}
                 </div>
               </div>
             </Box>
@@ -708,7 +710,7 @@ export default function Editpdfclearance() {
                 boxShadow: 24,
               }}
             >
-              <div className="modal-dialog modal-lg">
+              <div className="modal-dialog">
                 <div className="modal-content">
                   <div className="modal-header">
                     <h1 className="modal-title fs-5" id="exampleModalLabel">
@@ -834,6 +836,12 @@ export default function Editpdfclearance() {
                 transform: "translate(-50%, -50%)",
                 bgcolor: "background.paper",
                 boxShadow: 24,
+                width: {
+                  xs: "95%",   // mobile
+                  sm: "80%",   // tablet
+                  md: "70%",   // small laptop
+                  lg: "60%",   // desktop
+                },
               }}
             >
               <div className="modal-header">
@@ -843,31 +851,33 @@ export default function Editpdfclearance() {
                   <CloseIcon />
                 </button>
               </div>
-              <div className="newModalGap noFormaControl">
-                <div className="row mb-3">
+              <div className="newModalGap noFormaControl" style={{ overflow: "unset" }}>
+                <div className="row">
                   <div className="d-flex">
                     <div>
                       <label>Enter your HS code</label>
-                      <input
-                        type="text"
-                        className="form-control"
-                        placeholder="HS Code"
-                        name="HS_tariff_code"
-                        value={hfCode}
-                        onChange={handleInputChange}
-                        onKeyPress={handleValidate}
-                      />
+                      <div className="d-flex hsCodeParent">
+
+                        <input
+                          type="text"
+                          className="form-control"
+                          placeholder="HS Code"
+                          name="HS_tariff_code"
+                          value={hfCode}
+                          onChange={handleInputChange}
+                          onKeyPress={handleValidate}
+                        />
+                        <button className="add_hscode" onClick={handleClickHf}>
+                          +
+                        </button>
+                      </div>
                     </div>
-                    <div className="" style={{ marginLeft: "20px" }}>
-                      <button className="add_hscode" onClick={handleClickHf}>
-                        +
-                      </button>
-                    </div>
+
                   </div>
-                  <div className="d-flex align-items-center">
+                  <div>
                     <div className="updateLoading">
                       <div className="table-responsive estTableEdit">
-                        <table>
+                        <table className="table">
                           <thead className="esti_thead">
                             <tr>
                               <th>HS Code</th>
@@ -943,19 +953,20 @@ export default function Editpdfclearance() {
                     </div>
                   </div>
                 </div>
-
-                <Button
+              </div>
+              <div className="text-center mb-3">
+                <button
                   variant="contained"
-                  className="btn btn-secondary"
+                  className="blueBtn"
                   onClick={handleclickchnagedata}
                 >
                   Submit
-                </Button>
+                </button>
               </div>
             </Box>
           </Modal>
         </div>
       </div>
-    </div>
+    </div >
   );
 }

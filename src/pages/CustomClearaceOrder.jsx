@@ -1548,7 +1548,7 @@ const CustomClearaceOrder = () => {
                     <h4 className="freight_hd">Document Section</h4>
                     <span class="line"></span>
                   </div>
-                  <div className="col-md-6 mt-3 mt-md-4 ">
+                  <div className="col-md-6 mt-3 mt-md-0 text-end">
                     <button className="blueBtn" onClick={handleShow}>
                       Upload Documents
                     </button>

@@ -316,35 +316,23 @@ export default function Sageinvoices() {
   const [files, setFiles] = useState(null);
   const [loader, setLoader] = useState(false);
   const [sageid, setSageid] = useState(null);
-
-  // SEARCH
   const [namess, setNamess] = useState({
     search: "",
   });
-
-  // TAB STATE
   const [activeTab, setActiveTab] = useState("general");
-
-  // COUNTRY DROPDOWN
   const [selectedCountry, setSelectedCountry] = useState("");
-
   const [countruies, setCountruies] = useState({});
   const [pagenation, setPagenation] = useState({});
   const [openmodal, setOpenmodal] = useState(false);
-
   const totalPage = pagenation?.totalPages || 1;
-
   const userid = JSON.parse(localStorage.getItem("data123"))?.id;
   const usertype = JSON.parse(localStorage.getItem("data123"))?.user_type;
-
   useEffect(() => {
     getwarehouse();
   }, [currentPage, activeTab, selectedCountry]);
-
   const handlePageChange = (page) => {
     setCurrentPage(page);
   };
-
   // const getwarehouse = async () => {
   //   try {
   //     setLoader(true);
@@ -401,72 +389,72 @@ export default function Sageinvoices() {
   //     setLoader(false);
   //   }
   // };
-const getwarehouse = async () => {
-  try {
-    setLoader(true);
+  const getwarehouse = async () => {
+    try {
+      setLoader(true);
 
-    const datapost = {
-      staff_id: userid,
-      route_url: "/Admin/sageinvoice",
-      user_type: usertype,
-    };
+      const datapost = {
+        staff_id: userid,
+        route_url: "/Admin/sageinvoice",
+        user_type: usertype,
+      };
 
-    const permission = await axios.post(
-      `${process.env.REACT_APP_BASE_URL}CheckPermission`,
-      datapost,
-    );
+      const permission = await axios.post(
+        `${process.env.REACT_APP_BASE_URL}CheckPermission`,
+        datapost,
+      );
 
-    if (permission.data.success) {
-      try {
-        let url = "";
+      if (permission.data.success) {
+        try {
+          let url = "";
 
-        // ALL TAB
-        if (activeTab === "general") {
-          url = `${process.env.REACT_APP_BASE_URL}GetSageInvoiceList?page=${currentPage}`;
+          // ALL TAB
+          if (activeTab === "general") {
+            url = `${process.env.REACT_APP_BASE_URL}GetSageInvoiceList?page=${currentPage}`;
 
-          // SEARCH
-          if (namess.search) {
-            url += `&search=${namess.search}`;
+            // SEARCH
+            if (namess.search) {
+              url += `&search=${namess.search}`;
+            }
+
+            // COUNTRY FILTER DROPDOWN
+            if (selectedCountry) {
+              url += `&filter_country=${selectedCountry}`;
+            }
+          } else {
+            // REGION TAB API
+            url = `${process.env.REACT_APP_BASE_URL}GetSageInvoiceListByRegion?page=${currentPage}&limit=${pageSize}&region=${activeTab}`;
+
+            // SEARCH
+            if (namess.search) {
+              url += `&search=${namess.search}`;
+            }
           }
 
-          // COUNTRY FILTER DROPDOWN
-          if (selectedCountry) {
-            url += `&filter_country=${selectedCountry}`;
-          }
-        } else {
-          // REGION TAB API
-          url = `${process.env.REACT_APP_BASE_URL}GetSageInvoiceListByRegion?page=${currentPage}&limit=${pageSize}&region=${activeTab}`;
+          const response = await axios.get(url);
 
-          // SEARCH
-          if (namess.search) {
-            url += `&search=${namess.search}`;
-          }
+          setPagenation(response.data.pagination);
+          setData(response.data.data);
+        } catch (error) {
+          toast.error(
+            error.response?.data?.message ||
+              "Something went wrong while fetching data",
+          );
         }
-
-        const response = await axios.get(url);
-
-        setPagenation(response.data.pagination);
-        setData(response.data.data);
-      } catch (error) {
-        toast.error(
-          error.response?.data?.message ||
-            "Something went wrong while fetching data",
-        );
+      } else {
+        toast.error("You don’t have permission to access this page");
       }
-    } else {
-      toast.error("You don’t have permission to access this page");
+    } catch (error) {
+      toast.error(
+        error.response?.data?.message ||
+          "Something went wrong while checking permissions",
+      );
+    } finally {
+      setLoader(false);
     }
-  } catch (error) {
-    toast.error(
-      error.response?.data?.message ||
-        "Something went wrong while checking permissions",
-    );
-  } finally {
-    setLoader(false);
-  }
-};
+  };
 
-    const deletewarehouse = (id) => {
+  const deletewarehouse = (id) => {
     Swal.fire({
       title: "Are you sure?",
       text: "You won't be able to recover this!",
@@ -478,9 +466,7 @@ const getwarehouse = async () => {
     }).then((result) => {
       if (result.isConfirmed) {
         axios
-          .post(
-            `${process.env.REACT_APP_BASE_URL}delete-sage-invoice/${id}`,
-          )
+          .post(`${process.env.REACT_APP_BASE_URL}delete-sage-invoice/${id}`)
           .then((response) => {
             Swal.fire("Deleted!", response.data.message, "success");
             getwarehouse();
@@ -618,7 +604,7 @@ const getwarehouse = async () => {
                       : "btn-outline-primary"
                   }`}
                   onClick={() => {
-                   setActiveTab("South Africa");
+                    setActiveTab("South Africa");
                     setCurrentPage(1);
                   }}
                 >
@@ -626,12 +612,12 @@ const getwarehouse = async () => {
                 </button>
                 <button
                   className={`btn ${
-                  activeTab === "Zimbabwe"
+                    activeTab === "Zimbabwe"
                       ? "btn-primary"
                       : "btn-outline-primary"
                   }`}
                   onClick={() => {
-                 setActiveTab("Zimbabwe");
+                    setActiveTab("Zimbabwe");
                     setCurrentPage(1);
                   }}
                 >
@@ -639,7 +625,7 @@ const getwarehouse = async () => {
                 </button>
                 <button
                   className={`btn ${
-                 activeTab === "Zambia"
+                    activeTab === "Zambia"
                       ? "btn-primary"
                       : "btn-outline-primary"
                   }`}
@@ -661,7 +647,7 @@ const getwarehouse = async () => {
                       <th>Customer Ref.</th>
                       <th>Date</th>
                       <th>Total</th>
-                      {activeTab === "general" && <th>Country</th>}
+                      {/* {activeTab === "general" && <th>Country</th>} */}
                       <th>Upload</th>
                       <th>Action</th>
                     </tr>
@@ -679,7 +665,7 @@ const getwarehouse = async () => {
                               {new Date(item.date).toLocaleDateString("EN-gb")}
                             </td>
                             <td>{item.total}</td>
-                            {activeTab === "general" && (
+                            {/* {activeTab === "general" && (
                               <td>
                                 {" "}
                                 <div className="mb-4">
@@ -709,10 +695,10 @@ const getwarehouse = async () => {
                                     </option>
                                     <option value="zimbabwe">Zimbabwe</option>
                                     <option value="zambia">Zambia</option> */}
-                                  </select>
+                                  {/* </select>
                                 </div>
                               </td>
-                            )}
+                            )} */}
                             <td>
                               <button
                                 className="btn btn-secondary"
@@ -723,21 +709,20 @@ const getwarehouse = async () => {
                                 Upload
                               </button>
                             </td>
-                              <td>
-                                 <AiFillDelete
-                                                                onClick={() => {
-                                                                  deletewarehouse(item.id);
-                                                                }}
-                                                                style={{
-                                                                  color: "rgb(212, 69, 25)",
-                                                                  marginRight: "10px",
-                                                                  width: "20px",
-                                                                  height: "15px",
-                                                                  cursor: "pointer",
-                                                                }}
-                                                              />
-                              </td>
-                   
+                            <td>
+                              <AiFillDelete
+                                onClick={() => {
+                                  deletewarehouse(item.id);
+                                }}
+                                style={{
+                                  color: "rgb(212, 69, 25)",
+                                  marginRight: "10px",
+                                  width: "20px",
+                                  height: "15px",
+                                  cursor: "pointer",
+                                }}
+                              />
+                            </td>
                           </tr>
                         );
                       })}
@@ -762,57 +747,6 @@ const getwarehouse = async () => {
                 </div>
                 <ToastContainer />
               </div>
-              {/* <Modal
-                open={openmodal}
-                onClose={handleCloseModal}
-                aria-labelledby="modal-modal-title"
-              >
-                <Box
-                  sx={{
-                    position: "absolute",
-                    top: "50%",
-                    left: "50%",
-                    transform: "translate(-50%, -50%)",
-                    background: "#fff",
-                    width: 400,
-                    borderRadius: "10px",
-                    p: 3,
-                  }}
-                >
-                  <div className="d-flex justify-content-between align-items-center">
-                    <h2 id="modal-modal-title">Upload Document</h2>
-
-                    <button
-                      className="btn btn-close"
-                      onClick={handleCloseModal}
-                    >
-                      <CloseIcon />
-                    </button>
-                  </div>
-
-                  <div className="newModalGap">
-                    <label className="ware_label">
-                      Attach Sage Document
-                    </label>
-
-                    <div>
-                      <input
-                        type="file"
-                        onChange={handlefilechange}
-                        className="border py-2 px-2 rounded w-100"
-                      />
-                    </div>
-
-                    <Button
-                      variant="contained"
-                      onClick={postData123}
-                      className="mt-3 mb-2"
-                    >
-                      Apply
-                    </Button>
-                  </div>
-                </Box>
-              </Modal> */}
               <Modal
                 open={openmodal}
                 onClose={handleCloseModal}

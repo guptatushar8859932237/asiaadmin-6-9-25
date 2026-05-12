@@ -14,8 +14,8 @@ export default function ViewDetails() {
   const [calculation1, setCalculation1] = useState("");
   const [calculation2, setCalculation2] = useState("");
   const [calculation3, setCalculation3] = useState("");
-   const [rows, setRows] = useState([]);
-   const [finalAmount, setFinalAmount] = useState(0);
+  const [rows, setRows] = useState([]);
+  const [finalAmount, setFinalAmount] = useState(0);
   const [extrachange, setExtrachange] = useState("");
   const [hfCode, setHfCode] = useState("");
   const [data, setData] = useState({});
@@ -76,56 +76,56 @@ export default function ViewDetails() {
     }
   };
 
-   const handleClickHf = () => {
-      if (rows.length >= 3) {
-        toast.error('You can only add up to 3 rows.');
-        return;
-      }
-      const hfcoede = { hs_code: hfCode };
-      axios
-        .post(`${process.env.REACT_APP_BASE_URL}find-hs-code`, hfcoede)
-        .then((response) => {
-          console.log(response.data.data)
-          setData(response.data.data);
-          setRows([...rows, {
-            hs_code: hfCode,
-            hs_cod_desc: response.data.data.hs_cod_desc,
-            valueofgoods: '',
-            quotedRate: '',
-            csercount: 0,
-            datavalttac: 0,
-            datavat: 0,
-            estimate: 0
-          }]);
-          setHfCode('');
-        })
-        .catch((error) => {
-          toast.error(error.response.data.message);
-        });
-    };
-    const handleChangeValueOfGood = (e, index) => {
-      const { name, value } = e.target;
-      const newRows = [...rows];
-      newRows[index][name] = value;
-      setRows(newRows);
-    };
+  const handleClickHf = () => {
+    if (rows.length >= 3) {
+      toast.error('You can only add up to 3 rows.');
+      return;
+    }
+    const hfcoede = { hs_code: hfCode };
+    axios
+      .post(`${process.env.REACT_APP_BASE_URL}find-hs-code`, hfcoede)
+      .then((response) => {
+        console.log(response.data.data)
+        setData(response.data.data);
+        setRows([...rows, {
+          hs_code: hfCode,
+          hs_cod_desc: response.data.data.hs_cod_desc,
+          valueofgoods: '',
+          quotedRate: '',
+          csercount: 0,
+          datavalttac: 0,
+          datavat: 0,
+          estimate: 0
+        }]);
+        setHfCode('');
+      })
+      .catch((error) => {
+        toast.error(error.response.data.message);
+      });
+  };
+  const handleChangeValueOfGood = (e, index) => {
+    const { name, value } = e.target;
+    const newRows = [...rows];
+    newRows[index][name] = value;
+    setRows(newRows);
+  };
 
-    const handleClickValue = (index) => {
-      const finalVal = rows[index].valueofgoods;
-      const calculate10 = finalVal * 0.1;
-      const overall = parseFloat(finalVal) + calculate10;
-      const finalRes = overall * parseFloat(rows[index].quotedRate);
-  
-      const newRows = [...rows];
-      newRows[index].csercount = finalRes;
-      newRows[index].datavalttac = (finalRes * 0.1).toFixed(2);
-      newRows[index].datavat = ((parseFloat(newRows[index].datavalttac) + finalRes) * 0.15).toFixed(2);
-      newRows[index].estimate = (parseFloat(newRows[index].datavat) + parseFloat(newRows[index].datavalttac)).toFixed(2);
-      setRows(newRows);
-  
-      const totalEstimate = newRows.reduce((acc, row) => acc + parseFloat(row.estimate), 0);
-      setFinalAmount(totalEstimate);
-    };
+  const handleClickValue = (index) => {
+    const finalVal = rows[index].valueofgoods;
+    const calculate10 = finalVal * 0.1;
+    const overall = parseFloat(finalVal) + calculate10;
+    const finalRes = overall * parseFloat(rows[index].quotedRate);
+
+    const newRows = [...rows];
+    newRows[index].csercount = finalRes;
+    newRows[index].datavalttac = (finalRes * 0.1).toFixed(2);
+    newRows[index].datavat = ((parseFloat(newRows[index].datavalttac) + finalRes) * 0.15).toFixed(2);
+    newRows[index].estimate = (parseFloat(newRows[index].datavat) + parseFloat(newRows[index].datavalttac)).toFixed(2);
+    setRows(newRows);
+
+    const totalEstimate = newRows.reduce((acc, row) => acc + parseFloat(row.estimate), 0);
+    setFinalAmount(totalEstimate);
+  };
   return (
     <>
       <div className="wpWrapper">
@@ -171,17 +171,17 @@ export default function ViewDetails() {
                       </div>
                       <div className="d-flex">
                         <div>
-                            {/* <button>Edit</button> */}
+                          {/* <button>Edit</button> */}
                         </div>
-                      <div>
-                        <MdDownloadForOffline
-                          className="fs-2 "
-                          onClick={() => toPDF()}
-                          style={{ color: "#1b2245" }}
-                        />
+                        <div>
+                          <MdDownloadForOffline
+                            className="fs-2 "
+                            onClick={() => toPDF()}
+                            style={{ color: "#1b2245" }}
+                          />
+                        </div>
                       </div>
-                      </div>
-                      
+
                     </div>
                   </div>
                 </div>
@@ -200,7 +200,7 @@ export default function ViewDetails() {
                         <tbody>
                           <tr>
                             <td>
-                              <table style={{ margin: "20px" }}>
+                              <table>
                                 <tbody>
                                   <tr>
                                     <td style={{ width: "50%" }}>
@@ -220,18 +220,18 @@ export default function ViewDetails() {
                                           marginBottom: "unset",
                                           borderBottom: "1px solid #cb191e",
                                           display: "inline-block",
-                                          paddingBottom: 5,
+
                                         }}
                                       >
                                         ASIA DIRECT
                                       </p>
                                       <p
                                         style={{
-                                          fontSize: 15,
+                                          fontSize: 14,
                                           fontWeight: 500,
                                           marginBottom: "unset",
                                           lineHeight: "1.5",
-                                          marginTop: 10,
+                                          marginTop: 5,
                                         }}
                                       >
                                         R.C 102069/GU/23078/342 N.I.F. 00619049
@@ -245,15 +245,14 @@ export default function ViewDetails() {
                               </table>
                               <table
                                 style={{
-                                  paddingTop: "20px",
-                                  marginTop: "20px",
+
                                 }}
                               >
                                 <tbody>
                                   <tr>
                                     <td
                                       style={{
-                                        fontSize: 15,
+                                        fontSize: 14,
                                         textTransform: "lowercase",
                                       }}
                                     >
@@ -261,7 +260,7 @@ export default function ViewDetails() {
                                     </td>
                                     <td
                                       style={{
-                                        fontSize: 15,
+                                        fontSize: 14,
                                         padding: "0px 20px",
                                         textTransform: "lowercase",
                                       }}
@@ -271,7 +270,7 @@ export default function ViewDetails() {
                                     </td>
                                     <td
                                       style={{
-                                        fontSize: 15,
+                                        fontSize: 14,
                                         textTransform: "lowercase",
                                       }}
                                     >
@@ -285,7 +284,7 @@ export default function ViewDetails() {
                                   border: "2px solid #1b2245",
                                   padding: "10px 20px",
                                   width: "100%",
-                                  marginTop: 20,
+                                  marginTop: 5,
                                 }}
                               >
                                 <tbody>
@@ -293,7 +292,7 @@ export default function ViewDetails() {
                                     <td
                                       style={{
                                         textAlign: "center",
-                                        fontSize: 15,
+                                        fontSize: 14,
                                         fontWeight: 600,
                                         width: "100%",
                                       }}
@@ -325,7 +324,7 @@ export default function ViewDetails() {
                                           <tr>
                                             <td
                                               style={{
-                                                fontSize: 15,
+                                                fontSize: 14,
                                                 padding: "0px 10px",
                                               }}
                                             >
@@ -342,9 +341,9 @@ export default function ViewDetails() {
                                           background: "#1b2245",
                                           width: "100%",
                                           color: "white",
-                                          fontSize: 15,
+                                          fontSize: 14,
                                           textAlign: "center",
-                                          margin: "10px 0px",
+                                          margin: "5px 0px",
                                           padding: 2,
                                         }}
                                       >
@@ -369,18 +368,18 @@ export default function ViewDetails() {
                                               >
                                                 <p
                                                   style={{
-                                                    fontSize: 15,
+                                                    fontSize: 14,
                                                     marginBottom: "unset",
-                                                    marginTop: 10,
+                                                    marginTop: 0,
                                                   }}
                                                 >
                                                   <strong>Customer Ref</strong>
                                                 </p>
                                                 <p
                                                   style={{
-                                                    fontSize: 15,
+                                                    fontSize: 14,
                                                     marginBottom: "unset",
-                                                    marginTop: 10,
+                                                    marginTop: 0,
                                                   }}
                                                 >
                                                   {
@@ -397,18 +396,18 @@ export default function ViewDetails() {
                                               >
                                                 <p
                                                   style={{
-                                                    fontSize: 15,
+                                                    fontSize: 14,
                                                     marginBottom: "unset",
-                                                    marginTop: 10,
+                                                    marginTop: 5,
                                                   }}
                                                 >
                                                   <strong>Destination</strong>
                                                 </p>
                                                 <p
                                                   style={{
-                                                    fontSize: 15,
+                                                    fontSize: 14,
                                                     marginBottom: "unset",
-                                                    marginTop: 10,
+                                                    marginTop: 5,
                                                   }}
                                                 >
                                                   {
@@ -425,9 +424,9 @@ export default function ViewDetails() {
                                               >
                                                 <p
                                                   style={{
-                                                    fontSize: 15,
+                                                    fontSize: 14,
                                                     marginBottom: "unset",
-                                                    marginTop: 10,
+                                                    marginTop: 5,
                                                   }}
                                                 >
                                                   <strong>
@@ -436,9 +435,9 @@ export default function ViewDetails() {
                                                 </p>
                                                 <p
                                                   style={{
-                                                    fontSize: 15,
+                                                    fontSize: 14,
                                                     marginBottom: "unset",
-                                                    marginTop: 10,
+                                                    marginTop: 5,
                                                   }}
                                                 >
                                                   {getdatallestimate.goods_desc}
@@ -453,9 +452,9 @@ export default function ViewDetails() {
                                           background: "#1b2245",
                                           width: "100%",
                                           color: "white",
-                                          fontSize: 15,
+                                          fontSize: 14,
                                           textAlign: "center",
-                                          margin: "10px 0px",
+                                          margin: "5px 0px",
                                           padding: 2,
                                         }}
                                       >
@@ -476,13 +475,14 @@ export default function ViewDetails() {
                                                   display: "flex",
                                                   justifyContent:
                                                     "space-between",
+                                                  margin: "0px 10px"
                                                 }}
                                               >
                                                 <p
                                                   style={{
-                                                    fontSize: 15,
+                                                    fontSize: 14,
                                                     marginBottom: "unset",
-                                                    marginTop: 10,
+                                                    marginTop: 0,
                                                   }}
                                                 >
                                                   <strong>
@@ -492,7 +492,7 @@ export default function ViewDetails() {
                                                 </p>
                                                 <p
                                                   style={{
-                                                    fontSize: 15,
+                                                    fontSize: 14,
                                                     marginBottom: "unset",
                                                     marginTop: 10,
                                                   }}
@@ -506,7 +506,7 @@ export default function ViewDetails() {
                                       </table>
                                     </td>
                                     <td
-                                      style={{ width: "50%", paddingTop: 10 }}
+                                      style={{ width: "50%", paddingTop: 5 }}
                                     >
                                       <table>
                                         <tbody>
@@ -515,21 +515,48 @@ export default function ViewDetails() {
                                               style={{
                                                 width: 170,
                                                 display: "block",
-                                                padding: "0px 10px 10px 10px",
-                                                fontSize: 15,
+                                                padding: "0px 10px 5px 10px",
+
                                               }}
                                             >
-                                              <strong>Clearance Number</strong>
+                                              <strong style={{ fontSize: 14, }}>Clearance Number</strong>
                                             </td>
                                             <td
                                               style={{
-                                                paddingBottom: 10,
-                                                fontSize: 15,
+                                                paddingBottom: 5,
+                                                fontSize: 14,
                                               }}
                                             >
-                                              {
+                                              <span> {
                                                 getdatallestimate.clearance_number
-                                              }
+                                              }</span>
+
+                                            </td>
+                                          </tr>
+                                          <tr>
+                                            <td
+                                              style={{
+                                                padding: "0px 10px 5px 10px",
+                                                width: 170,
+                                                display: "block",
+
+                                              }}
+                                            >
+                                              <strong style={{ fontSize: 14, }}>Clearing Status</strong>
+                                            </td>
+                                            <td
+                                              style={{
+
+                                                fontSize: 14,
+                                                padding: "0px 0px 5px 0px",
+                                              }}
+                                            >
+                                              <span>
+                                                {
+                                                  getdatallestimate.clearing_status
+                                                }
+
+                                              </span>
                                             </td>
                                           </tr>
                                           <tr>
@@ -538,40 +565,16 @@ export default function ViewDetails() {
                                                 padding: "0px 10px 10px 10px",
                                                 width: 170,
                                                 display: "block",
-                                                paddingBottom: 10,
-                                                fontSize: 15,
+                                                paddingBottom: 5,
+
                                               }}
                                             >
-                                              <strong>Clearing Status</strong>
+                                              <strong style={{ fontSize: 14 }}>Comment On Docs</strong>
                                             </td>
                                             <td
                                               style={{
-                                                paddingBottom: 15,
-                                                fontSize: 15,
-                                                padding: "0px 0px 0px 0px",
-                                              }}
-                                            >
-                                              {
-                                                getdatallestimate.clearing_status
-                                              }
-                                            </td>
-                                          </tr>
-                                          <tr>
-                                            <td
-                                              style={{
-                                                padding: "0px 10px 10px 10px",
-                                                width: 170,
-                                                display: "block",
-                                                paddingBottom: 10,
-                                                fontSize: 15,
-                                              }}
-                                            >
-                                              <strong>Comment On Docs</strong>
-                                            </td>
-                                            <td
-                                              style={{
-                                                paddingBottom: 15,
-                                                fontSize: 15,
+                                                paddingBottom: 5,
+                                                fontSize: 14,
                                               }}
                                             >
                                               {
@@ -586,9 +589,9 @@ export default function ViewDetails() {
                                           background: "#1b2245",
                                           width: "100%",
                                           color: "white",
-                                          fontSize: 15,
+                                          fontSize: 14,
                                           textAlign: "center",
-                                          margin: "10px 0px",
+                                          margin: "0px 0px 5px 0px",
                                           padding: 2,
                                         }}
                                       >
@@ -613,18 +616,18 @@ export default function ViewDetails() {
                                               >
                                                 <p
                                                   style={{
-                                                    fontSize: 15,
+                                                    fontSize: 14,
                                                     marginBottom: "unset",
-                                                    marginTop: 10,
+                                                    marginTop: 0,
                                                   }}
                                                 >
                                                   <strong> Goods Desc</strong>
                                                 </p>
                                                 <p
                                                   style={{
-                                                    fontSize: 15,
+                                                    fontSize: 14,
                                                     marginBottom: "unset",
-                                                    marginTop: 10,
+                                                    marginTop: 0,
                                                   }}
                                                 >
                                                   {getdatallestimate.goods_desc}
@@ -639,18 +642,18 @@ export default function ViewDetails() {
                                               >
                                                 <p
                                                   style={{
-                                                    fontSize: 15,
+                                                    fontSize: 14,
                                                     marginBottom: "unset",
-                                                    marginTop: 10,
+                                                    marginTop: 5,
                                                   }}
                                                 >
                                                   <strong>Port of Entry</strong>
                                                 </p>
                                                 <p
                                                   style={{
-                                                    fontSize: 15,
+                                                    fontSize: 14,
                                                     marginBottom: "unset",
-                                                    marginTop: 10,
+                                                    marginTop: 5,
                                                   }}
                                                 >
                                                   {
@@ -667,18 +670,18 @@ export default function ViewDetails() {
                                               >
                                                 <p
                                                   style={{
-                                                    fontSize: 15,
+                                                    fontSize: 14,
                                                     marginBottom: "unset",
-                                                    marginTop: 10,
+                                                    marginTop: 5,
                                                   }}
                                                 >
                                                   <strong>Port of Exit</strong>
                                                 </p>
                                                 <p
                                                   style={{
-                                                    fontSize: 15,
+                                                    fontSize: 14,
                                                     marginBottom: "unset",
-                                                    marginTop: 10,
+                                                    marginTop: 5,
                                                   }}
                                                 >
                                                   {
@@ -716,7 +719,7 @@ export default function ViewDetails() {
                                       <span
                                         style={{
                                           paddingRight: 20,
-                                          fontSize: 15,
+                                          fontSize: 14,
                                           fontWeight: 600,
                                         }}
                                       >
@@ -737,7 +740,7 @@ export default function ViewDetails() {
                                       style={{
                                         padding: 5,
                                         border: "1px solid #1a2142",
-                                        fontSize: 15,
+                                        fontSize: 14,
                                         width: 150,
                                       }}
                                     >
@@ -748,7 +751,7 @@ export default function ViewDetails() {
                                       style={{
                                         padding: 5,
                                         border: "1px solid #1a2142",
-                                        fontSize: 15,
+                                        fontSize: 14,
                                         width: 200,
                                       }}
                                     >
@@ -758,7 +761,7 @@ export default function ViewDetails() {
                                       style={{
                                         padding: 5,
                                         border: "1px solid #1a2142",
-                                        fontSize: 15,
+                                        fontSize: 14,
                                         width: 200,
                                       }}
                                     >
@@ -768,7 +771,7 @@ export default function ViewDetails() {
                                       style={{
                                         padding: 5,
                                         border: "1px solid #1a2142",
-                                        fontSize: 15,
+                                        fontSize: 14,
                                         width: 200,
                                       }}
                                     >
@@ -778,7 +781,7 @@ export default function ViewDetails() {
                                       style={{
                                         padding: 5,
                                         border: "1px solid #1a2142",
-                                        fontSize: 15,
+                                        fontSize: 14,
                                         width: 200,
                                       }}
                                     >
@@ -788,7 +791,7 @@ export default function ViewDetails() {
                                       style={{
                                         padding: 5,
                                         border: "1px solid #1a2142",
-                                        fontSize: 15,
+                                        fontSize: 14,
                                       }}
                                     >
                                       Values of Good
@@ -797,7 +800,7 @@ export default function ViewDetails() {
                                       style={{
                                         padding: 5,
                                         border: "1px solid #1a2142",
-                                        fontSize: 15,
+                                        fontSize: 14,
                                       }}
                                     >
                                       Vat
@@ -806,23 +809,23 @@ export default function ViewDetails() {
                                       style={{
                                         padding: 5,
                                         border: "1px solid #1a2142",
-                                        fontSize: 15,
+                                        fontSize: 14,
                                       }}
                                     >
-                                   Final Amount 
+                                      Final Amount
                                     </th>
                                     {/* <th
                                       style={{
                                         padding: 5,
                                         border: "1px solid #1a2142",
-                                        fontSize: 15,
+                                        fontSize: 14,
                                       }}
                                     >
                                      
                                     </th> */}
                                   </tr>
                                   {details &&
-                                    details.length > 0  &&
+                                    details.length > 0 &&
                                     details.map((item, index) => {
                                       return (
                                         <>
@@ -832,7 +835,7 @@ export default function ViewDetails() {
                                                 padding: 5,
                                                 border: "1px solid #1a2142",
                                                 textAlign: "left",
-                                                fontSize: 15,
+                                                fontSize: 14,
                                               }}
                                             >
                                               {item.HS_tariff_code}
@@ -849,7 +852,7 @@ export default function ViewDetails() {
                                               style={{
                                                 padding: 5,
                                                 border: "1px solid #1a2142",
-                                                fontSize: 15,
+                                                fontSize: 14,
                                               }}
                                             >
                                               {item.goods_value}
@@ -858,7 +861,7 @@ export default function ViewDetails() {
                                               style={{
                                                 padding: 5,
                                                 border: "1px solid #1a2142",
-                                                fontSize: 15,
+                                                fontSize: 14,
                                               }}
                                             >
                                               {item.import_duty}
@@ -867,7 +870,7 @@ export default function ViewDetails() {
                                               style={{
                                                 padding: 5,
                                                 border: "1px solid #1a2142",
-                                                fontSize: 15,
+                                                fontSize: 14,
                                               }}
                                             >
                                               {item.import_duty_per}
@@ -876,18 +879,18 @@ export default function ViewDetails() {
                                               style={{
                                                 padding: 5,
                                                 border: "1px solid #1a2142",
-                                                fontSize: 15,
+                                                fontSize: 14,
                                               }}
                                             >
                                               {item.values_of_good}
                                             </td>
-                                           
-                                           
+
+
                                             <td
                                               style={{
                                                 padding: 5,
                                                 border: "1px solid #1a2142",
-                                                fontSize: 15,
+                                                fontSize: 14,
                                               }}
                                             >
                                               {item.vat}
@@ -896,7 +899,7 @@ export default function ViewDetails() {
                                               style={{
                                                 padding: 5,
                                                 border: "1px solid #1a2142",
-                                                fontSize: 15,
+                                                fontSize: 14,
                                               }}
                                             >
                                               {item.total_amount}
@@ -905,12 +908,12 @@ export default function ViewDetails() {
                                               style={{
                                                 padding: 5,
                                                 border: "1px solid #1a2142",
-                                                fontSize: 15,
+                                                fontSize: 14,
                                               }}
                                             >
                                              {/* <button onClick={handleclick}>Edit</button> */}
-                                            {/* </td> */} 
-                                            
+                                            {/* </td> */}
+
                                           </tr>
                                         </>
                                       );
@@ -921,14 +924,14 @@ export default function ViewDetails() {
                                       style={{
                                         padding: 5,
                                         border: "1px solid #1a2142",
-                                        fontSize: 15,
+                                        fontSize: 14,
                                       }}
                                     />
                                     <th
                                       style={{
                                         padding: 5,
                                         border: "1px solid #1a2142",
-                                        fontSize: 15,
+                                        fontSize: 14,
                                       }}
                                     >
                                       Extra Charge
@@ -938,28 +941,28 @@ export default function ViewDetails() {
                                       style={{
                                         padding: 5,
                                         border: "1px solid #1a2142",
-                                        fontSize: 15,
+                                        fontSize: 14,
                                       }}
                                     />
                                     <th
                                       style={{
                                         padding: 5,
                                         border: "1px solid #1a2142",
-                                        fontSize: 15,
+                                        fontSize: 14,
                                       }}
                                     ></th>
                                     <th
                                       style={{
                                         padding: 5,
                                         border: "1px solid #1a2142",
-                                        fontSize: 15,
+                                        fontSize: 14,
                                       }}
                                     ></th>
                                     <th
                                       style={{
                                         padding: 5,
                                         border: "1px solid #1a2142",
-                                        fontSize: 15,
+                                        fontSize: 14,
                                       }}
                                     >
                                     </th>
@@ -967,25 +970,25 @@ export default function ViewDetails() {
                                       style={{
                                         padding: 5,
                                         border: "1px solid #1a2142",
-                                        fontSize: 15,
+                                        fontSize: 14,
                                       }}
-                                      >
+                                    >
                                       {extrachange ? extrachange : 0}
 
-                               
+
                                     </th>
                                     {/* <th
                                       style={{
                                         padding: 5,
                                         border: "1px solid #1a2142",
-                                        fontSize: 15,
+                                        fontSize: 14,
                                       }}
                                     ></th>
                                     <th
                                       style={{
                                         padding: 5,
                                         border: "1px solid #1a2142",
-                                        fontSize: 15,
+                                        fontSize: 14,
                                       }}
                                     ></th> */}
                                   </tr>
@@ -1004,7 +1007,7 @@ export default function ViewDetails() {
                                         color: "Black",
                                       }}
                                     >
-                                    Total Charge
+                                      Total Charge
                                     </td>
                                     <td
                                       style={{
@@ -1041,10 +1044,10 @@ export default function ViewDetails() {
                                         border: "1px solid #1a2142",
                                         color: "black",
                                       }}
-                                      >
+                                    >
                                       {totalcalcualtion.toFixed(2)}
-                                  
-                                      </td>{" "}
+
+                                    </td>{" "}
                                   </tr>
                                 </tbody>
                               </table>
@@ -1083,88 +1086,88 @@ export default function ViewDetails() {
           </div>
           <div className="newModalGap">
             <div className="row my-3  ">
-                <h4>Enter HS code</h4>
+              <h4>Enter HS code</h4>
               <div className="d-flex ms-2">
-              <div className="my-3">
-                <input onChange={handleInputChange} onKeyPress={handleValidate} value={hfCode}></input>
-              </div>
-              <div>
-              {hfCode && (
-                  <button className=" my-3 btn btn-secondary ms-2 rounded-100" onClick={handleClickHf}>
-                    +
-                  </button>
-                )}
-              </div>
+                <div className="my-3">
+                  <input onChange={handleInputChange} onKeyPress={handleValidate} value={hfCode}></input>
+                </div>
+                <div>
+                  {hfCode && (
+                    <button className=" my-3 btn btn-secondary ms-2 rounded-100" onClick={handleClickHf}>
+                      +
+                    </button>
+                  )}
+                </div>
               </div>
               <div className="table-responsive">
-              <table className="table border">
-                <thead className="esti_thead">
-                  <tr>
-                    <th>HS Code</th>
-                    <th>Description</th>
-                    <th>VAT%</th>
-                    <th>Value of Goods</th>
-                    <th>Quoted Rate</th>
-                    <th></th>
-                    <th>Value Of Goods</th>
-                    <th>VAT</th>
-                    <th>Import Duty</th>
-                    <th>Calculate</th>
-                  </tr>
-                </thead>
-                <tbody className='esti_tbody'>
-                  {rows.map((row, index) => (
-                    <tr key={index}>
-                      <th>{row.hs_code}</th>
-                      <td>{row.hs_cod_desc}</td>
-                      <td>15%</td>
-                      <td>
-                        <input
-                          onKeyPress={handleValidate}
-                          name="valueofgoods"
-                          className='form-control'
-                          value={row.valueofgoods}
-                          onChange={(e) => handleChangeValueOfGood(e, index)}
-                        />
-                      </td>
-                      <td>
-                        <input
-                          onKeyPress={handleValidate}
-                          name="quotedRate"
-                          className='form-control'
-                          value={row.quotedRate}
-                          onChange={(e) => handleChangeValueOfGood(e, index)} />
-                      </td>
-                      <td><button
-                        className="ms-2 py-1 btn rounded"
-                        onClick={() => handleClickValue(index)}
-                        style={{ backgroundColor: 'red', color: 'white' }}
-                      >
-                        Add
-                      </button></td>
-                      <td>{row.csercount}</td>
-                      <td>{row.datavalttac}</td>
-                      <td>{row.datavat}</td>
-                      <td>{row.estimate}</td>
+                <table className="table border">
+                  <thead className="esti_thead">
+                    <tr>
+                      <th>HS Code</th>
+                      <th>Description</th>
+                      <th>VAT%</th>
+                      <th>Value of Goods</th>
+                      <th>Quoted Rate</th>
+                      <th></th>
+                      <th>Value Of Goods</th>
+                      <th>VAT</th>
+                      <th>Import Duty</th>
+                      <th>Calculate</th>
                     </tr>
-                  ))}
-                  {rows.length > 0 && (
-                    <>
-                      <tr>
-                        <td colSpan="10" className="text-end">
-                          <strong>Final Amount: </strong> {finalAmount.toFixed(2)}
+                  </thead>
+                  <tbody className='esti_tbody'>
+                    {rows.map((row, index) => (
+                      <tr key={index}>
+                        <th>{row.hs_code}</th>
+                        <td>{row.hs_cod_desc}</td>
+                        <td>15%</td>
+                        <td>
+                          <input
+                            onKeyPress={handleValidate}
+                            name="valueofgoods"
+                            className='form-control'
+                            value={row.valueofgoods}
+                            onChange={(e) => handleChangeValueOfGood(e, index)}
+                          />
                         </td>
+                        <td>
+                          <input
+                            onKeyPress={handleValidate}
+                            name="quotedRate"
+                            className='form-control'
+                            value={row.quotedRate}
+                            onChange={(e) => handleChangeValueOfGood(e, index)} />
+                        </td>
+                        <td><button
+                          className="ms-2 py-1 btn rounded"
+                          onClick={() => handleClickValue(index)}
+                          style={{ backgroundColor: 'red', color: 'white' }}
+                        >
+                          Add
+                        </button></td>
+                        <td>{row.csercount}</td>
+                        <td>{row.datavalttac}</td>
+                        <td>{row.datavat}</td>
+                        <td>{row.estimate}</td>
                       </tr>
-                    </>
-                  )}
-                </tbody>
-              </table>
-            </div>
+                    ))}
+                    {rows.length > 0 && (
+                      <>
+                        <tr>
+                          <td colSpan="10" className="text-end">
+                            <strong>Final Amount: </strong> {finalAmount.toFixed(2)}
+                          </td>
+                        </tr>
+                      </>
+                    )}
+                  </tbody>
+                </table>
+              </div>
             </div>
             <Button
               variant="contained"
               className="text-center"
-              // onClick={postattachquote}
+            // onClick={postattachquote}
             >
               Add Estimate
             </Button>

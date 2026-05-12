@@ -310,7 +310,7 @@ const CustomClearaceOrder = () => {
             {
               user_id: userid,
               added_by: "1",
-              page: page     
+              page: page
             }
           );
           setConstgetdata(response?.data?.data || []);
@@ -410,49 +410,49 @@ const CustomClearaceOrder = () => {
     getclient();
   }, []);
 
-   const handleSearch = (e) => {
-      const value = e.target.value;
-  
-      setSearchQuery(value);
-      setCurrentPage(1);
-  
-      throttledSearch(value); // ✅ throttled call
-    };
-  
-    const throttle = (func, delay) => {
-      let lastCall = 0;
-  
-      return (...args) => {
-        const now = Date.now();
-        if (now - lastCall >= delay) {
-          lastCall = now;
-          func(...args);
-        }
-      };
-    };
-    const throttledSearch = useRef(
-      throttle((value) => {
-        freightData1(value);
-      }, 1000)
-    ).current;
+  const handleSearch = (e) => {
+    const value = e.target.value;
 
-const freightData1 =async (value) => {
-        try {
-          const response = await axios.post(
-            `${process.env.REACT_APP_BASE_URL}clearing-list`,
-            {
-              user_id: userid,
-              added_by: "1",
-              search: value,
-            }
-          );
-          setConstgetdata(response?.data?.data || []);
-          console.log(response?.data);
-          setPagenation(response?.data);
-        } catch (error) {
-          toast.error(error.response?.data?.message || "Something went wrong");
+    setSearchQuery(value);
+    setCurrentPage(1);
+
+    throttledSearch(value); // ✅ throttled call
+  };
+
+  const throttle = (func, delay) => {
+    let lastCall = 0;
+
+    return (...args) => {
+      const now = Date.now();
+      if (now - lastCall >= delay) {
+        lastCall = now;
+        func(...args);
+      }
+    };
+  };
+  const throttledSearch = useRef(
+    throttle((value) => {
+      freightData1(value);
+    }, 1000)
+  ).current;
+
+  const freightData1 = async (value) => {
+    try {
+      const response = await axios.post(
+        `${process.env.REACT_APP_BASE_URL}clearing-list`,
+        {
+          user_id: userid,
+          added_by: "1",
+          search: value,
         }
-      } 
+      );
+      setConstgetdata(response?.data?.data || []);
+      console.log(response?.data);
+      setPagenation(response?.data);
+    } catch (error) {
+      toast.error(error.response?.data?.message || "Something went wrong");
+    }
+  }
 
   const getcountry = () => {
     axios
@@ -635,147 +635,153 @@ const freightData1 =async (value) => {
 
   const handlelcsendid = (item) => {
     console.log(item.id);
-      console.log(item)
+    console.log(item)
     setFreightIdAssignTask(item)
     setOpenmodalAssignFreight(true)
   }
 
-    const hanldecloseModal=()=>{
+  const hanldecloseModal = () => {
     setOpenmodalAssignFreight(false)
   }
 
-   const AssignFreightToSupplier = async () => {
-        const payload = {
-          clearance_id: freightIdAssignTask.id,
-          staff_id: supplierName
-        };
-        try {
-          const response = await axios.post(
-            `${process.env.REACT_APP_BASE_URL}assignClearanceToStaff`,
-            payload
-          );
-          console.log(response.data);
-          toast.success(response.data.message);
-          getClient()
-          setOpenmodalAssignFreight(false);
-        } catch (error) {
-          toast.error(error.response.data.message);
-        }
-      }
-       const getSupplierdata = () => {
-          axios
-            .get(`${process.env.REACT_APP_BASE_URL}staff-list`)
-            .then((response) => {
-              setSupplierData(response.data.data);
-            })
-            .catch((error) => {
-              toast.error("Error fetching suppliers");
-            });
-        };
-      
-        useEffect(() => {
-          getSupplierdata();
-        }, []);
+  const AssignFreightToSupplier = async () => {
+    const payload = {
+      clearance_id: freightIdAssignTask.id,
+      staff_id: supplierName
+    };
+    try {
+      const response = await axios.post(
+        `${process.env.REACT_APP_BASE_URL}assignClearanceToStaff`,
+        payload
+      );
+      console.log(response.data);
+      toast.success(response.data.message);
+      getClient()
+      setOpenmodalAssignFreight(false);
+    } catch (error) {
+      toast.error(error.response.data.message);
+    }
+  }
+  const getSupplierdata = () => {
+    axios
+      .get(`${process.env.REACT_APP_BASE_URL}staff-list`)
+      .then((response) => {
+        setSupplierData(response.data.data);
+      })
+      .catch((error) => {
+        toast.error("Error fetching suppliers");
+      });
+  };
+
+  useEffect(() => {
+    getSupplierdata();
+  }, []);
   return (
     <>
-    
-        <div className="wpWrapper">
-          <div className="container-fluid">
-            <div className="row manageFreight">
-               <Modal
-                                      open={openmodalAssignFreight}
-                                      onClose={hanldecloseModal}
-                                      aria-labelledby="modal-modal-title"
-                                      aria-describedby="modal-modal-description"
-                                      className="newModal"
-                                    >
-                                      <Box
-                                        sx={{
-                                          position: "absolute",
-                                          top: "50%",
-                                          left: "50%",
-                                          transform: "translate(-50%, -50%)",
-                                          minWidth: 450,
-                                          bgcolor: "background.paper",
-                                          boxShadow: 24,
-                                        }}
-                                      >
-                                        <div className="modal-header">
-                                          <h2>
-                                            <h2 id="modal-modal-title">Assign Staff</h2>
-                                          </h2>
-                                          <button className="btn btn-close" onClick={hanldecloseModal}>
-                                            <CloseIcon />
-                                          </button>
-                                        </div>
-                        
-                                        <div className="newModalGap">
-                                          <div className="row my-3  ">
-                                          </div>
-                        <div className="col-12 ">
-                                              <label>Assign Staff</label>
-                                              <select
-                                                className="form-cuntrol col-12 border px-3 py-2 mb-2"
-                                                value={supplierName}
-                                                onChange={(e)=>{setSupplierName(e.target.value)}}
-                                                name="attachdoc"
-                                              >
-                                                <option>Select</option>
-                                                {supplierData.map((item, index) => (
-                                                                  <option key={index} value={item.id}>
-                                                                   {item.full_name}
-                                                                  </option>
-                                                                ))}
-                                              </select>
-                                            </div>
-                                          <Button
-                                            variant="contained"
-                                            className="text-center"
-                                            onClick={AssignFreightToSupplier}
-                                          >
-                                            Add Staff
-                                          </Button>
-                                        </div>
-                                      </Box>
-                                    </Modal>
-              <div className="col-12">
-                <div className="d-flex justify-content-between align-items-center">
-                  <div className="">
-                    <h4 className="freight_hd">Custom Clearance Admin</h4>
+
+      <div className="wpWrapper">
+        <div className="container-fluid">
+          <div className="row manageFreight">
+            <Modal
+              open={openmodalAssignFreight}
+              onClose={hanldecloseModal}
+              aria-labelledby="modal-modal-title"
+              aria-describedby="modal-modal-description"
+              className="newModal"
+            >
+              <Box
+                sx={{
+                  position: "absolute",
+                  top: "50%",
+                  left: "50%",
+                  transform: "translate(-50%, -50%)",
+                  width: {
+                    xs: "95%",   // mobile
+                    sm: "80%",   // tablet
+                    md: "60%",   // small laptop
+                    lg: "40%",   // desktop
+                  },
+                  bgcolor: "background.paper",
+                  boxShadow: 24,
+                }}
+              >
+                <div className="modal-header">
+                  <h2>
+                    <h2 id="modal-modal-title">Assign Staff</h2>
+                  </h2>
+                  <button className="btn btn-close" onClick={hanldecloseModal}>
+                    <CloseIcon />
+                  </button>
+                </div>
+
+                <div className="newModalGap">
+                  <div className="col-12 ">
+                    <label>Assign Staff</label>
+                    <select
+                      className="form-cuntrol col-12 border px-3 py-2 mb-2"
+                      value={supplierName}
+                      onChange={(e) => { setSupplierName(e.target.value) }}
+                      name="attachdoc"
+                    >
+                      <option>Select</option>
+                      {supplierData.map((item, index) => (
+                        <option key={index} value={item.id}>
+                          {item.full_name}
+                        </option>
+                      ))}
+                    </select>
                   </div>
-                  <div className="d-flex justify-content-end">
-                    <div className="">
-                      <input
-                        className="px-2 py-1 rounded "
-                        placeholder="Search"
-                        value={searchQuery}
-                        onChange={handleSearch}
-                      ></input>
-                    </div>
-                    <div className="mx-2">
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setIsUpdating(false);
-                          setShowModal(true);
-                        }}
-                      >
-                        Add
-                      </button>
-                    </div>
-                    <div className="dropdown">
-                      <button onClick={handleOpenModal}>Filter</button>
-                    </div>
+                  <div className="mt-3 text-center">
+                    <button
+                      variant="contained"
+                      className="blueBtn"
+                      onClick={AssignFreightToSupplier}
+                    >
+                      Add Staff
+                    </button>
+
+                  </div>
+                </div>
+              </Box>
+            </Modal>
+            <div className="col-12">
+              <div className="d-flex justify-content-between align-items-center flex-wrap gap-2">
+                <div className="">
+                  <h4 className="freight_hd">Custom Clearance Admin</h4>
+                </div>
+                <div className="d-flex justify-content-end">
+                  <div className="searchManageFre">
+                    <input
+                      className="px-2 py-1 rounded "
+                      placeholder="Search"
+                      value={searchQuery}
+                      onChange={handleSearch}
+                    ></input>
+                  </div>
+                  <div className="mx-2">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setIsUpdating(false);
+                        setShowModal(true);
+                      }}
+                    >
+                      Add
+                    </button>
+                  </div>
+                  <div className="dropdown">
+                    <button onClick={handleOpenModal}>Filter</button>
                   </div>
                 </div>
               </div>
             </div>
-              {loader ? (
-        <div class="loader-container">
-          <div class="loader"></div>
-          <p class="loader-text">Updating... This may take some time</p>
-        </div>
-      ) : (
+          </div>
+          {loader ? (
+            <div class="loader-container">
+              <div class="loader"></div>
+              <p class="loader-text">Updating... This may take some time</p>
+            </div>
+          ) : (
             <div className="mt-4">
               <div>
                 <div className="table-responsive">
@@ -1077,9 +1083,9 @@ const freightData1 =async (value) => {
                 </div>
               </div>
             </div>
-      )}
-          </div>
+          )}
         </div>
+      </div>
       <Modal
         open={openmodal}
         onClose={handelmdal}
@@ -1093,6 +1099,13 @@ const freightData1 =async (value) => {
             left: "50%",
             transform: "translate(-50%, -50%)",
             bgcolor: "background.paper",
+            width: {
+              xs: "95%",   // mobile
+              sm: "80%",   // tablet
+              md: "60%",   // small laptop
+              lg: "40%",   // desktop
+            },
+
           }}
         >
           <div className="modal-header">
@@ -1102,277 +1115,90 @@ const freightData1 =async (value) => {
             </button>
           </div>
           <div className="newModalGap">
-            <div className="row my-2">
-              <div className="col-12 ">
+            <div className="row">
+              <div className="col-md-12">
                 <label>Attach Quote</label>
                 <input
                   type="file"
-                  className="form-cuntrol border px-3 w-100 py-2 rounded"
+                  className="form-control"
                   onChange={handecnagegetthedata}
                   name="file"
                 ></input>
               </div>
             </div>
-            <Button
-              variant="contained"
-              className="text-center"
-              onClick={postattachquote}
-              // className="mt-2"
-            >
-              Add Quote
-            </Button>
+            <div className="text-center mt-3">
+              <button
+                variant="contained"
+                className="blueBtn"
+                onClick={postattachquote}
+              >
+                Add Quote
+              </button>
+
+            </div>
           </div>
         </Box>
       </Modal>
       <ToastContainer />
-      <div
-        className={`modal fade ${showModal ? "show " : ""}`}
-        style={{ display: showModal ? "block" : "none" }}
-        tabIndex="-1"
-        aria-labelledby="exampleModalLabel"
-        aria-hidden="true"
-      >
-        <div className="modal-dialog modal-dialog-scrollable modal-dialog-centered">
-          <div className="modal-content">
-            <div className="modal-header">
-              <h5 className="modal-title" id="exampleModalLabel">
-                {isUpdating ? "Update" : "Add"} Custom Clearance
-              </h5>
-              <button
-                type="button"
-                className="btn-close"
-                onClick={handleModalClose}
-              >
-                <CloseIcon />
-              </button>
-            </div>
-            <div className="modal-body noFormaControl">
-              <div className="row">
-                <div className="col-md-6">
-                  <div className="mb-2">
-                    <label htmlFor="customer_ref" className="form-label">
-                      Mode of Freight <span style={{ color: "red" }}>*</span>
-                    </label>
+      <div>
+        <div
+          className={`modal fade ${showModal ? "show " : ""}`}
+          style={{ display: showModal ? "block" : "none" }}
+          tabIndex="-1"
+          aria-labelledby="exampleModalLabel"
+          aria-hidden="true"
+        >
+          <div className="modal-dialog modal-dialog-scrollable modal-dialog-centered modal-xl">
+            <div className="modal-content">
+              <div className="modal-header">
+                <h5 className="modal-title" id="exampleModalLabel">
+                  {isUpdating ? "Update" : "Add"} Custom Clearance
+                </h5>
+                <button
+                  type="button"
+                  className="btn-close"
+                  onClick={handleModalClose}
+                >
+                  <CloseIcon />
+                </button>
+              </div>
+              <div className="modal-body noFormaControl">
+                <div className="row">
+                  <div className="col-md-6">
+                    <div className="mb-2">
+                      <label htmlFor="customer_ref" className="form-label">
+                        Mode of Freight <span style={{ color: "red" }}>*</span>
+                      </label>
 
-                    <select
-                      onChange={isUpdating ? handleInputChange : handlechange}
-                      name="freight"
-                      className="w-100 py-2 px-2 sel_custom"
-                      value={isUpdating ? inputdata.freight : data.freight}
-                    >
-                      <option>Select...</option>
-                      <option value="Sea">Sea</option>
-                      <option value="Air">Air</option>
-                      <option value="Road">Road</option>
-                      <option value="Rail">Rail</option>
-                    </select>
-                  </div>
-                </div>
-                <div className="col-md-6">
-                  <label className="form-label">Client </label>
-                  <select
-                    name="client"
-                    onChange={isUpdating ? handleInputChange : handlechange}
-                    value={isUpdating ? inputdata.client : data.client}
-                  >
-                    <option>Select...</option>
-                    {lcientlist &&
-                      lcientlist.length > 0 &&
-                      lcientlist.map((item, index) => {
-                        // console.log(item);
-                        return (
-                          <>
-                            <option key={index} value={item.id}>
-                              {item.full_name}
-                            </option>
-                          </>
-                        );
-                      })}
-                  </select>
-                </div>
-              </div>
-              <div className="row">
-                <div className="col-md-6">
-                  {showSeaOptions && (
-                    <>
-                      <h5>Sea Freight Options</h5>
                       <select
-                        name="seaOption"
-                        id="seaOption"
                         onChange={isUpdating ? handleInputChange : handlechange}
-                        className="w-100 py-2 px-2"
+                        name="freight"
+                        className="w-100 py-2 px-2 sel_custom"
+                        value={isUpdating ? inputdata.freight : data.freight}
                       >
-                        <option value="">Select...</option>
-                        <option value="fullContainer">Full Container</option>
-                        <option value="lessThanContainer">
-                          Less than Container Size
-                        </option>
+                        <option>Select...</option>
+                        <option value="Sea">Sea</option>
+                        <option value="Air">Air</option>
+                        <option value="Road">Road</option>
+                        <option value="Rail">Rail</option>
                       </select>
-                    </>
-                  )}
-                  {showRoadOptions && (
-                    <>
-                      <h5>Road Freight Options</h5>
-                      <select
-                        name="roadOption"
-                        id="roadOption"
-                        onChange={isUpdating ? handleInputChange : handlechange}
-                        className="w-100 py-2 px-2"
-                      >
-                        <option value="">Select...</option>
-                        <option value="fullLoad">Full Load</option>
-                        <option value="smallCargo">
-                          Small Cargo for Console
-                        </option>
-                      </select>
-                    </>
-                  )}
-                </div>
-              </div>
-              <div className="row ">
-                <div className="col-md-6">
-                  <div>
-                    <label>Are You</label>
-                    <div className="shipRefer">
-                      {!isUpdating ? (
-                        <>
-                          <input
-                            type="radio"
-                            id="statusShipper"
-                            name="is_cong_shipp"
-                            value="shipper"
-                            onChange={handlechange}
-                          />
-                          <label htmlFor="statusShipper">Shipper </label>
-                          <input
-                            type="radio"
-                            id="statusConsignee"
-                            name="is_cong_shipp"
-                            value="consignee"
-                            onChange={handlechange}
-                          />
-                          <label htmlFor="statusConsignee">Consignee </label>
-                        </>
-                      ) : (
-                        <>
-                          <input
-                            type="radio"
-                            id="statusShipper"
-                            name="is_cong_shipp"
-                            value="shipper"
-                            checked={inputdata.is_cong_shipp === "shipper"}
-                            onChange={handleInputChange}
-                          />
-                          <label htmlFor="statusShipper">Shipper </label>
-                          <input
-                            type="radio"
-                            id="statusConsignee"
-                            name="is_cong_shipp"
-                            value="consignee"
-                            checked={inputdata.is_cong_shipp === "consignee"}
-                            onChange={handleInputChange}
-                          />
-                          <label htmlFor="statusConsignee">Consignee </label>
-                        </>
-                      )}
                     </div>
                   </div>
-                </div>
-                <div className="col-md-6">
-                  <label>Is this</label>
-                  <div className="shipRefer d-flex">
-                    {!isUpdating ? (
-                      <>
-                        <div className="d-flex align-items-center">
-                          <input
-                            type="radio"
-                            id="statusOne"
-                            name="is_Import_Export"
-                            value="import"
-                            onChange={handlechange}
-                            className="check_input"
-                          />
-                          <label htmlFor="statusOne">Import</label>
-                        </div>
-                        <div className="d-flex align-items-center">
-                          <input
-                            type="radio"
-                            id="statusTwo"
-                            name="is_Import_Export"
-                            value="export"
-                            onChange={handlechange}
-                            className="check_input"
-                          />
-                          <label htmlFor="statusTwo">Export</label>
-                        </div>
-                      </>
-                    ) : (
-                      <>
-                        <div className="d-flex align-items-center">
-                          <input
-                            type="radio"
-                            id="statusOne"
-                            name="is_Import_Export"
-                            value="import"
-                            checked={inputdata.is_Import_Export === "import"}
-                            onChange={handleInputChange}
-                            className="check_input"
-                          />
-                          <label htmlFor="statusOne">Import</label>
-                        </div>
-                        <div className="d-flex align-items-center">
-                          <input
-                            type="radio"
-                            id="statusTwo"
-                            name="is_Import_Export"
-                            value="export"
-                            checked={inputdata.is_Import_Export === "export"}
-                            onChange={handleInputChange}
-                            className="check_input"
-                          />
-                          <label htmlFor="statusTwo">Export</label>
-                        </div>
-                      </>
-                    )}
-                  </div>
-                </div>
-              </div>
-              <div className="row">
-                <div className="col-md-6">
-                  <label>Shipment Refrence</label>
-                  <div className="shipRefer">
-                    <input
-                      type="text"
-                      id="stausone"
-                      name="customer_ref"
-                      className="w-100 rounded py-1 px-2 sel_custom"
-                      onChange={isUpdating ? handleInputChange : handlechange}
-                      value={
-                        isUpdating ? inputdata.customer_ref : data.customer_ref
-                      }
-                      placeholder="Shipment Reference"
-                    />
-                  </div>
-                </div>
-                <div className="col-md-6">
-                  <label>Sales Representative</label>
-                  <div className="shipRefer">
+                  <div className="col-md-6">
+                    <label className="form-label">Client </label>
                     <select
-                      name="sales_representative"
+                      name="client"
                       onChange={isUpdating ? handleInputChange : handlechange}
-                      value={
-                        isUpdating
-                          ? inputdata.sales_representative
-                          : data.sales_representative
-                      }
+                      value={isUpdating ? inputdata.client : data.client}
                     >
-                      <option value="">Select...</option>
-                      {staffdata &&
-                        staffdata.length > 0 &&
-                        staffdata.map((item, index) => {
+                      <option>Select...</option>
+                      {lcientlist &&
+                        lcientlist.length > 0 &&
+                        lcientlist.map((item, index) => {
+                          // console.log(item);
                           return (
                             <>
-                              <option value={item.id} key={index}>
+                              <option key={index} value={item.id}>
                                 {item.full_name}
                               </option>
                             </>
@@ -1381,462 +1207,697 @@ const freightData1 =async (value) => {
                     </select>
                   </div>
                 </div>
-              </div>
-              <div className="row">
-                <div className="col-md-12">
-                  <h6 className="md_heading text-start">
-                    Port of Clearing Details
-                  </h6>
-                </div>
-              </div>
-              <div className="row">
-                <div className="col-md-6">
-                  <div className="mb-3">
-                    <label htmlFor="destination" className="form-label">
-                      Port of Loading Country{" "}
-                      <span style={{ color: "red" }}>*</span>
-                    </label>
-                    <select
-                      id="port_of_entry"
-                      name="loading_country"
-                      value={
-                        isUpdating
-                          ? inputdata.loading_country
-                          : data.loading_country
-                      }
-                      onChange={isUpdating ? handleInputChange : handlechange}
-                    >
-                      <option>Select...</option>
-                      {country &&
-                        country.length > 0 &&
-                        country.map((item, index) => {
-                          // console.log(item);
-                          return (
-                            <>
-                              <option key={index} value={item.id}>
-                                {item.name}
-                              </option>
-                            </>
-                          );
-                        })}
-                    </select>
+                <div className="row">
+                  <div className="col-md-6">
+                    {showSeaOptions && (
+                      <>
+                        <h5>Sea Freight Options</h5>
+                        <select
+                          name="seaOption"
+                          id="seaOption"
+                          onChange={isUpdating ? handleInputChange : handlechange}
+                          className="w-100 py-2 px-2"
+                        >
+                          <option value="">Select...</option>
+                          <option value="fullContainer">Full Container</option>
+                          <option value="lessThanContainer">
+                            Less than Container Size
+                          </option>
+                        </select>
+                      </>
+                    )}
+                    {showRoadOptions && (
+                      <>
+                        <h5>Road Freight Options</h5>
+                        <select
+                          name="roadOption"
+                          id="roadOption"
+                          onChange={isUpdating ? handleInputChange : handlechange}
+                          className="w-100 py-2 px-2"
+                        >
+                          <option value="">Select...</option>
+                          <option value="fullLoad">Full Load</option>
+                          <option value="smallCargo">
+                            Small Cargo for Console
+                          </option>
+                        </select>
+                      </>
+                    )}
                   </div>
                 </div>
-                <div className="col-md-6">
-                  <div className="mb-3">
-                    <label htmlFor="port_of_entry" className="form-label">
-                      Port of Exit Country{" "}
-                      <span style={{ color: "red" }}>*</span>
-                    </label>
-                    <select
-                      id="port_of_entry"
-                      name="discharge_country"
-                      value={
-                        isUpdating
-                          ? inputdata.discharge_country
-                          : data.discharge_country
-                      }
-                      onChange={isUpdating ? handleInputChange : handlechange}
-                    >
-                      <option>Select...</option>
-                      {country &&
-                        country.length > 0 &&
-                        country.map((item, index) => {
-                          // console.log(item);
-                          return (
-                            <>
-                              <option key={index} value={item.id}>
-                                {item.name}
-                              </option>
-                            </>
-                          );
-                        })}
-                    </select>
-                  </div>
-                </div>
-              </div>
-              <div className="row">
-                <div className="col-md-6">
-                  <div className="mb-3">
-                    <label htmlFor="port_of_exit" className="form-label">
-                      Port of Loading
-                    </label>
-                    <input
-                      className="form-control"
-                      name="port_of_loading"
-                      onChange={isUpdating ? handleInputChange : handlechange}
-                      value={
-                        isUpdating
-                          ? inputdata.port_of_loading
-                          : data.port_of_loading
-                      }
-                      placeholder="Port of Loading"
-                    ></input>
-                  </div>
-                </div>
-                <div className="col-md-6">
-                  <div className="mb-3">
-                    <label htmlFor="clearing_agent" className="form-label">
-                      Port of Discharge
-                    </label>
-                    <input
-                      className="form-control"
-                      name="port_of_discharge"
-                      onChange={isUpdating ? handleInputChange : handlechange}
-                      value={
-                        isUpdating
-                          ? inputdata.port_of_discharge
-                          : data.port_of_discharge
-                      }
-                      placeholder="Port of Discharge"
-                    ></input>
-                  </div>
-                </div>
-              </div>
-              <div className="row mb-3 mt-4">
-                <div className="col-9 mt-3">
-                  <h4 className="freight_hd">Document Section</h4>
-                  <span class="line"></span>
-                </div>
-                <div className="col-3">
-                  <Button className="btn  btn-primary" onClick={handleShow}>
-                    Upload Documents
-                  </Button>
+                <div className="row ">
+                  <div className="col-md-6 mb-3 mt-3 mt-md-0">
+                    <div>
+                      <label>Are You</label>
+                      <div className="shipRefer">
+                        {!isUpdating ? (
+                          <>
 
-                  {show1 ? (
-                    <Modal
-                      open={show1}
-                      onClose={handleClose}
-                      slotProps={{
-                        backdrop: {
-                          sx: { backgroundColor: "rgba(0,0,0,0.2)" }, // lighter background
-                        },
-                      }}
-                    >
-                      <Box
-                        sx={{
-                          p: 3,
-                          bgcolor: "background.paper",
-                          borderRadius: 2,
-                          width: 500,
-                          mx: "auto",
-                          mt: 10,
+                            <div className="radioBtn d-flex gap-3">
+                              <div>
+
+                                <input
+                                  type="radio"
+                                  id="statusShipper"
+                                  name="is_cong_shipp"
+                                  value="shipper"
+                                  onChange={handlechange}
+                                />
+                                <label htmlFor="statusShipper">Shipper </label>
+                              </div>
+                              <div>
+                                <input
+                                  type="radio"
+                                  id="statusConsignee"
+                                  name="is_cong_shipp"
+                                  value="consignee"
+                                  onChange={handlechange}
+                                />
+                                <label htmlFor="statusConsignee">Consignee </label>
+                              </div>
+                            </div>
+
+
+                          </>
+                        ) : (
+                          <>
+
+
+                            <div className="radioBtn d-flex gap-3">
+                              <div>
+
+                                <input
+                                  type="radio"
+                                  id="statusShipper"
+                                  name="is_cong_shipp"
+                                  value="shipper"
+                                  checked={inputdata.is_cong_shipp === "shipper"}
+                                  onChange={handleInputChange}
+                                />
+                                <label htmlFor="statusShipper">Shipper </label>
+
+                              </div>
+                              <div>
+
+                                <input
+                                  type="radio"
+                                  id="statusConsignee"
+                                  name="is_cong_shipp"
+                                  value="consignee"
+                                  checked={inputdata.is_cong_shipp === "consignee"}
+                                  onChange={handleInputChange}
+                                />
+                                <label htmlFor="statusConsignee">Consignee </label>
+                              </div>
+                            </div>
+
+                          </>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                  <div className="col-md-6">
+                    <label>Is this</label>
+                    <div className="shipRefer d-flex">
+                      {!isUpdating ? (
+                        <>
+                          <div className="radioBtn">
+                            <div>
+                              <input
+                                type="radio"
+                                id="statusOne"
+                                name="is_Import_Export"
+                                value="import"
+                                onChange={handlechange}
+                                className="check_input"
+                              />
+                              <label htmlFor="statusOne">Import</label>
+
+                            </div>
+                          </div>
+                          <div className="radioBtn">
+                            <div>
+
+                              <input
+                                type="radio"
+                                id="statusTwo"
+                                name="is_Import_Export"
+                                value="export"
+                                onChange={handlechange}
+                                className="check_input"
+                              />
+                              <label htmlFor="statusTwo">Export</label>
+                            </div>
+                          </div>
+                        </>
+                      ) : (
+                        <>
+                          <div className="radioBtn">
+                            <div>
+                              <input
+                                type="radio"
+                                id="statusOne"
+                                name="is_Import_Export"
+                                value="import"
+                                checked={inputdata.is_Import_Export === "import"}
+                                onChange={handleInputChange}
+                                className="check_input"
+                              />
+                              <label htmlFor="statusOne">Import</label>
+
+                            </div>
+                          </div>
+                          <div className="radioBtn">
+                            <div>
+                              <input
+                                type="radio"
+                                id="statusTwo"
+                                name="is_Import_Export"
+                                value="export"
+                                checked={inputdata.is_Import_Export === "export"}
+                                onChange={handleInputChange}
+                                className="check_input"
+                              />
+                              <label htmlFor="statusTwo">Export</label>
+
+                            </div>
+                          </div>
+                        </>
+                      )}
+                    </div>
+                  </div>
+                </div>
+                <div className="row">
+                  <div className="col-md-6 mt-3 mt-md-0">
+                    <label>Shipment Refrence</label>
+                    <div className="shipRefer">
+                      <input
+                        type="text"
+                        id="stausone"
+                        name="customer_ref"
+                        className="w-100 rounded py-1 px-2 sel_custom"
+                        onChange={isUpdating ? handleInputChange : handlechange}
+                        value={
+                          isUpdating ? inputdata.customer_ref : data.customer_ref
+                        }
+                        placeholder="Shipment Reference"
+                      />
+                    </div>
+                  </div>
+                  <div className="col-md-6 mt-3 mt-md-0">
+                    <label>Sales Representative</label>
+                    <div className="shipRefer">
+                      <select
+                        name="sales_representative"
+                        onChange={isUpdating ? handleInputChange : handlechange}
+                        value={
+                          isUpdating
+                            ? inputdata.sales_representative
+                            : data.sales_representative
+                        }
+                      >
+                        <option value="">Select...</option>
+                        {staffdata &&
+                          staffdata.length > 0 &&
+                          staffdata.map((item, index) => {
+                            return (
+                              <>
+                                <option value={item.id} key={index}>
+                                  {item.full_name}
+                                </option>
+                              </>
+                            );
+                          })}
+                      </select>
+                    </div>
+                  </div>
+                </div>
+                <div className="row">
+                  <div className="col-md-12">
+                    <h6 className="md_heading text-start">
+                      Port of Clearing Details
+                    </h6>
+                  </div>
+                </div>
+                <div className="row">
+                  <div className="col-md-6">
+                    <div className="mb-3">
+                      <label htmlFor="destination" className="form-label">
+                        Port of Loading Country{" "}
+                        <span style={{ color: "red" }}>*</span>
+                      </label>
+                      <select
+                        id="port_of_entry"
+                        name="loading_country"
+                        value={
+                          isUpdating
+                            ? inputdata.loading_country
+                            : data.loading_country
+                        }
+                        onChange={isUpdating ? handleInputChange : handlechange}
+                      >
+                        <option>Select...</option>
+                        {country &&
+                          country.length > 0 &&
+                          country.map((item, index) => {
+                            // console.log(item);
+                            return (
+                              <>
+                                <option key={index} value={item.id}>
+                                  {item.name}
+                                </option>
+                              </>
+                            );
+                          })}
+                      </select>
+                    </div>
+                  </div>
+                  <div className="col-md-6">
+                    <div className="mb-3">
+                      <label htmlFor="port_of_entry" className="form-label">
+                        Port of Exit Country{" "}
+                        <span style={{ color: "red" }}>*</span>
+                      </label>
+                      <select
+                        id="port_of_entry"
+                        name="discharge_country"
+                        value={
+                          isUpdating
+                            ? inputdata.discharge_country
+                            : data.discharge_country
+                        }
+                        onChange={isUpdating ? handleInputChange : handlechange}
+                      >
+                        <option>Select...</option>
+                        {country &&
+                          country.length > 0 &&
+                          country.map((item, index) => {
+                            // console.log(item);
+                            return (
+                              <>
+                                <option key={index} value={item.id}>
+                                  {item.name}
+                                </option>
+                              </>
+                            );
+                          })}
+                      </select>
+                    </div>
+                  </div>
+                </div>
+                <div className="row">
+                  <div className="col-md-6">
+                    <div className="mb-3">
+                      <label htmlFor="port_of_exit" className="form-label">
+                        Port of Loading
+                      </label>
+                      <input
+                        className="form-control"
+                        name="port_of_loading"
+                        onChange={isUpdating ? handleInputChange : handlechange}
+                        value={
+                          isUpdating
+                            ? inputdata.port_of_loading
+                            : data.port_of_loading
+                        }
+                        placeholder="Port of Loading"
+                      ></input>
+                    </div>
+                  </div>
+                  <div className="col-md-6">
+                    <div className="mb-3">
+                      <label htmlFor="clearing_agent" className="form-label">
+                        Port of Discharge
+                      </label>
+                      <input
+                        className="form-control"
+                        name="port_of_discharge"
+                        onChange={isUpdating ? handleInputChange : handlechange}
+                        value={
+                          isUpdating
+                            ? inputdata.port_of_discharge
+                            : data.port_of_discharge
+                        }
+                        placeholder="Port of Discharge"
+                      ></input>
+                    </div>
+                  </div>
+                </div>
+                <div className="row mb-3 ">
+                  <div className="col-md-6">
+                    <h4 className="freight_hd">Document Section</h4>
+                    <span class="line"></span>
+                  </div>
+                  <div className="col-md-6 mt-3 mt-md-0 text-end">
+                    <button className="blueBtn" onClick={handleShow}>
+                      Upload Documents
+                    </button>
+
+                    {show1 ? (
+                      <Modal
+                        open={show1}
+                        onClose={handleClose}
+                        slotProps={{
+                          backdrop: {
+                            sx: { backgroundColor: "rgba(0,0,0,0.2)" }, // lighter background
+                          },
                         }}
                       >
-                        <h2>Upload Documents</h2>
-                        <FormControl fullWidth sx={{ mt: 2 }}>
-                          <InputLabel id="doc-select-label">
-                            Select Document Type
-                          </InputLabel>
-                          <Select
-                            labelId="doc-select-label"
-                            onChange={handleSelect}
-                          >
-                            {docOptions.map((option) => (
-                              <MenuItem key={option.id} value={option.id}>
-                                {option.label}
-                              </MenuItem>
-                            ))}
-                          </Select>
-                        </FormControl>
-                        <div className="mt-3">
-                          {selectedDocs.map((doc, index) => (
-                            <div key={index} className="mb-3">
-                              <label className="fw-bold">{doc.name}</label>
-                              <input
-                                type="file"
-                                className="form-control"
-                                multiple
-                                accept="image/*,application/pdf"
-                                onChange={(e) =>
-                                  handleFileChangefil(e, doc.name)
-                                }
-                              />
-                            </div>
-                          ))}
-                        </div>
                         <Box
                           sx={{
-                            display: "flex",
-                            justifyContent: "flex-end",
-                            gap: 2,
-                            mt: 3,
+                            p: 3,
+                            bgcolor: "background.paper",
+                            borderRadius: 2,
+                            width: 500,
+                            mx: "auto",
+                            mt: 10,
                           }}
                         >
-                          <Button onClick={handleClose}>Cancel</Button>
-                          <Button
-                            variant="contained"
-                            color="success"
-                            onClick={handleSave}
+                          <h2>Upload Documents</h2>
+                          <FormControl fullWidth sx={{ mt: 2 }}>
+                            <InputLabel id="doc-select-label">
+                              Select Document Type
+                            </InputLabel>
+                            <Select
+                              labelId="doc-select-label"
+                              onChange={handleSelect}
+                            >
+                              {docOptions.map((option) => (
+                                <MenuItem key={option.id} value={option.id}>
+                                  {option.label}
+                                </MenuItem>
+                              ))}
+                            </Select>
+                          </FormControl>
+                          <div className="mt-3">
+                            {selectedDocs.map((doc, index) => (
+                              <div key={index} className="mb-3">
+                                <label className="fw-bold">{doc.name}</label>
+                                <input
+                                  type="file"
+                                  className="form-control"
+                                  multiple
+                                  accept="image/*,application/pdf"
+                                  onChange={(e) =>
+                                    handleFileChangefil(e, doc.name)
+                                  }
+                                />
+                              </div>
+                            ))}
+                          </div>
+                          <Box
+                            sx={{
+                              display: "flex",
+                              justifyContent: "flex-end",
+                              gap: 2,
+                              mt: 3,
+                            }}
                           >
-                            Save Documents
-                          </Button>
+                            <Button onClick={handleClose}>Cancel</Button>
+                            <Button
+                              variant="contained"
+                              color="success"
+                              onClick={handleSave}
+                            >
+                              Save Documents
+                            </Button>
+                          </Box>
                         </Box>
-                      </Box>
-                    </Modal>
-                  ) : (
-                    ""
-                  )}
+                      </Modal>
+                    ) : (
+                      ""
+                    )}
+                  </div>
+                </div>
+                <div className="row">
+                  <div className="col-md-12">
+                    <h6 className="md_heading text-start mt-0">Cargo Details</h6>
+                  </div>
+                </div>
+                <div className="row">
+                  <div className="col-md-6">
+                    <div className="mb-3">
+                      <label htmlFor="port_of_exit" className="form-label">
+                        Product Description
+                      </label>
+                      <input
+                        className="form-control"
+                        name="goods_desc"
+                        value={
+                          isUpdating ? inputdata.goods_desc : data.goods_desc
+                        }
+                        onChange={isUpdating ? handleInputChange : handlechange}
+                        placeholder="Product Description"
+                      ></input>
+                    </div>
+                  </div>
+                  <div className="col-md-6">
+                    <div className="mb-3">
+                      <label htmlFor="clearing_agent" className="form-label">
+                        Nature of Goods
+                      </label>
+                      <select
+                        id="clearing_agent"
+                        name="nature_of_goods"
+                        value={
+                          isUpdating
+                            ? inputdata.nature_of_goods
+                            : data.nature_of_goods
+                        }
+                        onChange={isUpdating ? handleInputChange : handlechange}
+                      >
+                        <option>Select...</option>
+                        <option value="General Cargo">General Cargo</option>
+                        <option value="Battery">Battery</option>
+                        <option value="Powders">Powders</option>
+                        <option value="Hazardous">Hazardous</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+                <div className="row">
+                  <div className="col-md-6">
+                    <div className="mb-3">
+                      <label htmlFor="port_of_exit" className="form-label">
+                        Type of Packing
+                      </label>
+                      <select
+                        name="packing_type"
+                        value={
+                          isUpdating ? inputdata.packing_type : data.packing_type
+                        }
+                        onChange={isUpdating ? handleInputChange : handlechange}
+                      >
+                        <option>Select...</option>
+                        <option value="box">Box</option>
+                        <option value="crate">Crate</option>
+                        <option value="pallet">Pallet</option>
+                        <option value="bags">Bags</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div className="col-md-6">
+                    <div className="mb-3">
+                      <label htmlFor="clearing_agent" className="form-label">
+                        Comment on Goods
+                      </label>
+                      <input
+                        className="form-control"
+                        name="comment_on_docs"
+                        onChange={isUpdating ? handleInputChange : handlechange}
+                        value={
+                          isUpdating
+                            ? inputdata.comment_on_docs
+                            : data.comment_on_docs
+                        }
+                        placeholder="Comment on Docs"
+                      ></input>
+                    </div>
+                  </div>
+                </div>
+                <div className="row">
+                  <div className="col-md-6">
+                    <div className="mb-3">
+                      <label htmlFor="port_of_exit" className="form-label">
+                        No of package
+                      </label>
+                      <input
+                        className="form-control"
+                        onKeyPress={handlekey}
+                        name="total_box"
+                        value={isUpdating ? inputdata.total_box : data.total_box}
+                        onChange={isUpdating ? handleInputChange : handlechange}
+                        placeholder="0.00"
+                      ></input>
+                    </div>
+                  </div>
+                  <div className="col-md-6">
+                    <div className="mb-3">
+                      <label htmlFor="clearing_agent" className="form-label">
+                        Total Dimension
+                      </label>
+                      <input
+                        className="form-control"
+                        onKeyPress={handlekey}
+                        name="total_dimension"
+                        onChange={isUpdating ? handleInputChange : handlechange}
+                        value={
+                          isUpdating
+                            ? inputdata.total_dimension?.toLocaleString()
+                            : data.total_dimension
+                        }
+                        placeholder="0.00"
+                      ></input>
+                    </div>
+                  </div>
+                </div>
+                <div className="row">
+                  <div className="col-md-6">
+                    <div className="mb-3">
+                      <label htmlFor="port_of_exit" className="form-label">
+                        Weight
+                      </label>
+                      <input
+                        className="form-control"
+                        name="total_weight"
+                        onKeyPress={handlekey}
+                        onChange={isUpdating ? handleInputChange : handlechange}
+                        value={
+                          isUpdating ? inputdata.total_weight : data.total_weight
+                        }
+                        placeholder="0.00"
+                      ></input>
+                    </div>
+                  </div>
                 </div>
               </div>
-              <div className="row">
-                <div className="col-md-12">
-                  <h6 className="md_heading text-start">Cargo Details</h6>
-                </div>
-              </div>
-              <div className="row">
-                <div className="col-md-6">
-                  <div className="mb-3">
-                    <label htmlFor="port_of_exit" className="form-label">
-                      Product Description
-                    </label>
-                    <input
-                      className="form-control"
-                      name="goods_desc"
-                      value={
-                        isUpdating ? inputdata.goods_desc : data.goods_desc
-                      }
-                      onChange={isUpdating ? handleInputChange : handlechange}
-                      placeholder="Product Description"
-                    ></input>
-                  </div>
-                </div>
-                <div className="col-md-6">
-                  <div className="mb-3">
-                    <label htmlFor="clearing_agent" className="form-label">
-                      Nature of Goods
-                    </label>
-                    <select
-                      id="clearing_agent"
-                      name="nature_of_goods"
-                      value={
-                        isUpdating
-                          ? inputdata.nature_of_goods
-                          : data.nature_of_goods
-                      }
-                      onChange={isUpdating ? handleInputChange : handlechange}
-                    >
-                      <option>Select...</option>
-                      <option value="General Cargo">General Cargo</option>
-                      <option value="Battery">Battery</option>
-                      <option value="Powders">Powders</option>
-                      <option value="Hazardous">Hazardous</option>
-                    </select>
-                  </div>
-                </div>
-              </div>
-              <div className="row">
-                <div className="col-md-6">
-                  <div className="mb-3">
-                    <label htmlFor="port_of_exit" className="form-label">
-                      Type of Packing
-                    </label>
-                    <select
-                      name="packing_type"
-                      value={
-                        isUpdating ? inputdata.packing_type : data.packing_type
-                      }
-                      onChange={isUpdating ? handleInputChange : handlechange}
-                    >
-                      <option>Select...</option>
-                      <option value="box">Box</option>
-                      <option value="crate">Crate</option>
-                      <option value="pallet">Pallet</option>
-                      <option value="bags">Bags</option>
-                    </select>
-                  </div>
-                </div>
-                <div className="col-md-6">
-                  <div className="mb-3">
-                    <label htmlFor="clearing_agent" className="form-label">
-                      Comment on Goods
-                    </label>
-                    <input
-                      className="form-control"
-                      name="comment_on_docs"
-                      onChange={isUpdating ? handleInputChange : handlechange}
-                      value={
-                        isUpdating
-                          ? inputdata.comment_on_docs
-                          : data.comment_on_docs
-                      }
-                      placeholder="Comment on Docs"
-                    ></input>
-                  </div>
-                </div>
-              </div>
-              <div className="row">
-                <div className="col-md-6">
-                  <div className="mb-3">
-                    <label htmlFor="port_of_exit" className="form-label">
-                      No of package
-                    </label>
-                    <input
-                      className="form-control"
-                      onKeyPress={handlekey}
-                      name="total_box"
-                      value={isUpdating ? inputdata.total_box : data.total_box}
-                      onChange={isUpdating ? handleInputChange : handlechange}
-                      placeholder="0.00"
-                    ></input>
-                  </div>
-                </div>
-                <div className="col-md-6">
-                  <div className="mb-3">
-                    <label htmlFor="clearing_agent" className="form-label">
-                      Total Dimension
-                    </label>
-                    <input
-                      className="form-control"
-                      onKeyPress={handlekey}
-                      name="total_dimension"
-                      onChange={isUpdating ? handleInputChange : handlechange}
-                      value={
-                        isUpdating
-                          ? inputdata.total_dimension?.toLocaleString()
-                          : data.total_dimension
-                      }
-                      placeholder="0.00"
-                    ></input>
-                  </div>
-                </div>
-              </div>
-              <div className="row">
-                <div className="col-md-6">
-                  <div className="mb-3">
-                    <label htmlFor="port_of_exit" className="form-label">
-                      Weight
-                    </label>
-                    <input
-                      className="form-control"
-                      name="total_weight"
-                      onKeyPress={handlekey}
-                      onChange={isUpdating ? handleInputChange : handlechange}
-                      value={
-                        isUpdating ? inputdata.total_weight : data.total_weight
-                      }
-                      placeholder="0.00"
-                    ></input>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div className="modal-footer">
-              <button
-                type="button"
-                className="btn btn-primary"
-                onClick={handleSubmit}
-              >
-                {isUpdating ? "Update" : "Add"}
-              </button>
-              <button
-                type="button"
-                className="btn btn-secondary close"
-                onClick={handleModalClose}
-              >
-                Close
-              </button>
-            </div>
-          </div>
-          <Modal
-            open={isModalOpen}
-            onClose={handleCloseModal}
-            aria-labelledby="modal-modal-title"
-            aria-describedby="modal-modal-description"
-          >
-            <Box
-              sx={{
-                position: "absolute",
-                top: "50%",
-                left: "50%",
-                transform: "translate(-50%, -50%)",
-                bgcolor: "background.paper",
-                boxShadow: 24,
-              }}
-            >
-              <div className="modal-header">
-                <h2>
-                  <h2 id="modal-modal-title">Filter</h2>
-                </h2>
-                <button className="btn btn-close" onClick={handleCloseModal}>
-                  <CloseIcon />
+              <div className="modal-footer">
+                <button
+                  type="button"
+                  className="btn btn-primary"
+                  onClick={handleSubmit}
+                >
+                  {isUpdating ? "Update" : "Add"}
+                </button>
+                <button
+                  type="button"
+                  className="btn btn-secondary close"
+                  onClick={handleModalClose}
+                >
+                  Close
                 </button>
               </div>
-              <div className="newModalGap noFormaControl mt-2">
-                <div className="row mb-2">
-                  <div className="col-6">
-                    <label>Country of Origin</label>
-                    <select name="origin" onChange={handlechange}>
-                      <option value="">Select</option>
-                      {country &&
-                        country.length > 0 &&
-                        country.map((item, index) => {
-                          return (
-                            <>
-                              <option value={item.id}>{item.name}</option>
-                            </>
-                          );
-                        })}
-                    </select>
-                  </div>
-                  <div className="col-6">
-                    <label>Delivery to Country </label>
-                    <select name="destination" onChange={handlechange}>
-                      <option value="">Select</option>
-                      {country &&
-                        country.length > 0 &&
-                        country.map((item, index) => {
-                          return (
-                            <>
-                              <option value={item.id}>{item.name}</option>
-                            </>
-                          );
-                        })}
-                    </select>
+            </div>
+            <Modal
+              open={isModalOpen}
+              onClose={handleCloseModal}
+              aria-labelledby="modal-modal-title"
+              aria-describedby="modal-modal-description"
+            >
+              <Box
+                sx={{
+                  position: "absolute",
+                  top: "50%",
+                  left: "50%",
+                  transform: "translate(-50%, -50%)",
+                  bgcolor: "background.paper",
+                  boxShadow: 24,
+                  width: {
+                    xs: "95%",
+                    sm: "80%",
+                    md: "60%",
+                    lg: "40%",
+                  },
+                }}
+              >
+                <div className="modal-header">
+
+                  <h2 id="modal-modal-title">Filter</h2>
+
+                  <button className="btn btn-close" onClick={handleCloseModal}>
+                    <CloseIcon />
+                  </button>
+                </div>
+                <div className="newModalGap noFormaControl mt-2">
+                  <div className="row g-3">
+                    <div className="col-md-6">
+                      <label>Country of Origin</label>
+                      <select name="origin" onChange={handlechange}>
+                        <option value="">Select</option>
+                        {country &&
+                          country.length > 0 &&
+                          country.map((item, index) => {
+                            return (
+                              <>
+                                <option value={item.id}>{item.name}</option>
+                              </>
+                            );
+                          })}
+                      </select>
+                    </div>
+                    <div className="col-md-6">
+                      <label>Delivery to Country </label>
+                      <select name="destination" onChange={handlechange}>
+                        <option value="">Select</option>
+                        {country &&
+                          country.length > 0 &&
+                          country.map((item, index) => {
+                            return (
+                              <>
+                                <option value={item.id}>{item.name}</option>
+                              </>
+                            );
+                          })}
+                      </select>
+                    </div>
+
+                    <div className="col-md-6">
+                      <label>Start Date</label>
+                      <input
+                        type="date"
+                        id="shipper3"
+                        name="startDate"
+                        style={{ cursor: "pointer" }}
+                        className="form-control"
+                        onChange={handlechange}
+                      />
+                    </div>
+                    <div className="col-md-6">
+                      <label>End Date </label>
+                      <input
+                        type="date"
+                        id="shipper3"
+                        name="endDate"
+                        style={{ cursor: "pointer" }}
+                        className="form-control"
+                        onChange={handlechange}
+                      />
+                    </div>
+
+                    <div className="col-12">
+                      <label>Freight</label>
+                      <select name="freight" onChange={handlechange}>
+                        <option value="">Select...</option>
+                        <option value="Sea">Sea</option>
+                        <option value="Air">Air</option>
+                        <option value="Road">Road</option>
+                      </select>
+                    </div>
+                    <div className="col-md-12 text-center">
+                      <button className="blueBtn" variant="contained" onClick={postData}>
+                        Apply
+                      </button>
+                    </div>
                   </div>
                 </div>
-                <div className="row mb-2">
-                  <div className="col-6">
-                    <label>Start Date</label>
-                    <input
-                      type="date"
-                      id="shipper3"
-                      name="startDate"
-                      style={{ cursor: "pointer" }}
-                      className="form-control"
-                      onChange={handlechange}
-                    />
-                  </div>
-                  <div className="col-6">
-                    <label>End Date </label>
-                    <input
-                      type="date"
-                      id="shipper3"
-                      name="endDate"
-                      style={{ cursor: "pointer" }}
-                      className="form-control"
-                      onChange={handlechange}
-                    />
-                  </div>
-                </div>
-                <div className="row mb-2">
-                  <div className="col-12">
-                    <label>Freight</label>
-                    <select name="freight" onChange={handlechange}>
-                      <option value="">Select...</option>
-                      <option value="Sea">Sea</option>
-                      <option value="Air">Air</option>
-                      <option value="Road">Road</option>
-                    </select>
-                  </div>
-                </div>
-                <Button variant="contained" onClick={postData}>
-                  Apply
-                </Button>
-              </div>
-            </Box>
-          </Modal>
+              </Box>
+            </Modal>
+          </div>
         </div>
+        {showModal && (
+          <div className="modal-backdrop fade show"></div>
+        )}
+
       </div>
     </>
   );

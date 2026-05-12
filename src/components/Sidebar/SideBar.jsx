@@ -76,7 +76,7 @@ const routes = [
       },
     ],
   },
-   {
+  {
     path: "",
     name: "Freight Management",
     icon: <FlightOutlinedIcon />,
@@ -123,7 +123,7 @@ const routes = [
         name: "Cashbook",
         icon: <ShoppingCartOutlinedIcon />,
       },
-      
+
     ],
   },
   {
@@ -141,7 +141,7 @@ const routes = [
         name: "Supplier Warehouse Order",
         icon: <ShoppingCartOutlinedIcon />,
       },
-       {
+      {
         path: "/Admin/Batches",
         name: "Batches",
         icon: <MilitaryTechOutlinedIcon />,
@@ -166,20 +166,20 @@ const routes = [
     icon: <PeopleAltOutlinedIcon />,
     subRoutes: [
       {
-    path: "/Admin/manage-customer",
-    name: "Manage Customers",
-    icon: <PeopleAltOutlinedIcon />,
-  },
-    {
-      path: "/Admin/manage-supplier",
-      name: "Manage Suppliers",
-      icon: <LocalShippingOutlinedIcon />,
-    },
-    {
-      path: "/Admin/manage-staff",
-      name: "Manage Staff",
-      icon: <Groups2OutlinedIcon />,
-    },
+        path: "/Admin/manage-customer",
+        name: "Manage Customers",
+        icon: <PeopleAltOutlinedIcon />,
+      },
+      {
+        path: "/Admin/manage-supplier",
+        name: "Manage Suppliers",
+        icon: <LocalShippingOutlinedIcon />,
+      },
+      {
+        path: "/Admin/manage-staff",
+        name: "Manage Staff",
+        icon: <Groups2OutlinedIcon />,
+      },
     ],
   },
   {
@@ -187,31 +187,31 @@ const routes = [
     name: "Facilities Management",
     icon: <PeopleAltOutlinedIcon />,
     subRoutes: [
-        {
-      path: "/Admin/Warehouse",
-      name: "Warehouse",
-      icon: <OtherHousesOutlinedIcon />,
-    },
-    {
-      path: "/Admin/Customesclearingagent",
-      name: "Customs Clearing Agent",
-      icon: <LocalShippingOutlinedIcon />,
-    },
-    {
-      path: "/Admin/freightForeward",
-      name: "Freight Forwarder",
-      icon: <Groups2OutlinedIcon />,
-    },
-    {
-      path: "/Admin/groupageWarehouse",
-      name: "Groupage Handler",
-      icon: <Groups2OutlinedIcon />,
-    },
-    {
-      path: "/Admin/RoadTransporter",
-      name: "Road Transport",
-      icon: <Groups2OutlinedIcon />,
-    },
+      {
+        path: "/Admin/Warehouse",
+        name: "Warehouse",
+        icon: <OtherHousesOutlinedIcon />,
+      },
+      {
+        path: "/Admin/Customesclearingagent",
+        name: "Customs Clearing Agent",
+        icon: <LocalShippingOutlinedIcon />,
+      },
+      {
+        path: "/Admin/freightForeward",
+        name: "Freight Forwarder",
+        icon: <Groups2OutlinedIcon />,
+      },
+      {
+        path: "/Admin/groupageWarehouse",
+        name: "Groupage Handler",
+        icon: <Groups2OutlinedIcon />,
+      },
+      {
+        path: "/Admin/RoadTransporter",
+        name: "Road Transport",
+        icon: <Groups2OutlinedIcon />,
+      },
     ],
   },
   {
@@ -230,22 +230,22 @@ const userControlRoutes = {
   name: "User Control",
   icon: <SecurityOutlinedIcon />,
   subRoutes: [
- {
-    path: "/Admin/taskmanager",
-    name: "Task Manager",
-    icon: <LanguageOutlinedIcon />,
-  }
+    {
+      path: "/Admin/taskmanager",
+      name: "Task Manager",
+      icon: <LanguageOutlinedIcon />,
+    }
     , {
       path: "/Admin/contactus",
       name: "Contact Us",
       icon: <OtherHousesOutlinedIcon />,
     },
-      {
-    path: "/Admin/countryoforigin",
-    name: "Country Of Origin",
-    icon: <LanguageOutlinedIcon />,
-  },
-    {  
+    {
+      path: "/Admin/countryoforigin",
+      name: "Country Of Origin",
+      icon: <LanguageOutlinedIcon />,
+    },
+    {
       path: "/Admin/link",
       name: "Add Links",
       icon: <AddLinkIcon />,
@@ -265,24 +265,24 @@ const userControlRoutes = {
 const SideBar = ({ children }) => {
   const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(true);
-  const [openDropdown, setOpenDropdown] = useState(null); 
+  const [openDropdown, setOpenDropdown] = useState(null);
   const usertype = JSON.parse(localStorage.getItem("data123")).user_type;
-let filteredRoutes = routes.filter((route) => {
-  if (route.path === "/Admin/TaskManagerstaff") {
-    return usertype !== "1";
-  }
-  return true;
-});
+  let filteredRoutes = routes.filter((route) => {
+    if (route.path === "/Admin/TaskManagerstaff") {
+      return usertype !== "1";
+    }
+    return true;
+  });
 
-// ✅ yaha add karo userControlRoutes
-if (usertype === "1") {
-  filteredRoutes.push(userControlRoutes);
-}
+  // ✅ yaha add karo userControlRoutes
+  if (usertype === "1") {
+    filteredRoutes.push(userControlRoutes);
+  }
   useEffect(() => {
     const savedState = localStorage.getItem("sidebarOpen");
     if (savedState !== null) {
       setIsOpen(savedState === "true");
-    } 
+    }
   }, []);
   useEffect(() => {
     localStorage.setItem("sidebarOpen", isOpen);
@@ -308,7 +308,7 @@ if (usertype === "1") {
     setOpenDropdown((prevIndex) => (prevIndex === index ? null : index));
   };
   return (
-    <div className="main-container">
+    <div className="main-container sideBarpageMain">
       <motion.div
         animate={{
           width: isOpen ? "300px" : "42px",
@@ -339,15 +339,15 @@ if (usertype === "1") {
             )}
           </AnimatePresence>
           {
-            isOpen? (<div className="bars" style={{ borderRadius: "20px" }}>
-            <BiLeftArrowCircle
-              onClick={toggle}
-              style={{ fontSize: "2rem", cursor: "pointer" }}
-            />
-          </div>):(   <BiRightArrowCircle size={30}  onClick={toggle}  color="blue" />)
+            isOpen ? (<div className="bars" style={{ borderRadius: "20px" }}>
+              <BiLeftArrowCircle
+                onClick={toggle}
+                style={{ fontSize: "2rem", cursor: "pointer" }}
+              />
+            </div>) : (<BiRightArrowCircle size={30} onClick={toggle} color="blue" />)
           }
         </div>
-        <div className="text-center">
+        <div className="text-center mt-5 mt-md-0">
           <div>
             <button
               className="search"
@@ -452,7 +452,7 @@ if (usertype === "1") {
       </motion.div>
       <motion.div
         animate={{
-          width: isOpen ? "85%" : "100%",
+          width: isOpen ? "calc(100% - 250px)" : "100%",
           transition: {
             duration: 0.5,
             type: "spring",

@@ -661,8 +661,8 @@ const Addfright = () => {
                   </div>
                   <div className="col-4">
                     <div className="borderShip updateLoading">
-                      <div className="row">
-                        <div className="col-6">
+                      <div className="row g-2">
+                        <div className="col-xl-6 col-lg-12 col-md-12">
                           <label>Insurance</label>
                           <div className="shipRefer1">
                             <input
@@ -686,7 +686,7 @@ const Addfright = () => {
                           </div>
                           <p className="text-danger mb-0">{error.is_active}</p>
                         </div>
-                        <div className="col-6">
+                        <div className="col-xl-6 col-lg-12 col-md-12">
                           <label>Ready for Collection</label>
                           <div className="shipRefer1">
                             <input
@@ -712,9 +712,8 @@ const Addfright = () => {
                             {error.ready_for_collection}
                           </p>
                         </div>
-                      </div>
-                      <div className="row">
-                        <div className="col-6">
+
+                        <div className="col-xl-6 col-lg-12 col-md-12">
                           <label>Assign to Clearing</label>
                           <div className="shipRefer1">
                             <input
@@ -740,7 +739,7 @@ const Addfright = () => {
                             {error.assign_to_clearing}
                           </p>
                         </div>
-                        <div className="col-6">
+                        <div className="col-xl-6 col-lg-12 col-md-12">
                           <label>Send to Warehouse</label>
                           <div className="shipRefer1">
                             <input
@@ -1337,15 +1336,15 @@ const Addfright = () => {
                           />
                         </div>
                       </div>
-                      <div className="row mb-3 mt-4">
-                        <div className="col-9 mt-3">
+                      <div className="row mb-3 mt-4  align-items-center">
+                        <div className="col-md-6">
                           <h4 className="freight_hd">Document Section</h4>
                           <span class="line"></span>
                         </div>
-                        <div className="col-3">
-                          <Button variant="primary" onClick={handleShow}>
+                        <div className="col-md-6 text-end">
+                          <button className="blueBtn" variant="primary" onClick={handleShow}>
                             Upload Documents
-                          </Button>
+                          </button>
                         </div>
                       </div>
                       <Modal
@@ -1386,12 +1385,12 @@ const Addfright = () => {
                           </div>
                         </Modal.Body>
                         <Modal.Footer>
-                          <Button variant="secondary" onClick={handleClose}>
+                          <button className="redBtn" variant="secondary" onClick={handleClose}>
                             Cancel
-                          </Button>
-                          <Button variant="success" onClick={handleSave}>
+                          </button>
+                          <button className="blueBtn" variant="success" onClick={handleSave}>
                             Save Documents
-                          </Button>
+                          </button>
                         </Modal.Footer>
                       </Modal>
                       <div className="row">

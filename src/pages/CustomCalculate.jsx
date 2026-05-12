@@ -128,12 +128,12 @@ export default function CustomCalculate() {
     }
   };
 
-  
-  const handleApi =async () => {
+
+  const handleApi = async () => {
 
     const reqdata = rows.map((row) => ({
-      clearance_id: clearenceid ===undefined?clearenceid1.id: clearenceid ,
-      client_id: userid?.id? userid?.id :clearenceid1.user_id ,
+      clearance_id: clearenceid === undefined ? clearenceid1.id : clearenceid,
+      client_id: userid?.id ? userid?.id : clearenceid1.user_id,
       hs_code: row.hs_code,
       quoted_rate: row.quotedRate,
       HS_tariff_code: row.hs_code,
@@ -148,19 +148,19 @@ export default function CustomCalculate() {
       total_amount: finalAmount,
     }));
     console.log(reqdata)
-try {
-  const response = await axios.post(`${process.env.REACT_APP_BASE_URL}calculate-clearance`, {
-    data: reqdata,
-  })
-  console.log(response.data)
-  if (response.data.success === true) {
-    toast.success(response.data.message);
-      navigate("/Admin/custom-clearance-order");
-  }
-} catch (error) {
-  console.log(error.response)
-  toast.error(error.response.data.message);
-}
+    try {
+      const response = await axios.post(`${process.env.REACT_APP_BASE_URL}calculate-clearance`, {
+        data: reqdata,
+      })
+      console.log(response.data)
+      if (response.data.success === true) {
+        toast.success(response.data.message);
+        navigate("/Admin/custom-clearance-order");
+      }
+    } catch (error) {
+      console.log(error.response)
+      toast.error(error.response.data.message);
+    }
   };
 
   useEffect(() => {
@@ -172,7 +172,7 @@ try {
   const location = useLocation();
   const clearenceid = location?.state?.dataIID;
   const userid = JSON?.parse(localStorage?.getItem("data123"));
-console.log(userid);  
+  console.log(userid);
   const handleclicknav = () => {
     navigate("/Admin/custom-clearance-order");
   };
@@ -203,19 +203,20 @@ console.log(userid);
             <div className="d-flex align-items-center">
               <div className="updateLoading">
                 <label>Enter your HS code</label>
-                <input
-                  type="text"
-                  className="form-control"
-                  placeholder="HS Code"
-                  value={hfCode}
-                  onChange={handleInputChange}
-                  onKeyPress={handleValidate}
-                />
-              </div>
-              <div className="" style={{ marginLeft: "20px" }}>
-                <button className="add_hscode" onClick={handleClickHf}>
-                  +
-                </button>
+                <div className="d-flex hsCodeParent">
+                  <input
+                    type="text"
+                    className="form-control"
+                    placeholder="HS Code"
+                    value={hfCode}
+                    onChange={handleInputChange}
+                    onKeyPress={handleValidate}
+                  />
+
+                  <button className="add_hscode" onClick={handleClickHf}>
+                    +
+                  </button>
+                </div>
               </div>
             </div>
             <div className="table-responsive">

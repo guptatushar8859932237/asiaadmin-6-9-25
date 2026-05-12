@@ -704,7 +704,7 @@ export default function CustomebyUserap() {
             </button>
           </div>
           <div className="newModalGap noFormaControl">
-            <div className="row mb-3 p-3">
+            <div className="row mb-3">
               <div className="col-6">
                 <label>Freight</label>
                 <select
@@ -721,24 +721,33 @@ export default function CustomebyUserap() {
               <div className="col-6">
                 <label>Are You</label>
                 <div className="shipRefer">
-                  <input
-                    type="radio"
-                    id="statusShipper"
-                    name="is_cong_shipp"
-                    value="shipper"
-                    checked={inputdata.is_cong_shipp === "Shipper"}
-                    onChange={handlechnageupdate}
-                  />
-                  <label htmlFor="statusShipper">Shipper </label>
-                  <input
-                    type="radio"
-                    id="statusConsignee"
-                    name="is_cong_shipp"
-                    value="consignee"
-                    checked={inputdata.is_cong_shipp === "Consignee"}
-                    onChange={handlechnageupdate}
-                  />
-                  <label htmlFor="statusConsignee">Consignee </label>
+                  <div className="radioBtn d-flex gap-3">
+                    <div>
+                      <input
+                        type="radio"
+                        id="statusShipper"
+                        name="is_cong_shipp"
+                        value="shipper"
+                        checked={inputdata.is_cong_shipp === "Shipper"}
+                        onChange={handlechnageupdate}
+                      />
+                      <label htmlFor="statusShipper">Shipper </label>
+
+                    </div>
+                    <div>
+                      <input
+                        type="radio"
+                        id="statusConsignee"
+                        name="is_cong_shipp"
+                        value="consignee"
+                        checked={inputdata.is_cong_shipp === "Consignee"}
+                        onChange={handlechnageupdate}
+                      />
+                      <label htmlFor="statusConsignee">Consignee </label>
+                    </div>
+                  </div>
+
+
                 </div>
               </div>
             </div>
@@ -755,24 +764,32 @@ export default function CustomebyUserap() {
               <div className="col-6">
                 <label>Is This</label>
                 <div className="shipRefer">
-                  <input
-                    type="radio"
-                    id="statusShipper"
-                    name="is_Import_Export"
-                    value="import"
-                    checked={inputdata.is_Import_Export === "import"}
-                    onChange={handlechnageupdate}
-                  />
-                  <label htmlFor="statusShipper">Import </label>
-                  <input
-                    type="radio"
-                    id="statusConsignee"
-                    name="is_Import_Export"
-                    value="export"
-                    checked={inputdata.is_Import_Export === "export"}
-                    onChange={handlechnageupdate}
-                  />
-                  <label htmlFor="statusConsignee">Export </label>
+                  <div className="radioBtn d-flex gap-3">
+                    <div>
+                      <input
+                        type="radio"
+                        id="statusShipper"
+                        name="is_Import_Export"
+                        value="import"
+                        checked={inputdata.is_Import_Export === "import"}
+                        onChange={handlechnageupdate}
+                      />
+                      <label htmlFor="statusShipper">Import </label>
+                    </div>
+                    <div>
+                      <input
+                        type="radio"
+                        id="statusConsignee"
+                        name="is_Import_Export"
+                        value="export"
+                        checked={inputdata.is_Import_Export === "export"}
+                        onChange={handlechnageupdate}
+                      />
+                      <label htmlFor="statusConsignee">Export </label>
+                    </div>
+                  </div>
+
+
                 </div>
               </div>
             </div>
@@ -907,15 +924,15 @@ export default function CustomebyUserap() {
             </div>
             <div className="row">
               <div className="col-md-12">
-                <div className="row mb-3 mt-4">
-                  <div className="col-9 mt-3">
+                <div className="row mb-3">
+                  <div className="col-md-6">
                     <h4 className="freight_hd">Document Section</h4>
                     <span class="line"></span>
                   </div>
-                  <div className="col-3">
-                    <Button className="btn  btn-primary" onClick={handleShow}>
+                  <div className="col-md-6 text-end">
+                    <button className="blueBtn" onClick={handleShow}>
                       Upload Documents
-                    </Button>
+                    </button>
 
                     {show1 ? (
                       <Modal

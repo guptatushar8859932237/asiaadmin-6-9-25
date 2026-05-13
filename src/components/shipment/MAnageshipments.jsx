@@ -42,6 +42,7 @@ export default function MAnageshipments() {
   const [shipmentID, setShipmentID] = useState("");
   const [loader, setLoader] = useState(true);
   const navigate = useNavigate();
+  const [debouncedSearch, setDebouncedSearch] = useState("");
   const [show1, setShow1] = useState(false);
   const [selectedDocs, setSelectedDocs] = useState([]);
   const docOptions = [
@@ -65,6 +66,15 @@ export default function MAnageshipments() {
       prev.map((doc) => (doc.name === docName ? { ...doc, files } : doc)),
     );
   };
+
+  useEffect(() => {
+  const timer = setTimeout(() => {
+    setDebouncedSearch(searchQuery);
+    setCurrentPage(1);
+  }, 500);
+
+  return () => clearTimeout(timer);
+}, [searchQuery]);
   const handleSave = () => {
     console.log("Uploaded Documents:", selectedDocs);
     selectedDocs.forEach((doc) => {
@@ -102,9 +112,9 @@ export default function MAnageshipments() {
     (pagenatedData?.total || 0) / (pagenatedData?.limit || 1),
   );
   const handlePageChange = (page) => {
-    setCurrentPage(page);
-    getwarehouse(page);
-  };
+  setCurrentPage(page);
+  getwarehouse(page, searchQuery, activeTab);
+};
   const userid = JSON.parse(localStorage.getItem("data123"))?.id;
   const usertype = JSON.parse(localStorage.getItem("data123"))?.user_type;
   const openModal1 = async () => {
@@ -143,10 +153,11 @@ export default function MAnageshipments() {
         console.log(error.response.data.data);
       });
   };
-  useEffect(() => {
-    console.log("API HIT:", activeTab);
-    getwarehouse(currentPage, searchQuery, activeTab);
-  }, [currentPage, searchQuery, activeTab]);
+useEffect(() => {
+  console.log("API HIT:", activeTab);
+
+  getwarehouse(currentPage, debouncedSearch, activeTab);
+}, [currentPage, debouncedSearch, activeTab]);
   // const getwarehouse = (page = 1, search = "") => {
   //   setLoader(true);
 
@@ -562,9 +573,8 @@ export default function MAnageshipments() {
                       style={{ width: "250px" }}
                       value={searchQuery}
                       onChange={(e) => {
-                        setSearchQuery(e.target.value);
-                        setCurrentPage(1); // reset page
-                      }}
+  setSearchQuery(e.target.value);
+}}
                     />
 
                     <button className="ms-2" onClick={openModal1}>

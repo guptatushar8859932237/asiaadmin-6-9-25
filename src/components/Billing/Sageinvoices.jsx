@@ -665,40 +665,7 @@ export default function Sageinvoices() {
                               {new Date(item.date).toLocaleDateString("EN-gb")}
                             </td>
                             <td>{item.total}</td>
-                            {/* {activeTab === "general" && (
-                              <td>
-                                {" "}
-                                <div className="mb-4">
-                                  <select
-                                    className="form-select w-auto"
-                                    value={selectedCountry}
-                                    onChange={(e) => {
-                                      setSelectedCountry(e.target.value);
-                                      setCurrentPage(1);
-                                      countrypushdata(e.target.value);
-                                    }}
-                                  >
-                                    <option value="">Select Country</option>
-
-                                    {countruies &&
-                                      countruies.length > 0 &&
-                                      countruies.map((country) => (
-                                        <option
-                                          key={country.id}
-                                          value={country.name}
-                                        >
-                                          {country.name}
-                                        </option>
-                                      ))}
-                                    {/* <option value="south_africa">
-                                      South Africa
-                                    </option>
-                                    <option value="zimbabwe">Zimbabwe</option>
-                                    <option value="zambia">Zambia</option> */}
-                                  {/* </select>
-                                </div>
-                              </td>
-                            )} */}
+                           
                             <td>
                               <button
                                 className="btn btn-secondary"
@@ -781,7 +748,6 @@ export default function Sageinvoices() {
                         className="border py-2 px-2 rounded w-100"
                       ></input>
                     </div>
-
                     <Button
                       variant="contained"
                       onClick={postData123}

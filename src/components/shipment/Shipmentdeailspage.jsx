@@ -4,6 +4,15 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import axios from "axios";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { toast, ToastContainer } from "react-toastify";
+import {
+  Modal,
+  Box,
+  Button,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
+} from "@mui/material";
 export default function Shipmentdeailspage() {
   const navigate = useNavigate();
   const [datat1, setDatat1] = useState("");
@@ -11,6 +20,9 @@ export default function Shipmentdeailspage() {
   const [tabledata1, setTabledata1] = useState([]);
   const location = useLocation();
   const [documents, setDocuments] = useState({});
+  const [statusModal, setStatusModal] = useState(false);
+  const [shipmentStatus, setShipmentStatus] = useState("");
+  const [selectedShipment, setSelectedShipment] = useState(null);
   const datat = location.state.data[0];
   console.log("datat", datat);
   const handleclick = () => {
@@ -49,6 +61,40 @@ export default function Shipmentdeailspage() {
   useEffect(() => {
     GetFreightImages();
   }, []);
+
+  const handleOpenStatusModal = () => {
+    setShipmentStatus(datat1?.status || "");
+    setStatusModal(true);
+  };
+
+  const handleCloseStatusModal = () => {
+    setStatusModal(false);
+  };
+  const handleUpdateStatus = async () => {
+    try {
+      const payload = {
+        shipment_id: datat.id,
+        status: shipmentStatus,
+      };
+
+      const response = await axios.post(
+        `${process.env.REACT_APP_BASE_URL}update-shipment-status`,
+        payload,
+      );
+
+      if (response.data.success) {
+        toast.success("Status Updated Successfully");
+
+        handleCloseStatusModal();
+
+        GetShipmentDetails();
+      }
+    } catch (error) {
+      console.log(error);
+
+      toast.error("Failed to update status");
+    }
+  };
   const deleteapi = (id) => {
     console.log(id);
     const data11 = {
@@ -72,16 +118,25 @@ export default function Shipmentdeailspage() {
             <div className="row">
               <div className="container">
                 <div className="client_details">
-                  <div className="d-flex">
-                    <div>
-                      <ArrowBackIcon
-                        style={{ cursor: "pointer" }}
-                        onClick={handleclick}
-                        className="mt-2 me-2"
-                      />
+                  <div className="d-flex justify-content-between">
+                    <div className="d-flex">
+                      <div>
+                        <ArrowBackIcon
+                          style={{ cursor: "pointer" }}
+                          onClick={handleclick}
+                          className="mt-2 me-2"
+                        />
+                      </div>
+                      <h2 className="me-3">Shipment Details</h2>
                     </div>
-                    <div className="mb-2">
-                      <h2>Shipment Details</h2>
+
+                    <div className="mb-2 ">
+                      <button
+                        className="btn btn-primary"
+                        onClick={handleOpenStatusModal}
+                      >
+                        Update Status
+                      </button>
                     </div>
                   </div>
                   <div className="row">
@@ -188,7 +243,7 @@ export default function Shipmentdeailspage() {
                             <strong>Destination Agent</strong>
                           </div>
                           <div>
-                            <h6>{datat1?.destination_agent}</h6>
+                            <p>{datat1?.destination_agent}</p>
                           </div>
                         </div>
                         <div className="parentShipDetail">
@@ -288,7 +343,7 @@ export default function Shipmentdeailspage() {
                                       href={`${process.env.REACT_APP_BASE_URLdocument}${item?.document}`}
                                       target="_blank"
                                       rel="noopener noreferrer"
-                                      className="view_docu ms-2"   
+                                      className="view_docu ms-2"
                                     >
                                       View Document
                                     </a>
@@ -497,6 +552,66 @@ export default function Shipmentdeailspage() {
           </div>
         </div>
       </div>
+      <Modal open={statusModal} onClose={handleCloseStatusModal}>
+        <Box
+          className="warehouse_modal123"
+          sx={{
+            position: "absolute",
+            overflow: "scroll",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            height: 300,
+            width: 400,
+            bgcolor: "background.paper",
+            boxShadow: 24,
+            p: 4,
+          }}
+        >
+          <div className="row">
+            <h5 className=" fw-bold fs-5 mb-3">
+              <span style={{ color: "#1b2245" }}>Update Status for </span>
+            </h5>
+
+            <FormControl fullWidth sx={{ mt: 2 }}>
+              <InputLabel>Status</InputLabel>
+
+              <Select
+                value={shipmentStatus}
+                label="Status"
+                onChange={(e) => setShipmentStatus(e.target.value)}
+              >
+                <MenuItem value="Goods at origin port">
+                  Goods at origin port
+                </MenuItem>
+
+                <MenuItem value="Goods are in transit">
+                  Goods are in transit
+                </MenuItem>
+
+                <MenuItem value="Arrived at destination port">
+                  Arrived at destination port
+                </MenuItem>
+
+                <MenuItem value="Customs clearing in progress">
+                  Customs clearing in progress
+                </MenuItem>
+
+                <MenuItem value="Customs released">Customs released</MenuItem>
+              </Select>
+            </FormControl>
+          </div>
+          <div className="text-end mt-4">
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={handleUpdateStatus}
+            >
+              Update Status
+            </Button>
+          </div>
+        </Box>
+      </Modal>
       <ToastContainer />
     </div>
   );

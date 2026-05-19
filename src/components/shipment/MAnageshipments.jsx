@@ -45,6 +45,9 @@ export default function MAnageshipments() {
   const [debouncedSearch, setDebouncedSearch] = useState("");
   const [show1, setShow1] = useState(false);
   const [selectedDocs, setSelectedDocs] = useState([]);
+  const [statusModal, setStatusModal] = useState(false);
+  const [selectedShipment, setSelectedShipment] = useState(null);
+  const [shipmentStatus, setShipmentStatus] = useState("");
   const docOptions = [
     { id: "Waybills", label: "Master Bill" },
     { id: "Waybills", label: "House bill" },
@@ -66,15 +69,13 @@ export default function MAnageshipments() {
       prev.map((doc) => (doc.name === docName ? { ...doc, files } : doc)),
     );
   };
-
   useEffect(() => {
-  const timer = setTimeout(() => {
-    setDebouncedSearch(searchQuery);
-    setCurrentPage(1);
-  }, 500);
-
-  return () => clearTimeout(timer);
-}, [searchQuery]);
+    const timer = setTimeout(() => {
+      setDebouncedSearch(searchQuery);
+      setCurrentPage(1);
+    }, 500);
+    return () => clearTimeout(timer);
+  }, [searchQuery]);
   const handleSave = () => {
     console.log("Uploaded Documents:", selectedDocs);
     selectedDocs.forEach((doc) => {
@@ -112,9 +113,9 @@ export default function MAnageshipments() {
     (pagenatedData?.total || 0) / (pagenatedData?.limit || 1),
   );
   const handlePageChange = (page) => {
-  setCurrentPage(page);
-  getwarehouse(page, searchQuery, activeTab);
-};
+    setCurrentPage(page);
+    getwarehouse(page, searchQuery, activeTab);
+  };
   const userid = JSON.parse(localStorage.getItem("data123"))?.id;
   const usertype = JSON.parse(localStorage.getItem("data123"))?.user_type;
   const openModal1 = async () => {
@@ -140,6 +141,39 @@ export default function MAnageshipments() {
       }
     }
   };
+  const handleOpenStatusModal = (item) => {
+    setSelectedShipment(item);
+    setShipmentStatus(item.status || "");
+    setStatusModal(true);
+  };
+  const handleCloseStatusModal = () => {
+    setStatusModal(false);
+  };
+  const handleUpdateStatus = async () => {
+    try {
+      const payload = {
+        shipment_id: selectedShipment.id,
+        status: shipmentStatus,
+      };
+
+      const response = await axios.post(
+        `${process.env.REACT_APP_BASE_URL}update-shipment-status`,
+        payload,
+      );
+
+      if (response.data.success) {
+        toast.success("Status Updated Successfully");
+
+        handleCloseStatusModal();
+
+        getwarehouse(currentPage, searchQuery, activeTab);
+      }
+    } catch (error) {
+      console.log(error);
+
+      toast.error("Failed to update status");
+    }
+  };
   useEffect(() => {
     getcountry();
   }, []);
@@ -153,11 +187,11 @@ export default function MAnageshipments() {
         console.log(error.response.data.data);
       });
   };
-useEffect(() => {
-  console.log("API HIT:", activeTab);
+  useEffect(() => {
+    console.log("API HIT:", activeTab);
 
-  getwarehouse(currentPage, debouncedSearch, activeTab);
-}, [currentPage, debouncedSearch, activeTab]);
+    getwarehouse(currentPage, debouncedSearch, activeTab);
+  }, [currentPage, debouncedSearch, activeTab]);
   // const getwarehouse = (page = 1, search = "") => {
   //   setLoader(true);
 
@@ -488,21 +522,16 @@ useEffect(() => {
       );
       return;
     }
-
-    // ❗ old data → API call
     try {
       const payload = {
         shipment_detail_id: item.shipment_details_id,
         orderId: item.order_id,
       };
-
       const response = await axios.post(
         `${process.env.REACT_APP_BASE_URL}DeleteShipmentDetails`,
         payload,
       );
-
       toast.success(response.data.message);
-
       setTindexdata((prev) =>
         prev.filter(
           (row) => row.shipment_details_id !== item.shipment_details_id,
@@ -564,7 +593,6 @@ useEffect(() => {
               <div className="col-12">
                 <div className="d-flex justify-content-between align-items-center">
                   <h4 className="freight_hd">Shipments List</h4>
-
                   <div className="d-flex">
                     <input
                       type="text"
@@ -573,10 +601,9 @@ useEffect(() => {
                       style={{ width: "250px" }}
                       value={searchQuery}
                       onChange={(e) => {
-  setSearchQuery(e.target.value);
-}}
+                        setSearchQuery(e.target.value);
+                      }}
                     />
-
                     <button className="ms-2" onClick={openModal1}>
                       Add Shipment
                     </button>
@@ -598,7 +625,6 @@ useEffect(() => {
               >
                 Active Shipments
               </button>
-
               <button
                 className={
                   activeTab === "released" ? "btn btn-primary" : "btn btn-light"
@@ -660,7 +686,7 @@ useEffect(() => {
                               <div className="progress">
                                 <div
                                   className={`progress-bar progress-bar-striped ${
-                                    item.status === "Customs released"
+                                    item.status === "Customs Released"
                                       ? "bg-secondary"
                                       : "bg-success"
                                   }`}
@@ -678,7 +704,7 @@ useEffect(() => {
                                                 "Customs clearing in progress"
                                               ? "80%"
                                               : item.status ===
-                                                  "Customs released"
+                                                  "Customs Released"
                                                 ? "100%"
                                                 : "25%"
                                     }`,
@@ -714,6 +740,26 @@ useEffect(() => {
                                       View
                                     </dropdow>
                                   </li>
+                                  {item.status === "Customs Released" ? null : (
+                                    <li>
+                                      <p
+                                        className="dropdown-item"
+                                        onClick={() =>
+                                          handleOpenStatusModal(item)
+                                        }
+                                      >
+                                        <i
+                                          className="fa fa-refresh"
+                                          style={{
+                                            marginRight: "10px",
+                                            width: "20px",
+                                            cursor: "pointer",
+                                          }}
+                                        ></i>
+                                        Change Status
+                                      </p>
+                                    </li>
+                                  )}
                                   <li>
                                     <dropdow
                                       className="dropdown-item li_icon"
@@ -796,6 +842,70 @@ useEffect(() => {
                   <i class="fi fi-rr-angle-small-right page_icon"></i>
                 </button>
               </div>
+              <Modal open={statusModal} onClose={handleCloseStatusModal}>
+                <Box
+                  className="warehouse_modal123"
+                  sx={{
+                    position: "absolute",
+                    overflow: "scroll",
+                    top: "50%",
+                    left: "50%",
+                    transform: "translate(-50%, -50%)",
+                    height: 300,
+                    width: 400,
+                    bgcolor: "background.paper",
+                    boxShadow: 24,
+                    p: 4,
+                  }}
+                >
+                  <div className="row">
+                    <h5 className=" fw-bold fs-5 mb-3">
+                      <span style={{ color: "#1b2245" }}>
+                        Update Status for{" "}
+                      </span>
+                    </h5>
+
+                    <FormControl fullWidth sx={{ mt: 2 }}>
+                      <InputLabel>Status</InputLabel>
+
+                      <Select
+                        value={shipmentStatus}
+                        label="Status"
+                        onChange={(e) => setShipmentStatus(e.target.value)}
+                      >
+                        <MenuItem value="Goods at origin port">
+                          Goods at origin port
+                        </MenuItem>
+
+                        <MenuItem value="Goods are in transit">
+                          Goods are in transit
+                        </MenuItem>
+
+                        <MenuItem value="Arrived at destination port">
+                          Arrived at destination port
+                        </MenuItem>
+
+                        <MenuItem value="Customs clearing in progress">
+                          Customs clearing in progress
+                        </MenuItem>
+
+                        <MenuItem value="Customs Released">
+                          Customs Released
+                        </MenuItem>
+                      </Select>
+                    </FormControl>
+                  </div>
+                  <div className="text-end mt-4">
+                    <Button
+                      variant="contained"
+                      color="primary"
+                      onClick={handleUpdateStatus}
+                    >
+                      Update Status
+                    </Button>
+                  </div>
+                </Box>
+              </Modal>
               <Modal
                 open={isModalOpen2}
                 onClose={closeModal2}
@@ -1016,7 +1126,6 @@ useEffect(() => {
                         className="mb-3 border ps-2 py-2 rounded w-100"
                       />
                     </div>
-
                     <div className="col-3">
                       <label className="ware_label">Status</label>
                       <select
@@ -1038,8 +1147,8 @@ useEffect(() => {
                         <option value="Customs clearing in progress">
                           Customs clearing in progress
                         </option>
-                        <option value="Customs released">
-                          Customs released
+                        <option value="Customs Released">
+                          Customs Released
                         </option>
                       </select>
                     </div>
@@ -1298,7 +1407,6 @@ useEffect(() => {
                             <th>Action</th>
                           </tr>
                         </thead>
-
                         <tbody>
                           {tindexdata
                             ?.filter((item) => !item?.clearance_number)
@@ -1323,7 +1431,6 @@ useEffect(() => {
                             ))}
                         </tbody>
                       </table>
-
                       <table className="table mt-4 table-striped tableICon">
                         <thead>
                           <tr>
@@ -1338,7 +1445,6 @@ useEffect(() => {
                             <th>Action</th>
                           </tr>
                         </thead>
-
                         <tbody>
                           {tindexdClearance
                             ?.filter((item) => item?.clearance_number)

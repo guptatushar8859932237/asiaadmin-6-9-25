@@ -155,22 +155,17 @@ export default function MAnageshipments() {
         shipment_id: selectedShipment.id,
         status: shipmentStatus,
       };
-
       const response = await axios.post(
         `${process.env.REACT_APP_BASE_URL}update-shipment-status`,
         payload,
       );
-
       if (response.data.success) {
         toast.success("Status Updated Successfully");
-
         handleCloseStatusModal();
-
         getwarehouse(currentPage, searchQuery, activeTab);
       }
     } catch (error) {
       console.log(error);
-
       toast.error("Failed to update status");
     }
   };

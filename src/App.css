@@ -5164,3 +5164,8 @@ td {
 .hsCodeParent input:focus {
   box-shadow: unset !important;
 }
+
+.table-responsive {
+  overflow-x: auto;
+  overflow-y: hidden;
+}

@@ -59,30 +59,30 @@ export default function Warehouse() {
       console.log(error);
     }
   };
- const useirid = JSON.parse(localStorage.getItem("data123"))
+  const useirid = JSON.parse(localStorage.getItem("data123"))
   const postData1 = () => {
     if (!validateAddWarehouse()) {
       toast.error("Please fix the errors before submitting.");
       return;
     }
-const data = {
-  warehouse_number: inputdata.mobile_number,
-  warehouse_name: inputdata.warehouse_name,
-  company_name: inputdata.company_name,
-  warehouse_address: inputdata.warehouse_address,
-  town: inputdata.town,
-  country: inputdata.country,
-  email: inputdata.email,
-  contact_person: inputdata.contact_person,
-  mobile_number: inputdata.mobile_number,
-  user_id: useirid.id,
+    const data = {
+      warehouse_number: inputdata.mobile_number,
+      warehouse_name: inputdata.warehouse_name,
+      company_name: inputdata.company_name,
+      warehouse_address: inputdata.warehouse_address,
+      town: inputdata.town,
+      country: inputdata.country,
+      email: inputdata.email,
+      contact_person: inputdata.contact_person,
+      mobile_number: inputdata.mobile_number,
+      user_id: useirid.id,
 
-  // ✅ FIXED
-  supplier_id:
-    inputdata.Warehouse_For === "Supplier" ? inputdata.supplier_name : "",
+      // ✅ FIXED
+      supplier_id:
+        inputdata.Warehouse_For === "Supplier" ? inputdata.supplier_name : "",
 
-  user_type: inputdata.Warehouse_For === "Supplier" ? "2" : "1",
-};
+      user_type: inputdata.Warehouse_For === "Supplier" ? "2" : "1",
+    };
 
     axios
       .post(`${process.env.REACT_APP_BASE_URL}addWarehouse`, data)
@@ -147,26 +147,26 @@ const data = {
       console.log("No file selected");
     }
   };
- const openModal2 = (id) => {
-  console.log(id)
-  setInputdtata(id)
-  const getuser = data.find((item) => item.warehouse_id === id);
-  console.log(getuser)
- setInputdata({
-  warehouse_id: getuser.warehouse_id, // ✅ correct
-  Warehouse_For: getuser.Warehouse_for,
-  supplier_name: getuser.supplier_id,
-  contact_person: getuser.contact_person,
-  country: getuser.country_id,
-  email: getuser.email,
-  mobile_number: getuser.mobile_number,
-  town: getuser.town,
-  warehouse_address: getuser.warehouse_address,
-  warehouse_name: getuser.warehouse_name,
-  warehouse_number: getuser.warehouse_number,
-});
-  setIsModalOpen2(true);
-};
+  const openModal2 = (id) => {
+    console.log(id)
+    setInputdtata(id)
+    const getuser = data.find((item) => item.warehouse_id === id);
+    console.log(getuser)
+    setInputdata({
+      warehouse_id: getuser.warehouse_id, // ✅ correct
+      Warehouse_For: getuser.Warehouse_for,
+      supplier_name: getuser.supplier_id,
+      contact_person: getuser.contact_person,
+      country: getuser.country_id,
+      email: getuser.email,
+      mobile_number: getuser.mobile_number,
+      town: getuser.town,
+      warehouse_address: getuser.warehouse_address,
+      warehouse_name: getuser.warehouse_name,
+      warehouse_number: getuser.warehouse_number,
+    });
+    setIsModalOpen2(true);
+  };
 
   const closeModal2 = () => {
     setIsModalOpen2(false);
@@ -176,23 +176,23 @@ const data = {
     setInputdata({ ...inputdata, [name]: value });
   };
   const apiupdatepost = () => {
- const dataupdate = {
-  Warehouse_for: inputdata.Warehouse_For,
-  supplier_id:
-    inputdata.Warehouse_For === "Supplier"
-      ? inputdata.supplier_name
-      : "",
-  warehouse_id:inputdtata, // ✅ now correct
-  warehouse_number: inputdata.warehouse_number,
-  warehouse_name: inputdata.warehouse_name,
-  warehouse_address: inputdata.warehouse_address,
-  town: inputdata.town,
-  company_name: inputdata.company_name,
-  country: inputdata.country,
-  email: inputdata.email,
-  contact_person: inputdata.contact_person,
-  mobile_number: inputdata.mobile_number, 
-};
+    const dataupdate = {
+      Warehouse_for: inputdata.Warehouse_For,
+      supplier_id:
+        inputdata.Warehouse_For === "Supplier"
+          ? inputdata.supplier_name
+          : "",
+      warehouse_id: inputdtata, // ✅ now correct
+      warehouse_number: inputdata.warehouse_number,
+      warehouse_name: inputdata.warehouse_name,
+      warehouse_address: inputdata.warehouse_address,
+      town: inputdata.town,
+      company_name: inputdata.company_name,
+      country: inputdata.country,
+      email: inputdata.email,
+      contact_person: inputdata.contact_person,
+      mobile_number: inputdata.mobile_number,
+    };
     axios
       .post(`${process.env.REACT_APP_BASE_URL}editWarehouse`, dataupdate)
       .then((response) => {
@@ -205,36 +205,36 @@ const data = {
       });
   };
   const deletewarehouse = (id) => {
-  Swal.fire({
-    title: "Are you sure?",
-    text: "You won't be able to recover this warehouse!",
-    icon: "warning",
-    showCancelButton: true,
-    confirmButtonColor: "#3085d6",
-    cancelButtonColor: "#d33",
-    confirmButtonText: "Yes, delete it!",
-  }).then((result) => {
-    if (result.isConfirmed) {
-      const datadelete = {
-        warehouse_id: id,
-      };
+    Swal.fire({
+      title: "Are you sure?",
+      text: "You won't be able to recover this warehouse!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, delete it!",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        const datadelete = {
+          warehouse_id: id,
+        };
 
-      axios
-        .post(
-          `${process.env.REACT_APP_BASE_URL}DeleteWarehouse`,
-          datadelete
-        )
-        .then((response) => {
-          Swal.fire("Deleted!", response.data.message, "success");
-          getwarehouse();
-        })
-        .catch((error) => {
-          Swal.fire("Error!", "Something went wrong", "error");
-          console.log(error.response?.data);
-        });
-    }
-  });
-};
+        axios
+          .post(
+            `${process.env.REACT_APP_BASE_URL}DeleteWarehouse`,
+            datadelete
+          )
+          .then((response) => {
+            Swal.fire("Deleted!", response.data.message, "success");
+            getwarehouse();
+          })
+          .catch((error) => {
+            Swal.fire("Error!", "Something went wrong", "error");
+            console.log(error.response?.data);
+          });
+      }
+    });
+  };
 
   const validateAddWarehouse = () => {
     let errors = {};
@@ -340,7 +340,7 @@ const data = {
                             <td>{item.town}</td>
                             <td>{item.warehouse_name}</td>
                             <td>{item.warehouse_number}</td>
-                            <td>
+                            <td style={{ display: "flex", alignItems: "center" }}>
                               <FaEdit
                                 onClick={() => {
                                   openModal2(item.warehouse_id);
@@ -348,8 +348,7 @@ const data = {
                                 style={{
                                   color: "rgb(27 34 69)",
                                   marginRight: "10px",
-                                  width: "20px",
-                                  height: "15px",
+
                                   cursor: "pointer",
                                 }}
                               />
@@ -358,12 +357,10 @@ const data = {
                                   deletewarehouse(item.warehouse_id);
                                 }}
                                 style={{
-                                  color: "rgb(27 34 69)",
-                                  marginRight: "10px",
-                                  width: "20px",
-                                  height: "15px",
+
                                   cursor: "pointer",
                                 }}
+                                className="text-danger"
                               />
                             </td>
                           </tr>
@@ -478,18 +475,18 @@ const data = {
                                   </option>
                                 ))}
                               </select> */}
-                            <select
-  name="supplier_name"
-  value={inputdata.supplier_name}
-  onChange={handleFileChange1}
->
-  <option value="">Select</option>
-  {supplierData.map((item) => (
-    <option key={item.id} value={item.id}>
-      {item.name}
-    </option>
-  ))}
-</select>
+                              <select
+                                name="supplier_name"
+                                value={inputdata.supplier_name}
+                                onChange={handleFileChange1}
+                              >
+                                <option value="">Select</option>
+                                {supplierData.map((item) => (
+                                  <option key={item.id} value={item.id}>
+                                    {item.name}
+                                  </option>
+                                ))}
+                              </select>
                             </div>
                           )}
                         </div>
@@ -681,17 +678,17 @@ const data = {
                                 })}
                               </select> */}
                               <select
-  name="supplier_name"
-  onChange={handleFileChange1}
-  className="mb-3 border ps-2 py-2 rounded w-100"
->
-  <option value="">Select</option>
-  {supplierData.map((item) => (
-    <option key={item.id} value={item.id}>
-      {item.name}
-    </option>
-  ))}
-</select>
+                                name="supplier_name"
+                                onChange={handleFileChange1}
+                                className="mb-3 border ps-2 py-2 rounded w-100"
+                              >
+                                <option value="">Select</option>
+                                {supplierData.map((item) => (
+                                  <option key={item.id} value={item.id}>
+                                    {item.name}
+                                  </option>
+                                ))}
+                              </select>
                             </div>
                           ) : (
                             ""

@@ -115,12 +115,17 @@ const routes = [
       },
       {
         path: "/Admin/sageinvoice",
-        name: "Sage Invoices",
+        name: "Sage Customer  Invoices",
         icon: <FaUser />,
       },
       {
         path: "/Admin/cashbook",
         name: "Cashbook",
+        icon: <ShoppingCartOutlinedIcon />,
+      },
+      {
+        path: "/Admin/Supplier_Invoice",
+        name: "Supplier Invoice",
         icon: <ShoppingCartOutlinedIcon />,
       },
 

@@ -98,6 +98,7 @@ import TaskDetails from "./pages/TaskDetails";
 import Profilesection from "./pages/Profilesection";
 import ClientKpiModule from "./pages/ClientKpiModule";
 import KPIgetdatauser from "./pages/KPIgetdatauser";
+import SupplierSageInvoice from "./components/Billing/SupplierSageInvoice";
 const Dashboard = lazy(() => import("./pages/Dashboard"));
 const Users = lazy(() => import("./pages/Users"));
 const Messages = lazy(() => import("./pages/Messages"));
@@ -389,6 +390,11 @@ export default function App() {
                   index
                   path="/Admin/shipmentdetail"
                   element={<Shipmentdeailspage />}
+                />
+                <Route
+                  index
+                  path="/Admin/Supplier_Invoice"
+                  element={<SupplierSageInvoice />}
                 />
                 <Route
                   index

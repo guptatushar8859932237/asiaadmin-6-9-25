@@ -1481,7 +1481,7 @@ export default function Editsupplierinvoiceedit() {
                   value={freight.shipment_id || ""}
                   onChange={(e) => setSelected1111(e.target.value)}
                 >
-               <option value="">Select Shipment</option>
+                  <option value="">Select Shipment</option>
                   {dat.map((item) => (
                     <option key={item.id} value={item.shipment_id}>
                       {item.waybill}

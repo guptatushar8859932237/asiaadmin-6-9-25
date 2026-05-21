@@ -1591,6 +1591,7 @@ export default function Addsupplierinvoice() {
                   value={selected}
                   onChange={(e) => setSelected1111(e.target.value)}
                 >
+                    <option value="">Select Supplier</option>
                   {dat.map((item) => (
                     <option key={item.id} value={item.shipment_id}>
                       {item.waybill}

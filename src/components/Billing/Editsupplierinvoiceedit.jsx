@@ -1276,8 +1276,20 @@ export default function Editsupplierinvoiceedit() {
         console.log("some thing went wrong");
       }
     } catch (error) {
-      console.log(error.data);
-    }
+  console.log("Full Error =>", error);
+
+  console.log("Error Response =>", error.response);
+
+  console.log("Error Data =>", error.response?.data);
+
+  console.log("Error Message =>", error.message);
+
+  console.log("Status Code =>", error.response?.status);
+
+  toast.error(
+    error.response?.data?.message || "Something went wrong"
+  );
+}
   };
   const handlepresss = (e) => {
     if (e.charCode < 42 || e.charCode > 57) {

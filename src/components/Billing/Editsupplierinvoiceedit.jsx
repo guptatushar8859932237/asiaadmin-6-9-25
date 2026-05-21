@@ -1,12 +1,3 @@
-// import React from 'react'
-
-// export default function Addsupplierinvoice() {
-//   return (
-//     <div>
-//       addsupplierinvoice
-//     </div>
-//   )
-// }
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -20,7 +11,7 @@ import html2pdf from "html2pdf.js";
 import { RiFolderUserFill } from "react-icons/ri";
 import { MdArrowOutward } from "react-icons/md";
 import { useRef } from "react";
-export default function Addsupplierinvoice() {
+export default function Editsupplierinvoiceedit() {
   const [update, setUpdate] = useState([0]);
   const location = useLocation();
   const [freight, setFreight] = useState([0]);
@@ -40,32 +31,27 @@ export default function Addsupplierinvoice() {
   const [selected, setSelected] = useState([]); // selected IDs
   const [open, setOpen] = useState(false);
   const navigate = useNavigate();
-  const getdata122 = location?.state?.data[0];
-  console.log(getdata122);
-  useEffect(() => {
-    getFreightDataById();
-  }, []);
+
+   const item = location.state?.item.supplier_invoice_id;
+   console.log(item)
+  const fwtsupplierdata =async()=>{
+    try {
+        const response = await axios.get(`${process.env.REACT_APP_BASE_URL}getSupplierInvoiceById/${item}`);
+        setFreight(response.data.data);
+        console.log(response.data.data)
+
+    } catch (error) {
+        console.log(error)
+    }
+  }
+  useEffect(()=>{
+  fwtsupplierdata()
+  },[item])
+
   const user = JSON.parse(localStorage.getItem("data123"));
   const localFreigtId = localStorage.getItem("freightid");
   console.log("Stored:", localStorage.getItem("freightid"));
-  const getFreightDataById = async () => {
-    const payload = {
-      freight_id: localFreigtId,
-    };
-    console.log(payload, "payload");
-    try {
-      const response = await axios.post(
-        `${process.env.REACT_APP_BASE_URL}freight-list-byId`,
-        payload,
-      );
-
-      if (response?.data?.data?.length > 0) {
-        setGetdata(response.data.data[0]);
-      }
-    } catch (error) {
-      console.error("Error fetching freight data by id:", error);
-    }
-  };
+ 
   const andlemodaloen = () => {
     setOpenmodal(true);
   };
@@ -886,19 +872,10 @@ export default function Addsupplierinvoice() {
 
   const estimateCalculate = async () => {
     try {
-
-//         "/addEstimatSupplierInvoice"
-// post
-// {
-//   "supplier_invoice_id": 1,
-//   "supplier_id": 12,
-//   "shipment_id": 45,
- 
-
       const payload = {
-       
-  supplier_id: selectedSupplier,
-  shipment_id: selected,
+       supplier_invoice_id:item,
+  supplier_id: freight?.supplier_id,
+  shipment_id: Number(freight.shipment_id || ""),
         origin_pick_up_cost: freight.origin_pick_up_cost,
         origin_pick_up_fees: freight.origin_pick_up_fees,
         origin_pickup_fee_gpcalc: freight.origin_pickup_fee_gpcalc,
@@ -1302,45 +1279,9 @@ export default function Addsupplierinvoice() {
       console.log(error.data);
     }
   };
-  const supplier = () => {
-    axios
-      .post(`${process.env.REACT_APP_BASE_URL}get-suppler-selected`, {
-        freight_id: getdata122?.id,
-      })
-      .then((response) => {
-        // console.log(response);
-        setClient(response.data.data);
-      })
-      .catch((error) => {
-        toast.error(error.response.data);
-      });
-  };
-  useEffect(() => {
-    supplier();
-    supplierSelected();
-  }, []);
   const handlepresss = (e) => {
     if (e.charCode < 42 || e.charCode > 57) {
       e.preventDefault();
-    }
-  };
-  // ////////////////////////////////////////////////////supplier selected
-  const supplierSelected = async () => {
-    console.log(localFreigtId);
-    try {
-      const response = await axios.post(
-        `${process.env.REACT_APP_BASE_URL}get-suppler-selected`,
-        { freight_id: localFreigtId },
-      );
-      // console.log(response);
-      if (response?.data?.data) {
-        setSelected(response.data.data.map((item) => item.id));
-        // setClient(response.data.data);
-      } else {
-        console.log("No data found");
-      }
-    } catch (error) {
-      console.log("Something went wrong:", error);
     }
   };
   const dateformate = new Date(getdata?.date).toLocaleDateString("en-GB");
@@ -1354,10 +1295,6 @@ export default function Addsupplierinvoice() {
   useEffect(() => {
     getsupplier();
   }, 1000);
-  useEffect(() => {
-    getdataapi();
-    getNewDataapi();
-  }, 1000);
   const getsupplier = () => {
     axios
       .get(`${process.env.REACT_APP_BASE_URL}supplier-list`)
@@ -1369,48 +1306,8 @@ export default function Addsupplierinvoice() {
         console.log(error.response.data);
       });
   };
-  const getdataapi = async () => {
-    // console.log(getdata);
-    const data123456 = {
-      quote_estimate_id: getdata122?.quote_estimate_id
-        ? getdata122?.quote_estimate_id
-        : getdata122?.quote_estimate_id,
-      freight,
-    };
-    await axios
-      .post(`${process.env.REACT_APP_BASE_URL}get-shipestimate`, data123456)
-      .then((response) => {
-        console.log(response.data.data);
-        setFreight(response.data.data);
-      })
-      .catch((error) => {
-        console.log(error.response.data);
-      });
-  };
-  const getNewDataapi = async () => {
-    // console.log(getdata);
-    const data123456 = {
-      quote_estimate_id: getdata122?.quote_estimate_id
-        ? getdata122?.quote_estimate_id
-        : getdata122?.quote_estimate_id,
-      freight_id: parseInt(localFreigtId),
-    };
-    // console.log(data123456);
-    await axios
-      .post(
-        `${process.env.REACT_APP_BASE_URL}GetQuoteShipEstimateById`,
-        data123456,
-      )
-      .then((response) => {
-        console.log(response.data.data);
-        setFreight(response.data.data);
-      })
-      .catch((error) => {
-        console.log(error.response.data);
-      });
-  };
+  
   const handleclicknav = () => {
-    // navigate("/Admin/managefreight");
     window.history.back();
   };
   const closemodal = () => {
@@ -1467,16 +1364,10 @@ export default function Addsupplierinvoice() {
       toast.success(response.data.message);
       setOpenmodal(false);
     }
-    // console.log("something went wrong")
   };
-  // const downloadPDF =  () => {
-  //    setShowData(true);
-  //      downloadPDF1();
-  // };
+  
   const downloadPDF = () => {
     setShowData(false); // PDF ke liye limited UI
-    // downloadPDF1()
-    navigate("/Admin/Downloadestimate", { state: { data: getdata122 } });
   };
   const downloadPDF1 = () => {
     console.log(showData);
@@ -1504,7 +1395,7 @@ export default function Addsupplierinvoice() {
   };
   const setSelected1111 = async (value) => {
     console.log(value);
-    setSelected(value);
+    setFreight(value);
   };
   const apidataget = async () => {
         const payload ={
@@ -1573,12 +1464,12 @@ export default function Addsupplierinvoice() {
 
             <div className="custom-modal-body">
               <div style={{ margin: "20px" }}>
-               <option value="">Select Shipment</option>
                 <select
                   className="form-select"
-                  value={selected}
+                  value={freight.shipment_id || ""}
                   onChange={(e) => setSelected1111(e.target.value)}
                 >
+               <option value="">Select Shipment</option>
                   {dat.map((item) => (
                     <option key={item.id} value={item.shipment_id}>
                       {item.waybill}
@@ -1740,9 +1631,9 @@ export default function Addsupplierinvoice() {
                                     }}
                                   >
                                     <strong>
-                                      {getdata?.client_name}
+                                      {freight?.client_name}
                                       <br />
-                                      {getdata?.address_1}
+                                      {freight?.address_1}
                                     </strong>
                                   </td>
                                 </tr>
@@ -1792,7 +1683,7 @@ export default function Addsupplierinvoice() {
                                           marginBottom: "unset",
                                         }}
                                       >
-                                        {getdata?.waybill}
+                                        {freight?.waybill}
                                       </p>
                                     </div>
                                     <div
@@ -1817,7 +1708,7 @@ export default function Addsupplierinvoice() {
                                           marginTop: 5,
                                         }}
                                       >
-                                        {getdata?.carrier}
+                                        {freight?.carrier}
                                       </p>
                                     </div>
                                     <div
@@ -1842,7 +1733,7 @@ export default function Addsupplierinvoice() {
                                           marginTop: 5,
                                         }}
                                       >
-                                        {getdata?.vessel}
+                                        {freight?.vessel}
                                       </p>
                                     </div>
                                     <div
@@ -1867,7 +1758,7 @@ export default function Addsupplierinvoice() {
                                           marginTop: 5,
                                         }}
                                       >
-                                        {new Date(getdata?.ETD).toLocaleDateString("en-GB")}
+                                        {new Date(freight?.ETD).toLocaleDateString("en-GB")}
                                       </p>
                                     </div>
                                     <div
@@ -1892,7 +1783,7 @@ export default function Addsupplierinvoice() {
                                           marginTop: 5,
                                         }}
                                       >
-                                        {new Date(getdata?.ATD).toLocaleDateString("en-GB")}
+                                        {new Date(freight?.ATD).toLocaleDateString("en-GB")}
                                       </p>
                                     </div>
                                     <div
@@ -1948,7 +1839,7 @@ export default function Addsupplierinvoice() {
                                           marginTop: 5,
                                         }}
                                       >
-                                        {getdata?.status}
+                                        {freight?.status}
                                       </p>
                                     </div>
                                     <div
@@ -1973,7 +1864,7 @@ export default function Addsupplierinvoice() {
                                           marginTop: 5,
                                         }}
                                       >
-                                        {getdata?.origin_agent}
+                                        {freight?.origin_agent}
                                       </p>
                                     </div>
                                     <div
@@ -1998,7 +1889,7 @@ export default function Addsupplierinvoice() {
                                           marginTop: 5,
                                         }}
                                       >
-                                        {getdata?.incoterm}
+                                        {freight?.incoterm}
                                       </p> */}
                                     </div>
                                     <div
@@ -2023,7 +1914,7 @@ export default function Addsupplierinvoice() {
                                           marginTop: 5,
                                         }}
                                       >
-                                        {getdata?.freight}
+                                        {freight?.freight}
                                       </p>
                                     </div>
                                   </td>
@@ -2108,7 +1999,7 @@ export default function Addsupplierinvoice() {
                                     <strong>Reference</strong>
                                   </td>
                                   <td style={{ fontSize: 14 }}>
-                                    {getdata?.client_ref_name}
+                                    {freight?.client_ref_name}
                                   </td>
                                 </tr>
                                 <tr>
@@ -2129,7 +2020,7 @@ export default function Addsupplierinvoice() {
                                       padding: "0px 10px 0px 10px",
                                     }}
                                   >
-                                    {new Date(getdata?.created_at).toLocaleDateString(
+                                    {new Date(freight?.created_at).toLocaleDateString(
                                       "en-GB",
                                     )}
                                   </td>
@@ -2181,7 +2072,7 @@ export default function Addsupplierinvoice() {
                                           marginTop: 5,
                                         }}
                                       >
-                                        {getdata?.port_of_loading}
+                                        {freight?.port_of_loading}
                                       </p>
                                     </div>
                                     <div
@@ -2206,7 +2097,7 @@ export default function Addsupplierinvoice() {
                                           marginTop: 5,
                                         }}
                                       >
-                                        {getdata?.port_of_discharge}
+                                        {freight?.port_of_discharge}
                                       </p>
                                     </div>
                                     <div
@@ -2231,7 +2122,7 @@ export default function Addsupplierinvoice() {
                                           marginTop: 5,
                                         }}
                                       >
-                                        {getdata?.destination_agent}
+                                        {freight?.destination_agent}
                                       </p>
                                     </div>
                                     <div
@@ -2257,7 +2148,7 @@ export default function Addsupplierinvoice() {
                                           marginTop: 5,
                                         }}
                                       >
-                                        {getdata?.container}
+                                        {freight?.container}
                                       </p>
                                     </div>
                                     <div
@@ -2282,7 +2173,7 @@ export default function Addsupplierinvoice() {
                                           marginTop: 5,
                                         }}
                                       >
-                                        {getdata?.load}
+                                        {freight?.load}
                                       </p>
                                     </div>
                                     <div
@@ -2310,7 +2201,7 @@ export default function Addsupplierinvoice() {
                                           marginTop: 5,
                                         }}
                                       >
-                                        {getdata?.release_type}
+                                        {freight?.release_type}
                                       </p>
                                     </div>
                                     <div
@@ -2335,7 +2226,7 @@ export default function Addsupplierinvoice() {
                                           marginTop: 5,
                                         }}
                                       >
-                                        {                                          getdata?.origin_country_name}
+                                        {                                          freight?.origin_country}
                                       </p>
                                     </div>
                                     <div
@@ -2360,7 +2251,7 @@ export default function Addsupplierinvoice() {
                                           marginTop: 5,
                                         }}
                                       >
-                                        {                                          getdata?.des_country_name}
+                                        {                                          freight?.destination_country}
                                       </p>
                                     </div>
                                   </td>

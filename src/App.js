@@ -100,6 +100,8 @@ import ClientKpiModule from "./pages/ClientKpiModule";
 import KPIgetdatauser from "./pages/KPIgetdatauser";
 import SupplierSageInvoice from "./components/Billing/SupplierSageInvoice";
 import Addsupplierinvoice from "./components/Billing/Addsupplierinvoice";
+import Editsupplierinvoice from "./components/Billing/Editsupplierinvoiceedit";
+import Editsupplierinvoiceedit from "./components/Billing/Editsupplierinvoiceedit";
 const Dashboard = lazy(() => import("./pages/Dashboard"));
 const Users = lazy(() => import("./pages/Users"));
 const Messages = lazy(() => import("./pages/Messages"));
@@ -401,6 +403,11 @@ export default function App() {
                   index
                   path="/Admin/Supplier_Invoice"
                   element={<SupplierSageInvoice />}
+                />
+                <Route
+                  index
+                  path="/Admin/editsupplierinvoiceedit"
+                  element={<Editsupplierinvoiceedit />}
                 />
                 <Route
                   index

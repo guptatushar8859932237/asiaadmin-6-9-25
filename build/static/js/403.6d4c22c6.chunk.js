@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunkasia_direct=self.webpackChunkasia_direct||[]).push([[403],{19403:(e,a,s)=>{s.r(a),s.d(a,{default:()=>i});var c=s(44414);const i=()=>(0,c.jsx)("div",{className:"title",children:" Saved"})}}]);

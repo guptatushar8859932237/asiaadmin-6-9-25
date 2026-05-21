@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunkasia_direct=self.webpackChunkasia_direct||[]).push([[998],{7998:(s,a,e)=>{e.r(a),e.d(a,{default:()=>i});var c=e(44414);const i=()=>(0,c.jsx)("div",{className:"title",children:" Analytics"})}}]);

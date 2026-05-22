@@ -587,50 +587,6 @@ export default function BatchesOrder() {
                                   </p>
                                 </td>
                               </tr>
-                              {/* <tr>
-                                <td className="instr_td">
-                                  <p className="client_para1 mb-3">
-                                    Instructions:
-                                  </p>
-                                </td>
-                                <td>
-                                  <p className="client_para1 mb-3">
-                                    {datat1.shipment_des}
-                                  </p>
-                                </td>
-                              </tr> */}
-                              {/* <tr>
-                                <td>
-                                  <p class="client_para1">Local Carrier:</p>
-                                </td>
-                                <td>
-                                  <p class="client_para1">
-                                    {datat1.local_carrier}
-                                  </p>
-                                </td>
-                              </tr> */}
-                              {/* <tr>
-                                <td>
-                                  <p class="client_para1">Driver Name:</p>
-                                </td>
-                                <td>
-                                  <p class="client_para1">
-                                    {datat1.driver_name}
-                                  </p>
-                                </td>
-                              </tr>
-                              <tr>
-                                <td>
-                                  <p class="client_para1">
-                                    Vehicle Registration:
-                                  </p>
-                                </td>
-                                <td>
-                                  <p class="client_para1">
-                                    {datat1.vehicle_registration}
-                                  </p>
-                                </td>
-                              </tr> */}
                             </tbody>
                           </table>
                         </div>

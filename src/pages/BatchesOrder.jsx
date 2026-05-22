@@ -465,6 +465,9 @@ export default function BatchesOrder() {
                                   </p>
                                 </td>
                               </tr>
+                              {/* 
+                                <tr>                        
+                              */}
                               <tr>
                                 <td>
                                   <p class="client_para1">Collection Address:</p>

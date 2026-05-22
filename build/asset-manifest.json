@@ -1,27 +1,27 @@
 {
   "files": {
-    "main.css": "/Admin/static/css/main.65abf5b6.css",
-    "main.js": "/Admin/static/js/main.918ba8d5.js",
+    "main.css": "/Admin/static/css/main.feca6391.css",
+    "main.js": "/Admin/static/js/main.c2290f1e.js",
     "static/js/249.4a2f6f17.chunk.js": "/Admin/static/js/249.4a2f6f17.chunk.js",
     "static/js/846.615a9501.chunk.js": "/Admin/static/js/846.615a9501.chunk.js",
     "static/js/80.8bad0e3e.chunk.js": "/Admin/static/js/80.8bad0e3e.chunk.js",
     "static/js/606.165e924a.chunk.js": "/Admin/static/js/606.165e924a.chunk.js",
     "static/js/998.cc043a77.chunk.js": "/Admin/static/js/998.cc043a77.chunk.js",
-    "static/js/626.98421b03.chunk.js": "/Admin/static/js/626.98421b03.chunk.js",
+    "static/js/626.9ddfa657.chunk.js": "/Admin/static/js/626.9ddfa657.chunk.js",
     "static/js/403.6d4c22c6.chunk.js": "/Admin/static/js/403.6d4c22c6.chunk.js",
     "static/js/654.06cfff54.chunk.js": "/Admin/static/js/654.06cfff54.chunk.js",
     "static/js/105.8f503e2b.chunk.js": "/Admin/static/js/105.8f503e2b.chunk.js",
     "static/js/543.58a7ab1a.chunk.js": "/Admin/static/js/543.58a7ab1a.chunk.js",
     "static/js/305.fefbcdfd.chunk.js": "/Admin/static/js/305.fefbcdfd.chunk.js",
     "static/js/353.86288af7.chunk.js": "/Admin/static/js/353.86288af7.chunk.js",
-    "static/js/829.d93e0030.chunk.js": "/Admin/static/js/829.d93e0030.chunk.js",
+    "static/js/829.ff25a0fc.chunk.js": "/Admin/static/js/829.ff25a0fc.chunk.js",
     "static/js/524.9ed6859c.chunk.js": "/Admin/static/js/524.9ed6859c.chunk.js",
     "static/js/752.8eec57f4.chunk.js": "/Admin/static/js/752.8eec57f4.chunk.js",
     "static/js/225.8691a241.chunk.js": "/Admin/static/js/225.8691a241.chunk.js",
     "static/js/77.2a4d6d96.chunk.js": "/Admin/static/js/77.2a4d6d96.chunk.js",
     "static/js/890.fab7d041.chunk.js": "/Admin/static/js/890.fab7d041.chunk.js",
     "static/js/327.d240de78.chunk.js": "/Admin/static/js/327.d240de78.chunk.js",
-    "static/js/701.aa506f83.chunk.js": "/Admin/static/js/701.aa506f83.chunk.js",
+    "static/js/701.044590ff.chunk.js": "/Admin/static/js/701.044590ff.chunk.js",
     "static/js/659.f3704ad9.chunk.js": "/Admin/static/js/659.f3704ad9.chunk.js",
     "static/js/304.cfb40364.chunk.js": "/Admin/static/js/304.cfb40364.chunk.js",
     "static/js/82.ca4ebb5a.chunk.js": "/Admin/static/js/82.ca4ebb5a.chunk.js",
@@ -41,7 +41,7 @@
     "index.html": "/Admin/index.html"
   },
   "entrypoints": [
-    "static/css/main.65abf5b6.css",
-    "static/js/main.918ba8d5.js"
+    "static/css/main.feca6391.css",
+    "static/js/main.c2290f1e.js"
   ]
 }

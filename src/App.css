@@ -127,7 +127,7 @@ th {
 .sidebar {
   width: 5px;
   background: var(--blue);
-
+  min-height: 100vh;
 }
 
 .sidebar svg {
@@ -183,10 +183,8 @@ th {
   align-items: center;
   justify-content: center;
   margin: 10px 0px;
-  /* height: 30px; */
   padding: 5px 20px;
   background: var(--maroon);
-  border-radius: 5px;
   line-height: normal !important;
   width: 100%;
   border: 0px !important;
@@ -1021,6 +1019,8 @@ td {
 th {
   font-size: 13px !important;
   padding: 15px 10px !important;
+  background-color: var(--blue) !important;
+  color: white !important;
 }
 
 /* .tableICon button {

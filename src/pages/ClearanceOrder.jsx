@@ -5,14 +5,14 @@ import { Modal, Box, Button } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import { useNavigate } from "react-router-dom";
 import FormControl from "@mui/material/FormControl";
-import {InputLabel, MenuItem,  Select } from "@mui/material";
+import { InputLabel, MenuItem, Select } from "@mui/material";
 const pageSize = 10;
 export default function ClearanceOrder() {
   const [openDropdown, setOpenDropdown] = useState(null);
   const [openSubmenu, setOpenSubmenu] = useState(null);
   const [show1, setShow1] = useState(false);
   const dropdownRefs = useRef({});
-   const [selectedDocs, setSelectedDocs] = useState([]);
+  const [selectedDocs, setSelectedDocs] = useState([]);
   const submenuRefs = useRef({});
   const toggleDropdown = (index) => {
     setOpenDropdown(openDropdown === index ? null : index);
@@ -52,16 +52,16 @@ export default function ClearanceOrder() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isModalOpen1, setIsModalOpen1] = useState(false);
   const [country, setCountry] = useState([]);
-   const handleShow = () => setShow1(true);
-      const handleClose = () => setShow1(false);
+  const handleShow = () => setShow1(true);
+  const handleClose = () => setShow1(false);
   const [isModalOpen2, setIsModalOpen2] = useState(false);
   const [apidata, setApidata] = useState({});
-   const [formFiles, setFormFiles] = useState({
-      supplier_invoice: [],
-      other_documents: [],
-      licenses: [],
-      packing_list: [],
-    });
+  const [formFiles, setFormFiles] = useState({
+    supplier_invoice: [],
+    other_documents: [],
+    licenses: [],
+    packing_list: [],
+  });
   const [data, setData] = useState();
   const [loader, setLoader] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
@@ -77,7 +77,7 @@ export default function ClearanceOrder() {
     setLoader(true);
     try {
       const response = await axios.post(
-        `${process.env.REACT_APP_BASE_URL}getCleranceOrder`,{ user_id:userid, user_type:usertype,page:page }
+        `${process.env.REACT_APP_BASE_URL}getCleranceOrder`, { user_id: userid, user_type: usertype, page: page }
       );
       console.log(response.data.data);
       setData1(response.data.data);
@@ -167,12 +167,12 @@ export default function ClearanceOrder() {
     }
   };
 
-    const handleSelect = (e) => {
-        const selected = e.target.value;
-        if (selected && !selectedDocs.find((doc) => doc.name === selected)) {
-          setSelectedDocs([...selectedDocs, { name: selected, files: [] }]);
-        }
-      };
+  const handleSelect = (e) => {
+    const selected = e.target.value;
+    if (selected && !selectedDocs.find((doc) => doc.name === selected)) {
+      setSelectedDocs([...selectedDocs, { name: selected, files: [] }]);
+    }
+  };
   const handleclick121212 = async (item) => {
     try {
       const datapost = {
@@ -209,44 +209,44 @@ export default function ClearanceOrder() {
       }
     }
   };
- 
+
   const totalPages = Math.ceil(pagenationdata.total / pagenationdata.limit);
   const startIndex = (currentPage - 1) * pagenationdata.limit;
   const endIndex = startIndex + pagenationdata.limit;
   const handlePageChange = (currentData) => {
     setCurrentPage(currentData);
-getdata(currentData)
+    getdata(currentData)
   };
 
-     const handleSearch = (e) => {
-        const value = e.target.value;
-        setSearchQuery(value);
-        setCurrentPage(1);
-        throttledSearch(value); // ✅ throttled call
-      };
-    
-      const throttle = (func, delay) => {
-        let lastCall = 0;
-    
-        return (...args) => {
-          const now = Date.now();
-          if (now - lastCall >= delay) {
-            lastCall = now;
-            func(...args);
-          }
-        };
-      };
-      const throttledSearch = useRef(
-        throttle((value) => {
-          getdata1143(value);
-        }, 1000)
-      ).current;
+  const handleSearch = (e) => {
+    const value = e.target.value;
+    setSearchQuery(value);
+    setCurrentPage(1);
+    throttledSearch(value); // ✅ throttled call
+  };
+
+  const throttle = (func, delay) => {
+    let lastCall = 0;
+
+    return (...args) => {
+      const now = Date.now();
+      if (now - lastCall >= delay) {
+        lastCall = now;
+        func(...args);
+      }
+    };
+  };
+  const throttledSearch = useRef(
+    throttle((value) => {
+      getdata1143(value);
+    }, 1000)
+  ).current;
 
   const getdata1143 = async (page) => {
     setLoader(true);
     try {
       const response = await axios.post(
-        `${process.env.REACT_APP_BASE_URL}getCleranceOrder`,{ user_id:userid, user_type:usertype, search:page }
+        `${process.env.REACT_APP_BASE_URL}getCleranceOrder`, { user_id: userid, user_type: usertype, search: page }
       );
       console.log(response.data.data);
       setData1(response.data.data);
@@ -283,15 +283,15 @@ getdata(currentData)
       startDate: data.startDate,
       endDate: data.endDate,
       clearingType: data.clearingType,
-      user_id:userid, usertype: usertype,
+      user_id: userid, usertype: usertype,
     };
     axios
       .post(`${process.env.REACT_APP_BASE_URL}getCleranceOrder`, datapost)
       .then((response) => {
         if (response.data.success === true) {
           handleCloseModal();
-         setData1(response.data.data);
-      setPagenationdata(response.data);
+          setData1(response.data.data);
+          setPagenationdata(response.data);
         }
       })
       .catch((error) => {
@@ -361,7 +361,7 @@ getdata(currentData)
           if (error.response && error.response.status === 400) {
             toast.error(
               error.response.data.message ||
-                "Permission Denied: You don’t have access to delete this order"
+              "Permission Denied: You don’t have access to delete this order"
             );
           } else {
             toast.error("Something went wrong while deleting the order.");
@@ -422,13 +422,13 @@ getdata(currentData)
     const { name, value } = e.target;
     setApidata({ ...apidata, [name]: value });
   };
-   const handleFileChange = (e, fieldName) => {
+  const handleFileChange = (e, fieldName) => {
     const files = Array.from(e.target.files);
     setFormFiles((prev) => ({
       ...prev,
       [fieldName]: files,
     }));
-  };  
+  };
   const handleupdateupdate = async () => {
     try {
       const formdata = new FormData();
@@ -453,14 +453,14 @@ getdata(currentData)
       formdata.append("sales_representative", apidata.sales_representative);
       formdata.append("documentName", apidata.documentName);
 
-     selectedDocs.forEach(doc => {
-  console.log("Doc Type:", doc.name);
+      selectedDocs.forEach(doc => {
+        console.log("Doc Type:", doc.name);
 
-  doc.files.forEach(file => {
-    formdata.append(doc.name, file); // 👈 each file append
-    console.log("File:", file.name, "| Size:", file.size, "bytes");
-  });
-});
+        doc.files.forEach(file => {
+          formdata.append(doc.name, file); // 👈 each file append
+          console.log("File:", file.name, "| Size:", file.size, "bytes");
+        });
+      });
       const response = await axios.post(
         `${process.env.REACT_APP_BASE_URL}update-clearing`,
         formdata
@@ -474,36 +474,36 @@ getdata(currentData)
     }
   };
 
-   const docOptions = [
-      { id: "Customs Documents", label: "Customs docs" },
-      { id: "Supporting Documents", label: "Supporting docs" },
-      { id: "Invoice, Packing List", label: "Invoice / Packing " },
-      { id: "Product Literature", label: "Product Literature" },
-      { id: "Letters of authority", label: "Letters of authority" },
-      { id: "Waybills", label: "Freight Docs" },
-      { id: "Waybills", label: "Shipping instruction" },
-      { id: "AD_Quotations", label: "Attach Quote" },
-      { id: "Supplier Invoices", label: "Supplier Invoices" }
-    ];
-       const handleFileChangefil = (e, docName) => {
-        const files = Array.from(e.target.files);
-        setSelectedDocs((prev) =>
-          prev.map((doc) =>
-            doc.name === docName ? { ...doc, files } : doc
-          )
-        );
-      };
+  const docOptions = [
+    { id: "Customs Documents", label: "Customs docs" },
+    { id: "Supporting Documents", label: "Supporting docs" },
+    { id: "Invoice, Packing List", label: "Invoice / Packing " },
+    { id: "Product Literature", label: "Product Literature" },
+    { id: "Letters of authority", label: "Letters of authority" },
+    { id: "Waybills", label: "Freight Docs" },
+    { id: "Waybills", label: "Shipping instruction" },
+    { id: "AD_Quotations", label: "Attach Quote" },
+    { id: "Supplier Invoices", label: "Supplier Invoices" }
+  ];
+  const handleFileChangefil = (e, docName) => {
+    const files = Array.from(e.target.files);
+    setSelectedDocs((prev) =>
+      prev.map((doc) =>
+        doc.name === docName ? { ...doc, files } : doc
+      )
+    );
+  };
 
-       const handleSave = () => {
-      console.log("Uploaded Documents:", selectedDocs);
-      selectedDocs.forEach(doc => {
-        console.log("Doc Type:", doc);
-        doc.files.forEach(file => {
-          console.log("File:", file.name, "| Size:", file.size, "bytes");
-        });
+  const handleSave = () => {
+    console.log("Uploaded Documents:", selectedDocs);
+    selectedDocs.forEach(doc => {
+      console.log("Doc Type:", doc);
+      doc.files.forEach(file => {
+        console.log("File:", file.name, "| Size:", file.size, "bytes");
       });
-      handleClose();
-    };
+    });
+    handleClose();
+  };
   return (
     <>
       <Modal
@@ -829,82 +829,82 @@ getdata(currentData)
               </div> */}
             </div>
 
-         <div className="row mb-3 mt-4">
-                                        <div className="col-9 mt-3">
-                                          <h4 className="freight_hd">Document Section</h4>
-                                          <span class="line"></span>
-                                        </div>
-                                        <div className="col-3">
-                      <Button className="btn  btn-primary" onClick={handleShow}>
-                                Upload Documents
-                              </Button>
-                                             
-                                             {
-                                              show1 ? <Modal
-                              open={show1}
-                              onClose={handleClose}
-                              slotProps={{
-                                backdrop: {
-                                  sx: { backgroundColor: "rgba(0,0,0,0.2)" }, // lighter background
-                                },
-                              }}
-                            >
-                              <Box
-                                sx={{
-                                  p: 3,
-                                  bgcolor: "background.paper",
-                                  borderRadius: 2,
-                                  width: 500,
-                                  mx: "auto",
-                                  mt: 10,
-                                }}
-                              >
-                                <h2>Upload Documents</h2>
-                      
-                                {/* Dropdown */}
-                                <FormControl fullWidth sx={{ mt: 2 }}>
-                                  <InputLabel id="doc-select-label">Select Document Type</InputLabel>
-                                  <Select
-                                    labelId="doc-select-label"
-                                    // value={selected}
-                                    onChange={handleSelect}
-                                  >
-                                    {docOptions.map((option) => (
-                                      <MenuItem key={option.id} value={option.id}>
-                                        {option.label}
-                                      </MenuItem>
-                                    ))}
-                                  </Select>
-                                </FormControl>
-                      
-                                {/* Dynamic file inputs */}
-                                <div className="mt-3">
-                                  {selectedDocs.map((doc, index) => (
-                                    <div key={index} className="mb-3">
-                                      <label className="fw-bold">{doc.name}</label>
-                                      <input
-                                        type="file"
-                                        className="form-control"
-                                        multiple
-                                        accept="image/*,application/pdf"
-                                        onChange={(e) => handleFileChangefil(e, doc.name)}
-                                      />
-                                    </div>
-                                  ))}
-                                </div>
-                      
-                                {/* Footer buttons */}
-                                <Box sx={{ display: "flex", justifyContent: "flex-end", gap: 2, mt: 3 }}>
-                                  <Button onClick={handleClose}>Cancel</Button>
-                                  <Button variant="contained" color="success" onClick={handleSave}>
-                                    Save Documents
-                                  </Button>
-                                </Box>
-                              </Box>
-                            </Modal> : ""
-                                             }   
-                                        </div>
-                                      </div>
+            <div className="row mb-3 mt-4">
+              <div className="col-9 mt-3">
+                <h4 className="freight_hd">Document Section</h4>
+                <span class="line"></span>
+              </div>
+              <div className="col-3">
+                <Button className="btn  btn-primary" onClick={handleShow}>
+                  Upload Documents
+                </Button>
+
+                {
+                  show1 ? <Modal
+                    open={show1}
+                    onClose={handleClose}
+                    slotProps={{
+                      backdrop: {
+                        sx: { backgroundColor: "rgba(0,0,0,0.2)" }, // lighter background
+                      },
+                    }}
+                  >
+                    <Box
+                      sx={{
+                        p: 3,
+                        bgcolor: "background.paper",
+                        borderRadius: 2,
+                        width: 500,
+                        mx: "auto",
+                        mt: 10,
+                      }}
+                    >
+                      <h2>Upload Documents</h2>
+
+                      {/* Dropdown */}
+                      <FormControl fullWidth sx={{ mt: 2 }}>
+                        <InputLabel id="doc-select-label">Select Document Type</InputLabel>
+                        <Select
+                          labelId="doc-select-label"
+                          // value={selected}
+                          onChange={handleSelect}
+                        >
+                          {docOptions.map((option) => (
+                            <MenuItem key={option.id} value={option.id}>
+                              {option.label}
+                            </MenuItem>
+                          ))}
+                        </Select>
+                      </FormControl>
+
+                      {/* Dynamic file inputs */}
+                      <div className="mt-3">
+                        {selectedDocs.map((doc, index) => (
+                          <div key={index} className="mb-3">
+                            <label className="fw-bold">{doc.name}</label>
+                            <input
+                              type="file"
+                              className="form-control"
+                              multiple
+                              accept="image/*,application/pdf"
+                              onChange={(e) => handleFileChangefil(e, doc.name)}
+                            />
+                          </div>
+                        ))}
+                      </div>
+
+                      {/* Footer buttons */}
+                      <Box sx={{ display: "flex", justifyContent: "flex-end", gap: 2, mt: 3 }}>
+                        <Button onClick={handleClose}>Cancel</Button>
+                        <Button variant="contained" color="success" onClick={handleSave}>
+                          Save Documents
+                        </Button>
+                      </Box>
+                    </Box>
+                  </Modal> : ""
+                }
+              </div>
+            </div>
 
             <Button variant="contained" onClick={handleupdateupdate}>
               Update
@@ -912,37 +912,37 @@ getdata(currentData)
           </div>
         </Box>
       </Modal>
-     
-        <>
-          <div className="wpWrapper">
-            <div className="container-fluid">
-              <div className="row manageFreight">
-                <div className="d-flex justify-content-between">
-                  <h4 className="freight_hd">Order Clearance</h4>
-                  <div className="d-flex align-items-center">
-                    <div className="">
-                      <input
-                        value={searchQuery}
-                        onChange={handleSearch}
-                        placeholder="Search..."
-                        className="px-2 py-1 rounded"
-                      />
-                    </div>
-                    <button className="me-2 mx-1" onClick={handleOpenModal}>
-                      Filter
-                    </button>
+
+      <>
+        <div className="wpWrapper">
+          <div className="container-fluid">
+            <div className="row manageFreight">
+              <div className="d-flex justify-content-between">
+                <h4 className="freight_hd">Order Clearance</h4>
+                <div className="d-flex align-items-center">
+                  <div className="">
+                    <input
+                      value={searchQuery}
+                      onChange={handleSearch}
+                      placeholder="Search..."
+                      className="px-2 py-1 rounded"
+                    />
                   </div>
+                  <button className="me-2 mx-1" onClick={handleOpenModal}>
+                    Filter
+                  </button>
                 </div>
               </div>
-               {loader ? (
-        <div class="loader-container">
-          <div class="loader"></div>
-          <p class="loader-text">Updating... This may take some time</p>
-        </div>
-      ) : (
+            </div>
+            {loader ? (
+              <div class="loader-container">
+                <div class="loader"></div>
+                <p class="loader-text">Updating... This may take some time</p>
+              </div>
+            ) : (
               <div className="mt-3">
                 <div className=" ">
-                  <div className="table-responsive">
+                  <div>
                     <table className="table table-striped tableICon">
                       <tbody style={{ border: "none" }}>
                         {data1 &&
@@ -1003,8 +1003,8 @@ getdata(currentData)
                                             <div
                                               className="dropdown-container"
                                               ref={(el) =>
-                                                (dropdownRefs.current[index] =
-                                                  el)
+                                              (dropdownRefs.current[index] =
+                                                el)
                                               }
                                             >
                                               <button
@@ -1043,9 +1043,9 @@ getdata(currentData)
                                                 <div
                                                   className="dropdown-menu"
                                                   ref={(el) =>
-                                                    (submenuRefs.current[
-                                                      index
-                                                    ] = el)
+                                                  (submenuRefs.current[
+                                                    index
+                                                  ] = el)
                                                   }
                                                 >
                                                   <ul>
@@ -1097,7 +1097,7 @@ getdata(currentData)
                                                           style={{
                                                             transform:
                                                               openSubmenu ===
-                                                              index
+                                                                index
                                                                 ? "rotate(180deg)"
                                                                 : "rotate(0deg)",
                                                             transition:
@@ -1110,71 +1110,71 @@ getdata(currentData)
 
                                                       {openSubmenu ===
                                                         index && (
-                                                        <div className="submenu">
-                                                          <ul>
-                                                            <li
-                                                              className="dropdown-item"
-                                                              onClick={() =>
-                                                                handleclickdelete(
-                                                                  item
-                                                                )
-                                                              }
-                                                            >
-                                                              Delete
-                                                            </li>
-                                                            <li
-                                                              className="dropdown-item"
-                                                              onClick={() =>
-                                                                handlecciew(
-                                                                  item
-                                                                )
-                                                              }
-                                                            >
-                                                              View Details
-                                                            </li>
-                                                            <li
-                                                              className="dropdown-item"
-                                                              onClick={() =>
-                                                                handleclickdelete12(
-                                                                  item
-                                                                )
-                                                              }
-                                                            >
-                                                              View
-                                                            </li>
-                                                            <li
-                                                              className="dropdown-item"
-                                                              onClick={() =>
-                                                                handleclickdelete123423(
-                                                                  item
-                                                                )
-                                                              }
-                                                            >
-                                                              Edit Order
-                                                            </li>
-                                                            <li
-                                                              className="dropdown-item"
-                                                              onClick={() =>
-                                                                handleclickdelete1234(
-                                                                  item
-                                                                )
-                                                              }
-                                                            >
-                                                              Edit Estimate
-                                                            </li>
-                                                            <li
-                                                              className="dropdown-item"
-                                                              onClick={() =>
-                                                                handleOpenModal1(
-                                                                  item
-                                                                )
-                                                              }
-                                                            >
-                                                              Attach Document
-                                                            </li>
-                                                          </ul>
-                                                        </div>
-                                                      )}
+                                                          <div className="submenu">
+                                                            <ul>
+                                                              <li
+                                                                className="dropdown-item"
+                                                                onClick={() =>
+                                                                  handleclickdelete(
+                                                                    item
+                                                                  )
+                                                                }
+                                                              >
+                                                                Delete
+                                                              </li>
+                                                              <li
+                                                                className="dropdown-item"
+                                                                onClick={() =>
+                                                                  handlecciew(
+                                                                    item
+                                                                  )
+                                                                }
+                                                              >
+                                                                View Details
+                                                              </li>
+                                                              <li
+                                                                className="dropdown-item"
+                                                                onClick={() =>
+                                                                  handleclickdelete12(
+                                                                    item
+                                                                  )
+                                                                }
+                                                              >
+                                                                View
+                                                              </li>
+                                                              <li
+                                                                className="dropdown-item"
+                                                                onClick={() =>
+                                                                  handleclickdelete123423(
+                                                                    item
+                                                                  )
+                                                                }
+                                                              >
+                                                                Edit Order
+                                                              </li>
+                                                              <li
+                                                                className="dropdown-item"
+                                                                onClick={() =>
+                                                                  handleclickdelete1234(
+                                                                    item
+                                                                  )
+                                                                }
+                                                              >
+                                                                Edit Estimate
+                                                              </li>
+                                                              <li
+                                                                className="dropdown-item"
+                                                                onClick={() =>
+                                                                  handleOpenModal1(
+                                                                    item
+                                                                  )
+                                                                }
+                                                              >
+                                                                Attach Document
+                                                              </li>
+                                                            </ul>
+                                                          </div>
+                                                        )}
                                                     </li>
                                                   </ul>
                                                 </div>
@@ -1249,32 +1249,32 @@ getdata(currentData)
                   </div>
                 </div>
               </div>
-      )}
-            </div>
-            <Modal
-              open={isModalOpen}
-              onClose={handleCloseModal}
-              aria-labelledby="modal-modal-title"
-              aria-describedby="modal-modal-description"
+            )}
+          </div>
+          <Modal
+            open={isModalOpen}
+            onClose={handleCloseModal}
+            aria-labelledby="modal-modal-title"
+            aria-describedby="modal-modal-description"
+          >
+            <Box
+              sx={{
+                position: "absolute",
+                top: "50%",
+                left: "50%",
+                transform: "translate(-50%, -50%)",
+                bgcolor: "background.paper",
+                boxShadow: 24,
+              }}
             >
-              <Box
-                sx={{
-                  position: "absolute",
-                  top: "50%",
-                  left: "50%",
-                  transform: "translate(-50%, -50%)",
-                  bgcolor: "background.paper",
-                  boxShadow: 24,
-                }}
-              >
-                <div className="modal-header">
-                  <h2 id="modal-modal-title">Filter</h2>
-                  <button className="btn btn-close" onClick={handleCloseModal}>
-                    <CloseIcon />
-                  </button>
-                </div>
+              <div className="modal-header">
+                <h2 id="modal-modal-title">Filter</h2>
+                <button className="btn btn-close" onClick={handleCloseModal}>
+                  <CloseIcon />
+                </button>
+              </div>
 
-                {/* <div className="row my-3  ">
+              {/* <div className="row my-3  ">
                 <div className="col-6">
                   <label>Delivery Type</label>
                   <select
@@ -1326,74 +1326,74 @@ getdata(currentData)
                   </div>
                 </div>
               </div> */}
-                <div className="newModalGap noFormaControl">
-                  <div className="row mb-3">
-                    <div className="col-6">
-                      <label>Country of Origin</label>
-                      <select name="origin" onChange={handlechange}>
-                        <option value="">Select</option>
-                        {country &&
-                          country.length > 0 &&
-                          country.map((item, index) => {
-                            return (
-                              <>
-                                <option value={item.id}>{item.name}</option>
-                              </>
-                            );
-                          })}
-                      </select>
-                    </div>
-                    <div className="col-6">
-                      <label>Delivery to Country </label>
-                      <select name="destination" onChange={handlechange}>
-                        <option value="">Select</option>
-                        {country &&
-                          country.length > 0 &&
-                          country.map((item, index) => {
-                            return (
-                              <>
-                                <option value={item.id}>{item.name}</option>
-                              </>
-                            );
-                          })}
-                      </select>
-                    </div>
+              <div className="newModalGap noFormaControl">
+                <div className="row mb-3">
+                  <div className="col-6">
+                    <label>Country of Origin</label>
+                    <select name="origin" onChange={handlechange}>
+                      <option value="">Select</option>
+                      {country &&
+                        country.length > 0 &&
+                        country.map((item, index) => {
+                          return (
+                            <>
+                              <option value={item.id}>{item.name}</option>
+                            </>
+                          );
+                        })}
+                    </select>
                   </div>
-                  <div className="row mb-3">
-                    <div className="col-6">
-                      <label>Start Date</label>
-                      <input
-                        type="date"
-                        id="shipper3"
-                        name="startDate"
-                        style={{ cursor: "pointer" }}
-                        onChange={handlechange}
-                        className="form-control"
-                      />
-                    </div>
-                    <div className="col-6">
-                      <label>End Date </label>
-                      <input
-                        type="date"
-                        id="shipper3"
-                        name="endDate"
-                        style={{ cursor: "pointer" }}
-                        className="form-control"
-                        onChange={handlechange}
-                      />
-                    </div>
+                  <div className="col-6">
+                    <label>Delivery to Country </label>
+                    <select name="destination" onChange={handlechange}>
+                      <option value="">Select</option>
+                      {country &&
+                        country.length > 0 &&
+                        country.map((item, index) => {
+                          return (
+                            <>
+                              <option value={item.id}>{item.name}</option>
+                            </>
+                          );
+                        })}
+                    </select>
                   </div>
-                  <div className="row mb-3">
-                    <div className="col-12">
-                      <label>Freight</label>
-                      <select name="freight" onChange={handlechange}>
-                        <option value="">Select...</option>
-                        <option value="Sea">Sea</option>
-                        <option value="Air">Air</option>
-                        <option value="Road">Road</option>
-                      </select>
-                    </div>
-                    {/* <div className="col-6">
+                </div>
+                <div className="row mb-3">
+                  <div className="col-6">
+                    <label>Start Date</label>
+                    <input
+                      type="date"
+                      id="shipper3"
+                      name="startDate"
+                      style={{ cursor: "pointer" }}
+                      onChange={handlechange}
+                      className="form-control"
+                    />
+                  </div>
+                  <div className="col-6">
+                    <label>End Date </label>
+                    <input
+                      type="date"
+                      id="shipper3"
+                      name="endDate"
+                      style={{ cursor: "pointer" }}
+                      className="form-control"
+                      onChange={handlechange}
+                    />
+                  </div>
+                </div>
+                <div className="row mb-3">
+                  <div className="col-12">
+                    <label>Freight</label>
+                    <select name="freight" onChange={handlechange}>
+                      <option value="">Select...</option>
+                      <option value="Sea">Sea</option>
+                      <option value="Air">Air</option>
+                      <option value="Road">Road</option>
+                    </select>
+                  </div>
+                  {/* <div className="col-6">
                       <label>freight Type </label>
                       <select
                         name="type"
@@ -1405,59 +1405,59 @@ getdata(currentData)
                         <option value="normal">Normal</option>
                       </select>
                     </div> */}
-                  </div>
-                  <Button variant="contained" onClick={postData}>
-                    Apply
-                  </Button>
                 </div>
-              </Box>
-            </Modal>
-            <Modal
-              open={isModalOpen1}
-              onClose={handleCloseModal1}
-              aria-labelledby="modal-modal-title"
-              aria-describedby="modal-modal-description"
+                <Button variant="contained" onClick={postData}>
+                  Apply
+                </Button>
+              </div>
+            </Box>
+          </Modal>
+          <Modal
+            open={isModalOpen1}
+            onClose={handleCloseModal1}
+            aria-labelledby="modal-modal-title"
+            aria-describedby="modal-modal-description"
+          >
+            <Box
+              sx={{
+                position: "absolute",
+                top: "50%",
+                left: "50%",
+                transform: "translate(-50%, -50%)",
+                bgcolor: "background.paper",
+                boxShadow: 24,
+                minWidth: "200px"
+              }}
             >
-              <Box
-                sx={{
-                  position: "absolute",
-                  top: "50%",
-                  left: "50%",
-                  transform: "translate(-50%, -50%)",
-                  bgcolor: "background.paper",
-                  boxShadow: 24,
-                  minWidth:"200px"
-                }}
-              >
-                <div className="modal-header">
-                  <h2 id="modal-modal-title">Upload Document</h2>
-                  <button className="btn btn-close" onClick={handleCloseModal1}>
-                    <CloseIcon />
-                  </button>
-                </div>
+              <div className="modal-header">
+                <h2 id="modal-modal-title">Upload Document</h2>
+                <button className="btn btn-close" onClick={handleCloseModal1}>
+                  <CloseIcon />
+                </button>
+              </div>
 
-                <div className="newModalGap noFormaControl">
-                  <div>
-                    <input
-                      type="file"
-                      className="w-100 py-1 rounded  px-2 py-1"
-                      onChange={handlechangefile}
-                      name="documentfile"
-                    ></input>
-                  </div>
-                  <Button
-                    className="mt-3"
-                    variant="contained"
-                    onClick={docupload}
-                  >
-                    Apply
-                  </Button>
+              <div className="newModalGap noFormaControl">
+                <div>
+                  <input
+                    type="file"
+                    className="w-100 py-1 rounded  px-2 py-1"
+                    onChange={handlechangefile}
+                    name="documentfile"
+                  ></input>
                 </div>
-              </Box>
-            </Modal>
-          </div>
-          <ToastContainer />
-        </>
+                <Button
+                  className="mt-3"
+                  variant="contained"
+                  onClick={docupload}
+                >
+                  Apply
+                </Button>
+              </div>
+            </Box>
+          </Modal>
+        </div>
+        <ToastContainer />
+      </>
     </>
   );
 }

@@ -1118,7 +1118,7 @@ export default function Managefreight() {
                 </div>
               ) : (
                 <div>
-                  <div className="table-responsive">
+                  <div>
                     <table className="table table-striped tableICon">
                       <tbody>
                         {data &&

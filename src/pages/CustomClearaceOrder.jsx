@@ -784,7 +784,7 @@ const CustomClearaceOrder = () => {
           ) : (
             <div className="mt-4">
               <div>
-                <div className="table-responsive">
+                <div>
                   <table className="table table-striped table-hover">
                     <tbody>
                       {constgetdata.map((item, index) => {

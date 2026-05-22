@@ -1514,7 +1514,7 @@ export default function CustomebyUserap() {
                   <p class="loader-text">Updating... This may take some time</p>
                 </div>
               ) : (
-                <div className="table-responsive">
+                <div>
                   <table className="table table-striped">
                     <tbody style={{ border: "none" }}>
                       {constgetdata &&

@@ -759,46 +759,46 @@ export default function Order() {
         toast.error(error.response?.data || "An error occurred");
       });
   };
-  const track123 =async (item) => {
+  const track123 = async (item) => {
     try {
-        const body = {
-          freight_id: item?.freight_id,
-          order_id: item?.order_id,
-        };
-        const res = await axios.post(
-          `${process.env.REACT_APP_BASE_URL}add_freight_to_warehouse`,
-          body
-        );
-        toast.success(res.data.message);
-        getorder();
-        closeModal();
-        setOpenModalorder(false);
-      } catch (error) {
-        toast.error(error.response?.data?.message || "Something went wrong");
-      }
+      const body = {
+        freight_id: item?.freight_id,
+        order_id: item?.order_id,
+      };
+      const res = await axios.post(
+        `${process.env.REACT_APP_BASE_URL}add_freight_to_warehouse`,
+        body
+      );
+      toast.success(res.data.message);
+      getorder();
+      closeModal();
+      setOpenModalorder(false);
+    } catch (error) {
+      toast.error(error.response?.data?.message || "Something went wrong");
+    }
   };
   const [supplierOptions, setSupplierOptions] = useState([])
   const [warehouseType, setWarehouseType] = useState(""); // radio state
   const [selectedSupplier, setSelectedSupplier] = useState("");
-useEffect(()=>{
-  getSupplier()
-},[])
-const getSupplier= async ()=>{
-  try {
-      const response= await axios.get(`${process.env.REACT_APP_BASE_URL}getWarehouseSupplierList`);
+  useEffect(() => {
+    getSupplier()
+  }, [])
+  const getSupplier = async () => {
+    try {
+      const response = await axios.get(`${process.env.REACT_APP_BASE_URL}getWarehouseSupplierList`);
       console.log(response.data);
-      if(response.data.success){
+      if (response.data.success) {
         setSupplierOptions(response.data.data)
       }
-  } catch (error) {
-    console.log(error); 
+    } catch (error) {
+      console.log(error);
+    }
   }
-}
   const handleWarehouseChange = async (e) => {
     const type = e.target.value;
     setWarehouseType(type);
     if (type === "asia") {
-     
+
     }
   };
   const handleUpdateForSupplier = async () => {
@@ -960,7 +960,7 @@ const getSupplier= async ()=>{
             </div>
             <div className="mt-4">
               <div className="">
-                <div className="table-responsive">
+                <div>
                   <table className="table table-striped tableICon">
                     <tbody>
                       {pagenation.data &&
@@ -996,22 +996,22 @@ const getSupplier= async ()=>{
                                     <div className="col-md-3 ps-0">
                                       <div className="">
                                         <p className="origin">
-                                          {item.product_desc?item.product_desc:item.goods_description}
+                                          {item.product_desc ? item.product_desc : item.goods_description}
                                         </p>
                                       </div>
                                     </div>
                                     <div className="col-md-5">
                                       <div className="d-flex align-items-center justify-content-center">
                                         <p className="origin">
-                                          {item.collection_from_country?item.collection_from_country:item.warouse_from_country}
+                                          {item.collection_from_country ? item.collection_from_country : item.warouse_from_country}
                                         </p>
                                         <div className="arrow">
                                           <i className="fi fi-rr-arrow-right mx-2 arr_icon"></i>
                                         </div>
                                         <p className="origin">
-                                          {item.delivery_to_country?item.delivery_to_country:item.warouse_delivery_to}
+                                          {item.delivery_to_country ? item.delivery_to_country : item.warouse_delivery_to}
                                           <span className="fright_type">
-                                            ({item?.freight?item.freight:item.warehouse_freight_type})
+                                            ({item?.freight ? item.freight : item.warehouse_freight_type})
                                           </span>
                                         </p>
                                       </div>
@@ -1039,21 +1039,21 @@ const getSupplier= async ()=>{
                                             <a className="dropdown-item det_page">
                                               <ul className="p-0 m-0">
                                                 {
-                                                  item?.warehouse_freight_type?"":    <li
-                                                  className="page_list"
-                                                  style={{
-                                                    cursor: "pointer",
-                                                    fontSize: "15px",
-                                                  }}
-                                                  onClick={() => {
-                                                    handledeliveryEye(item?.id);
-                                                  }}
-                                                >
-                                                  <RemoveRedEyeIcon /> View
-                                                  Details
-                                                </li>
+                                                  item?.warehouse_freight_type ? "" : <li
+                                                    className="page_list"
+                                                    style={{
+                                                      cursor: "pointer",
+                                                      fontSize: "15px",
+                                                    }}
+                                                    onClick={() => {
+                                                      handledeliveryEye(item?.id);
+                                                    }}
+                                                  >
+                                                    <RemoveRedEyeIcon /> View
+                                                    Details
+                                                  </li>
                                                 }
-                                                 <li
+                                                <li
                                                   className="page_list"
                                                   style={{
                                                     cursor: "pointer",
@@ -1068,23 +1068,23 @@ const getSupplier= async ()=>{
                                                   <IntegrationInstructionsIcon />{" "}
                                                   Booking Instruction
                                                 </li>
-                                                 {
-                                                  item?.warehouse_freight_type?"": 
-                                                <li
-                                                  className="page_list"
-                                                  style={{
-                                                    cursor: "pointer",
-                                                    fontSize: "15px",
-                                                  }}
-                                                  onClick={() => {
-                                                    Shippingorderedit(item);
-                                                  }}
-                                                >
-                                                  <IntegrationInstructionsIcon />{" "}
-                                                  Edit Order
-                                                </li>
+                                                {
+                                                  item?.warehouse_freight_type ? "" :
+                                                    <li
+                                                      className="page_list"
+                                                      style={{
+                                                        cursor: "pointer",
+                                                        fontSize: "15px",
+                                                      }}
+                                                      onClick={() => {
+                                                        Shippingorderedit(item);
+                                                      }}
+                                                    >
+                                                      <IntegrationInstructionsIcon />{" "}
+                                                      Edit Order
+                                                    </li>
                                                 }
-                                               
+
                                                 <li
                                                   className="page_list"
                                                   style={{
@@ -1111,20 +1111,20 @@ const getSupplier= async ()=>{
                                                   Clearing
                                                 </li>
                                                 {
-                                                  item.warehouse_freight_type ?"":
-                                                <li
-                                                  className="page_list"
-                                                  style={{
-                                                    cursor: "pointer",
-                                                    fontSize: "15px",
-                                                  }}
-                                                  onClick={() => {
-                                                    track12311(item);
-                                                  }}
-                                                >
-                                                  <ContentCopyIcon /> Edit
-                                                  Estimate
-                                                </li>
+                                                  item.warehouse_freight_type ? "" :
+                                                    <li
+                                                      className="page_list"
+                                                      style={{
+                                                        cursor: "pointer",
+                                                        fontSize: "15px",
+                                                      }}
+                                                      onClick={() => {
+                                                        track12311(item);
+                                                      }}
+                                                    >
+                                                      <ContentCopyIcon /> Edit
+                                                      Estimate
+                                                    </li>
                                                 }
                                                 <li
                                                   className="page_list"
@@ -1290,11 +1290,11 @@ const getSupplier= async ()=>{
                                                       item
                                                     );
                                                   }}
-                                                  // onClick={() => {
-                                                  //   handleclicknavibilloflaadding11(
-                                                  //     item?.id
-                                                  //   );
-                                                  // }}
+                                                // onClick={() => {
+                                                //   handleclicknavibilloflaadding11(
+                                                //     item?.id
+                                                //   );
+                                                // }}
                                                 >
                                                   <PictureAsPdfIcon /> Download
                                                   Estimate

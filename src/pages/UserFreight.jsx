@@ -957,7 +957,7 @@ export default function UserFreight() {
                   <p class="loader-text">Updating... This may take some time</p>
                 </div>
               ) : (
-                <div className="table-responsive">
+                <div>
                   <table className="table table-striped tableICon">
                     <tbody>
                       {data &&

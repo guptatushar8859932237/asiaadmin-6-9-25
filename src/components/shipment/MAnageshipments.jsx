@@ -632,7 +632,7 @@ export default function MAnageshipments() {
                 Customs Released
               </button>
             </div>
-            <div className="table-responsive mt-2">
+            <div className="mt-2">
               <table className="table table-striped tableICon">
                 <tbody>
                   {data &&
@@ -1388,7 +1388,7 @@ export default function MAnageshipments() {
                         </button>
                       </div>
                     </div>
-                    <div className="table-responsive mt-2">
+                    <div className="mt-2">
                       <table className="table mt-4 table-striped tableICon">
                         <thead>
                           <tr>

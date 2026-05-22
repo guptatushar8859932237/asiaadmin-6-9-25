@@ -228,7 +228,6 @@ const Notification = () => {
           <div className="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
             <h4 className="mb-2">Notification</h4>
             <div className="d-flex searchManageFre gap-2">
-
               <input
                 type="text"
                 className="rounded "
@@ -239,8 +238,6 @@ const Notification = () => {
                   setCurrentPage(1); // reset page on search
                 }}
               />
-
-
               <button
                 data-bs-toggle="modal"
                 data-bs-target="#exampleModal"

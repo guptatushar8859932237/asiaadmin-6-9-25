@@ -9,32 +9,32 @@ const pageSize = 10;
 const Query = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState("");
- const [clientSearch, setClientSearch] = useState("");
-const [clientList, setClientList] = useState([]);
-const [showDropdown, setShowDropdown] = useState(false);
+  const [clientSearch, setClientSearch] = useState("");
+  const [clientList, setClientList] = useState([]);
+  const [showDropdown, setShowDropdown] = useState(false);
   const [dataDispute, setDataDispute] = useState("");
-    const [modalid, setModalid] = useState(null);
+  const [modalid, setModalid] = useState(null);
   const [data, setData] = useState({});
   const [totalPage, setTotalPage] = useState(1);
-const [loader, setLoader] = useState(false);
+  const [loader, setLoader] = useState(false);
   const [isModalOpen1, setIsModalOpen1] = useState(false);
   const [modalOpendAdd, setModalOpendAdd] = useState(false);
   const [supplierdata, setSupplierdata] = useState([]);
- useEffect(() => {
-  getclientlistr(currentPage, searchQuery);
-}, [currentPage, searchQuery]);
+  useEffect(() => {
+    getclientlistr(currentPage, searchQuery);
+  }, [currentPage, searchQuery]);
   const getclientlistr = (page = 1, search = "") => {
-      const payload = {
+    const payload = {
       page: page,
       limit: pageSize,
       search: search,
     };
     axios
-      .post(`${process.env.REACT_APP_BASE_URL}getQueries`,payload)
+      .post(`${process.env.REACT_APP_BASE_URL}getQueries`, payload)
       .then((response) => {
         console.log(response.data.data);
         // setLoader(false);
-           setTotalPage(response?.data?.totalPages || 1);
+        setTotalPage(response?.data?.totalPages || 1);
         setSupplierdata(response.data.data);
       })
       .catch((error) => {
@@ -59,7 +59,7 @@ const [loader, setLoader] = useState(false);
         axios
           .post(`${process.env.REACT_APP_BASE_URL}deleteQueries`, data1)
           .then((response) => {
-        getclientlistr(currentPage, searchQuery);
+            getclientlistr(currentPage, searchQuery);
             toast.success(response.data.message);
           })
           .catch((error) => {
@@ -125,69 +125,69 @@ const [loader, setLoader] = useState(false);
     const { name, value } = e.target;
     setDataDispute({ ...dataDispute, [name]: value });
   };
- useEffect(() => {
-  if (!clientSearch) {
-    setClientList([]);
-    return;
-  }
-  const delayDebounce = setTimeout(() => {
-    fetchClients(clientSearch);
-  }, 500);
-  return () => clearTimeout(delayDebounce);
-}, [clientSearch]);
-const fetchClients = async (searchText) => {
-  try {
-    const response = await axios.post(
-      `${process.env.REACT_APP_BASE_URL}client-list`,
-      { search: searchText }
-    );
-    setClientList(response.data.data || []);
-    setShowDropdown(true);
-  } catch (error) {
-    console.log(error);
-  }
-};
-const handleclickapi1 = async () => {
-  try {
-    // Basic validation
-    if (
-      !dataDispute.name ||
-      !dataDispute.subject ||
-      !dataDispute.message ||
-      !dataDispute.client_id
-    ) {
-      toast.error("Please fill all required fields");
+  useEffect(() => {
+    if (!clientSearch) {
+      setClientList([]);
       return;
     }
-    const payload = {
-      message: dataDispute.message,
-      freight_no: dataDispute.phone_no,
-      name: dataDispute.name,
-      nature_of_Heading: dataDispute.nature_of_Heading, // dropdown
-      user_id: dataDispute.client_id,
-      subject: dataDispute.subject,
-    };
-
-    const response = await axios.post(
-      `${process.env.REACT_APP_BASE_URL}addQueries`,
-      payload
-    );
-
-    if (response.data.success) {
-      toast.success("Query added successfully");
-      setModalOpendAdd(false);
-      setDataDispute({});
-      setClientSearch("");
-      setClientList([]);
-     getclientlistr(currentPage, searchQuery);// refresh table
-    } else {
-      toast.error(response.data.message || "Failed to add query");
+    const delayDebounce = setTimeout(() => {
+      fetchClients(clientSearch);
+    }, 500);
+    return () => clearTimeout(delayDebounce);
+  }, [clientSearch]);
+  const fetchClients = async (searchText) => {
+    try {
+      const response = await axios.post(
+        `${process.env.REACT_APP_BASE_URL}client-list`,
+        { search: searchText }
+      );
+      setClientList(response.data.data || []);
+      setShowDropdown(true);
+    } catch (error) {
+      console.log(error);
     }
-  } catch (error) {
-    console.error(error);
-    toast.error("Something went wrong");
-  }
-};
+  };
+  const handleclickapi1 = async () => {
+    try {
+      // Basic validation
+      if (
+        !dataDispute.name ||
+        !dataDispute.subject ||
+        !dataDispute.message ||
+        !dataDispute.client_id
+      ) {
+        toast.error("Please fill all required fields");
+        return;
+      }
+      const payload = {
+        message: dataDispute.message,
+        freight_no: dataDispute.phone_no,
+        name: dataDispute.name,
+        nature_of_Heading: dataDispute.nature_of_Heading, // dropdown
+        user_id: dataDispute.client_id,
+        subject: dataDispute.subject,
+      };
+
+      const response = await axios.post(
+        `${process.env.REACT_APP_BASE_URL}addQueries`,
+        payload
+      );
+
+      if (response.data.success) {
+        toast.success("Query added successfully");
+        setModalOpendAdd(false);
+        setDataDispute({});
+        setClientSearch("");
+        setClientList([]);
+        getclientlistr(currentPage, searchQuery);// refresh table
+      } else {
+        toast.error(response.data.message || "Failed to add query");
+      }
+    } catch (error) {
+      console.error(error);
+      toast.error("Something went wrong");
+    }
+  };
   return (
     <>
       <div className="wpWrapper">
@@ -200,22 +200,22 @@ const handleclickapi1 = async () => {
                     <div className="">
                       <h4 className="freight_hd">Customer Query</h4>
                     </div>
-                    <div className="d-flex">
+                    <div className="d-flex gap-2">
 
-                    <input
-                     className="py-1 rounded ps-1"
-                     type="text"
-                     placeholder="Search by name"
-                     value={searchQuery}
-                     onChange={(e) => {
-                       setSearchQuery(e.target.value);
-                       setCurrentPage(1);
-                      }}
-/>
-                    <div className="">
-                      <button className="freight_hd" onClick={handleclickopen}>
-                        Add Dispute
-                      </button>
+                      <input
+                        className="py-1 rounded ps-1"
+                        type="text"
+                        placeholder="Search by name"
+                        value={searchQuery}
+                        onChange={(e) => {
+                          setSearchQuery(e.target.value);
+                          setCurrentPage(1);
+                        }}
+                      />
+                      <div className="">
+                        <button className="freight_hd" onClick={handleclickopen}>
+                          Add Dispute
+                        </button>
                       </div>
                     </div>
                   </div>
@@ -299,8 +299,13 @@ const handleclickapi1 = async () => {
                       transform: "translate(-50%, -50%)",
                       bgcolor: "background.paper",
                       boxShadow: 24,
-                      width: "500px",
-                      overflow: "scroll",
+                      width: {
+                        xs: "95%",
+                        sm: "80%",
+                        md: "60%",
+                        lg: "40%",
+                      },
+
                     }}
                   >
                     <div className="modal-header">
@@ -342,46 +347,46 @@ const handleclickapi1 = async () => {
                         />
                       </div>
 
-                    <div className="col-md-12 position-relative">
-  <label className="div_label">
-    Client <span className="redStar">*</span>
-  </label>
+                      <div className="col-md-12 position-relative">
+                        <label className="div_label">
+                          Client <span className="redStar">*</span>
+                        </label>
 
-  <input
-    type="text"
-    className="form-control mb-3"
-    placeholder="Search client by name"
-    value={clientSearch}
-    onChange={(e) => setClientSearch(e.target.value)}
-    onFocus={() => clientList.length && setShowDropdown(true)}
-  />
+                        <input
+                          type="text"
+                          className="form-control mb-3"
+                          placeholder="Search client by name"
+                          value={clientSearch}
+                          onChange={(e) => setClientSearch(e.target.value)}
+                          onFocus={() => clientList.length && setShowDropdown(true)}
+                        />
 
-  {showDropdown && clientList.length > 0 && (
-    <ul
-      className="list-group position-absolute w-100"
-      style={{ zIndex: 1000, maxHeight: "200px", overflowY: "auto" }}
-    >
-      {clientList.map((item, index) => (
-        <li
-          key={index}
-          className="list-group-item list-group-item-action"
-          style={{ cursor: "pointer" }}
-          onClick={() => {
-            setClientSearch(item.full_name);
-            setDataDispute({
-              ...dataDispute,
-              client_id: item.id,
-              client_name: item.full_name,
-            });
-            setShowDropdown(false);
-          }}
-        >
-          {item.full_name}
-        </li>
-      ))}
-    </ul>
-  )}
-</div>
+                        {showDropdown && clientList.length > 0 && (
+                          <ul
+                            className="list-group position-absolute w-100"
+                            style={{ zIndex: 1000, maxHeight: "200px", overflowY: "auto" }}
+                          >
+                            {clientList.map((item, index) => (
+                              <li
+                                key={index}
+                                className="list-group-item list-group-item-action"
+                                style={{ cursor: "pointer" }}
+                                onClick={() => {
+                                  setClientSearch(item.full_name);
+                                  setDataDispute({
+                                    ...dataDispute,
+                                    client_id: item.id,
+                                    client_name: item.full_name,
+                                  });
+                                  setShowDropdown(false);
+                                }}
+                              >
+                                {item.full_name}
+                              </li>
+                            ))}
+                          </ul>
+                        )}
+                      </div>
 
 
                       <div className="col-md-12">
@@ -429,14 +434,14 @@ const handleclickapi1 = async () => {
                           required
                         ></textarea>
                       </div>
-                    </div>
-                    <div className="d-flex justify-content-center">
-                      <button
-                        onClick={handleclickapi1}
-                        className=" btn btn-primary"
-                      >
-                        Add Query
-                      </button>
+                      <div className="d-flex justify-content-center">
+                        <button
+                          onClick={handleclickapi1}
+                          className=" blueBtn"
+                        >
+                          Add Query
+                        </button>
+                      </div>
                     </div>
                   </Box>
                 </Modal>
@@ -455,8 +460,14 @@ const handleclickapi1 = async () => {
                       transform: "translate(-50%, -50%)",
                       bgcolor: "background.paper",
                       boxShadow: 24,
-                      width: "500px",
                       height: "220px",
+                      width: {
+                        xs: "95%",   // mobile
+                        sm: "80%",   // tablet
+                        md: "60%",   // small laptop
+                        lg: "40%",   // desktop
+                      },
+
                     }}
                   >
                     <div className="modal-header">
@@ -495,13 +506,16 @@ const handleclickapi1 = async () => {
                           />
                         </div>
                       </div>
-                      <Button
-                        variant="contained"
-                        className="mt-4"
-                        onClick={handleclickapi}
-                      >
-                        Apply
-                      </Button>
+                      <div className="d-flex justify-content-center mt-3">
+                        <button
+                          className="blueBtn"
+                          variant="contained"
+
+                          onClick={handleclickapi}
+                        >
+                          Apply
+                        </button>
+                      </div>
                     </div>
                   </Box>
                 </Modal>

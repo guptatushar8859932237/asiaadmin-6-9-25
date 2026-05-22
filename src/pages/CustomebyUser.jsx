@@ -693,6 +693,13 @@ export default function CustomebyUserap() {
             transform: "translate(-50%, -50%)",
             bgcolor: "background.paper",
             boxShadow: 24,
+            width: {
+              xs: "95%",
+              sm: "80%",
+              md: "60%",
+              lg: "40%",
+            },
+
           }}
         >
           <div className="modal-header">
@@ -704,8 +711,8 @@ export default function CustomebyUserap() {
             </button>
           </div>
           <div className="newModalGap noFormaControl">
-            <div className="row mb-3">
-              <div className="col-6">
+            <div className="row mb-2">
+              <div className="col-md-6">
                 <label>Freight</label>
                 <select
                   name="customer_ref"
@@ -718,7 +725,7 @@ export default function CustomebyUserap() {
                   <option value="Road">Road</option>
                 </select>
               </div>
-              <div className="col-6">
+              <div className="col-md-6 mt-2 mt-md-0">
                 <label>Are You</label>
                 <div className="shipRefer">
                   <div className="radioBtn d-flex gap-3">
@@ -751,8 +758,8 @@ export default function CustomebyUserap() {
                 </div>
               </div>
             </div>
-            <div className="row mb-3">
-              {/* <div className="col-6">
+            <div className="row mb-2">
+              {/* <div className="col-md-6">
                         <label>Freight</label>
                         <select name="freight" onChange={handlechange}>
                           <option value="">Select...</option>
@@ -761,7 +768,7 @@ export default function CustomebyUserap() {
                           <option value="Road">Road</option>
                         </select>
                       </div> */}
-              <div className="col-6">
+              <div className="col-md-6">
                 <label>Is This</label>
                 <div className="shipRefer">
                   <div className="radioBtn d-flex gap-3">
@@ -925,11 +932,11 @@ export default function CustomebyUserap() {
             <div className="row">
               <div className="col-md-12">
                 <div className="row mb-3">
-                  <div className="col-md-6">
+                  <div className="col-md-6 col-sm-6">
                     <h4 className="freight_hd">Document Section</h4>
                     <span class="line"></span>
                   </div>
-                  <div className="col-md-6 text-end">
+                  <div className="col-md-6 col-sm-6 text-start text-sm-end mt-3 mt-sm-0">
                     <button className="blueBtn" onClick={handleShow}>
                       Upload Documents
                     </button>
@@ -1167,9 +1174,11 @@ export default function CustomebyUserap() {
                   />
               </div>
             </div> */}
-            <Button variant="contained" onClick={updatedata}>
-              Update
-            </Button>
+            <div className="text-center">
+              <button className="blueBtn" variant="contained" onClick={updatedata}>
+                Update
+              </button>
+            </div>
           </div>
         </Box>
       </Modal>
@@ -1186,9 +1195,16 @@ export default function CustomebyUserap() {
             top: "50%",
             left: "50%",
             transform: "translate(-50%, -50%)",
-            minWidth: 450,
+
             bgcolor: "background.paper",
             boxShadow: 24,
+            width: {
+              xs: "95%",   // mobile
+              sm: "80%",   // tablet
+              md: "60%",   // small laptop
+              lg: "40%",   // desktop
+            },
+
           }}
         >
           <div className="modal-header">
@@ -1201,11 +1217,11 @@ export default function CustomebyUserap() {
           </div>
 
           <div className="newModalGap">
-            <div className="row my-3  "></div>
+
             <div className="col-12 ">
               <label>Assign Staff</label>
               <select
-                className="form-cuntrol col-12 border px-3 py-2 mb-2"
+                className="form-control col-12"
                 value={supplierName}
                 onChange={(e) => {
                   setSupplierName(e.target.value);
@@ -1220,13 +1236,15 @@ export default function CustomebyUserap() {
                 ))}
               </select>
             </div>
-            <Button
-              variant="contained"
-              className="text-center"
-              onClick={AssignFreightToSupplier}
-            >
-              Add Staff
-            </Button>
+            <div className="text-center mt-3">
+              <button
+                variant="contained"
+                className="text-center blueBtn"
+                onClick={AssignFreightToSupplier}
+              >
+                Add Staff
+              </button>
+            </div>
           </div>
         </Box>
       </Modal>
@@ -1235,7 +1253,7 @@ export default function CustomebyUserap() {
         <div className="container-fluid">
           <div className="row manageFreight">
             <div className="col-12">
-              <div className="d-flex justify-content-between">
+              <div className="d-flex justify-content-between flex-wrap gap-2">
                 <h4 className="freight_hd">Custom Clearance User</h4>
                 <div className="d-flex align-items-center">
                   <div className="me-2">
@@ -1994,6 +2012,13 @@ export default function CustomebyUserap() {
                 top: "50%",
                 left: "50%",
                 transform: "translate(-50%, -50%)",
+                width: {
+                  xs: "95%",   // mobile
+                  sm: "80%",   // tablet
+                  md: "60%",   // small laptop
+                  lg: "40%",   // desktop
+                },
+
               }}
             >
               <div className="modal-header">
@@ -2010,13 +2035,18 @@ export default function CustomebyUserap() {
                   className="border px-3 rounded py-2 my-2 w-100"
                   onChange={handleCloseModal1}
                 ></input>
-                <Button
-                  className="mt-2"
-                  variant="contained"
-                  onClick={postData123}
-                >
-                  Apply
-                </Button>
+                <div className="text-center mt-3">
+
+                  <button
+                    className="blueBtn"
+
+                    variant="contained"
+                    onClick={postData123}
+                  >
+                    Apply
+                  </button>
+                </div>
+
               </div>
             </Box>
           </Modal>
@@ -2032,6 +2062,13 @@ export default function CustomebyUserap() {
                 top: "50%",
                 left: "50%",
                 transform: "translate(-50%, -50%)",
+                width: {
+                  xs: "95%",
+                  sm: "80%",
+                  md: "60%",
+                  lg: "40%",
+                },
+
               }}
             >
               <div className="modal-header">
@@ -2041,7 +2078,7 @@ export default function CustomebyUserap() {
                 </button>
               </div>
               <div className="newModalGap">
-                {/* <div className="col-6">
+                {/* <div className="col-md-6">
                   <label>Delivery Type</label>
                   <select
                     name="type"
@@ -2053,7 +2090,7 @@ export default function CustomebyUserap() {
                     <option value="normal">Consolidation</option>
                   </select>
                 </div> */}
-                {/* <div className="col-6">
+                {/* <div className="col-md-6">
                   <label>Priority </label>
                   <div className="shipRefer1 d-flex">
                     <div>
@@ -2092,8 +2129,8 @@ export default function CustomebyUserap() {
                   </div>
                 </div> */}
 
-                <div className="row mb-3">
-                  <div className="col-6">
+                <div className="row g-2">
+                  <div className="col-md-6">
                     <label>Country of Origin</label>
                     <select
                       name="origin"
@@ -2112,7 +2149,7 @@ export default function CustomebyUserap() {
                         })}
                     </select>
                   </div>
-                  <div className="col-6">
+                  <div className="col-md-6">
                     <label>Delivery to Country </label>
                     <select
                       name="destination"
@@ -2131,9 +2168,8 @@ export default function CustomebyUserap() {
                         })}
                     </select>
                   </div>
-                </div>
-                <div className="row mb-3">
-                  <div className="col-6">
+
+                  <div className="col-md-6">
                     <label>Start Date</label>
                     <input
                       type="date"
@@ -2144,7 +2180,7 @@ export default function CustomebyUserap() {
                       onChange={handlechange}
                     />
                   </div>
-                  <div className="col-6">
+                  <div className="col-md-6">
                     <label>End Date </label>
                     <input
                       type="date"
@@ -2155,8 +2191,7 @@ export default function CustomebyUserap() {
                       onChange={handlechange}
                     />
                   </div>
-                </div>
-                <div className="row mb-3">
+
                   <div className="col-12">
                     <label>Freight</label>
                     <select
@@ -2170,7 +2205,7 @@ export default function CustomebyUserap() {
                       <option value="Road">Road</option>
                     </select>
                   </div>
-                  {/* <div className="col-6">
+                  {/* <div className="col-md-6">
                       <label>freight Type </label>
                       <select
                         name="type"
@@ -2183,9 +2218,12 @@ export default function CustomebyUserap() {
                       </select>
                     </div> */}
                 </div>
-                <Button variant="contained" onClick={postData}>
-                  Apply
-                </Button>
+                <div className="text-center">
+                  <button className="blueBtn mt-3" variant="contained" onClick={postData}>
+                    Apply
+                  </button>
+
+                </div>
               </div>
             </Box>
           </Modal>

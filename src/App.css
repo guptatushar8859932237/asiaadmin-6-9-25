@@ -2544,7 +2544,7 @@ ul {
 }
 
 .freight_hd {
-  font-size: 22px;
+  font-size: 20px;
   font-weight: 600;
   color: #1b2245;
   margin-bottom: 0px !important;
@@ -4165,7 +4165,7 @@ button.btn-close i {
   font-size: 14px;
 }
 
-.MuiFormGroup-root.MuiRadioGroup-root.css-dmmspl-MuiFormGroup-root {
+.MuiFormGroup-root.MuiRadioGroup-root {
   display: flex !important;
   flex-direction: row;
 }

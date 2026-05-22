@@ -417,7 +417,7 @@ export default function Editclearenceuser() {
       <div className="container-fluid">
         <div className="row  manageFreight">
           <div className="col-12">
-            <div className="d-flex justify-content-between align-items-center">
+            <div className="d-flex justify-content-between align-items-center flex-wrap gap-2">
               <div className="d-flex">
                 <div>
                   <ArrowBackIcon
@@ -430,30 +430,32 @@ export default function Editclearenceuser() {
                   <h4 className="freight_hd ms-3 mt-0"> Clearance Estimate</h4>
                 </div>
               </div>
+
+              <div className="d-flex justify-content-between gap-2 align-items-end">
+                <div>
+                  <button
+                    className="btn btn-secondary"
+                    onClick={handleclickopenmodal}
+                  >
+                    Add Data
+                  </button>
+                </div>
+
+                <div>
+                  <button
+                    className="btn btn-secondary"
+                    onClick={handleclickopenbutton}
+                  >
+                    Add Extra charges
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
         </div>
         <div className="mt-4">
           <div>
-            <div className="d-flex justify-content-between align-items-end mb-3">
-              <div>
-                <button
-                  className="btn btn-secondary"
-                  onClick={handleclickopenmodal}
-                >
-                  Add Data
-                </button>
-              </div>
 
-              <div>
-                <button
-                  className="btn btn-secondary"
-                  onClick={handleclickopenbutton}
-                >
-                  Add Extra charges
-                </button>
-              </div>
-            </div>
             <div className="table-responsive">
               <table className="table border">
                 <thead className="esti_thead">
@@ -577,6 +579,12 @@ export default function Editclearenceuser() {
                 transform: "translate(-50%, -50%)",
                 bgcolor: "background.paper",
                 boxShadow: 24,
+                width: {
+                  xs: "95%",
+                  sm: "80%",
+                  md: "60%",
+                  lg: "40%",
+                },
               }}
             >
               <div className="modal-dialog modal-lg">
@@ -711,6 +719,13 @@ export default function Editclearenceuser() {
                 transform: "translate(-50%, -50%)",
                 bgcolor: "background.paper",
                 boxShadow: 24,
+                width: {
+                  xs: "95%",   // mobile
+                  sm: "80%",   // tablet
+                  md: "60%",   // small laptop
+                  lg: "40%",   // desktop
+                },
+
               }}
             >
               <div className="modal-dialog modal-lg">
@@ -728,7 +743,7 @@ export default function Editclearenceuser() {
                       <div>
                         <div className="updateLoading">
                           <div className="row">
-                            <div className="col-md-4">
+                            <div className="col-lg-4 col-md-6">
                               <label htmlFor="importer_vat">Import VAT</label>
                               <input
                                 type="number"
@@ -739,7 +754,7 @@ export default function Editclearenceuser() {
                                 onKeyPress={hanldekeypress}
                               />
                             </div>
-                            <div className="col-md-4">
+                            <div className="col-lg-4 col-md-6">
                               <label htmlFor="Customs_Duty">Customs Duty</label>
                               <input
                                 type="number"
@@ -750,7 +765,7 @@ export default function Editclearenceuser() {
                                 onKeyPress={hanldekeypress}
                               />
                             </div>
-                            <div className="col-md-4">
+                            <div className="col-lg-4 col-md-6">
                               <label htmlFor="Agency_surcharge">
                                 Agency Surcharge
                               </label>
@@ -763,9 +778,8 @@ export default function Editclearenceuser() {
                                 onKeyPress={hanldekeypress}
                               />
                             </div>
-                          </div>
-                          <div className="row">
-                            <div className="col-md-4">
+
+                            <div className="col-lg-4 col-md-6">
                               <label htmlFor="Disbursement_fee">
                                 Disbursement Fee
                               </label>
@@ -778,7 +792,7 @@ export default function Editclearenceuser() {
                                 onKeyPress={hanldekeypress}
                               />
                             </div>
-                            <div className="col-md-4">
+                            <div className="col-lg-4 col-md-6">
                               <label htmlFor="Customs_Clearing_fee">
                                 Customs Clearing Fee
                               </label>
@@ -791,7 +805,7 @@ export default function Editclearenceuser() {
                                 onKeyPress={hanldekeypress}
                               />
                             </div>
-                            <div className="col-md-4">
+                            <div className="col-lg-4 col-md-6">
                               <label htmlFor="Document_Fee">Document Fee</label>
                               <input
                                 type="number"
@@ -802,28 +816,28 @@ export default function Editclearenceuser() {
                                 onKeyPress={hanldekeypress}
                               />
                             </div>
-                          </div>
-                          <div className="row mt-1">
-                            <div className="col-md-7">
-                              <div className="text-end me-5">
-                                <button
-                                  className="btn btn-primary btn-block"
-                                  onClick={() => {
-                                    handlepostvalue();
-                                  }}
-                                >
-                                  Calculate
-                                </button>
-                              </div>
-                            </div>
-                            <div className="col-md-5">
-                              <div className="text-end">
-                                <p>
-                                  <strong>Overall Value:</strong>
-                                  <span className="text-success ms-2">
-                                    {finalVal}
-                                  </span>
-                                </p>
+
+                            <div className="col-md-12">
+                              <div className="d-flex justify-content-end align-items-center gap-2">
+
+                                <div className="">
+                                  <button
+                                    className="btn btn-primary btn-block"
+                                    onClick={() => {
+                                      handlepostvalue();
+                                    }}
+                                  >
+                                    Calculate
+                                  </button>
+                                </div>
+                                <div>
+                                  <p>
+                                    <strong>Overall Value:</strong>
+                                    <span className="text-success ms-2">
+                                      {finalVal}
+                                    </span>
+                                  </p>
+                                </div>
                               </div>
                             </div>
                           </div>
@@ -858,6 +872,13 @@ export default function Editclearenceuser() {
                 transform: "translate(-50%, -50%)",
                 bgcolor: "background.paper",
                 boxShadow: 24,
+                width: {
+                  xs: "95%",   // mobile
+                  sm: "80%",   // tablet
+                  md: "60%",   // small laptop
+                  lg: "40%",   // desktop
+                },
+
               }}
             >
               <div className="modal-header">

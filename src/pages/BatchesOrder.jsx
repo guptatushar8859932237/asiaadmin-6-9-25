@@ -712,7 +712,7 @@ export default function BatchesOrder() {
                 <Table>
                   <TableHead>
                     <TableRow className="border-bottom">
-                      <TableCell className="fw-bold">Freight No</TableCell>
+                      <TableCell className="fw-bold">Freight No / Order Number</TableCell>
                       <TableCell className="fw-bold">Client Name</TableCell>
                       <TableCell className="fw-bold">
                         Num. of Packages
@@ -721,7 +721,6 @@ export default function BatchesOrder() {
                       <TableCell className="fw-bold">Weight</TableCell>
                       <TableCell className="fw-bold">Dimension</TableCell>
                       <TableCell className="fw-bold">Package Type</TableCell>
-                      <TableCell className="fw-bold">Priority</TableCell>
                       <TableCell className="fw-bold">View</TableCell>
                     </TableRow>
                   </TableHead>
@@ -733,14 +732,13 @@ export default function BatchesOrder() {
                         return(
                           <>
                             <TableRow key={index} className="border-bottom">
-                          <TableCell>{item.freight_number}</TableCell>
+                          <TableCell>{item.freight_number===null?item.order_number:item.freight_number}</TableCell>
                           <TableCell>{item.client_Name}</TableCell>
                           <TableCell>{item.no_of_packages}</TableCell>
                           <TableCell>{item.freight}</TableCell>
                           <TableCell>{item.weight}</TableCell>
-                          <TableCell>{item.dimension}</TableCell>
+                          <TableCell>{item.dimensions}</TableCell>
                           <TableCell>{item.package_type}</TableCell>
-                          <TableCell>{item.priority}</TableCell>
                           <TableCell>
                             <VisibilityIcon
                               onClick={() => handleclcick(item)}

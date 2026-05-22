@@ -32,16 +32,15 @@ const style1 = {
   top: "50%",
   left: "50%",
   transform: "translate(-50%, -50%)",
-
   bgcolor: "background.paper",
   boxShadow: 24,
   borderRadius: "12px",
   overflow: "hidden",
   width: {
-    xs: "95%",   // mobile
-    sm: "80%",   // tablet
-    md: "60%",   // small laptop
-    lg: "50%",   // desktop
+    xs: "95%", // mobile
+    sm: "80%", // tablet
+    md: "60%", // small laptop
+    lg: "50%", // desktop
   },
 };
 export default function SupplierWarehouse() {
@@ -121,7 +120,6 @@ export default function SupplierWarehouse() {
   const [selectedData, setSelectedData] = useState(null);
   const navigate = useNavigate();
   const handleOpenModal = () => setIsModalOpen(true);
-
   const handleCloseModal = () => {
     setIsModalOpen(false);
     handleOpenModal3();
@@ -141,24 +139,18 @@ export default function SupplierWarehouse() {
   const getData = async (page = 1) => {
     try {
       setLoader(true);
-
       const payload = {
         user_id: userid,
         page: page,
         limit: pageSize,
       };
-
-      console.log("Sending page:", page); // 🔥 debug
-
+      console.log("Sending page:", page); 
       const response = await axios.post(
         `${process.env.REACT_APP_BASE_URL}GetSupplierCreatedWarehouseOrders`,
         payload,
       );
-
       console.log("Response page:", response.data.page); // 🔥 debug
-
       setLoader(false);
-
       if (response.data && response.data.data) {
         setData(response.data.data);
         setPagenationData(response.data);
@@ -189,10 +181,19 @@ export default function SupplierWarehouse() {
         toast.error("Error fetching batch data");
       });
   };
+  // const handlePageChange = (page) => {
+  //   console.log(page);
+  //   setCurrentPage(page);
+  //   getData(page);
+  // };
   const handlePageChange = (page) => {
-    console.log(page);
     setCurrentPage(page);
-    getData(page);
+
+    if (searchQuery.trim() !== "") {
+      getdata11(searchQuery, page);
+    } else {
+      getData(page);
+    }
   };
   const handleEditClick = (order_id) => {
     const selectedData = data.find((item) => item.id === order_id);
@@ -211,26 +212,22 @@ export default function SupplierWarehouse() {
       confirmButtonText: "Yes, Move it!",
       cancelButtonText: "Cancel",
     });
-
     if (result.isConfirmed) {
       try {
         const payload = {
           supplier_warehouse_id: item.id,
           user_id: userData.id,
         };
-
         const response = await axios.post(
           `${process.env.REACT_APP_BASE_URL}MoveSupplierWarehouseOrder`, // 🔥 change API if needed
           payload,
         );
-
         if (response?.data?.success) {
           await Swal.fire({
             icon: "success",
             title: "Success",
             text: "Product moved to order successfully!",
           });
-
           // 🔄 refresh data if needed
           getData(currentPage);
         } else {
@@ -274,10 +271,8 @@ export default function SupplierWarehouse() {
         console.log(error.response.data);
       });
   };
-
   const handlechangewarehouse2 = (e) => {
     const { name, value } = e.target;
-
     setProdata((prev) => ({
       ...prev,
       [name]: value,
@@ -324,7 +319,6 @@ export default function SupplierWarehouse() {
   const handleSubmit = async () => {
     console.log(prodata);
     console.log(nameData);
-
     const payload = {
       supplier_warehouse_id: selectedData?.id,
       client_id: nameData?.client_id,
@@ -333,13 +327,11 @@ export default function SupplierWarehouse() {
       order_id: nameData?.order_id,
       batch_id: nameData?.batch_id,
     };
-
     try {
       const response = await axios.post(
         `${process.env.REACT_APP_BASE_URL}adminUpdateSupplierWarehouse`,
         payload,
       );
-
       if (response?.data?.success) {
         handleCloseModalpopup();
         setNameData("");
@@ -357,7 +349,6 @@ export default function SupplierWarehouse() {
       }
     } catch (error) {
       console.log(error);
-
       Swal.fire({
         icon: "error",
         title: "Error",
@@ -367,7 +358,6 @@ export default function SupplierWarehouse() {
       });
     }
   };
-
   const filterOptions = (options, { inputValue }) => {
     console.log("Filtering options with input:", inputValue);
     return options.filter(
@@ -485,7 +475,6 @@ export default function SupplierWarehouse() {
         console.log(error.response.data.data);
       });
   };
-
   const handleclicknavi = async (item) => {
     try {
       const datapost = {
@@ -581,11 +570,9 @@ export default function SupplierWarehouse() {
     formdata.append("cost_to_dispatch", prodata.cost_to_dispatch);
     formdata.append("waybill_ref", prodata.waybill_ref);
     formdata.append("documentName", prodata.documentName);
-
     // Append files with static key "document"
     selectedDocs.forEach((doc) => {
       console.log("Doc Type:", doc.name);
-
       doc.files.forEach((file) => {
         formdata.append(doc.name, file); // 👈 each file append
         console.log("File:", file.name, "| Size:", file.size, "bytes");
@@ -595,7 +582,6 @@ export default function SupplierWarehouse() {
     for (let [key, value] of formdata.entries()) {
       console.log(`${key}:`, value);
     }
-
     axios
       .post(`${process.env.REACT_APP_BASE_URL}addWarehouseProduct`, formdata)
       .then((response) => {
@@ -608,7 +594,6 @@ export default function SupplierWarehouse() {
         toast.error("Error adding warehouse product");
       });
   };
-
   console.log(selectedData);
   const handlekey = (e) => {
     if (e.charCode < 48 || e.charCode > 57) {
@@ -653,32 +638,30 @@ export default function SupplierWarehouse() {
         toast.error(error.response.data.message);
       });
   };
-
   const debounce = (func, delay) => {
-  let timer;
-  return (...args) => {
-    clearTimeout(timer);
-    timer = setTimeout(() => {
-      func(...args);
-    }, delay);
+    let timer;
+    return (...args) => {
+      clearTimeout(timer);
+      timer = setTimeout(() => {
+        func(...args);
+      }, delay);
+    };
   };
-};
-const debouncedSearch = useRef(
-  debounce((value) => {
-    getdata11(value);
-  }, 500)
-).current;
- const handleSearch = (e) => {
-  const value = e.target.value;
-  setSearchQuery(value);
-  setCurrentPage(1);
-
-  if (value.trim() === "") {
-    getData(1); // 🔥 reset to original data
-  } else {
-    debouncedSearch(value);
-  }
-};
+  const debouncedSearch = useRef(
+    debounce((value) => {
+      getdata11(value);
+    }, 500),
+  ).current;
+  const handleSearch = (e) => {
+    const value = e.target.value;
+    setSearchQuery(value);
+    setCurrentPage(1);
+    if (value.trim() === "") {
+      getData(1); // 🔥 reset to original data
+    } else {
+      debouncedSearch(value);
+    }
+  };
   const throttle = (func, delay) => {
     let lastCall = 0;
     return (...args) => {
@@ -694,12 +677,18 @@ const debouncedSearch = useRef(
       getdata11(value);
     }, 1000),
   ).current;
-  const getdata11 = async (value) => {
+  const getdata11 = async (value, page = 1) => {
     setLoader(true);
     try {
+      const payload = {
+        user_id: userid,
+        page: page,
+        limit: pageSize,
+        search: value, // 👈 send search value
+      };
       const response = await axios.post(
-        `${process.env.REACT_APP_BASE_URL}GetWarehouseOrders`,
-        { user_id: userid, user_type: usertype, search: value },
+        `${process.env.REACT_APP_BASE_URL}GetSupplierCreatedWarehouseOrders`,
+        payload,
       );
       setLoader(false);
       if (response.data && response.data.data) {
@@ -711,15 +700,38 @@ const debouncedSearch = useRef(
     } catch (error) {
       setLoader(false);
       console.error("Error fetching warehouse orders:", error);
-      if (error.response && error.response.status === 400) {
-        toast.error(
-          error.response.data.message || "Data not found or permission denied.",
-        );
-      } else {
-        toast.error("Something went wrong while fetching orders.");
-      }
+      toast.error(
+        error?.response?.data?.message ||
+          "Something went wrong while fetching orders.",
+      );
     }
   };
+  // const getdata11 = async (value) => {
+  //   setLoader(true);
+  //   try {
+  //     const response = await axios.post(
+  //       `${process.env.REACT_APP_BASE_URL}GetWarehouseOrders`,
+  //       { user_id: userid, user_type: usertype, search: value },
+  //     );
+  //     setLoader(false);
+  //     if (response.data && response.data.data) {
+  //       setData(response.data.data);
+  //       setPagenationData(response.data);
+  //     } else {
+  //       toast.error("No warehouse orders found.");
+  //     }
+  //   } catch (error) {
+  //     setLoader(false);
+  //     console.error("Error fetching warehouse orders:", error);
+  //     if (error.response && error.response.status === 400) {
+  //       toast.error(
+  //         error.response.data.message || "Data not found or permission denied.",
+  //       );
+  //     } else {
+  //       toast.error("Something went wrong while fetching orders.");
+  //     }
+  //   }
+  // };
   useEffect(() => {
     getSupplier();
     getBatches();
@@ -758,7 +770,6 @@ const debouncedSearch = useRef(
       );
     }
   };
-
   const handleChangeSupplier = (e) => {
     setResponseData(e.target.value);
   };
@@ -784,7 +795,7 @@ const debouncedSearch = useRef(
       if (error.response) {
         toast.error(
           error.response.data?.message ||
-          `Request failed with status ${error.response.status}`,
+            `Request failed with status ${error.response.status}`,
         );
       } else if (error.request) {
         toast.error("Server not responding. Please try again later.");
@@ -794,14 +805,12 @@ const debouncedSearch = useRef(
       console.error("AssignSupplier Error:", error);
     }
   };
-
   const handlechangewarehouse1 = (e) => {
     setProdata({
       ...prodata,
       [e.target.name]: e.target.value,
     });
   };
-
   const handlechangewarehouse = (e) => {
     const { name, value } = e.target;
     setNameData({ ...nameData, [name]: value });
@@ -821,7 +830,6 @@ const debouncedSearch = useRef(
       console.log(error);
     }
   };
-
   const options = orderDatap.map((item) => ({
     value: item.order_number,
     label: item.order_number,
@@ -837,14 +845,12 @@ const debouncedSearch = useRef(
                   <h4 className="freight_hd">Supplier Warehouse </h4>
                 </div>
                 <div className="d-flex justify-content-end align-items-center gap-2">
-
                   <input
                     className="searchTop"
                     placeholder="Search"
                     value={searchQuery}
                     onChange={handleSearch}
-                  ></input>
-
+                  />
                   <button
                     variant="contained"
                     onClick={() => {
@@ -854,7 +860,6 @@ const debouncedSearch = useRef(
                   >
                     Filter
                   </button>
-
                 </div>
               </div>
             </div>
@@ -886,7 +891,7 @@ const debouncedSearch = useRef(
                                               className="client_nm"
                                               style={{ fontSize: "16px" }}
                                             >
-                                              {item?.warehouse_name} 
+                                              {item?.warehouse_name}
                                               {/* {item.supplier_name ? "/" : ""}{" "}
                                               {item.supplier_name} */}
                                             </p>
@@ -906,11 +911,10 @@ const debouncedSearch = useRef(
                                             </p>
                                           </div>
                                           <div className="col-md-2 text-end">
-                                            
                                             <p className="port_date">
                                               <div className="ss text-end">
                                                 {item?.move_to_adminWarhouse ==
-                                                  "1" ? (
+                                                "1" ? (
                                                   <span className="text-success">
                                                     Moved To Warehouse
                                                   </span>
@@ -975,18 +979,19 @@ const debouncedSearch = useRef(
                                           <div className="col-md-2">
                                             <div className="text-end">
                                               <p className="origin">
-                                                {item.nature_of_hazard} 
-                                            <div className="text-end">
-                                             <p className="port_date">
-                                              {new Date(
-                                                item.created_at,
-                                              ).toLocaleDateString("en-GB")}
-                                            </p>
-                                          </div>
+                                                {item.nature_of_hazard}
+                                                <div className="text-end">
+                                                  <p className="port_date">
+                                                    {new Date(
+                                                      item.created_at,
+                                                    ).toLocaleDateString(
+                                                      "en-GB",
+                                                    )}
+                                                  </p>
+                                                </div>
                                               </p>
                                             </div>
                                           </div>
-                                         
                                         </div>
                                         {/* third row */}
                                         <div className="row align-items-center">
@@ -1028,9 +1033,7 @@ const debouncedSearch = useRef(
                                               </p>
                                             </div>
                                           </div>
-                                          <div className="col-md-4">
-                                            
-                                          </div>
+                                          <div className="col-md-4"></div>
                                           <div className="col-md-2">
                                             <p>
                                               <span>Packages:</span>{" "}
@@ -1039,7 +1042,7 @@ const debouncedSearch = useRef(
                                           </div>
                                           <div className="col-md-2 text-end">
                                             {item.move_to_adminWarhouse ===
-                                              0 ? (
+                                            0 ? (
                                               <DriveFileMoveIcon
                                                 className="me-2 mt-1"
                                                 fontSize="small"
@@ -1055,7 +1058,7 @@ const debouncedSearch = useRef(
                                               ""
                                             )}
                                             {item.move_to_adminWarhouse ===
-                                              0 ? (
+                                            0 ? (
                                               <FaEdit
                                                 onClick={() =>
                                                   handleEditClick(item.id)
@@ -1068,7 +1071,6 @@ const debouncedSearch = useRef(
                                             ) : (
                                               ""
                                             )}
-
                                             {/* <DeleteIcon
                                               onClick={() =>
                                                 handleEditClick12(
@@ -1153,7 +1155,6 @@ const debouncedSearch = useRef(
                             onChange={handleChangeSupplier}
                           >
                             <option>select</option>
-
                             {handlsupplier &&
                               handlsupplier.length > 0 &&
                               handlsupplier.map((item, index) => {
@@ -1371,10 +1372,8 @@ const debouncedSearch = useRef(
                         aria-labelledby="modal-title"
                         aria-describedby="modal-description"
                         className="editWare"
-
                       >
-                        <Box sx={style1}
-                        >
+                        <Box sx={style1}>
                           <div className="modal-header">
                             <h2 id="modal-modal-title">Edit Warehouse Order</h2>
                             <button
@@ -1385,10 +1384,8 @@ const debouncedSearch = useRef(
                             </button>
                           </div>
                           <div className="newModalGap noFormaControl">
-
                             {selectedData && (
                               <>
-                              
                                 <div container spacing={2}>
                                   <div className="row g-2">
                                     <div className="col-md-12">
@@ -1418,17 +1415,16 @@ const debouncedSearch = useRef(
                                             },
                                           });
                                           allOrder({
-                                            client_id: newValue ? newValue.id : "",
+                                            client_id: newValue
+                                              ? newValue.id
+                                              : "",
                                           });
                                         }}
                                         isOptionEqualToValue={(option, value) =>
                                           option.id === value.id
                                         }
                                         renderInput={(params) => (
-                                          <TextField
-                                            {...params}
-
-                                          />
+                                          <TextField {...params} />
                                         )}
                                       />
                                     </div>
@@ -1486,10 +1482,7 @@ const debouncedSearch = useRef(
                                             option.order_id === value.order_id
                                           }
                                           renderInput={(params) => (
-                                            <TextField
-                                              {...params}
-
-                                            />
+                                            <TextField {...params} />
                                           )}
                                         />
                                       </div>
@@ -1525,14 +1518,10 @@ const debouncedSearch = useRef(
                                           option.batch_id === value.batch_id
                                         }
                                         renderInput={(params) => (
-                                          <TextField
-                                            {...params}
-
-                                          />
+                                          <TextField {...params} />
                                         )}
                                       />
                                     </div>
-
                                     <div className="col-md-6">
                                       <label>Date</label>
                                       <input
@@ -1542,24 +1531,21 @@ const debouncedSearch = useRef(
                                         value={
                                           selectedData.date_received
                                             ? selectedData.date_received.split(
-                                              "T",
-                                            )[0]
+                                                "T",
+                                              )[0]
                                             : ""
                                         }
                                         name="date_received"
                                         onChange={handlechangewarehouse}
                                       />
                                     </div>
-
                                     <div className="col-md-6">
                                       <label>Warehouse Order Id</label>
                                       <input
                                         type="type"
                                         className="form-control"
                                         disabled
-                                        value={
-                                          selectedData.warehouse_order_id
-                                        }
+                                        value={selectedData.warehouse_order_id}
                                         name="warehouse_order_id"
                                         onChange={handlechangewarehouse}
                                         placeholder=""
@@ -1571,9 +1557,7 @@ const debouncedSearch = useRef(
                                         type="type"
                                         className="form-control"
                                         disabled
-                                        value={
-                                          selectedData.courier_waybill_ref
-                                        }
+                                        value={selectedData.courier_waybill_ref}
                                         name="courier_waybill_ref"
                                         onChange={handlechangewarehouse}
                                         placeholder=""
@@ -1596,21 +1580,19 @@ const debouncedSearch = useRef(
                                         value={
                                           selectedData.dispatch_date
                                             ? selectedData.dispatch_date.split(
-                                              "T",
-                                            )[0]
+                                                "T",
+                                              )[0]
                                             : ""
                                         }
                                         name="dispatch_date"
                                         onChange={handlechangewarehouse}
                                       />
                                     </div>
-
                                     <div className="col-md-12">
                                       <h5 className="mt-3 mb-2">
                                         Package Information
                                       </h5>
                                     </div>
-
                                     <div className="col-md-6">
                                       <label>Customer Name</label>
                                       <input
@@ -1633,7 +1615,6 @@ const debouncedSearch = useRef(
                                         placeholder="customer name"
                                       ></input>
                                     </div>
-
                                     <div className="col-md-6">
                                       <label>Country of Origin</label>
                                       <select
@@ -1665,9 +1646,7 @@ const debouncedSearch = useRef(
                                       <select
                                         name="destination_country"
                                         disabled
-                                        value={
-                                          selectedData.destination_country
-                                        }
+                                        value={selectedData.destination_country}
                                         onChange={handlechangewarehouse}
                                         className="form-select"
                                       >
@@ -1745,9 +1724,7 @@ const debouncedSearch = useRef(
                                     </div>
                                     {selectedData.hazardous === "Yes" ? (
                                       <div className="col-md-6">
-                                        <label>
-                                          Description of Hazardous{" "}
-                                        </label>
+                                        <label>Description of Hazardous </label>
                                         <input
                                           type="type"
                                           className="form-control"
@@ -1812,8 +1789,9 @@ const debouncedSearch = useRef(
                                       ></textarea>
                                     </div>
                                     <div className="col-md-12">
-                                      <h5 className="mt-3 mb-2">Damaged Goods</h5>
-
+                                      <h5 className="mt-3 mb-2">
+                                        Damaged Goods
+                                      </h5>
                                     </div>
 
                                     <div className="col-md-6">
@@ -1869,7 +1847,6 @@ const debouncedSearch = useRef(
                                       <h5 className="mt-3 mb-2">
                                         Supplier Information
                                       </h5>
-
                                     </div>
 
                                     <div className="col-md-6">
@@ -2009,9 +1986,7 @@ const debouncedSearch = useRef(
                                       <label>Warehouse Dispatch</label>
                                       <select
                                         className="form-select"
-                                        value={
-                                          selectedData.warehouse_dispatch
-                                        }
+                                        value={selectedData.warehouse_dispatch}
                                         name="warehouse_dispatch"
                                         disabled
                                         onChange={handlechangewarehouse}
@@ -2067,7 +2042,6 @@ const debouncedSearch = useRef(
                                         placeholder=""
                                       ></textarea>
                                     </div>
-
                                   </div>
                                 </div>
 
@@ -2080,7 +2054,7 @@ const debouncedSearch = useRef(
                                     Submit
                                   </button>
                                 </div>
-</>
+                              </>
                             )}
                           </div>
                         </Box>

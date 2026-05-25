@@ -2508,14 +2508,23 @@ ul {
   width: 100%;
   max-width: 500px;
   box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+  margin: 0 10px;
 }
 
 .custom-modal-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background-color: #be191d;
+  background-color: var(--blue);
   padding: 17px;
+  border-radius: 8px 8px 0 0;
+}
+
+.custom-modal-header h5 {
+  color: #fff;
+  font-size: 18px;
+  font-weight: 500 !important;
+  margin-bottom: 0px;
 }
 
 .custom-modal-title {
@@ -3529,7 +3538,7 @@ div:where(.swal2-container) button:where(.swal2-styled).swal2-cancel {
 
 .icon_child {
   background-color: lightgray;
-  height: 42px;
+  height: 38px;
   width: 44px;
   position: absolute;
   z-index: 9999;
@@ -4196,9 +4205,7 @@ button.btn-close i {
   margin-bottom: unset !important;
 }
 
-.spaceAssignEst .MuiButtonBase-root {
-  padding-left: unset !important;
-}
+
 
 button.btn-close svg {
   height: 25px;
@@ -5168,4 +5175,158 @@ td {
 .table-responsive {
   overflow-x: auto;
   overflow-y: hidden;
+}
+
+/* MAIN CARDS */
+.viewDetails .desti_card,
+.viewDetails .desti_card1 {
+  border: 0;
+  border-radius: 18px;
+  background: #fff;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.06);
+  overflow: hidden;
+  height: 100%;
+  transition: 0.3s ease;
+}
+
+.viewDetails .desti_card:hover,
+.viewDetails .desti_card1:hover {
+  transform: translateY(-3px);
+}
+
+/* CARD BODY */
+.viewDetails .desti_card .card-body,
+.viewDetails .desti_card1 .card-body {
+  padding: 24px;
+}
+
+/* HEADING */
+.viewDetails .orgin_hd {
+  font-size: 18px;
+  font-weight: 700;
+  color: #111827;
+  margin-bottom: 10px;
+}
+
+
+
+/* SECTION BOX */
+.viewDetails .view_box {
+  padding: 16px;
+  background: #f8fafc;
+  border-radius: 14px;
+  margin-bottom: 16px;
+  border: 1px solid #edf2f7;
+}
+
+/* SMALL TITLE */
+.viewDetails .ship_hd {
+  font-size: 15px;
+  font-weight: 700;
+  color: #000000;
+  margin-bottom: 12px;
+
+  letter-spacing: 0.4px;
+  display: flex;
+  align-items: center;
+}
+
+/* ICON */
+.viewDetails .build_icon {
+  font-size: 18px;
+  color: #2563eb;
+  margin-right: 12px;
+  margin-top: 2px;
+}
+
+/* MAIN TEXT */
+.viewDetails .or_para {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--black);
+  margin-bottom: 6px;
+  line-height: 1.5;
+  margin-left: 0px;
+}
+
+/* SUB TEXT */
+.viewDetails .client_para,
+.viewDetails .client_para,
+.viewDetails .client_para1 {
+  font-size: 14px;
+  color: var(--black);
+  margin-bottom: 5px;
+  line-height: 1.6;
+  word-break: break-word;
+  margin-left: 0px;
+  font-weight: 500;
+}
+
+/* TABLE */
+.viewDetails .det_show {
+  width: 100%;
+}
+
+.viewDetails .det_show tr {
+  border-bottom: 1px solid #eef2f7;
+}
+
+.viewDetails .det_show td {
+  padding: 12px 0;
+  vertical-align: top;
+}
+
+/* DOCUMENT SECTION */
+.viewDetails .view_docu {
+  background: #eff6ff;
+  color: #2563eb;
+  padding: 7px 14px;
+  border-radius: 8px;
+  text-decoration: none;
+  font-size: 13px;
+  font-weight: 600;
+  transition: 0.3s;
+}
+
+.viewDetails .view_docu:hover {
+  background: #2563eb;
+  color: #fff;
+}
+
+/* LABELS */
+.viewDetails .view_box {
+  font-size: 14px;
+  font-weight: 600;
+  color: #111827;
+  margin-bottom: 8px;
+  display: block;
+}
+
+/* DOCUMENT ROW */
+.viewDetails .doc_row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #f9fafb;
+  padding: 12px 14px;
+  border-radius: 10px;
+  margin-bottom: 10px;
+  border: 1px solid #edf2f7;
+}
+
+/* RESPONSIVE */
+@media (max-width: 767px) {
+
+  .viewDetails .desti_card,
+  .viewDetails .desti_card1 {
+    margin-bottom: 20px;
+  }
+
+  .viewDetails .card-body {
+    padding: 18px !important;
+  }
+
+  .viewDetails .view_box {
+    padding: 14px;
+  }
 }

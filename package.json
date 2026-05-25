@@ -31,6 +31,7 @@
     "caniuse-lite": "^1.0.30001791",
     "context": "^4.0.17",
     "date-fns": "^4.1.0",
+    "fir": "^5.0.0",
     "framer-motion": "^12.38.0",
     "gapi-script": "^1.2.0",
     "html2canvas": "^1.4.1",
@@ -63,7 +64,8 @@
     "source-map-explorer": "^2.5.3",
     "styled-components": "^6.4.1",
     "sweetalert2": "^11.26.24",
-    "web-vitals": "^5.2.0"
+    "web-vitals": "^5.2.0",
+    "ye": "^0.0.3"
   },
   "scripts": {
     "start": "react-scripts start",

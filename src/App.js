@@ -205,7 +205,7 @@ export default function App() {
                   element={<WarehouseOrder />}
                 />
                 <Route
-                  index       
+                  index
                   path="/Admin/SupplierWarehouse"
                   element={<SupplierWarehouse />}
                 />
@@ -248,7 +248,7 @@ export default function App() {
                 <Route
                   index
                   path="/Admin/chat"
-                  element={<ChatTest     />}
+                  element={<ChatTest />}
                 />
                 <Route
                   index
@@ -450,12 +450,12 @@ export default function App() {
                   path="/Admin/Downloadestimate"
                   element={<Downlaodestimate />}
                 />
-                <Route                                    
+                <Route
                   index
                   path="/Admin/supplier-estimation-view"
                   element={<Supplierestimationview />}
                 />
-                <Route                                    
+                <Route
                   index
                   path="/Admin/DownloadEstimate"
                   element={<DownloadEstimation />}

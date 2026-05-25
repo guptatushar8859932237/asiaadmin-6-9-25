@@ -114,15 +114,15 @@ export default function Dashboard() {
                 </div>
               </div>
             </div>
-            {/* <div class="col-lg-3" onClick={() => { navigaet('/Admin/invoices') }}>
+            <div class="col-lg-3" onClick={() => { navigaet('/Admin/KPIDashboard') }}>
                   <div class="cardDash">
-                    <h4 className="hd_dash">Invoices</h4>
+                    <h4 className="hd_dash">Leave</h4>
                     <div class="iconParent">
                       <div class="cardContent">
                       <p className="para_dash"><CountUp end={countdata?.no_of_invoices} /></p>
                       </div>
                       <div class="iconGrad">
-                        <i className="fa fa-codepen"></i>
+                        <i className="fa fa-calendar"></i>
                       </div>
                     </div>
                     <div class="cardBottom bg2">
@@ -130,7 +130,7 @@ export default function Dashboard() {
                       <i class="fi fi-rr-angle-double-small-right"></i>
                     </div>
                   </div>
-              </div> */}
+              </div>
           </div>
           <div className="chart mt-4">
             <div className="row g-4">

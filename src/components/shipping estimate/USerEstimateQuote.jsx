@@ -1490,8 +1490,7 @@ export default function USerEstimateQuote() {
               </button>
             </div>
             <div className="custom-modal-body">
-              <div style={{ margin: "20px" }}>
-                {/* Selected Box */}
+              <div>                {/* Selected Box */}
                 <div
                   onClick={() => setOpen(!open)}
                   style={{
@@ -1546,11 +1545,11 @@ export default function USerEstimateQuote() {
                     ))}
                   </div>
                 )}
-                <br />
+
               </div>
             </div>
             <div className="custom-modal-footer">
-              <button className="btn btn-primary" onClick={handleAddSupplier}>
+              <button className="blueBtn" onClick={handleAddSupplier}>
                 Add Supplier
               </button>
             </div>

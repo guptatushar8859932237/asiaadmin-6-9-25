@@ -9,7 +9,7 @@ export default function Clearenceorderdetailspage() {
   const navigate = useNavigate();
   const [document, setDocument] = useState([]);
   const [document1, setDocument1] = useState([]);
-   const [documents, setDocuments] = useState({});
+  const [documents, setDocuments] = useState({});
   const [packing, setPacking] = useState([]);
   const [licenses, setLicenses] = useState([]);
   const info = infolocation?.state?.data[0];
@@ -17,21 +17,21 @@ export default function Clearenceorderdetailspage() {
   const handleclicknav = () => {
     navigate("/Admin/custom-clearance-order");
   };
-    const GetFreightImages = () => {
-      const data = { clearance_id : info.id,uploaded_by:"1" };
-    
-      axios
-        .post(`${process.env.REACT_APP_BASE_URL}GetFreightImages`, data)
-        .then((response) => {
-          console.log(response.data.data);
-    
-          // Save all groups (Customs, Packing, Invoices, Licenses, etc.)
-          setDocuments(response.data.data);
-        })
-        .catch((error) => {
-          console.log(error.response?.data);
-        });
-    };
+  const GetFreightImages = () => {
+    const data = { clearance_id: info.id, uploaded_by: "1" };
+
+    axios
+      .post(`${process.env.REACT_APP_BASE_URL}GetFreightImages`, data)
+      .then((response) => {
+        console.log(response.data.data);
+
+        // Save all groups (Customs, Packing, Invoices, Licenses, etc.)
+        setDocuments(response.data.data);
+      })
+      .catch((error) => {
+        console.log(error.response?.data);
+      });
+  };
   // const GetFreightImages = () => {
   //   console.log(info);
   //   const data = { clearence_id: info.id };
@@ -87,19 +87,19 @@ export default function Clearenceorderdetailspage() {
               </div>
             </div>
           </div>
-          <div className="row mt-4">
-            <div className="col-md-4 pe-4">
+          <div className="row mt-4 viewDetails">
+            <div className="col-md-4">
               <div className="card desti_card">
                 <div className="card-body">
                   <div className="">
                     <h6 className="orgin_hd">Shipper Details</h6>
-                    <span className="line"></span>
+
                   </div>
                   <div className="main_det">
                     <div className="view_box">
-                      <h6 className="ship_hd">Shipper</h6>
+                      <h6 className="ship_hd">  <i class="fi fi-rs-building build_icon"></i> Shipper</h6>
                       <div className="d-flex align-items-start">
-                        <i class="fi fi-rs-building build_icon"></i>
+
                         <div className="">
                           <p className="or_para">
                             {" "}
@@ -129,7 +129,7 @@ export default function Clearenceorderdetailspage() {
                       </div>
                     </div>
                     <div className="view_box">
-                      <h6 className="ship_hd">Pickup Address</h6>
+                      <h6 className="ship_hd">   <i class="fi fi-rr-marker build_icon"></i> Pickup Address</h6>
                       <div className="d-flex align-items-start">
                         <div className=""></div>
                         <div className="">
@@ -141,9 +141,9 @@ export default function Clearenceorderdetailspage() {
                       </div>
                     </div>
                     <div className="view_box">
-                      <h6 className="ship_hd">Exporter</h6>
+                      <h6 className="ship_hd">   <i class="fi fi-rs-building build_icon"></i> Exporter</h6>
                       <div className="d-flex align-items-start">
-                        <i class="fi fi-rs-building build_icon"></i>
+
                         <div className="">
                           <p className="or_para">{info.shipper_name}</p>
                           <p className="client_para">Export Code:{info.code}</p>
@@ -153,7 +153,7 @@ export default function Clearenceorderdetailspage() {
                         </div>
                       </div>
                     </div>
-                    <div className="">
+                    <div className="view_box">
                       <div className="d-flex align-items-start">
                         <i class="fi fi-rr-marker build_icon"></i>
                         <div className="">
@@ -170,13 +170,13 @@ export default function Clearenceorderdetailspage() {
                 <div className="card-body">
                   <div className="">
                     <h6 className="orgin_hd">Consignee Details</h6>
-                    <span className="line"></span>
+
                   </div>
                   <div className="main_det">
                     <div className="view_box">
-                      <h6 className="ship_hd">Consignee</h6>
+                      <h6 className="ship_hd">   <i class="fi fi-rs-building build_icon"></i> Consignee</h6>
                       <div className="d-flex align-items-start">
-                        <i class="fi fi-rs-building build_icon"></i>
+
                         <div className="">
                           <p className="or_para">
                             {info.shipment_ref === "shipper"
@@ -203,7 +203,7 @@ export default function Clearenceorderdetailspage() {
                       </div>
                     </div>
                     <div className="view_box">
-                      <h6 className="ship_hd">Delivery Address</h6>
+                      <h6 className="ship_hd">   <i className="fi fi-rr-marker build_icon"></i> Delivery Address</h6>
                       <div className="d-flex align-items-start">
                         <div className=""></div>
                         <div className="">
@@ -215,9 +215,9 @@ export default function Clearenceorderdetailspage() {
                       </div>
                     </div>
                     <div className="view_box">
-                      <h6 className="ship_hd">Importer</h6>
+                      <h6 className="ship_hd"> <i className="fi fi-rs-building build_icon"></i> Importer</h6>
                       <div className="d-flex align-items-start">
-                        <i class="fi fi-rs-building build_icon"></i>
+
                         <div className="">
                           <p className="or_para">{info.importers_ref}</p>
                           <p className="client_para">
@@ -229,7 +229,7 @@ export default function Clearenceorderdetailspage() {
                         </div>
                       </div>
                     </div>
-                    <div className="">
+                    <div className="view_box">
                       <div className="d-flex align-items-start">
                         <i class="fi fi-rr-marker build_icon"></i>
                         <div className="">
@@ -343,15 +343,15 @@ export default function Clearenceorderdetailspage() {
                               <p class="client_para1">{info.fcl_lcl}</p>
                             </td>
                           </tr> */}
-                          {/* <tr>
+            {/* <tr>
                             <td><p class="client_para1">Insurance:</p></td>
                             <td><p class="client_para1">Yes</p></td>
                           </tr> */}
-                          {/* <tr>
+            {/* <tr>
                             <td><p class="client_para1 mb-3">Warehouse:</p></td>
                             <td><p class="client_para1 mb-3">xxxxxxxxxx</p></td>
                           </tr> */}
-                          {/* <tr>
+            {/* <tr>
                             <td>
                               <p className="ship_hd">POD Information</p>
                             </td>
@@ -398,108 +398,61 @@ export default function Clearenceorderdetailspage() {
                   </div>
                 </div>
               </div>
-            </div> */} 
-          </div>
-          <div className="view_card">
-            <div className="row">
-              <div className="col-md-4 pe-4">
-                <div className="card desti_card1">
-                  <div className="card-body">
-                    <div className="">
-                      <h6 className="orgin_hd">Cargo Details</h6>
-                      <span className="line"></span>
-                    </div>
-                    <div className="main_det">
-                      <div class="table-responsive">
-                        <table class="det_show">
-                          <tbody>
-                            <tr>
-                              <td class="fright_num">
-                                <p class="client_para1">Product Description:</p>
-                              </td>
-                              <td>
-                                <p class="client_para1">{info.product_desc}</p>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>
-                                <p class="client_para1">Industry:</p>
-                              </td>
-                              <td>
-                                <p class="client_para1">
-                                  {info.nature_of_goods}
-                                </p>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>
-                                <p class="client_para1">Total Box:</p>
-                              </td>
-                              <td>
-                                <p class="client_para1">
-                                  {info.total_box}
-                                </p>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>
-                                <p class="client_para1">Packaging:</p>
-                              </td>
-                              <td>
-                                <p class="client_para1">{info.packing_type}</p>
-                              </td>
-                            </tr>
-                            {/* <tr>
-                              <td>
-                                <p class="client_para1">No of Packages:</p>
-                              </td>
-                              <td>
-                                <p class="client_para1">
-                                  {info.no_of_packages}
-                                </p>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>
-                                <p class="client_para1">Dimensions(cbm):</p>
-                              </td>
-                              <td>
-                                <p class="client_para1">{info.dimension}</p>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>
-                                <p class="client_para1">Weight(kgs):</p>
-                              </td>
-                              <td>
-                                <p class="client_para1">{info.weight}</p>
-                              </td>
-                            </tr> */}
-                            <tr>
-                              <td>
-                                <p class="client_para1">Vol weight(kgs):</p>
-                              </td>
-                              <td>
-                                <p class="client_para1">
-                                  {info.volumetric_weight}
-                                </p>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>
-                                <p class="client_para1">Chargeable weight:</p>
-                              </td>
-                              <td>
-                                <p class="client_para1"></p>
-                              </td>
-                            </tr>
-                          </tbody>
-                        </table>
-                      </div>
-                    </div>
+            </div> */}
+            <div className="col-md-4">
+              <div className="card desti_card">
+                <div className="card-body">
+
+                  <div className="">
+                    <h6 className="orgin_hd">Cargo Details</h6>
                   </div>
+
+                  <div className="main_det">
+
+                    {/* PRODUCT DESCRIPTION */}
+                    <div className="view_box">
+                      <p className="client_para">Product Description</p>
+                      <p className="or_para">{info.product_desc}</p>
+                    </div>
+
+                    {/* INDUSTRY */}
+                    <div className="view_box">
+                      <p className="client_para">Industry</p>
+                      <p className="or_para">{info.nature_of_goods}</p>
+                    </div>
+
+                    {/* TOTAL BOX */}
+                    <div className="view_box">
+                      <p className="client_para">Total Box</p>
+                      <p className="or_para">{info.total_box}</p>
+                    </div>
+
+                    {/* PACKAGING */}
+                    <div className="view_box">
+                      <p className="client_para">Packaging</p>
+                      <p className="or_para">{info.packing_type}</p>
+                    </div>
+
+                    {/* VOLUME WEIGHT */}
+                    <div className="view_box">
+                      <p className="client_para">Vol Weight (kgs)</p>
+                      <p className="or_para">{info.volumetric_weight}</p>
+                    </div>
+
+                    {/* CHARGEABLE WEIGHT */}
+                    {/* <div className="view_box">
+                      <h6 className="ship_hd">Chargeable Weight</h6>
+                      <p className="or_para"></p>
+                    </div> */}
+
+                  </div>
+
                 </div>
               </div>
+            </div>
+          </div>
+          <div className="view_card">
+            <div className="row viewDetails">
               {/* <div className="col-md-8">
                 <div className="card desti_card">
                   <div className="card-body mb-3">
@@ -622,13 +575,13 @@ export default function Clearenceorderdetailspage() {
                   </div>
                 </div>
               </div> */}
-               <div className="col-md-4">
+              <div className="col-md-12">
                 <div className="card desti_card">
-                  <p>view Document</p>
-                  <div className="card-body mb-3">
+                  <div className="card-body">
+                    <h6 className="orgin_hd"> view Document</h6>
                     {Object.keys(documents).map((groupName, groupIndex) => (
                       <div key={groupIndex} className="mb-2">
-                        <label>{groupName} :</label>
+                        <label>{groupName}</label>
                         {documents[groupName]?.map((item, index) => (
                           <div key={item.id} className="d-flex align-items-center">
                             <a
@@ -648,7 +601,7 @@ export default function Clearenceorderdetailspage() {
                         ))}
                       </div>
                     ))}
-              
+
                     {/* Quotation (separate because it's not part of groups) */}
                     <div className="mb-2">
                       <label> :</label>

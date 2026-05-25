@@ -10,7 +10,7 @@ export default function MAnageFreightDetails() {
   const infolocation = useLocation();
   const navigate = useNavigate();
   const [documents, setDocuments] = useState({});
-   const { id } = useParams();
+  const { id } = useParams();
 
   console.log(id); // yaha mil jayegi id
   const [data, setData] = useState({
@@ -64,30 +64,30 @@ export default function MAnageFreightDetails() {
         console.log(error.response.data);
       });
   };
-const getFreightDataById = async () => {
-  const payload = {
-    freight_id:id,
+  const getFreightDataById = async () => {
+    const payload = {
+      freight_id: id,
+    };
+
+    try {
+      const response = await axios.post(
+        `${process.env.REACT_APP_BASE_URL}freight-list-byId`,
+        payload
+      );
+
+      if (response?.data?.data?.length > 0) {
+        setInfo(response.data.data[0]);
+      }
+    } catch (error) {
+      console.error("Error fetching freight data by id:", error);
+    }
   };
 
-  try {
-    const response = await axios.post(
-      `${process.env.REACT_APP_BASE_URL}freight-list-byId`,
-      payload
-    );
 
-    if (response?.data?.data?.length > 0) {
-      setInfo(response.data.data[0]);
-    }
-  } catch (error) {
-    console.error("Error fetching freight data by id:", error);
-  }
-};
 
-  
-
-  useEffect(()=>{
+  useEffect(() => {
     getFreightDataById()
-  },[])
+  }, [])
   return (
     <div className="wpWrapper">
       <div className="container-fluid">
@@ -106,20 +106,20 @@ const getFreightDataById = async () => {
               </div>
             </div>
           </div>
-      
-          <div className="row mt-4">
-            <div className="col-md-4 pe-4">
+
+          <div className="row mt-4 viewDetails">
+            <div className="col-md-4">
               <div className="card desti_card">
                 <div className="card-body">
                   <div className="">
                     <h6 className="orgin_hd">Shipper Details</h6>
-                    <span className="line"></span>
+
                   </div>
                   <div className="main_det">
                     <div className="view_box">
-                      <h6 className="ship_hd">Exporter</h6>
+                      <h6 className="ship_hd">  <i class="fi fi-rs-building build_icon"></i> Exporter</h6>
                       <div className="d-flex align-items-start">
-                        <i class="fi fi-rs-building build_icon"></i>
+
                         <div className="">
                           <p className="or_para">
                             {info?.shipment_ref === "consignee"
@@ -129,23 +129,23 @@ const getFreightDataById = async () => {
                           <p className="client_para">
                             {info?.shipment_ref === "consignee"
                               ? info?.supplier_address
-                              :  info?.address_1 +" " + info?.address_2 + " "+ <br /> +info?.province+ " " +<br />+ info?.delivery_to_name}
+                              : info?.address_1 + " " + info?.address_2 + " " + <br /> + info?.province + " " + <br /> + info?.delivery_to_name}
                           </p>
                           <p className="client_para">
                             {info?.shipment_ref === "consignee"
                               ? info?.telephone
-                              :info?.cellphone}
+                              : info?.cellphone}
                           </p>
                           <p className="client_para">
                             {info?.shipment_ref === "consignee"
                               ? ""
-                              :info?.client_email }
+                              : info?.client_email}
                           </p>
                         </div>
                       </div>
                     </div>
                     <div className="view_box">
-                      <h6 className="ship_hd">Pickup Address</h6>
+                      <h6 className="ship_hd"> <i class="fi fi-rr-marker build_icon"></i> Pickup Address</h6>
                       <div className="d-flex align-items-start">
                         <div className=""></div>
                         <div className="">
@@ -155,23 +155,23 @@ const getFreightDataById = async () => {
                       </div>
                     </div>
                     <div className="view_box">
-                      <h6 className="ship_hd">Exporter</h6>
+                      <h6 className="ship_hd"> <i class="fi fi-rs-building build_icon"></i> Exporter</h6>
                       <div className="d-flex align-items-start">
-                        <i class="fi fi-rs-building build_icon"></i>
+
                         <div className="">
                           <p className="or_para">{info?.shipper_name}</p>
                           <p className="client_para">Export Code:{info?.code}</p>
                           <p className="client_para">Vat Number:{
-                          info?.shipment_ref==="shipper"?4740280377:""}</p>
+                            info?.shipment_ref === "shipper" ? 4740280377 : ""}</p>
                         </div>
                       </div>
                     </div>
-                    <div className="">  
+                    <div className="view_box">
                       <div className="d-flex align-items-start">
                         <i class="fi fi-rr-marker build_icon"></i>
                         <div className="">
                           <p className="client_para">{info.supplier_address}</p>
-                          <p className="client_para">{info.supplier_address}</p>
+
                         </div>
                       </div>
                     </div>
@@ -184,13 +184,13 @@ const getFreightDataById = async () => {
                 <div className="card-body">
                   <div className="">
                     <h6 className="orgin_hd">Consignee Details</h6>
-                    <span className="line"></span>
+
                   </div>
                   <div className="main_det">
                     <div className="view_box">
-                      <h6 className="ship_hd">Importer</h6>
+                      <h6 className="ship_hd"> <i class="fi fi-rs-building build_icon"></i> Importer</h6>
                       <div className="d-flex align-items-start">
-                        <i class="fi fi-rs-building build_icon"></i>
+
                         <div className="">
                           <p className="or_para">
                             {info?.shipment_ref === "consignee"
@@ -199,7 +199,7 @@ const getFreightDataById = async () => {
                           </p>
                           <p className="client_para">
                             {info?.shipment_ref === "consignee"
-                              ? info?.address_1 +" " + info.address_2 + " " +info.province+ " " + info.delivery_to_name
+                              ? info?.address_1 + " " + info.address_2 + " " + info.province + " " + info.delivery_to_name
                               : info.supplier_address}
                           </p>
                           <p className="client_para">
@@ -216,7 +216,7 @@ const getFreightDataById = async () => {
                       </div>
                     </div>
                     <div className="view_box">
-                      <h6 className="ship_hd">Delivery Address</h6>
+                      <h6 className="ship_hd"> <i class="fi fi-rr-marker build_icon"></i> Delivery Address</h6>
                       <div className="d-flex align-items-start">
                         <div className=""></div>
                         <div className="">
@@ -228,23 +228,23 @@ const getFreightDataById = async () => {
                       </div>
                     </div>
                     <div className="view_box">
-                      <h6 className="ship_hd">Importer</h6>
+                      <h6 className="ship_hd"> <i class="fi fi-rs-building build_icon"></i> Importer</h6>
                       <div className="d-flex align-items-start">
-                        <i class="fi fi-rs-building build_icon"></i>
+
                         <div className="">
                           <p className="or_para">{info.importers_ref}</p>
                           <p className="client_para">Export Code:{info.code}</p>
                           <p className="client_para">
-                            Vat Number : 
+                            Vat Number :
                             {
-                              info.shipment_ref ==="consignee"?
-                              4740280377:""
+                              info.shipment_ref === "consignee" ?
+                                4740280377 : ""
                             }
                           </p>
                         </div>
                       </div>
                     </div>
-                    <div className="">
+                    <div className="view_box">
                       <div className="d-flex align-items-start">
                         <i class="fi fi-rr-marker build_icon"></i>
                         <div className="">
@@ -434,7 +434,7 @@ const getFreightDataById = async () => {
               </div>
             </div>
           </div>
-          <div className="view_card">
+          <div className="view_card viewDetails">
             <div className="row">
               <div className="col-md-4 pe-4">
                 <div className="card desti_card1">

@@ -22,6 +22,8 @@ export default function Shipmentdeailspage() {
   const [documents, setDocuments] = useState({});
   const [statusModal, setStatusModal] = useState(false);
   const [shipmentStatus, setShipmentStatus] = useState("");
+  const [date, setDate] = useState("");
+  const [comment, setComment] = useState("");
   const [selectedShipment, setSelectedShipment] = useState(null);
   const datat = location.state.data[0];
   console.log("datat", datat);
@@ -61,12 +63,10 @@ export default function Shipmentdeailspage() {
   useEffect(() => {
     GetFreightImages();
   }, []);
-
   const handleOpenStatusModal = () => {
     setShipmentStatus(datat1?.status || "");
     setStatusModal(true);
   };
-
   const handleCloseStatusModal = () => {
     setStatusModal(false);
   };
@@ -75,24 +75,32 @@ export default function Shipmentdeailspage() {
       const payload = {
         shipment_id: datat.id,
         status: shipmentStatus,
+        date: date,
+        comment: comment,
       };
-
       const response = await axios.post(
         `${process.env.REACT_APP_BASE_URL}update-shipment-status`,
         payload,
       );
-
       if (response.data.success) {
         toast.success("Status Updated Successfully");
-
         handleCloseStatusModal();
-
         GetShipmentDetails();
       }
     } catch (error) {
       console.log(error);
-
-      toast.error("Failed to update status");
+      const errorData = error?.response?.data;
+      if (Array.isArray(errorData?.errors)) {
+        errorData.errors.forEach((err) => {
+          toast.error(err.msg || err.message);
+        });
+      } else if (errorData?.message) {
+        toast.error(errorData.message);
+      } else if (errorData?.error) {
+        toast.error(errorData.error);
+      } else {
+        toast.error(error?.message || "Failed to update status");
+      }
     }
   };
   const deleteapi = (id) => {
@@ -129,7 +137,6 @@ export default function Shipmentdeailspage() {
                       </div>
                       <h2 className="me-3">Shipment Details</h2>
                     </div>
-
                     <div className="mb-2 ">
                       <button
                         className="btn btn-primary"
@@ -572,10 +579,8 @@ export default function Shipmentdeailspage() {
             <h5 className=" fw-bold fs-5 mb-3">
               <span style={{ color: "#1b2245" }}>Update Status for </span>
             </h5>
-
             <FormControl fullWidth sx={{ mt: 2 }}>
               <InputLabel>Status</InputLabel>
-
               <Select
                 value={shipmentStatus}
                 label="Status"
@@ -584,21 +589,34 @@ export default function Shipmentdeailspage() {
                 <MenuItem value="Goods at origin port">
                   Goods at origin port
                 </MenuItem>
-
                 <MenuItem value="Goods are in transit">
                   Goods are in transit
                 </MenuItem>
-
                 <MenuItem value="Arrived at destination port">
                   Arrived at destination port
                 </MenuItem>
-
                 <MenuItem value="Customs clearing in progress">
                   Customs clearing in progress
                 </MenuItem>
-
                 <MenuItem value="Customs released">Customs released</MenuItem>
               </Select>
+            </FormControl>
+            <FormControl fullWidth sx={{ mt: 2 }}>
+              <input
+                type="date"
+                className="p-2"
+                value={date}
+                onChange={(e) => setDate(e.target.value)}
+              />
+            </FormControl>
+            <FormControl fullWidth sx={{ mt: 2 }}>
+              <InputLabel>Comment</InputLabel>
+              <textarea
+                type="text"
+                value={comment}
+                onChange={(e) => setComment(e.target.value)}
+                className="p-2"
+              />
             </FormControl>
           </div>
           <div className="text-end mt-4">

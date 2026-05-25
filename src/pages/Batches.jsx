@@ -195,7 +195,7 @@ export default function Batches() {
           if (error.response && error.response.status === 400) {
             toast.error(
               error.response.data.message ||
-                "Permission Denied: You don’t have access to delete this batch",
+              "Permission Denied: You don’t have access to delete this batch",
             );
           } else {
             toast.error("Something went wrong while deleting the batch.");
@@ -399,7 +399,7 @@ export default function Batches() {
           if (error.response && error.response.status === 400) {
             toast.error(
               error.response.data.message ||
-                "Permission Denied: You don’t have access to this action",
+              "Permission Denied: You don’t have access to this action",
             );
           } else {
             toast.error("Something went wrong while assigning the batch.");
@@ -478,7 +478,7 @@ export default function Batches() {
                   </div>
                 </div>
               </div>
-              <div className="table-responsive mt-4">
+              <div className="table-responsive mt-4 tableResFixed">
                 <TableContainer className="table table-striped tableICon">
                   <Table className="batch_table">
                     <TableHead>
@@ -498,49 +498,49 @@ export default function Batches() {
                         <TableCell className="fw-bold">Action</TableCell>
                       </TableRow>
                     </TableHead>
-                   <TableBody>
-  {datauser &&
-    datauser.length > 0 &&
-    datauser.map((item, index) => {
-      const isDisabled = !!item.track_status; // 🔥 important
+                    <TableBody>
+                      {datauser &&
+                        datauser.length > 0 &&
+                        datauser.map((item, index) => {
+                          const isDisabled = !!item.track_status; // 🔥 important
 
-      return (
-        <TableRow
-          key={index + 1}
-          className="border-bottom"
-          style={{
-  backgroundColor: isDisabled ? "#f5f5f5" : "",
-}}
-        >
-          <TableCell style={{ color: isDisabled ? "#999" : "" }}>{item?.batch_number}</TableCell>
-          <TableCell style={{ color: isDisabled ? "#999" : "" }}>{item?.freight}</TableCell>
+                          return (
+                            <TableRow
+                              key={index + 1}
+                              className="border-bottom"
+                              style={{
+                                backgroundColor: isDisabled ? "#f5f5f5" : "",
+                              }}
+                            >
+                              <TableCell style={{ color: isDisabled ? "#999" : "" }}>{item?.batch_number}</TableCell>
+                              <TableCell style={{ color: isDisabled ? "#999" : "" }}>{item?.freight}</TableCell>
 
-          <TableCell style={{ color: isDisabled ? "#999" : "" }}>{item?.total_freight_dimension}</TableCell>
-          <TableCell style={{ color: isDisabled ? "#999" : "" }}>{item?.total_freight_weight}</TableCell>
-          <TableCell style={{ color: isDisabled ? "#999" : "" }}>{item?.total_freight_packages}</TableCell>
-          <TableCell style={{ color: isDisabled ? "#999" : "" }} className="col-1">
-            {item?.origin_country_name}
-          </TableCell>
-          <TableCell style={{ color: isDisabled ? "#999" : "" }}>{item?.des_country_name}</TableCell>
-          <TableCell style={{ color: isDisabled ? "#999" : "" }}>{item?.forwarding_agent}</TableCell>
+                              <TableCell style={{ color: isDisabled ? "#999" : "" }}>{item?.total_freight_dimension}</TableCell>
+                              <TableCell style={{ color: isDisabled ? "#999" : "" }}>{item?.total_freight_weight}</TableCell>
+                              <TableCell style={{ color: isDisabled ? "#999" : "" }}>{item?.total_freight_packages}</TableCell>
+                              <TableCell style={{ color: isDisabled ? "#999" : "" }} className="col-1">
+                                {item?.origin_country_name}
+                              </TableCell>
+                              <TableCell style={{ color: isDisabled ? "#999" : "" }}>{item?.des_country_name}</TableCell>
+                              <TableCell style={{ color: isDisabled ? "#999" : "" }}>{item?.forwarding_agent}</TableCell>
 
-          {/* 🔒 Disable row click */}
-          <TableCell style={{ color: isDisabled ? "#999" : "" }}
-            style={{
-              cursor: isDisabled ? "not-allowed" : "pointer",
-            }}
-            onClick={() => {
-              if (!isDisabled) {
-                handleclickid(item.id);
-              }
-            }}
-          >
-            {item?.count_freight}
-          </TableCell>
+                              {/* 🔒 Disable row click */}
+                              <TableCell style={{ color: isDisabled ? "#999" : "" }}
+                                style={{
+                                  cursor: isDisabled ? "not-allowed" : "pointer",
+                                }}
+                                onClick={() => {
+                                  if (!isDisabled) {
+                                    handleclickid(item.id);
+                                  }
+                                }}
+                              >
+                                {item?.count_freight}
+                              </TableCell>
 
-          <TableCell style={{ color: isDisabled ? "#999" : "" }}>{item.track_status}</TableCell>
+                              <TableCell style={{ color: isDisabled ? "#999" : "" }}>{item.track_status}</TableCell>
 
-          {/* <div className="dropdown">
+                              {/* <div className="dropdown">
             <a
               href="#"
               type="button"
@@ -557,7 +557,7 @@ export default function Batches() {
                 <ul className="p-0 m-0">
 
                   {/* ✅ ALWAYS ALLOWED */}
-                  {/* <li
+                              {/* <li
                     className="page_list"
                     style={{ cursor: "pointer", fontSize: "15px" }}
                     onClick={() => handleclickid(item.id)}
@@ -574,7 +574,7 @@ export default function Batches() {
                   </li>
 
                   {/* ❌ DISABLED WHEN STATUS EXISTS */}
-                {/* <li
+                              {/* <li
   className="page_list"
   style={{
     cursor: isDisabled ? "not-allowed" : "pointer",
@@ -635,84 +635,84 @@ export default function Batches() {
               </a>
             </div>
           </div> */}
-          <div className="dropdown">
-  <a
-    href="#"
-    type="button"
-    className="act_btn dropdown-toggle mb-3"
-    data-bs-toggle="dropdown"
-    aria-expanded="false"
-    onClick={(e) => e.preventDefault()}
-  >
-    Action
-  </a>
+                              <div className="dropdown">
+                                <a
+                                  href="#"
+                                  type="button"
+                                  className="act_btn dropdown-toggle mb-3"
+                                  data-bs-toggle="dropdown"
+                                  aria-expanded="false"
+                                  onClick={(e) => e.preventDefault()}
+                                >
+                                  Action
+                                </a>
 
-  <div className="dropdown-menu">
-    <a className="dropdown-item det_page">
-      <ul className="p-0 m-0">
+                                <div className="dropdown-menu">
+                                  <a className="dropdown-item det_page">
+                                    <ul className="p-0 m-0">
 
-        {/* ✅ ALWAYS SHOW */}
-        <li
-          className="page_list"
-          style={{ cursor: "pointer", fontSize: "15px" }}
-          onClick={() => handleclickid(item.id)}
-        >
-          <RemoveRedEyeIcon /> View Details
-        </li>
+                                      {/* ✅ ALWAYS SHOW */}
+                                      <li
+                                        className="page_list"
+                                        style={{ cursor: "pointer", fontSize: "15px" }}
+                                        onClick={() => handleclickid(item.id)}
+                                      >
+                                        <RemoveRedEyeIcon /> View Details
+                                      </li>
 
-        <li
-          className="page_list"
-          style={{ cursor: "pointer", fontSize: "15px" }}
-          onClick={() => openModal2(item.id)}
-        >
-          <ContentCopyIcon /> Edit Batch
-        </li>
+                                      <li
+                                        className="page_list"
+                                        style={{ cursor: "pointer", fontSize: "15px" }}
+                                        onClick={() => openModal2(item.id)}
+                                      >
+                                        <ContentCopyIcon /> Edit Batch
+                                      </li>
 
-        <li
-          className="page_list"
-          style={{ cursor: "pointer", fontSize: "15px" }}
-          onClick={() => track(item?.id)}
-        >
-          <RoomIcon /> Track Batch
-        </li>
+                                      <li
+                                        className="page_list"
+                                        style={{ cursor: "pointer", fontSize: "15px" }}
+                                        onClick={() => track(item?.id)}
+                                      >
+                                        <RoomIcon /> Track Batch
+                                      </li>
 
-        {/* ❌ SHOW ONLY WHEN NOT DISABLED */}
-        {!isDisabled && (
-          <>
-            <li
-              className="page_list"
-              style={{ cursor: "pointer", fontSize: "15px" }}
-              onClick={() => copy1(item?.id)}
-            >
-              <CopyAll /> Copy
-            </li>
+                                      {/* ❌ SHOW ONLY WHEN NOT DISABLED */}
+                                      {!isDisabled && (
+                                        <>
+                                          <li
+                                            className="page_list"
+                                            style={{ cursor: "pointer", fontSize: "15px" }}
+                                            onClick={() => copy1(item?.id)}
+                                          >
+                                            <CopyAll /> Copy
+                                          </li>
 
-            <li
-              className="page_list"
-              style={{ cursor: "pointer", fontSize: "15px" }}
-              onClick={() => track123(item)}
-            >
-              <WarehouseIcon /> Assign Clearing
-            </li>
+                                          <li
+                                            className="page_list"
+                                            style={{ cursor: "pointer", fontSize: "15px" }}
+                                            onClick={() => track123(item)}
+                                          >
+                                            <WarehouseIcon /> Assign Clearing
+                                          </li>
 
-            <li
-              className="page_list"
-              style={{ cursor: "pointer", fontSize: "15px" }}
-              onClick={() => handleclickdelete(item?.id)}
-            >
-              <DeleteIcon /> Delete Batch
-            </li>
-          </>
-        )}
+                                          <li
+                                            className="page_list"
+                                            style={{ cursor: "pointer", fontSize: "15px" }}
+                                            onClick={() => handleclickdelete(item?.id)}
+                                          >
+                                            <DeleteIcon /> Delete Batch
+                                          </li>
+                                        </>
+                                      )}
 
-      </ul>
-    </a>
-  </div>
-</div>
-        </TableRow>
-      );
-    })}
-</TableBody>
+                                    </ul>
+                                  </a>
+                                </div>
+                              </div>
+                            </TableRow>
+                          );
+                        })}
+                    </TableBody>
                   </Table>
                 </TableContainer>
               </div>
@@ -816,7 +816,7 @@ export default function Batches() {
                                   type="date"
                                   className="form-control"
                                   value={formattedDate}
-                                  // name="date_created"
+                                // name="date_created"
                                 />
                               </div>
                               <div className="col-6">
@@ -829,10 +829,10 @@ export default function Batches() {
                                   value={
                                     inputdata?.date_of_first_received
                                       ? new Date(
-                                          inputdata.date_of_first_received,
-                                        )
-                                          .toISOString()
-                                          .split("T")[0]
+                                        inputdata.date_of_first_received,
+                                      )
+                                        .toISOString()
+                                        .split("T")[0]
                                       : ""
                                   }
                                 />

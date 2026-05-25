@@ -93,8 +93,8 @@ export default function MAnageFreightDetails() {
       <div className="container-fluid">
         <div className="formDetails">
           <div className="row">
-            <div className="col-lg-12 px-0">
-              <div className="d-flex justify-content-between mb-3">
+            <div className="col-lg-12">
+              <div className="d-flex justify-content-between">
                 <div className="d-flex">
                   <div style={{ cursor: "pointer" }}>
                     <ArrowBackIcon onClick={handleclick} />
@@ -108,7 +108,7 @@ export default function MAnageFreightDetails() {
           </div>
 
           <div className="row mt-4 viewDetails">
-            <div className="col-md-4">
+            <div className=" col-lg-4 col-md-6 col-sm-6">
               <div className="card desti_card">
                 <div className="card-body">
                   <div className="">
@@ -179,7 +179,7 @@ export default function MAnageFreightDetails() {
                 </div>
               </div>
             </div>
-            <div className="col-md-4">
+            <div className="col-lg-4 col-md-6 col-sm-6">
               <div className="card desti_card">
                 <div className="card-body">
                   <div className="">
@@ -258,303 +258,189 @@ export default function MAnageFreightDetails() {
                 </div>
               </div>
             </div>
-            <div className="col-md-4 ps-4">
+            <div className="col-lg-4 col-md-6 col-sm-6">
               <div className="card desti_card">
                 <div className="card-body">
-                  <div className="">
-                    <h6 className="orgin_hd">Booking Information</h6>
-                    <span className="line"></span>
+
+                  <div>
+                    <h6 className="orgin_hd">Cargo Details</h6>
                   </div>
+
                   <div className="main_det">
-                    <div class="table-responsive">
-                      <table class="det_show">
-                        <tbody>
-                          <tr>
-                            <td>
-                              <p className="ship_hd">POL Information</p>
-                            </td>
-                          </tr>
-                          <tr>
-                            <td class="fright_num">
-                              <p class="client_para1">
-                                <strong>Place of loading:</strong>
-                              </p>
-                            </td>
-                            <td>
-                              <p class="client_para1">
-                                {info.supplier_address}
-                              </p>
-                            </td>
-                          </tr>
-                          <tr>
-                            <td>
-                              <p class="client_para1">
-                                <strong>Port of Loading:</strong>
-                              </p>
-                            </td>
-                            <td>
-                              <p class="client_para1">{info.port_of_loading}</p>
-                            </td>
-                          </tr>
-                          <tr>
-                            <td className="instr_td">
-                              <p className="client_para1 mb-3">
-                                <strong>Instructions:</strong>
-                              </p>
-                            </td>
-                            <td>
-                              <p className="client_para1 mb-3">
-                                {info.shipment_origin}
-                              </p>
-                            </td>
-                          </tr>
-                          <tr>
-                            <td>
-                              <p className="ship_hd">Transit Information</p>
-                            </td>
-                          </tr>
-                          <tr>
-                            <td>
-                              <p class="client_para1">
-                                <strong>Freight Option:</strong>
-                              </p>
-                            </td>
-                            <td>
-                              <p class="client_para1">{info.freight}</p>
-                            </td>
-                          </tr>
-                          <tr>
-                            <td>
-                              <p class="client_para1">
-                                <strong>Efficiency:</strong>
-                              </p>
-                            </td>
-                            <td>
-                              <p class="client_para1">{info.type}</p>
-                            </td>
-                          </tr>
-                          <tr>
-                            <td>
-                              <p class="client_para1">
-                                <strong>Incoterms:</strong>
-                              </p>
-                            </td>
-                            <td>
-                              <p class="client_para1">{info.incoterm}</p>
-                            </td>
-                          </tr>
-                          <tr>
-                            <td>
-                              <p class="client_para1">
-                                <strong>Type:</strong>
-                              </p>
-                            </td>
-                            <td>
-                              <p class="client_para1">{info.fcl_lcl}</p>
-                            </td>
-                          </tr>
-                          <tr>
-                            <td>
-                              <p class="client_para1">
-                                <strong>Insurance:</strong>
-                              </p>
-                            </td>
-                            <td>
-                              <p class="client_para1">{info.insurance}</p>
-                            </td>
-                          </tr>
-                          <tr>
-                            <td>
-                              <p class="client_para1 mb-3">
-                                <strong>Warehouse:</strong>
-                              </p>
-                            </td>
-                            <td>
-                              <p class="client_para1 mb-3">
-                                {info.assign_warehouse}
-                              </p>
-                            </td>
-                          </tr>
-                          <tr>
-                            <td>
-                              <p className="ship_hd">POD Information </p>
-                            </td>
-                          </tr>
-                          <tr>
-                            <td>
-                              <p class="client_para1">
-                                <strong>Place of delivery:</strong>
-                              </p>
-                            </td>
-                            <td>
-                              <p class="client_para1">
-                                {info.place_of_delivery}
-                              </p>
-                            </td>
-                          </tr>
-                          <tr>
-                            <td>
-                              <p class="client_para1">
-                                <strong>Port of Discharge:</strong>
-                              </p>
-                            </td>
-                            <td>
-                              <p class="client_para1">
-                                {info.post_of_discharge}
-                              </p>
-                            </td>
-                          </tr>
-                          <tr>
-                            <td className="instr_td">
-                              <p className="client_para1 mb-3">
-                                <strong>Instructions:</strong>
-                              </p>
-                            </td>
-                            <td>
-                              <p className="client_para1 mb-3">
-                                {info.shipment_des}
-                              </p>
-                            </td>
-                          </tr>
-                          <tr>
-                            <td>
-                              <p class="ship_hd">
-                                <strong>Comment</strong>
-                              </p>
-                            </td>
-                            <td>
-                              <p class="client_para1">{info.comment}</p>
-                            </td>
-                          </tr>
-                        </tbody>
-                      </table>
+
+                    {/* PRODUCT DESCRIPTION */}
+                    <div className="view_box">
+                      <p className="client_para">Product Description</p>
+                      <p className="or_para">{info.product_desc}</p>
                     </div>
+
+                    {/* HAZARDOUS */}
+                    <div className="view_box">
+                      <p className="client_para">Hazardous</p>
+                      <p className="or_para">{info.hazardous}</p>
+                    </div>
+
+                    {/* INDUSTRY */}
+                    <div className="d-flex gap-2 justify-content-between view_box flex-wrap">
+                      <div>
+                        <p className="client_para">Industry</p>
+                        <p className="or_para">{info.nature_of_hazard}</p>
+                      </div>
+
+                      {/* PACKAGING */}
+                      <div>
+                        <p className="client_para">Packaging</p>
+                        <p className="or_para">{info.package_type}</p>
+                      </div>
+
+                    </div>
+
+                    {/* NO OF PACKAGES */}
+                    <div className="d-flex gap-2 justify-content-between view_box flex-wrap">
+                      <div className="view_box">
+                        <p className="client_para">No of Packages</p>
+                        <p className="or_para">{info.no_of_packages}</p>
+                      </div>
+
+                      {/* DIMENSIONS */}
+                      <div className="view_box">
+                        <p className="client_para">Dimensions (cbm)</p>
+                        <p className="or_para">{info.dimension}</p>
+                      </div>
+
+                    </div>
+                    <div className="d-flex gap-2 justify-content-between view_box flex-wrap">
+                      {/* WEIGHT */}
+                      <div>
+                        <p className="client_para">Weight (kgs)</p>
+                        <p className="or_para">{info.weight}</p>
+                      </div>
+                      {/* VOLUMETRIC WEIGHT */}
+                      <div>
+                        <p className="client_para">Vol Weight (kgs)</p>
+                        <p className="or_para">{info?.volumetric_weight}</p>
+                      </div>
+                    </div>
+
+                    {/* COMMODITY */}
+                    <div className="view_box">
+                      <p className="client_para">Commodity</p>
+                      <p className="or_para">{info.commodity_name}</p>
+                    </div>
+
+
                   </div>
+
                 </div>
               </div>
             </div>
+
           </div>
           <div className="view_card viewDetails">
             <div className="row">
-              <div className="col-md-4 pe-4">
-                <div className="card desti_card1">
+              <div className="col-md-6">
+                <div className="card desti_card">
                   <div className="card-body">
-                    <div className="">
-                      <h6 className="orgin_hd">Cargo Details</h6>
-                      <span className="line"></span>
+
+                    <div>
+                      <h6 className="orgin_hd">Booking Information</h6>
                     </div>
+
                     <div className="main_det">
-                      <div class="table-responsive">
-                        <table class="det_show">
-                          <tbody>
-                            <tr>
-                              <td class="fright_num">
-                                <p class="client_para1">
-                                  {" "}
-                                  <strong>Product Description:</strong>{" "}
-                                </p>
-                              </td>
-                              <td>
-                                <p class="client_para1">{info.product_desc}</p>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>
-                                <p class="client_para1">
-                                  <strong>Hazardous:</strong>
-                                </p>
-                              </td>
-                              <td>
-                                <p class="client_para1">{info.hazardous}</p>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>
-                                <p class="client_para1">
-                                  <strong>Industry:</strong>
-                                </p>
-                              </td>
-                              <td>
-                                <p class="client_para1">
-                                  {info.nature_of_hazard}
-                                </p>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>
-                                <p class="client_para1">
-                                  <strong>Packaging:</strong>
-                                </p>
-                              </td>
-                              <td>
-                                <p class="client_para1">{info.package_type}</p>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>
-                                <p class="client_para1">
-                                  <strong>No of Packages:</strong>
-                                </p>
-                              </td>
-                              <td>
-                                <p class="client_para1">
-                                  {info.no_of_packages}
-                                </p>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>
-                                <p class="client_para1">
-                                  <strong>Dimensions(cbm):</strong>
-                                </p>
-                              </td>
-                              <td>
-                                <p class="client_para1">{info.dimension}</p>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>
-                                <p class="client_para1">
-                                  <strong>Weight(kgs):</strong>
-                                </p>
-                              </td>
-                              <td>
-                                <p class="client_para1">{info.weight}</p>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>
-                                <p class="client_para1">
-                                  <strong>Commodity:</strong>
-                                </p>
-                              </td>
-                              <td>
-                                <p class="client_para1">
-                                  {info.commodity_name}
-                                </p>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>
-                                <p class="client_para1">
-                                  <strong>Vol weight(kgs):</strong>
-                                </p>
-                              </td>
-                              <td>
-                                <p class="client_para1">
-                                  {info?.volumetric_weight}
-                                </p>
-                              </td>
-                            </tr>
-                            <tr></tr>
-                          </tbody>
-                        </table>
+
+                      {/* POL SECTION */}
+                      <div className="ship_section_title">
+                        <p className="ship_hd">POL Information</p>
                       </div>
+                      <div className="d-flex gap-2 view_box">
+                        <div className="flex-grow-1">
+                          <p className="client_para">Place of Loading</p>
+                          <p className="or_para">{info.supplier_address}</p>
+                        </div>
+                        <div className="flex-grow-1">
+                          <p className="client_para">Port of Loading</p>
+                          <p className="or_para">{info.port_of_loading}</p>
+                        </div>
+
+                      </div>
+
+
+                      <div className="view_box">
+                        <p className="client_para">Instructions</p>
+                        <p className="or_para">{info.shipment_origin}</p>
+                      </div>
+
+                      {/* TRANSIT SECTION */}
+                      <div className="ship_section_title">
+                        <p className="ship_hd">Transit Information</p>
+                      </div>
+                      <div className="d-flex gap-2 view_box justify-content-between flex-wrap">
+                        <div>
+                          <p className="client_para">Freight Option</p>
+                          <p className="or_para">{info.freight}</p>
+                        </div>
+                        <div>
+                          <p className="client_para">Efficiency</p>
+                          <p className="or_para">{info.type}</p>
+                        </div>
+                        <div>
+                          <p className="client_para">Incoterms</p>
+                          <p className="or_para">{info.incoterm}</p>
+                        </div>
+                      </div>
+
+                      <div className="d-flex justify-content-between gap-2 view_box flex-wrap">
+
+                        <div>
+                          <p className="client_para">Type</p>
+                          <p className="or_para">{info.fcl_lcl}</p>
+                        </div>
+                        <div>
+                          <p className="client_para">Insurance</p>
+                          <p className="or_para">{info.insurance}</p>
+                        </div>
+                        <div>
+                          <p className="client_para">Warehouse</p>
+                          <p className="or_para">{info.assign_warehouse}</p>
+                        </div>
+                      </div>
+
+
+
+
+
+                      {/* POD SECTION */}
+                      <div className="ship_section_title">
+                        <p className="ship_hd">POD Information</p>
+                      </div>
+
+                      <div className="view_box">
+                        <p className="client_para">Place of Delivery</p>
+                        <p className="or_para">{info.place_of_delivery}</p>
+                      </div>
+
+                      <div className="view_box">
+                        <p className="client_para">Port of Discharge</p>
+                        <p className="or_para">{info.post_of_discharge}</p>
+                      </div>
+
+                      <div className="view_box">
+                        <p className="client_para">Instructions</p>
+                        <p className="or_para">{info.shipment_des}</p>
+                      </div>
+
+                      {/* COMMENT */}
+                      <div className="view_box">
+                        <p className="client_para">Comment</p>
+                        <p className="or_para">{info.comment}</p>
+                      </div>
+
                     </div>
+
                   </div>
                 </div>
               </div>
-              <div className="col-md-8">
+              <div className="col-md-6">
                 <div className="card desti_card">
                   <div className="card-body mb-3">
                     {Object.keys(documents).map((groupName, groupIndex) => (

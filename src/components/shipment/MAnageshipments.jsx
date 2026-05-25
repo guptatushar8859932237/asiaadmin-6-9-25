@@ -43,6 +43,8 @@ export default function MAnageshipments() {
   const [loader, setLoader] = useState(true);
   const navigate = useNavigate();
   const [debouncedSearch, setDebouncedSearch] = useState("");
+  const [date, setDate] = useState("");
+  const [comment, setComment] = useState("");
   const [show1, setShow1] = useState(false);
   const [selectedDocs, setSelectedDocs] = useState([]);
   const [statusModal, setStatusModal] = useState(false);
@@ -154,6 +156,8 @@ export default function MAnageshipments() {
       const payload = {
         shipment_id: selectedShipment.id,
         status: shipmentStatus,
+        comment: comment,
+        date: date,
       };
       const response = await axios.post(
         `${process.env.REACT_APP_BASE_URL}update-shipment-status`,
@@ -166,7 +170,21 @@ export default function MAnageshipments() {
       }
     } catch (error) {
       console.log(error);
-      toast.error("Failed to update status");
+      const errorData = error?.response?.data;
+      if (Array.isArray(errorData?.errors)) {
+        errorData.errors.forEach((err) => {
+          toast.error(err.msg || err.message);
+        });
+      }
+      else if (errorData?.message) {
+        toast.error(errorData.message);
+      }
+      else if (errorData?.error) {
+        toast.error(errorData.error);
+      }
+      else {
+        toast.error(error?.message || "Failed to update status");
+      }
     }
   };
   useEffect(() => {
@@ -888,6 +906,23 @@ export default function MAnageshipments() {
                           Customs Released
                         </MenuItem>
                       </Select>
+                    </FormControl>
+                    <FormControl fullWidth sx={{ mt: 2 }}>
+                      {/* <InputLabel>Date</InputLabel> */}
+                      <input
+                        type="date"
+                        className="p-2"
+                        value={date}
+                        onChange={(e) => setDate(e.target.value)}
+                      />
+                    </FormControl>
+                    <FormControl fullWidth sx={{ mt: 2 }}>
+                      <InputLabel>Comment</InputLabel>
+                      <textarea
+                        type="text"
+                        value={comment}
+                        onChange={(e) => setComment(e.target.value)}
+                      />
                     </FormControl>
                   </div>
                   <div className="text-end mt-4">

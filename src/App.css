@@ -4984,6 +4984,19 @@ td {
   font-size: 20px;
 }
 
+.highlight {
+  background: #ffcccc !important;
+  border-radius: 10px;
+  color: black !important;
+  font-weight: bold;
+}
+
+.react-calendar {
+  width: 100% !important;
+  border-radius: 10px;
+  padding: 10px;
+}
+
 .uploadIcon:hover {
   color: var(--maroon);
 }

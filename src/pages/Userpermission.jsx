@@ -121,7 +121,7 @@ const UserPermission = ({ staffId }) => {
       <div className="container-fluid">
         <div>
           <div>
-            <div class="page-wrapper">
+            {/* <div class="page-wrapper">
           <div class="content">
     <div class="row">
             <div class="col-lg-3" 
@@ -133,7 +133,7 @@ const UserPermission = ({ staffId }) => {
                   <div class="cardContent">
                     <p className="para_dash">
                         {/* <CountUp end={countdata?.no_of_clients} /> */}
-                        </p>
+                        {/* </p>
                   </div>
                   <div class="iconGrad">
                     <i className="fa fa-user"></i>
@@ -154,7 +154,7 @@ const UserPermission = ({ staffId }) => {
                   <div class="cardContent">                                                
                     <p className="para_dash">
                         {/* <CountUp end={countdata?.no_of_freights} /> */}
-                        </p>                                                
+                        {/* </p>                                                
                   </div>                                                
                   <div class="iconGrad">                                                
                     <i className="fa fa-plane"></i>                                                
@@ -175,7 +175,7 @@ const UserPermission = ({ staffId }) => {
                   <div class="cardContent">
                     <p className="para_dash">
                         {/* <CountUp end={countdata?.no_of_orders} /> */}
-                        </p>
+                        {/* </p>
                   </div>
                   <div class="iconGrad">
                     <i className="fa fa-truck"></i>
@@ -209,7 +209,7 @@ const UserPermission = ({ staffId }) => {
             </div>
           </div>
           </div>
-          </div>
+          </div> */}
             <div>
               <h2 className="text-xl font-bold mb-2">Staff Permissions</h2>
               <div className="bg-white shadow-md rounded mainPer">

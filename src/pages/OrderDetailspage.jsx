@@ -25,22 +25,24 @@ export default function MAnageFreightDetails() {
   console.log(infolocation?.state);
   console.log(infolocation.state.data);
 
+  useEffect(() => {
+    getalldata();
+  }, []);
 
-  useEffect(()=>{
-    getalldata()
-  },[])
-
-  const getalldata = async() => {
-  try {
-console.log(info?.order_id)
-    const datapost={orderId:info?.order_id}
-    const response = await axios.post(`${process.env.REACT_APP_BASE_URL}OrderDetailsById`,datapost)
-    setData(response.data.data[0]);
-    console.log(response.data.data[0]);
-  } catch (error) {
-    console.log(error);
-  }
-  }
+  const getalldata = async () => {
+    try {
+      console.log(info?.order_id);
+      const datapost = { orderId: info?.order_id };
+      const response = await axios.post(
+        `${process.env.REACT_APP_BASE_URL}OrderDetailsById`,
+        datapost,
+      );
+      setData(response.data.data[0]);
+      console.log(response.data.data[0]);
+    } catch (error) {
+      console.log(error);
+    }
+  };
   const [document, setDocument] = useState([]);
   const [documents, setDocuments] = useState({});
   const [document1, setDocument1] = useState([]);
@@ -111,14 +113,14 @@ console.log(info?.order_id)
         console.log(error.response.data);
       });
   };
-   const GetFreightImages = () => {
-    const data = { freight_id: info.freight_id,uploaded_by:"1" };
-  
+  const GetFreightImages = () => {
+    const data = { freight_id: info.freight_id, uploaded_by: "1" };
+
     axios
       .post(`${process.env.REACT_APP_BASE_URL}GetFreightImages`, data)
       .then((response) => {
         console.log(response.data.data);
-  
+
         // Save all groups (Customs, Packing, Invoices, Licenses, etc.)
         setDocuments(response.data.data);
       })
@@ -185,8 +187,8 @@ console.log(info?.order_id)
                               <td>
                                 <p class="client_para1">
                                   {info.shipment_ref === "consignee"
-                              ? info.shipper_name
-                              : info.client_name}
+                                    ? info.shipper_name
+                                    : info.client_name}
                                 </p>
                               </td>
                             </tr>
@@ -196,9 +198,9 @@ console.log(info?.order_id)
                               </td>
                               <td>
                                 <p class="client_para1">
-                                   {info.shipment_ref === "consignee"
-                              ? ""
-                              :info.client_email }
+                                  {info.shipment_ref === "consignee"
+                                    ? ""
+                                    : info.client_email}
                                 </p>
                               </td>
                             </tr>
@@ -208,9 +210,9 @@ console.log(info?.order_id)
                               </td>
                               <td>
                                 <p class="client_para1">
-                                {info.shipment_ref === "consignee"
-                              ? info.telephone
-                              :info.cellphone}
+                                  {info.shipment_ref === "consignee"
+                                    ? info.telephone
+                                    : info.cellphone}
                                 </p>
                               </td>
                             </tr>
@@ -221,8 +223,8 @@ console.log(info?.order_id)
                               <td>
                                 <p class="client_para1">
                                   {info.shipment_ref === "consignee"
-                              ? info.telephone
-                              :info.cellphone}
+                                    ? info.telephone
+                                    : info.cellphone}
                                 </p>
                               </td>
                             </tr>
@@ -232,15 +234,15 @@ console.log(info?.order_id)
                               </td>
                               <td>
                                 <p class="client_para1 mb-3">
-                                   {info.shipment_ref === "consignee"
-                              ? ""
-                              :info.client_email }
+                                  {info.shipment_ref === "consignee"
+                                    ? ""
+                                    : info.client_email}
                                 </p>
                               </td>
                             </tr>
                             <tr>
                               <td>
-                                <p className="ship_hd">Pickup Address</p>
+                                <p className="ship_hd fw-600" style={{ fontWeight: 'bold' }}>Pickup Address</p>
                               </td>
                             </tr>
                             <tr>
@@ -248,9 +250,19 @@ console.log(info?.order_id)
                                 <p class="client_para1">Address1:</p>
                               </td>
                               <td>
-                                <p class="client_para1">{info.shipment_ref === "consignee"
-                              ? info.supplier_address
-                              :  info?.address_1 +" " + info.address_2 + " "+ <br /> +info.province+ " " +<br />+ info.delivery_to_name}</p>
+                                <p class="client_para1">
+                                  {info.shipment_ref === "consignee"
+                                    ? info.supplier_address
+                                    : info?.address_1 +
+                                      " " +
+                                      info.address_2 +
+                                      " " +
+                                      <br /> +
+                                      info.province +
+                                      " " +
+                                      <br /> +
+                                      info.delivery_to_name}
+                                </p>
                               </td>
                             </tr>
                             <tr>
@@ -281,7 +293,7 @@ console.log(info?.order_id)
                             </tr>
                             <tr>
                               <td>
-                                <p className="ship_hd">Export details</p>
+                                <p className="ship_hd fw-600" style={{ fontWeight: 'bold' }}>Export details</p>
                               </td>
                             </tr>
                             <tr>
@@ -333,8 +345,8 @@ console.log(info?.order_id)
                               <td>
                                 <p class="client_para1">
                                   {info.shipment_ref === "consignee"
-                              ? info.client_name
-                              : info.shipper_name}
+                                    ? info.client_name
+                                    : info.shipper_name}
                                 </p>
                               </td>
                             </tr>
@@ -344,9 +356,9 @@ console.log(info?.order_id)
                               </td>
                               <td>
                                 <p class="client_para1">
-                                 {info.shipment_ref === "consignee"
-                              ? info.client_email
-                              : ""}
+                                  {info.shipment_ref === "consignee"
+                                    ? info.client_email
+                                    : ""}
                                 </p>
                               </td>
                             </tr>
@@ -357,8 +369,8 @@ console.log(info?.order_id)
                               <td>
                                 <p class="client_para1">
                                   {info.shipment_ref === "consignee"
-                              ? info.cellphone
-                              : info.telephone}
+                                    ? info.cellphone
+                                    : info.telephone}
                                 </p>
                               </td>
                             </tr>
@@ -380,19 +392,19 @@ console.log(info?.order_id)
                               </td>
                               <td>
                                 <p class="client_para1 mb-3">
-                                {info.shipment_ref === "consignee"
-                              ? info.client_email
-                              : ""}
+                                  {info.shipment_ref === "consignee"
+                                    ? info.client_email
+                                    : ""}
                                 </p>
                               </td>
                             </tr>
                             <tr>
                               <td>
-                                <p className="ship_hd">Delivery Address</p>
+                                <p className="ship_hd fw-600" style={{ fontWeight: 'bold' }}>Delivery Address</p>
                               </td>
                               <td>
-<p className="client_para">
-                            {/* {info.shipment_ref === "consignee"
+                                <p className="client_para">
+                                  {/* {info.shipment_ref === "consignee"
                               ? info?.address_1 +" " + info.address_2 + " " +info.province+ " " + info.delivery_to_name
                               : info.supplier_address} */}
                                 </p>
@@ -406,8 +418,12 @@ console.log(info?.order_id)
                                 <p class="client_para1">
                                   {/* {info?.supplier_address} */}
                                   {info.shipment_ref === "consignee"
-                              ? info?.address_1 +" " + info.address_2 + " " +info.province
-                              : info.supplier_address}
+                                    ? info?.address_1 +
+                                      " " +
+                                      info.address_2 +
+                                      " " +
+                                      info.province
+                                    : info.supplier_address}
                                 </p>
                               </td>
                             </tr>
@@ -439,7 +455,7 @@ console.log(info?.order_id)
                             </tr>
                             <tr>
                               <td>
-                                <p className="ship_hd">Export details</p>
+                                <p className="ship_hd fw-600" style={{ fontWeight: 'bold' }}>Export details</p>
                               </td>
                             </tr>
                             <tr>
@@ -486,7 +502,19 @@ console.log(info?.order_id)
                           <tbody>
                             <tr>
                               <td>
-                                <p className="ship_hd">POL Information</p>
+                                <p className="ship_hd fw-600" style={{ fontWeight: 'bold' }}>
+                                  POL Information
+                                </p>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <p class="client_para1">Freight Number:</p>
+                              </td>
+                              <td>
+                                <p class="client_para1">
+                                  {data?.freight_number}
+                                </p>
                               </td>
                             </tr>
                             <tr>
@@ -494,7 +522,9 @@ console.log(info?.order_id)
                                 <p class="client_para1">Origin Handler:</p>
                               </td>
                               <td>
-                                <p class="client_para1">{data?.shipments_origin_agent}</p>
+                                <p class="client_para1">
+                                  {data?.shipments_origin_agent}
+                                </p>
                               </td>
                             </tr>
                             <tr>
@@ -531,7 +561,9 @@ console.log(info?.order_id)
                             </tr>
                             <tr>
                               <td>
-                                <p className="ship_hd">Transit Information</p>
+                                <p className="ship_hd fw-600" style={{ fontWeight: 'bold' }}>
+                                  Transit Information
+                                </p>
                               </td>
                             </tr>
                             <tr>
@@ -584,8 +616,7 @@ console.log(info?.order_id)
                                 </p>
                               </td>
                             </tr>
-                           
-                           
+
                             <tr>
                               <td>
                                 <p class="client_para1">ETD:</p>
@@ -593,7 +624,7 @@ console.log(info?.order_id)
                               <td>
                                 <p class="client_para1">
                                   {new Date(info?.ETA).toLocaleDateString(
-                                    "en-GB"
+                                    "en-GB",
                                   )}
                                 </p>
                               </td>
@@ -654,7 +685,7 @@ console.log(info?.order_id)
                             </tr>
                             <tr>
                               <td>
-                                <p className="ship_hd">POD Information</p>
+                                <p className="ship_hd fw-600" style={{ fontWeight: 'bold' }}>POD Information</p>
                               </td>
                             </tr>
                             <tr>
@@ -1463,50 +1494,52 @@ console.log(info?.order_id)
                   </div>
                 </div>
               </div> */}
- <div className="col-md-4">
-  <div className="card desti_card">
-    <div className="card-body mb-3">
-      {Object.keys(documents).map((groupName, groupIndex) => (
-        <div key={groupIndex} className="mb-2">
-          <label>{groupName} :</label>
-          {documents[groupName]?.map((item, index) => (
-            <div key={item.id} className="d-flex align-items-center">
-              <a
-                href={`${process.env.REACT_APP_BASE_URLdocument}${item?.document}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="view_docu ms-2"
-              >
-                View Document
-              </a>
-              <DeleteIcon
-                onClick={() => deleteapi(item.id)}
-                className="text-danger ms-2"
-                style={{ cursor: "pointer" }}
-              />
-            </div>
-          ))}
-        </div>
-      ))}
+              <div className="col-md-4">
+                <div className="card desti_card">
+                  <div className="card-body mb-3">
+                    {Object.keys(documents).map((groupName, groupIndex) => (
+                      <div key={groupIndex} className="mb-2">
+                        <label>{groupName} :</label>
+                        {documents[groupName]?.map((item, index) => (
+                          <div
+                            key={item.id}
+                            className="d-flex align-items-center"
+                          >
+                            <a
+                              href={`${process.env.REACT_APP_BASE_URLdocument}${item?.document}`}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="view_docu ms-2"
+                            >
+                              View Document
+                            </a>
+                            <DeleteIcon
+                              onClick={() => deleteapi(item.id)}
+                              className="text-danger ms-2"
+                              style={{ cursor: "pointer" }}
+                            />
+                          </div>
+                        ))}
+                      </div>
+                    ))}
 
-      {/* Quotation (separate because it's not part of groups) */}
-      <div className="mb-2">
-        <label>Attach Quotation :</label>
-        {info.attachment_Estimate && (
-          <a
-            href={`${process.env.REACT_APP_BASE_URLdocument}${info?.attachment_Estimate}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="view_docu ms-2"
-          >
-            View Document
-          </a>
-        )}
-      </div>
-    </div>
-  </div>
-</div>
-
+                    {/* Quotation (separate because it's not part of groups) */}
+                    <div className="mb-2">
+                      <label>Attach Quotation :</label>
+                      {info.attachment_Estimate && (
+                        <a
+                          href={`${process.env.REACT_APP_BASE_URLdocument}${info?.attachment_Estimate}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="view_docu ms-2"
+                        >
+                          View Document
+                        </a>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>

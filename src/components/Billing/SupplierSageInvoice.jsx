@@ -87,50 +87,8 @@ export default function SupplierSageInvoice() {
   };
 
   const handleCopyInvoice = async (item) => {
-    const copyPayload = {
-      supplier_invoice_id: item.supplier_invoice_id,
-      shipment_id: item.shipment_id,
-      supplier_id: item.supplier_id,
-    };
-
-    console.log("[Copy Invoice] 1. Row item (list se):", item);
-    console.log("[Copy Invoice] 2. API request payload:", copyPayload);
-
-    try {
-      const response = await axios.post(
-        `${process.env.REACT_APP_BASE_URL}copySupplierInvoice`,
-        copyPayload
-      );
-
-      console.log("[Copy Invoice] 3. Full API response:", response);
-      console.log("[Copy Invoice] 4. response.data:", response.data);
-      console.log("[Copy Invoice] 5. response.data.data:", response.data?.data);
-
-      const copyData = response.data?.data ?? response.data;
-
-      console.log("[Copy Invoice] 6. copyData (navigate state):", copyData);
-
-      if (!copyData) {
-        console.warn("[Copy Invoice] copyData empty — kuch return nahi hua");
-        toast.error("No data returned from copy invoice");
-        return;
-      }
-
-      toast.info("Copied data opening on add page. Save only when you click Get Quote.");
-      navigate("/Admin/addsupplierinvoice", {
-        state: {
-          copyInvoiceData: copyData,
-          isCopyPreview: true,
-        },
-      });
-    } catch (error) {
-      console.error("[Copy Invoice] API error:", error);
-      console.error("[Copy Invoice] error.response:", error?.response);
-      console.error("[Copy Invoice] error.response.data:", error?.response?.data);
-      toast.error(
-        error?.response?.data?.message || "Failed to copy invoice"
-      );
-    }
+    console.log(item)
+      navigate("/Admin/addsupplierinvoice",{state:{copyInvoiceData:item}})
   };
   return (
     <div className="wpWrapper">
@@ -187,16 +145,16 @@ export default function SupplierSageInvoice() {
                             <BsThreeDotsVertical />
                           </button>
                           <ul className="dropdown-menu">
-                            <li>
+                            {/* <li>
                               <button type="button" className="dropdown-item">
                                 View
                               </button>
-                            </li>
-                            <li>
+                            </li> */}
+                            {/* <li>
                               <button type="button" className="dropdown-item">
                                 Print
                               </button>
-                            </li>
+                            </li> */}
                             <li>
                               <button
                                 type="button"
@@ -226,11 +184,11 @@ export default function SupplierSageInvoice() {
                                 Delete
                               </button>
                             </li>
-                            <li>
+                            {/* <li>
                               <button type="button" className="dropdown-item">
                                 Create Supplier Adjust
                               </button>
-                            </li>
+                            </li> */}
                           </ul>
                         </div>
                       </td>

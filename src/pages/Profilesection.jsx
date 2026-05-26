@@ -4,9 +4,27 @@ import { AiFillDelete } from "react-icons/ai";
 import { toast, ToastContainer } from "react-toastify";
 import Swal from "sweetalert2";
 import { Box, Button, Modal } from "@mui/material";
-import { FaEdit } from "react-icons/fa";
 import CloseIcon from "@mui/icons-material/Close";
+import Calendar from "react-calendar";
+import "react-calendar/dist/Calendar.css";
+
 const pageSize = 10;
+
+const toDateKey = (date) => {
+  const y = date.getFullYear();
+  const m = String(date.getMonth() + 1).padStart(2, "0");
+  const d = String(date.getDate()).padStart(2, "0");
+  return `${y}-${m}-${d}`;
+};
+
+const parseInputDate = (value) => {
+  if (!value) return null;
+  const parts = value.split("T")[0].split("-").map(Number);
+  if (parts.length !== 3 || parts.some(Number.isNaN)) return null;
+  return new Date(parts[0], parts[1] - 1, parts[2]);
+};
+
+const formatDateForInput = (date) => toDateKey(date);
 export default function Profilesection() {
   const [currentPage, setCurrentPage] = useState(1);
   const [data, setData] = useState([]);
@@ -17,13 +35,11 @@ export default function Profilesection() {
   const [isModalOpen2, setIsModalOpen2] = useState(false);
   const [pagenationData, setPagenationData] = useState(1);
   const [input, setInput] = useState({
-    name: "",
-    email: "",
-    phone: "",
-    address: "",
-    contact: "",
-    country_id: "",
+    leave_from: "",
+    leave_to: "",
+    reason: "",
   });
+  const [calendarDate, setCalendarDate] = useState(new Date());
   const [inputdata, setInputdata] = useState({
     id: "",
     name: "",
@@ -63,23 +79,81 @@ export default function Profilesection() {
   // ---------------- HANDLE INPUT (ADD) ----------------
   const handlechange = (e) => {
     const { name, value } = e.target;
-    setInput((prev) => ({ ...prev, [name]: value }));
+    setInput((prev) => {
+      const next = { ...prev, [name]: value };
+      if (name === "leave_from" && prev.leave_to && value > prev.leave_to) {
+        next.leave_to = value;
+      }
+      return next;
+    });
+  };
+
+  const openLeaveModal = () => {
+    setInput({ leave_from: "", leave_to: "", reason: "" });
+    setCalendarDate(new Date());
+    setIsModalOpen(true);
+  };
+
+  const closeLeaveModal = () => {
+    setIsModalOpen(false);
+    setInput({ leave_from: "", leave_to: "", reason: "" });
+  };
+
+  const handleCalendarDayClick = (date) => {
+    const clicked = formatDateForInput(date);
+
+    setInput((prev) => {
+      if (!prev.leave_from || (prev.leave_from && prev.leave_to)) {
+        return { ...prev, leave_from: clicked, leave_to: "" };
+      }
+      if (clicked < prev.leave_from) {
+        return { ...prev, leave_from: clicked, leave_to: prev.leave_from };
+      }
+      return { ...prev, leave_to: clicked };
+    });
+  };
+
+  const leaveTileClassName = ({ date, view }) => {
+    if (view !== "month") return null;
+
+    const from = parseInputDate(input.leave_from);
+    const to = parseInputDate(input.leave_to);
+    if (!from) return null;
+
+    const day = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+    const end = to || from;
+
+    if (day >= from && day <= end) {
+      const key = toDateKey(day);
+      if (key === toDateKey(from)) return "highlight leave-range-start";
+      if (to && key === toDateKey(to)) return "highlight leave-range-end";
+      return "highlight leave-range-between";
+    }
+    return null;
   };
   // ---------------- ADD SUPPLIER ----------------
   const handleAddSupplier = () => {
-    const data = {
-        staff_id:localstorageData.id,
-      leave_from: input.leave_from,
-       leave_to: input.leave_to,
-        reason: input.reason
+    if (!input.leave_from || !input.leave_to) {
+      toast.error("Please select leave from and leave to dates");
+      return;
+    }
+    if (!input.reason?.trim()) {
+      toast.error("Please enter reason for leave");
+      return;
+    }
 
+    const data = {
+      staff_id: localstorageData.id,
+      leave_from: input.leave_from,
+      leave_to: input.leave_to,
+      reason: input.reason,
     };
 
     axios
       .post(`${process.env.REACT_APP_BASE_URL}applyStaffLeave`, data)
       .then((res) => {
-        toast.success(res.data.message || "Add Leave Success Fully successfully!");
-        setIsModalOpen(false);
+        toast.success(res.data.message || "Leave added successfully!");
+        closeLeaveModal();
         getdata();
       })
       .catch((error) => {
@@ -209,7 +283,7 @@ const formdata={
                 />
                 <button
                   className="btn btn-primary ms-2"
-                  onClick={() => setIsModalOpen(true)}
+                  onClick={openLeaveModal}
                 >
                   Add Leave
                 </button>
@@ -297,43 +371,66 @@ const formdata={
         </div>
         {/* ---------------- ADD SUPPLIER MODAL ---------------- */}
         {isModalOpen && (
-          <div className="custom-modal">
-            <div className="custom-modal-content">
+          <div className="custom-modal leave-modal-overlay">
+            <div className="custom-modal-content leave-modal-content">
               <div className="custom-modal-header">
                 <h5>Add Leave</h5>
-                <button
-                  className="btn-close"
-                  onClick={() => setIsModalOpen(false)}
-                >
+                <button className="btn-close" onClick={closeLeaveModal}>
                   <CloseIcon />
                 </button>
               </div>
               <div className="custom-modal-body">
-                <label>Leave From</label>
-                <input
-                  type="date"
-                  className="form-control mb-2"
-                  name="leave_from"
-                  onChange={handlechange}
+                {/* <p className="leave-calendar-hint text-muted small mb-2">
+                  Click a start date, then an end date on the calendar. You can
+                  also edit dates manually below.
+                </p> */}
+                <Calendar
+                  className="leave-picker-calendar w-100"
+                  value={calendarDate}
+                  onChange={setCalendarDate}
+                  onClickDay={handleCalendarDayClick}
+                  tileClassName={leaveTileClassName}
+                  minDate={new Date()}
                 />
-                <label>Leave To</label>
-                <input
-                  type="date"
-                  className="form-control mb-2"
-                  name="leave_to"
-                  onChange={handlechange}
-                />
-                <label>Reason</label>
+                <div className="row mt-3 g-2 leave-modal-dates">
+                  <div className="col-12 col-sm-6">
+                    <label>Leave From</label>
+                    <input
+                      type="date"
+                      className="form-control"
+                      name="leave_from"
+                      value={input.leave_from}
+                      onChange={handlechange}
+                    />
+                  </div>
+                  <div className="col-12 col-sm-6">
+                    <label>Leave To</label>
+                    <input
+                      type="date"
+                      className="form-control"
+                      name="leave_to"
+                      value={input.leave_to}
+                      min={input.leave_from || undefined}
+                      onChange={handlechange}
+                    />
+                  </div>
+                </div>
+                <label className="mt-3">Reason</label>
                 <input
                   type="text"
-                  className="form-control mb-2"
+                  className="form-control"
                   name="reason"
+                  value={input.reason}
                   placeholder="Reason for leave"
                   onChange={handlechange}
                 />
-            </div>
-              <div className="custom-modal-footer">
-                <button className="btn btn-primary" onClick={handleAddSupplier}>
+              </div>
+              <div className="custom-modal-footer leave-modal-footer">
+                <button
+                  type="button"
+                  className="btn btn-primary leave-modal-submit"
+                  onClick={handleAddSupplier}
+                >
                   Add Leave
                 </button>
               </div>

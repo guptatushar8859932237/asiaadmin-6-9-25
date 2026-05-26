@@ -27,7 +27,6 @@ import { Autocomplete } from "@mui/material";
 import PictureAsPdfIcon from "@mui/icons-material/PictureAsPdf";
 import CloseIcon from "@mui/icons-material/Close";
 import Swal from "sweetalert2";
-// import Select from "react-select";
 const pageSize = 10;
 const style1 = {
   position: "absolute",

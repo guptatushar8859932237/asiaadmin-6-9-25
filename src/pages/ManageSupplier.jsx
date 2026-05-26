@@ -3,10 +3,34 @@ import React, { useEffect, useState } from "react";
 import { AiFillDelete } from "react-icons/ai";
 import { toast, ToastContainer } from "react-toastify";
 import Swal from "sweetalert2";
-import { Box, Button, Modal } from "@mui/material";
 import { FaEdit } from "react-icons/fa";
 import CloseIcon from "@mui/icons-material/Close";
 const pageSize = 10;
+const SERVICE_TYPES = [
+  { value: "all", label: "All" },
+  { value: "shipping", label: "Shipping" },
+  { value: "airfreight", label: "Airfreight" },
+  { value: "seafreight", label: "Seafreight" },
+  { value: "roadfreight", label: "Roadfreight" },
+  { value: "courier", label: "Courier" },
+  { value: "customs_clearing", label: "Customs Clearing" },
+  { value: "warehousing", label: "Warehousing" },
+  { value: "consulting", label: "Consulting" },
+  { value: "handling_unpacking", label: "Handling & Unpacking" },
+];
+const emptySupplierForm = {
+  supplier_email: "",
+  supplier_name: "",
+  supplier_phone: "",
+  supplier_country: "",
+  country_code: "",
+  password: "",
+  user_type: "",
+  company_name: "",
+  address: "",
+  country_based: "",
+  service_type: "",
+};
 export default function ManageSupplier() {
   const [currentPage, setCurrentPage] = useState(1);
   const [data, setData] = useState([]);
@@ -16,27 +40,12 @@ export default function ManageSupplier() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isModalOpen2, setIsModalOpen2] = useState(false);
   const [pagenationData, setPagenationData] = useState(1);
-
-  const [input, setInput] = useState({
-    supplier_email: "",
-    supplier_name: "",
-    supplier_phone: "",
-    supplier_country: "",
-    country_code: "",
-    password: "",
-  });
-
+  const [input, setInput] = useState({ ...emptySupplierForm });
   const [inputdata, setInputdata] = useState({
+    ...emptySupplierForm,
     supplier_id: "",
-    supplier_email: "",
-    supplier_name: "",
-    supplier_phone: "",
-    supplier_country: "",
-    country_code: "",
-    password: "",
-    profile: null, // only for update
+    profile: null,
   });
-
   // ---------------- FETCH DATA ----------------
   const getdata = async (page = 1, search = "") => {
     try {
@@ -83,6 +92,18 @@ export default function ManageSupplier() {
   };
 
   // ---------------- ADD SUPPLIER ----------------
+  const openAddModal = () => {
+    setInput({ ...emptySupplierForm });
+    setIsModalOpen(true);
+  };
+
+  const closeAddModal = () => {
+    setIsModalOpen(false);
+    setInput({ ...emptySupplierForm });
+  };
+  const closeEditModal = () => {
+    setIsModalOpen2(false);
+  };
   const handleAddSupplier = () => {
     const data = {
       supplier_email: input.supplier_email,
@@ -91,14 +112,17 @@ export default function ManageSupplier() {
       country: input.supplier_country,
       password: input.password,
       user_type: input.user_type,
-      country_code : input.country_code
+      country_code: input.country_code,
+      company_name: input.company_name,
+      address: input.address,
+      country_based: input.country_based,
+      service_type: input.service_type,
     };
-
     axios
       .post(`${process.env.REACT_APP_BASE_URL}add-supplier`, data)
       .then((res) => {
         toast.success(res.data.message || "Supplier added successfully!");
-        setIsModalOpen(false);
+        closeAddModal();
         getdata();
       })
       .catch((error) => {
@@ -144,13 +168,20 @@ export default function ManageSupplier() {
     if (usr) {
       setInputdata({
         supplier_id: usr.id,
-        supplier_email: usr.email,
-        supplier_name: usr.name,
-        supplier_phone: usr.phone_no,
-        supplier_country: usr.country,
-           country_code: usr.country_code,
+        supplier_email: usr.email || "",
+        supplier_name: usr.name || "",
+        supplier_phone: usr.phone_no || "",
+        supplier_country:
+          usr.country != null ? String(usr.country) : "",
+        country_code: resolveCountryCode(usr.country_code),
         password: "",
         profile: null,
+        user_type: usr.user_type || "",
+        company_name: usr.company_name || "",
+        address: usr.address || "",
+        country_based:
+          usr.country_based != null ? String(usr.country_based) : "",
+        service_type: usr.service_type || "",
       });
     }
     setIsModalOpen2(true);
@@ -176,6 +207,10 @@ export default function ManageSupplier() {
     formdata.append("phone_no", inputdata.supplier_phone);
     formdata.append("country", inputdata.supplier_country);
     formdata.append("country_code", inputdata.country_code);
+    formdata.append("company_name", inputdata.company_name);
+    formdata.append("address", inputdata.address);
+    formdata.append("country_based", inputdata.country_based);
+    formdata.append("service_type", inputdata.service_type);
 
     if (inputdata.password) {
       formdata.append("password", inputdata.password);
@@ -191,7 +226,7 @@ export default function ManageSupplier() {
       })
       .then((res) => {
         toast.success(res.data.message);
-        setIsModalOpen2(false);
+        closeEditModal();
         getdata();
       })
       .catch((err) => {
@@ -220,7 +255,23 @@ export default function ManageSupplier() {
     setSearchQuery(value);
     setCurrentPage(1);
 
-    getdata(1, value); // 🔥 API search
+    getdata(1, value);
+  };
+
+  const resolveCountryCode = (code) => {
+    if (code === "" || code == null) return "";
+    const matchByPhone = countruies.find(
+      (c) => String(c.phonecode) === String(code)
+    );
+    if (matchByPhone) return String(matchByPhone.phonecode);
+    const matchById = countruies.find((c) => String(c.id) === String(code));
+    return matchById ? String(matchById.phonecode) : String(code);
+  };
+
+  const getCountryNameById = (id) => {
+    if (!id) return "-";
+    const country = countruies.find((c) => String(c.id) === String(id));
+    return country?.name || id;
   };
 
   // const handleCountryChange = (e) => {
@@ -235,19 +286,189 @@ export default function ManageSupplier() {
   //   }));
   // };
 
-  // const handleEditCountryChange = (e) => {
-  //   const countryId = e.target.value;
+  const getServiceLabel = (value) =>
+    SERVICE_TYPES.find((s) => s.value === value)?.label || value || "-";
 
-  //   const selectedCountry = countruies.find((c) => c.id === Number(countryId));
+  const Field = ({ label, children, col = "col-12 col-md-6" }) => (
+    <div className={`supplier-field ${col}`}>
+      <label className="supplier-field-label">{label}</label>
+      {children}
+    </div>
+  );
 
-  //   setInputdata((prev) => ({
-  //     ...prev,
-  //     supplier_country: countryId,
-  //     supplier_phone: selectedCountry
-  //       ? `+${selectedCountry.phonecode} `
-  //       : prev.supplier_phone,
-  //   }));
-  // };
+  const renderSupplierFields = (values, onChange, isEdit = false) => (
+    <div className="supplier-form-fields">
+      <div className="supplier-form-section">
+        <p className="supplier-form-section-title">Company Details</p>
+        <div className="row supplier-form-row">
+          <Field label="Company Name">
+            <input
+              type="text"
+              className="form-control"
+              name="company_name"
+              placeholder="Company name"
+              value={values.company_name || ""}
+              onChange={onChange}
+            />
+          </Field>
+          <Field label="Type of Service">
+            <select
+              name="service_type"
+              className="form-control"
+              value={values.service_type || ""}
+              onChange={onChange}
+            >
+              <option value="">Select service type</option>
+              {SERVICE_TYPES.map((item) => (
+                <option key={item.value} value={item.value}>
+                  {item.label}
+                </option>
+              ))}
+            </select>
+          </Field>
+          <Field label="Address" col="col-12">
+            <input
+              type="text"
+              className="form-control"
+              name="address"
+              placeholder="Full address"
+              value={values.address || ""}
+              onChange={onChange}
+            />
+          </Field>
+          <Field label="Country Based">
+            <select
+              name="country_based"
+              className="form-control"
+              value={values.country_based || ""}
+              onChange={onChange}
+            >
+              <option value="">Select country</option>
+              {countruies?.map((item) => (
+                <option key={`based-${item.id}`} value={item.id}>
+                  {item.name}
+                </option>
+              ))}
+            </select>
+          </Field>
+          <Field label="Country of Origin">
+            <select
+              name="supplier_country"
+              className="form-control"
+              value={values.supplier_country || ""}
+              onChange={onChange}
+            >
+              <option value="">Select</option>
+              {countruies?.map((item) => (
+                <option key={item.id} value={item.id}>
+                  {item.name}
+                </option>
+              ))}
+            </select>
+          </Field>
+        </div>
+      </div>
+
+      <div className="supplier-form-section">
+        <p className="supplier-form-section-title">Account Details</p>
+        <div className="row supplier-form-row">
+          <Field label="Email">
+            <input
+              type="email"
+              className="form-control"
+              name="supplier_email"
+              placeholder="test@example.com"
+              value={values.supplier_email || ""}
+              onChange={onChange}
+            />
+          </Field>
+          <Field label="Full Name">
+            <input
+              type="text"
+              className="form-control"
+              name="supplier_name"
+              placeholder="Supplier name"
+              value={values.supplier_name || ""}
+              onChange={onChange}
+            />
+          </Field>
+          <Field label="Country Code" col="col-12 col-sm-4">
+            <select
+              name="country_code"
+              className="form-control"
+              value={values.country_code || ""}
+              onChange={onChange}
+            >
+              <option value="">Select</option>
+              {countruies?.map((item) => (
+                <option key={`code-${item.id}`} value={item.phonecode}>
+                  +{item.phonecode} {item.shortname}
+                </option>
+              ))}
+            </select>
+          </Field>
+          <Field label="Phone Number" col="col-12 col-sm-8">
+            <input
+              type="text"
+              className="form-control"
+              name="supplier_phone"
+              placeholder="Phone number"
+              value={values.supplier_phone || ""}
+              onChange={onChange}
+            />
+          </Field>
+          {!isEdit && (
+            <>
+              <Field label="Register as">
+                <select
+                  name="user_type"
+                  className="form-control"
+                  value={values.user_type || ""}
+                  onChange={onChange}
+                >
+                  <option value="">Select...</option>
+                  <option value="1">Supplier</option>
+                  <option value="2">Warehouse</option>
+                </select>
+              </Field>
+              <Field label="Password">
+                <input
+                  type="password"
+                  className="form-control"
+                  name="password"
+                  value={values.password || ""}
+                  onChange={onChange}
+                />
+              </Field>
+            </>
+          )}
+          {isEdit && (
+            <>
+              <Field label="Profile Image">
+                <input
+                  type="file"
+                  className="form-control"
+                  name="profile"
+                  onChange={onChange}
+                />
+              </Field>
+              <Field label="Password (optional)">
+                <input
+                  type="password"
+                  className="form-control"
+                  name="password"
+                  value={values.password || ""}
+                  onChange={onChange}
+                  placeholder="Leave blank to keep current"
+                />
+              </Field>
+            </>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+
   return (
     <>
       <>
@@ -266,7 +487,7 @@ export default function ManageSupplier() {
                 />
                 <button
                   className="btn btn-primary ms-2"
-                  onClick={() => setIsModalOpen(true)}
+                  onClick={openAddModal}
                 >
                   Add Supplier
                 </button>
@@ -284,11 +505,12 @@ export default function ManageSupplier() {
                   <thead>
                     <tr>
                       <th>Sr.No.</th>
+                      {/* <th>Company</th> */}
                       <th>Full Name</th>
                       <th>Email</th>
                       <th>Phone</th>
-                      <th>Country</th>
-                      {/* <th>Profile</th> */}
+                      {/* <th>Service Type</th> */}
+                       <th>Country</th>
                       <th>Action</th>
                     </tr>
                   </thead>
@@ -296,9 +518,15 @@ export default function ManageSupplier() {
                     {data.map((item, index) => (
                       <tr key={index}>
                         <td>{index + 1}</td>
+                        {/* <td>{item.company_name || "-"}</td> */}
                         <td>{item.name}</td>
                         <td>{item.email}</td>
                         <td>{item.phone_no}</td>
+                        {/* <td>{getServiceLabel(item.service_type)}</td>
+                        <td>
+                          {item.country_based_name ||
+                            getCountryNameById(item.country_based)}
+                        </td> */}
                         <td>{item.country_name}</td>
                         <td>
                           <FaEdit
@@ -353,240 +581,54 @@ export default function ManageSupplier() {
         </div>
         {/* ---------------- ADD SUPPLIER MODAL ---------------- */}
         {isModalOpen && (
-          <div className="custom-modal">
-            <div className="custom-modal-content">
+          <div className="custom-modal supplier-modal-overlay">
+            <div className="custom-modal-content supplier-modal-content">
               <div className="custom-modal-header">
                 <h5>Add Supplier</h5>
-                <button
-                  className="btn-close"
-                  onClick={() => setIsModalOpen(false)}
-                >
+                <button className="btn-close" onClick={closeAddModal}>
                   <CloseIcon />
                 </button>
               </div>
               <div className="custom-modal-body">
-                <label>Email</label>
-                <input
-                  type="email"
-                  className="form-control mb-2"
-                  name="supplier_email"
-                  placeholder="test@example.com"
-                  onChange={handlechange}
-                />
-                <label>Full Name</label>
-                <input
-                  type="text"
-                  className="form-control mb-2"
-                  name="supplier_name"
-                  placeholder="Supplier Name"
-                  onChange={handlechange}
-                />
-                <div className="d-flex col-12">
-                  <div className="col-4">
-   <label>Country Code</label>
-                <select
-                  name="country_code"
-                  onChange={handlechange}
-                  className="form-control mb-2"
-                >
-                  <option>Select</option>
-                  {countruies &&
-                    countruies.length > 0 &&
-                    countruies.map((item, index) => {
-                      return (
-                        <>
-                          <option key={index} value={item.phonecode}>
-                            +{item.phonecode} {item.shortname}
-                          </option>
-                        </>
-                      );
-                    })}
-                </select>
-                  </div>
-                  <div className="col-8">
-                    <label>Phone Number</label>
-                <input
-                  type="text"
-                  className="form-control mb-2"
-                  name="supplier_phone"
-                  placeholder="Phone Number"
-                  value={input.supplier_phone}
-                  onChange={handlechange}
-                />
-                  </div>
-                </div>
-              
-                
-                <label>Country of Origin</label>
-                <select
-                  name="supplier_country"
-                  onChange={handlechange}
-                  className="form-control mb-2"
-                >
-                  <option>Select</option>
-                  {countruies &&
-                    countruies.length > 0 &&
-                    countruies.map((item, index) => {
-                      return (
-                        <>
-                          <option key={index} value={item.id}>
-                            {item.name}
-                          </option>
-                        </>
-                      );
-                    })}
-                </select>
-                <label>Register as</label>
-                <select
-                  name="user_type"
-                  onChange={handlechange}
-                  className="form-control mb-2"
-                >
-                  <option>select...</option>
-                  <option value="1">Supplier</option>
-                  <option value="2">Warehouse</option>
-                </select>
-                <label>Password</label>
-                <input
-                  type="password"
-                  className="form-control mb-2"
-                  name="password"
-                  onChange={handlechange}
-                />
+                {renderSupplierFields(input, handlechange, false)}
               </div>
-              <div className="custom-modal-footer">
-                <button className="btn btn-primary" onClick={handleAddSupplier}>
+              <div className="custom-modal-footer supplier-modal-footer">
+                <button
+                  type="button"
+                  className="btn btn-primary supplier-modal-submit"
+                  onClick={handleAddSupplier}
+                >
                   Add Supplier
                 </button>
               </div>
             </div>
           </div>
         )}
-        <Modal open={isModalOpen2} onClose={() => setIsModalOpen2(false)}>
-          <Box
-            sx={{
-              position: "absolute",
-              top: "50%",
-              left: "50%",
-              transform: "translate(-50%, -50%)",
-              bgcolor: "white",
-              p: 3,
-              borderRadius: 2,
-              width: "30%",
-            }}
-          >
-            <div className="modal-header">
-              <h4>Edit Supplier</h4>
-              <button
-                className="btn-close"
-                onClick={() => setIsModalOpen2(false)}
-              >
-                <CloseIcon />
-              </button>
+
+        {isModalOpen2 && (
+          <div className="custom-modal supplier-modal-overlay">
+            <div className="custom-modal-content supplier-modal-content">
+              <div className="custom-modal-header">
+                <h5>Edit Supplier</h5>
+                <button className="btn-close" onClick={closeEditModal}>
+                  <CloseIcon />
+                </button>
+              </div>
+              <div className="custom-modal-body">
+                {renderSupplierFields(inputdata, handleupdateapi, true)}
+              </div>
+              <div className="custom-modal-footer supplier-modal-footer">
+                <button
+                  type="button"
+                  className="btn btn-primary supplier-modal-submit"
+                  onClick={postData1234}
+                >
+                  Update Supplier
+                </button>
+              </div>
             </div>
-            <label>Email</label>
-            <input
-              type="email"
-              className="form-control mb-2"
-              name="supplier_email"
-              value={inputdata.supplier_email}
-              onChange={handleupdateapi}
-            />
-            <label>Name</label>
-            <input
-              type="text"
-              className="form-control mb-2"
-              name="supplier_name"
-              value={inputdata.supplier_name}
-              onChange={handleupdateapi}
-            />
-            <div className="d-flex col-12">
-     <div className="col-4">
- <label>Country Code</label>
-            <select
-              name="country_code"
-              value={inputdata.country_code}
-              onChange={handleupdateapi}
-              className="form-control mb-2"
-            >
-              <option>Select</option>
-              {countruies &&
-                countruies.length > 0 &&
-                countruies.map((item, index) => {
-                  console.log(item)
-                  return (
-                    <>
-                      <option key={index} value={item.id}>
-                        +{item.phonecode} {item.shortname}
-                      </option>
-                    </>
-                  );
-                })}
-            </select>
-                </div>
-
-
-         
-        <div className="col-8">
-    <label>Phone</label>
-            <input
-              type="text"
-              className="form-control mb-2"
-              name="supplier_phone"
-              value={inputdata.supplier_phone}
-              onChange={handleupdateapi}
-            />
-        </div>
-           </div>
-            {/* <label>Country</label>
-              <input
-                type="text"
-                className="form-control mb-2"
-                name="supplier_country"
-                value={inputdata.supplier_country}
-                onChange={handleupdateapi}
-              /> */}
-             
- <label>Country of Origin</label>
-            <select
-              name="supplier_country"
-              value={inputdata.supplier_country}
-              onChange={handleupdateapi}
-              className="form-control mb-2"
-            >
-              <option>Select</option>
-              {countruies &&
-                countruies.length > 0 &&
-                countruies.map((item, index) => {
-                  return (
-                    <>
-                      <option key={index} value={item.id}>
-                        {item.name}
-                      </option>
-                    </>
-                  );
-                })}
-            </select>
-            <label>Profile Image</label>
-            <input
-              type="file"
-              className="form-control mb-3"
-              name="profile"
-              onChange={handleupdateapi}
-            />
-
-            <label>Password</label>
-            <input
-              type="password"
-              className="form-control mb-2"
-              name="password"
-              onChange={handleupdateapi}
-            />
-            <Button variant="contained" fullWidth onClick={postData1234}>
-              Update Supplier
-            </Button>
-          </Box>
-        </Modal>
+          </div>
+        )}
         <ToastContainer />
       </>
     </>

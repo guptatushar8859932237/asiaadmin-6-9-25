@@ -40,11 +40,77 @@ export default function Addsupplierinvoice() {
   const [selected, setSelected] = useState([]); // selected IDs
   const [open, setOpen] = useState(false);
   const navigate = useNavigate();
-  const getdata122 = location?.state?.data[0];
-  console.log(getdata122);
+  const getdata122 = location?.state?.data?.[0];
+  const copyInvoiceData = location?.state?.copyInvoiceData;
+  const isCopyPreview = Boolean(location?.state?.isCopyPreview && copyInvoiceData);
+
+  console.log("[Add Invoice] location.state:", location?.state);
+  console.log("[Add Invoice] copyInvoiceData:", copyInvoiceData);
+  console.log("[Add Invoice] isCopyPreview:", isCopyPreview);
+  console.log("[Add Invoice] getdata122:", getdata122);
+
   useEffect(() => {
+    if (isCopyPreview) return;
     getFreightDataById();
-  }, []);
+  }, [isCopyPreview]);
+
+  useEffect(() => {
+    if (!copyInvoiceData) {
+      console.log("[Add Invoice] copyInvoiceData nahi hai — normal add mode");
+      return;
+    }
+
+    console.log("[Add Invoice] copyInvoiceData mila:", copyInvoiceData);
+
+    const invoiceData =
+      copyInvoiceData?.data && typeof copyInvoiceData.data === "object"
+        ? copyInvoiceData.data
+        : copyInvoiceData;
+
+    console.log("[Add Invoice] invoiceData (parse ke baad):", invoiceData);
+
+    const {
+      supplier_invoice_id,
+      id,
+      invoice_id,
+      ...editableInvoice
+    } = invoiceData;
+
+    console.log("[Add Invoice] supplier_invoice_id (hata diya):", supplier_invoice_id);
+    console.log("[Add Invoice] id (hata diya):", id);
+    console.log("[Add Invoice] invoice_id (hata diya):", invoice_id);
+    console.log("[Add Invoice] editableInvoice (form state):", editableInvoice);
+    console.log("[Add Invoice] supplier_id:", editableInvoice.supplier_id);
+    console.log("[Add Invoice] shipment_id:", editableInvoice.shipment_id);
+    console.log("[Add Invoice] shipment object:", editableInvoice.shipment);
+
+    setFreight(editableInvoice);
+
+    if (
+      editableInvoice.supplier_id != null &&
+      editableInvoice.supplier_id !== ""
+    ) {
+      setSelectedSupplier(String(editableInvoice.supplier_id));
+      console.log("[Add Invoice] selectedSupplier set:", editableInvoice.supplier_id);
+    }
+
+    if (
+      editableInvoice.shipment_id != null &&
+      editableInvoice.shipment_id !== ""
+    ) {
+      setSelected(String(editableInvoice.shipment_id));
+      console.log("[Add Invoice] selected (shipment) set:", editableInvoice.shipment_id);
+    }
+
+    if (editableInvoice.shipment) {
+      setGetdata(editableInvoice.shipment);
+      console.log("[Add Invoice] getdata (shipment) set:", editableInvoice.shipment);
+    }
+
+    toast.info(
+      "Copied invoice loaded for review. Nothing saved yet — click Get Quote to add."
+    );
+  }, [copyInvoiceData]);
   const user = JSON.parse(localStorage.getItem("data123"));
   const localFreigtId = localStorage.getItem("freightid");
   console.log("Stored:", localStorage.getItem("freightid"));
@@ -885,6 +951,12 @@ export default function Addsupplierinvoice() {
     totalChangeRoeOrigin;
 
   const estimateCalculate = async () => {
+    console.log("[Add Invoice] Get Quote click — save API chalegi");
+    console.log("[Add Invoice] isCopyPreview:", isCopyPreview);
+    console.log("[Add Invoice] selectedSupplier:", selectedSupplier);
+    console.log("[Add Invoice] selected (shipment_id):", selected);
+    console.log("[Add Invoice] freight state:", freight);
+
     try {
 
 //         "/addEstimatSupplierInvoice"
@@ -896,7 +968,6 @@ export default function Addsupplierinvoice() {
  
 
       const payload = {
-       
   supplier_id: selectedSupplier,
   shipment_id: selected,
         origin_pick_up_cost: freight.origin_pick_up_cost,
@@ -1287,16 +1358,22 @@ export default function Addsupplierinvoice() {
           quote_estimate_id: getdata.quote_estimate_id || quotationID,
         }),
       };
+      console.log("[Add Invoice] addEstimatSupplierInvoice payload:", payload);
+      console.log("[Add Invoice] payload keys count:", Object.keys(payload).length);
+
       const response = await axios.post(
         `${process.env.REACT_APP_BASE_URL}addEstimatSupplierInvoice`,
         payload,
       );
+
+      console.log("[Add Invoice] add API response:", response.data);
+
       if (response.data.success === true) {
           setQuotationID(response.data.ID);
           toast.success(response.data.message);
           navigate("/Admin/Supplier_Invoice");
       } else {
-        console.log("some thing went wrong");
+        console.warn("[Add Invoice] add API success false:", response.data);
       }
     } catch (error) {
   console.log("Full Error =>", error);
@@ -1328,9 +1405,10 @@ export default function Addsupplierinvoice() {
       });
   };
   useEffect(() => {
+    if (isCopyPreview) return;
     supplier();
     supplierSelected();
-  }, []);
+  }, [isCopyPreview]);
   const handlepresss = (e) => {
     if (e.charCode < 42 || e.charCode > 57) {
       e.preventDefault();
@@ -1367,9 +1445,10 @@ export default function Addsupplierinvoice() {
     getsupplier();
   }, 1000);
   useEffect(() => {
+    if (isCopyPreview) return;
     getdataapi();
     getNewDataapi();
-  }, 1000);
+  }, [isCopyPreview]);
   const getsupplier = () => {
     axios
       .get(`${process.env.REACT_APP_BASE_URL}supplier-list`)
@@ -1628,6 +1707,11 @@ export default function Addsupplierinvoice() {
 
                       <h4 className="freight_hd mb-0">
                         Supplier Estimate Form
+                        {isCopyPreview && (
+                          <span className="badge bg-warning text-dark ms-2 small">
+                            Copy preview — not saved yet
+                          </span>
+                        )}
                       </h4>
                     </div>
                     <div className="d-flex gap-3 align-items-center blueText">

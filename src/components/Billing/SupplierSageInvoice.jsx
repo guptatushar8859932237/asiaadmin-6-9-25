@@ -5,6 +5,8 @@ import { FaEdit } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { BsThreeDotsVertical } from "react-icons/bs";
 import Swal from "sweetalert2";
+import { toast, ToastContainer } from "react-toastify";
+
 export default function SupplierSageInvoice() {
   const [data, setData] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
@@ -83,6 +85,53 @@ export default function SupplierSageInvoice() {
       state: { item },
     });
   };
+
+  const handleCopyInvoice = async (item) => {
+    const copyPayload = {
+      supplier_invoice_id: item.supplier_invoice_id,
+      shipment_id: item.shipment_id,
+      supplier_id: item.supplier_id,
+    };
+
+    console.log("[Copy Invoice] 1. Row item (list se):", item);
+    console.log("[Copy Invoice] 2. API request payload:", copyPayload);
+
+    try {
+      const response = await axios.post(
+        `${process.env.REACT_APP_BASE_URL}copySupplierInvoice`,
+        copyPayload
+      );
+
+      console.log("[Copy Invoice] 3. Full API response:", response);
+      console.log("[Copy Invoice] 4. response.data:", response.data);
+      console.log("[Copy Invoice] 5. response.data.data:", response.data?.data);
+
+      const copyData = response.data?.data ?? response.data;
+
+      console.log("[Copy Invoice] 6. copyData (navigate state):", copyData);
+
+      if (!copyData) {
+        console.warn("[Copy Invoice] copyData empty — kuch return nahi hua");
+        toast.error("No data returned from copy invoice");
+        return;
+      }
+
+      toast.info("Copied data opening on add page. Save only when you click Get Quote.");
+      navigate("/Admin/addsupplierinvoice", {
+        state: {
+          copyInvoiceData: copyData,
+          isCopyPreview: true,
+        },
+      });
+    } catch (error) {
+      console.error("[Copy Invoice] API error:", error);
+      console.error("[Copy Invoice] error.response:", error?.response);
+      console.error("[Copy Invoice] error.response.data:", error?.response?.data);
+      toast.error(
+        error?.response?.data?.message || "Failed to copy invoice"
+      );
+    }
+  };
   return (
     <div className="wpWrapper">
       <div className="container-fluid">
@@ -94,7 +143,7 @@ export default function SupplierSageInvoice() {
           Add New Invoice
         </button>
         <div className="table-responsive tableResFixed mt-4">
-          <table className="table table-striped tableICon">
+          <table className=" table-striped tableICon">
             <thead>
               <tr>
                 <th>Waybill</th>
@@ -128,52 +177,63 @@ export default function SupplierSageInvoice() {
                         {item.invoice_total}
                       </td>
                       <td>{item.status}</td>
-                      <div className="dropdown">
-  <button
-    className="btn btn-light border"
-    data-bs-toggle="dropdown"
-  >
-    <BsThreeDotsVertical />
-  </button>
-  <ul className="dropdown-menu">
-    <li>
-      <button className="dropdown-item">
-        View
-      </button>
-    </li>
-    <li>
-      <button className="dropdown-item">
-        Print
-      </button>
-    </li>
-    <li>
-      <button className="dropdown-item"   onClick={() => {
-                            AutoEditde(item);
-                          }}>
-        Edit
-      </button>
-    </li>
-    <li>
-      <button className="dropdown-item">
-        Copy
-      </button>
-    </li>
-    <li>
-      <button className="dropdown-item text-danger"  onClick={() => {
-                            deletewarehouse(
-                              item.supplier_invoice_id
-                            );
-                          }}>
-        Delete
-      </button>
-    </li>
-    <li>
-      <button className="dropdown-item">
-        Create Supplier Adjust
-      </button>
-    </li>
-  </ul>
-</div>
+                      <td>
+                        <div className="dropdown">
+                          <button
+                            type="button"
+                            className="btn btn-light border"
+                            data-bs-toggle="dropdown"
+                          >
+                            <BsThreeDotsVertical />
+                          </button>
+                          <ul className="dropdown-menu">
+                            <li>
+                              <button type="button" className="dropdown-item">
+                                View
+                              </button>
+                            </li>
+                            <li>
+                              <button type="button" className="dropdown-item">
+                                Print
+                              </button>
+                            </li>
+                            <li>
+                              <button
+                                type="button"
+                                className="dropdown-item"
+                                onClick={() => AutoEditde(item)}
+                              >
+                                Edit
+                              </button>
+                            </li>
+                            <li>
+                              <button
+                                type="button"
+                                className="dropdown-item"
+                                onClick={() => handleCopyInvoice(item)}
+                              >
+                                Copy
+                              </button>
+                            </li>
+                            <li>
+                              <button
+                                type="button"
+                                className="dropdown-item text-danger"
+                                onClick={() =>
+                                  deletewarehouse(item.supplier_invoice_id)
+                                }
+                              >
+                                Delete
+                              </button>
+                            </li>
+                            <li>
+                              <button type="button" className="dropdown-item">
+                                Create Supplier Adjust
+                              </button>
+                            </li>
+                          </ul>
+                        </div>
+                      </td>
                       {/* <td>
                         <AiFillDelete
                           onClick={() => {
@@ -244,6 +304,7 @@ export default function SupplierSageInvoice() {
           </div>
         </div>
       </div>
+      <ToastContainer />
     </div>
   );
 }

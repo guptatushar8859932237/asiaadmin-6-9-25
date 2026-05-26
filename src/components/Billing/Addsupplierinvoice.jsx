@@ -1,12 +1,3 @@
-// import React from 'react'
-
-// export default function Addsupplierinvoice() {
-//   return (
-//     <div>
-//       addsupplierinvoice
-//     </div>
-//   )
-// }
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -43,77 +34,31 @@ export default function Addsupplierinvoice() {
   const getdata122 = location?.state?.data?.[0];
   const copyInvoiceData = location?.state?.copyInvoiceData;
   const isCopyPreview = Boolean(location?.state?.isCopyPreview && copyInvoiceData);
-
   console.log("[Add Invoice] location.state:", location?.state);
   console.log("[Add Invoice] copyInvoiceData:", copyInvoiceData);
   console.log("[Add Invoice] isCopyPreview:", isCopyPreview);
   console.log("[Add Invoice] getdata122:", getdata122);
-
   useEffect(() => {
     if (isCopyPreview) return;
     getFreightDataById();
   }, [isCopyPreview]);
 
-  useEffect(() => {
-    if (!copyInvoiceData) {
-      console.log("[Add Invoice] copyInvoiceData nahi hai — normal add mode");
-      return;
-    }
 
-    console.log("[Add Invoice] copyInvoiceData mila:", copyInvoiceData);
 
-    const invoiceData =
-      copyInvoiceData?.data && typeof copyInvoiceData.data === "object"
-        ? copyInvoiceData.data
-        : copyInvoiceData;
 
-    console.log("[Add Invoice] invoiceData (parse ke baad):", invoiceData);
-
-    const {
-      supplier_invoice_id,
-      id,
-      invoice_id,
-      ...editableInvoice
-    } = invoiceData;
-
-    console.log("[Add Invoice] supplier_invoice_id (hata diya):", supplier_invoice_id);
-    console.log("[Add Invoice] id (hata diya):", id);
-    console.log("[Add Invoice] invoice_id (hata diya):", invoice_id);
-    console.log("[Add Invoice] editableInvoice (form state):", editableInvoice);
-    console.log("[Add Invoice] supplier_id:", editableInvoice.supplier_id);
-    console.log("[Add Invoice] shipment_id:", editableInvoice.shipment_id);
-    console.log("[Add Invoice] shipment object:", editableInvoice.shipment);
-
-    setFreight(editableInvoice);
-
-    if (
-      editableInvoice.supplier_id != null &&
-      editableInvoice.supplier_id !== ""
-    ) {
-      setSelectedSupplier(String(editableInvoice.supplier_id));
-      console.log("[Add Invoice] selectedSupplier set:", editableInvoice.supplier_id);
-    }
-
-    if (
-      editableInvoice.shipment_id != null &&
-      editableInvoice.shipment_id !== ""
-    ) {
-      setSelected(String(editableInvoice.shipment_id));
-      console.log("[Add Invoice] selected (shipment) set:", editableInvoice.shipment_id);
-    }
-
-    if (editableInvoice.shipment) {
-      setGetdata(editableInvoice.shipment);
-      console.log("[Add Invoice] getdata (shipment) set:", editableInvoice.shipment);
-    }
-
-    toast.info(
-      "Copied invoice loaded for review. Nothing saved yet — click Get Quote to add."
-    );
-  }, [copyInvoiceData]);
+    const usershipmentid =  location?.state?.copyInvoiceData?.shipment_id;
+    console.log("usershipmentid:", usershipmentid);
   const user = JSON.parse(localStorage.getItem("data123"));
   const localFreigtId = localStorage.getItem("freightid");
   console.log("Stored:", localStorage.getItem("freightid"));
+  
+useEffect(() => {
+  if (usershipmentid) {
+    apidataget(usershipmentid);
+  }
+}, [usershipmentid]);
+  
+  
   const getFreightDataById = async () => {
     const payload = {
       freight_id: localFreigtId,
@@ -124,7 +69,6 @@ export default function Addsupplierinvoice() {
         `${process.env.REACT_APP_BASE_URL}freight-list-byId`,
         payload,
       );
-
       if (response?.data?.data?.length > 0) {
         setGetdata(response.data.data[0]);
       }
@@ -202,7 +146,6 @@ export default function Addsupplierinvoice() {
   }
   const finalcfs1 = isNaN(finalValuecfs) ? "0.00" : finalValuecfs.toFixed(2);
   const finalvlaueocfs = finalcfs1 * parseInt(freight?.roe_origin_cfs_currency);
-
   const oridoc1 = parseFloat(freight.origin_pick_up_documantion_cost) || 0;
   // const oridoc2 = parseFloat(freight.origin_pick_up_documantation_fees) || 0;
   const oridoc2 = parseFloat(
@@ -224,7 +167,6 @@ export default function Addsupplierinvoice() {
   console.log(freight.roe_origin_doc_currency);
   console.log(parseInt(freight?.roe_origin_doc_currency));
   const finalvlaueodoc = finaldoc1 * parseInt(freight?.roe_origin_doc_currency);
-
   const oriforewarding1 =
     parseFloat(freight.origin_pick_up_forewarding_cost) || 0;
   const oriforewarding2 = parseFloat(
@@ -958,15 +900,6 @@ export default function Addsupplierinvoice() {
     console.log("[Add Invoice] freight state:", freight);
 
     try {
-
-//         "/addEstimatSupplierInvoice"
-// post
-// {
-//   "supplier_invoice_id": 1,
-//   "supplier_id": 12,
-//   "shipment_id": 45,
- 
-
       const payload = {
   supplier_id: selectedSupplier,
   shipment_id: selected,
@@ -1566,8 +1499,8 @@ export default function Addsupplierinvoice() {
   // };
   const downloadPDF = () => {
     setShowData(false); // PDF ke liye limited UI
-    // downloadPDF1()
-    navigate("/Admin/Downloadestimate", { state: { data: getdata122 } });
+    downloadPDF1()
+    navigate("/Admin/Downloadestimate", { state: { data: freight } });
   };
   const downloadPDF1 = () => {
     console.log(showData);
@@ -1597,10 +1530,15 @@ export default function Addsupplierinvoice() {
     console.log(value);
     setSelected(value);
   };
-  const apidataget = async () => {
-        const payload ={
-            shipment_id: selected
-        }
+  const apidataget = async (shipmentId) => {
+    console.log(shipmentId, usershipmentid);
+     const payload = {
+  shipment_id: Array.isArray(selected)
+    ? selected.length > 0
+      ? selected[0]
+      : shipmentId
+    : selected || shipmentId,
+};
     try {
       const response = await axios.post(
         `${process.env.REACT_APP_BASE_URL}GetShipmentDetails`,payload,
@@ -1609,11 +1547,17 @@ export default function Addsupplierinvoice() {
       setOpenmodal(false)
       setGetdata(response.data.shipment);
     } catch (error) {
-      console.log(error);
-      toast.error(error?.response?.data?.message || "Something went wrong");
-    }
+  console.log("Full Error:", error);
+  console.log("Error Response:", error?.response);
+  console.log("Error Data:", error?.response?.data);
+  toast.error(
+    error?.response?.data?.message ||
+    error?.response?.data?.error ||
+    error?.message ||
+    "Something went wrong"
+  );
+}
   };
-
 
   const setSelecSupplier = async (value) => {
     console.log(value); 
@@ -1715,8 +1659,10 @@ export default function Addsupplierinvoice() {
                       </h4>
                     </div>
                     <div className="d-flex gap-3 align-items-center blueText">
-                      {/* <i onClick={() => downloadPDF1()} class="fa fa-download" aria-hidden="true"></i>
-                      <i class="fa fa-address-card" onClick={() => downloadPDF()}></i> */}
+                      <i onClick={() => downloadPDF1()} class="fa fa-download" aria-hidden="true"></i>
+                     
+                      {/* <i class="fa fa-address-card" onClick={() => downloadPDF()}></i>  */}
+                      
                       <button onClick={andlemodaloen} className="blueBtn">
                         Select Shipment
                       </button>

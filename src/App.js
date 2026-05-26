@@ -177,7 +177,7 @@ export default function App() {
                 <Route index path="/Admin/messages" element={<Messages />} />
                 <Route index path="/Admin/user" element={<User />} />
                 <Route index path="/Admin/analytics" element={<Analytics />} />
-                <Route index path="/Admin/SupplierEstimation/:id" element={<SupplierEstimation />} />
+                <Route index path="/Admin/SupplierEstimation" element={<SupplierEstimation />} />
                 <Route
                   index
                   path="/Admin/file-manager"

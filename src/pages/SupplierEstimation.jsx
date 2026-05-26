@@ -11,7 +11,7 @@ export default function SupplierEstimation() {
   const pageSize = 10;
   const navigate = useNavigate();
   const location = useLocation();
-    const { id } = useParams();
+    const id  = location.state.data
 
   console.log(id);
   // console.log("location", location.state.data);

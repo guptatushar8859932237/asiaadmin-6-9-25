@@ -72,7 +72,7 @@ export default function Dashboard1() {
     admin_remark: "",
   });
   const [calendarDate, setCalendarDate] = useState(new Date());
-  const [hoverTooltip, setHoverTooltip] = useState(null)
+  const [hoverTooltip, setHoverTooltip] = useState(null);
   const leaveDatesMap = useMemo(() => buildLeaveDatesMap(data), [data]);
   const tileClassName = ({ date, view }) => {
     if (view !== "month") return null;
@@ -111,7 +111,7 @@ export default function Dashboard1() {
       };
       const response = await axios.post(
         `${process.env.REACT_APP_BASE_URL}getAllStaffLeaveRequests`,
-        payload
+        payload,
       );
       setData(response?.data?.data || []);
       setPagenationData(response?.data || {});
@@ -128,7 +128,7 @@ export default function Dashboard1() {
     return () => clearTimeout(delay);
   }, [currentPage, searchQuery]);
   const totalPages = Math.ceil(
-    (pagenationData?.total || 0) / (pagenationData?.limit || pageSize)
+    (pagenationData?.total || 0) / (pagenationData?.limit || pageSize),
   );
   const handleSearch = (e) => {
     setSearchQuery(e.target.value);
@@ -156,10 +156,7 @@ export default function Dashboard1() {
       admin_remark: inputdata.admin_remark,
     };
     axios
-      .post(
-        `${process.env.REACT_APP_BASE_URL}updateStaffLeaveStatus`,
-        payload
-      )
+      .post(`${process.env.REACT_APP_BASE_URL}updateStaffLeaveStatus`, payload)
       .then((res) => {
         toast.success(res.data.message);
         setIsModalOpen2(false);
@@ -168,6 +165,33 @@ export default function Dashboard1() {
       .catch((err) => {
         toast.error(err.response?.data?.message || "Update failed!");
       });
+  };
+  const addToGoogleCalendar = (leave) => {
+    const start = new Date(leave.leave_from);
+    const end = new Date(leave.leave_to);
+    end.setDate(end.getDate() + 1);
+    const formatDate = (date) => {
+      return date.toISOString().replace(/-|:|\.\d+/g, "");
+    };
+    const startDate = formatDate(start);
+    const endDate = formatDate(end);
+    const title = `${leave.staff_name} Leave`;
+    const details = `
+Reason: ${leave.reason || ""}
+Status: ${
+      leave.status === 1
+        ? "Approved"
+        : leave.status === 2
+          ? "Rejected"
+          : "Pending"
+    }
+`;
+    const url =
+      `https://calendar.google.com/calendar/render?action=TEMPLATE` +
+      `&text=${encodeURIComponent(title)}` +
+      `&dates=${startDate}/${endDate}` +
+      `&details=${encodeURIComponent(details)}`;
+    window.open(url, "_blank");
   };
   return (
     <>
@@ -218,18 +242,16 @@ export default function Dashboard1() {
                       {data.length > 0 ? (
                         data.map((item, index) => (
                           <tr key={index}>
-                            <td>
-                              {(currentPage - 1) * pageSize + index + 1}
-                            </td>
+                            <td>{(currentPage - 1) * pageSize + index + 1}</td>
                             <td>{item.staff_name}</td>
                             <td>
                               {new Date(item.leave_from).toLocaleDateString(
-                                "en-GB"
+                                "en-GB",
                               )}
                             </td>
                             <td>
                               {new Date(item.leave_to).toLocaleDateString(
-                                "en-GB"
+                                "en-GB",
                               )}
                             </td>
                             <td>{item.reason}</td>
@@ -237,10 +259,10 @@ export default function Dashboard1() {
                               {item.status === 0
                                 ? "Pending"
                                 : item.status === 1
-                                ? "Approved"
-                                : item.status === 2
-                                ? "Rejected"
-                                : "Pending"}
+                                  ? "Approved"
+                                  : item.status === 2
+                                    ? "Rejected"
+                                    : "Pending"}
                             </td>
                             <td>{item.admin_remark}</td>
                             <td>
@@ -248,6 +270,13 @@ export default function Dashboard1() {
                                 className="fa fa-edit"
                                 style={{ cursor: "pointer" }}
                                 onClick={() => openModal2(item)}
+                              ></i>
+                              <i
+                                className="fa fa-calendar ms-1"
+                                style={{
+                                  cursor: "pointer",
+                                }}
+                                onClick={() => addToGoogleCalendar(item)}
                               ></i>
                             </td>
                           </tr>
@@ -273,9 +302,7 @@ export default function Dashboard1() {
                       Page {currentPage} of {totalPages || 1}
                     </span>
                     <button
-                      disabled={
-                        currentPage === totalPages || totalPages === 0
-                      }
+                      disabled={currentPage === totalPages || totalPages === 0}
                       className="bg_page"
                       onClick={() => setCurrentPage((prev) => prev + 1)}
                     >
@@ -346,7 +373,10 @@ export default function Dashboard1() {
         >
           <div className="d-flex justify-content-between">
             <h4>Edit Leave</h4>
-            <button className="btn-close" onClick={() => setIsModalOpen2(false)}>
+            <button
+              className="btn-close"
+              onClick={() => setIsModalOpen2(false)}
+            >
               <CloseIcon />
             </button>
           </div>

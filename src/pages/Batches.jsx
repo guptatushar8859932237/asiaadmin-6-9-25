@@ -478,7 +478,7 @@ export default function Batches() {
                   </div>
                 </div>
               </div>
-              <div className="table-responsive mt-4 tableResFixed">
+              <div className="table-responsive mt-4">
                 <TableContainer className="table table-striped tableICon">
                   <Table className="batch_table">
                     <TableHead>

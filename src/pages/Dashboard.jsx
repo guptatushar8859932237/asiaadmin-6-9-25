@@ -1,10 +1,10 @@
 import Donutchart from "./Donutchart";
 import NegativeValuesBarChart from "./Negativevalue";
 import { useEffect, useState } from "react";
-import { toast, ToastContainer } from 'react-toastify';
-import axios from "axios"
+import { toast, ToastContainer } from "react-toastify";
+import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import CountUp from 'react-countup';
+import CountUp from "react-countup";
 export default function Dashboard() {
   ////////////////////////////All state /////////////////////////////////////////////////////
   const [countdata, setCountdata] = useState();
@@ -12,29 +12,38 @@ export default function Dashboard() {
   /////////////////////////////get all count in box/////////////////////////////////////////
   const getcountall = async () => {
     try {
-      const response = await axios.post(`${process.env.REACT_APP_BASE_URL}count-all`)
+      const response = await axios.post(
+        `${process.env.REACT_APP_BASE_URL}count-all`,
+      );
       if (response.data.success === true) {
-        console.log(response.data)
-        setCountdata(response.data.details)
+        console.log(response.data);
+        setCountdata(response.data.details);
       }
     } catch (error) {
-      toast.error(error.response.data)
+      toast.error(error.response.data);
     }
-  }
+  };
   useEffect(() => {
-    getcountall()
-  }, [])
+    getcountall();
+  }, []);
   return (
     <>
       <div className="wpWrapper dash_wrap">
         <div className="container-fluid">
           <div class="row g-4">
-            <div class=" col-xl-3 col-lg-4 col-md-6 col-sm-6" onClick={() => { navigaet('/Admin/manage-customer') }}>
+            <div
+              class=" col-xl-3 col-lg-4 col-md-6 col-sm-6"
+              onClick={() => {
+                navigaet("/Admin/manage-customer");
+              }}
+            >
               <div class="cardDash">
                 <h4 className="hd_dash">Clients</h4>
                 <div class="iconParent">
                   <div class="cardContent">
-                    <p className="para_dash"><CountUp end={countdata?.no_of_clients} /></p>
+                    <p className="para_dash">
+                      <CountUp end={countdata?.no_of_clients} />
+                    </p>
                   </div>
                   <div class="iconGrad">
                     <i className="fa fa-user"></i>
@@ -46,12 +55,19 @@ export default function Dashboard() {
                 </div>
               </div>
             </div>
-            <div class="col-xl-3 col-lg-4 col-md-6 col-sm-6" onClick={() => { navigaet('/Admin/managefreight') }}>
+            <div
+              class="col-xl-3 col-lg-4 col-md-6 col-sm-6"
+              onClick={() => {
+                navigaet("/Admin/managefreight");
+              }}
+            >
               <div class="cardDash">
                 <h4 className="hd_dash">Freights</h4>
                 <div class="iconParent">
                   <div class="cardContent">
-                    <p className="para_dash"><CountUp end={countdata?.no_of_freights} /></p>
+                    <p className="para_dash">
+                      <CountUp end={countdata?.no_of_freights} />
+                    </p>
                   </div>
                   <div class="iconGrad">
                     <i className="fa fa-plane"></i>
@@ -63,12 +79,19 @@ export default function Dashboard() {
                 </div>
               </div>
             </div>
-            <div class="col-xl-3 col-lg-4 col-md-6 col-sm-6" onClick={() => { navigaet('/Admin/order') }}>
+            <div
+              class="col-xl-3 col-lg-4 col-md-6 col-sm-6"
+              onClick={() => {
+                navigaet("/Admin/order");
+              }}
+            >
               <div class="cardDash">
                 <h4 className="hd_dash">Orders</h4>
                 <div class="iconParent">
                   <div class="cardContent">
-                    <p className="para_dash"><CountUp end={countdata?.no_of_orders} /></p>
+                    <p className="para_dash">
+                      <CountUp end={countdata?.no_of_orders} />
+                    </p>
                   </div>
                   <div class="iconGrad">
                     <i className="fa fa-truck"></i>
@@ -80,12 +103,19 @@ export default function Dashboard() {
                 </div>
               </div>
             </div>
-            <div class="col-xl-3 col-lg-4 col-md-6 col-sm-6" onClick={() => { navigaet('/Admin/custom-clearance-order') }}>
+            <div
+              class="col-xl-3 col-lg-4 col-md-6 col-sm-6"
+              onClick={() => {
+                navigaet("/Admin/custom-clearance-order");
+              }}
+            >
               <div class="cardDash">
                 <h4 className="hd_dash">Clearances</h4>
                 <div class="iconParent">
                   <div class="cardContent">
-                    <p className="para_dash"><CountUp end={countdata?.no_of_clearance} /></p>
+                    <p className="para_dash">
+                      <CountUp end={countdata?.no_of_clearance} />
+                    </p>
                   </div>
                   <div class="iconGrad">
                     <i className="fa fa-bars"></i>
@@ -97,12 +127,19 @@ export default function Dashboard() {
                 </div>
               </div>
             </div>
-            <div class="col-xl-3 col-lg-4 col-md-6 col-sm-6" onClick={() => { navigaet('/Admin/calculation-order') }} >
+            <div
+              class="col-xl-3 col-lg-4 col-md-6 col-sm-6"
+              onClick={() => {
+                navigaet("/Admin/calculation-order");
+              }}
+            >
               <div class="cardDash">
                 <h4 className="hd_dash">Clearance Orders</h4>
                 <div class="iconParent">
                   <div class="cardContent">
-                    <p className="para_dash"><CountUp end={countdata?.no_Of_clearanceOrder} /></p>
+                    <p className="para_dash">
+                      <CountUp end={countdata?.no_Of_clearanceOrder} />
+                    </p>
                   </div>
                   <div class="iconGrad">
                     <i className="fa fa-codepen"></i>
@@ -114,23 +151,30 @@ export default function Dashboard() {
                 </div>
               </div>
             </div>
-            <div class="col-lg-3" onClick={() => { navigaet('/Admin/KPIDashboard') }}>
-                  <div class="cardDash">
-                    <h4 className="hd_dash">Leave</h4>
-                    <div class="iconParent">
-                      <div class="cardContent">
-                      <p className="para_dash"><CountUp end={countdata?.no_of_invoices} /></p>
-                      </div>
-                      <div class="iconGrad">
-                        <i className="fa fa-calendar"></i>
-                      </div>
-                    </div>
-                    <div class="cardBottom bg2">
-                      <p>View More</p>
-                      <i class="fi fi-rr-angle-double-small-right"></i>
-                    </div>
+            <div
+              class="col-lg-3"
+              onClick={() => {
+                navigaet("/Admin/KPIDashboard");
+              }}
+            >
+              <div class="cardDash">
+                <h4 className="hd_dash">Leave</h4>
+                <div class="iconParent">
+                  <div class="cardContent">
+                    <p className="para_dash">
+                      <CountUp end={countdata?.no_of_invoices} />
+                    </p>
                   </div>
+                  <div class="iconGrad">
+                    <i className="fa fa-calendar"></i>
+                  </div>
+                </div>
+                <div class="cardBottom bg2">
+                  <p>View More</p>
+                  <i class="fi fi-rr-angle-double-small-right"></i>
+                </div>
               </div>
+            </div>
           </div>
           <div className="chart mt-4">
             <div className="row g-4">
@@ -139,7 +183,6 @@ export default function Dashboard() {
                   <h4 className="graph_hd">Freight Status</h4>
                   <div className="chartWrapper">
                     <NegativeValuesBarChart />
-
                   </div>
                 </div>
               </div>

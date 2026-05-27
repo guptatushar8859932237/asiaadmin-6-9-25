@@ -192,7 +192,7 @@ export default function Clearencedetails() {
                       ref={targetRef}
                       style={{
                         background: "#08080912",
-                        padding: "20px",
+                        padding: "10px",
                       }}
                     >
                       <table style={{ width: "100%" }}>

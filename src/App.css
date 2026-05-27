@@ -749,7 +749,7 @@ a.dropdown-option {
 
 .wpWrapper {
   padding: 30px 20px 30px 15px !important;
-  /* height: calc(100vh - 70px); */
+  height: calc(100vh - 70px);
   overflow-y: auto;
   scrollbar-width: thin;
   scrollbar-color: #dadada #fff;
@@ -5117,7 +5117,7 @@ td {
 
 .cost-table select {
   border: unset;
-  width: 70px;
+
 }
 
 .cost-table input {

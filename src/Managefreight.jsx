@@ -166,7 +166,6 @@ export default function Managefreight() {
       setPriority(inputdata.priority);
     }
   }, [inputdata.priority]);
-
   useEffect(() => {
     updatecountry();
     getClient();
@@ -230,7 +229,6 @@ export default function Managefreight() {
       frightData(currentPage);
     }
   }, [userid, usertype, currentPage]);
-
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -319,7 +317,6 @@ export default function Managefreight() {
   let month = String(today.getMonth() + 1).padStart(2, "0"); // Months are 0-based, so add 1
   let day = String(today.getDate()).padStart(2, "0");
   let formattedDate = `${year}-${month}-${day}`;
-
   const handleupdateapipost = (freight_id) => {
     console.log(inputdata.client_ref);
     const formdata = new FormData();
@@ -377,7 +374,6 @@ export default function Managefreight() {
         console.log("File:", file.name, "| Size:", file.size, "bytes");
       });
     });
-
     console.log(formdata);
     axios
       .post(`${process.env.REACT_APP_BASE_URL}edit-freight`, formdata)
@@ -396,85 +392,6 @@ export default function Managefreight() {
         toast.error(error.response?.data || "An error occurred");
       });
   };
-  // const handleupdateapipost =async (freight_id) => {
-  //   console.log(inputdata.client_ref);
-  //   const formdata = new FormData();
-  //   formdata.append("date", formattedDate);
-  //   formdata.append("id", inputdata?.freight_id);
-  //   formdata.append("client_ref", inputdata.client_ref);
-  //   formdata.append("type", inputdata.type);
-  //   formdata.append("freight", inputdata.freight);
-  //   formdata.append("incoterm", inputdata.incoterm);
-  //   formdata.append("dimension", inputdata.dimension);
-  //   formdata.append("weight", inputdata.weight);
-  //   formdata.append("quote_received", inputdata.quote_received);
-  //   formdata.append("client_quoted", inputdata.client_quoted);
-  //   formdata.append("is_active", inputdata.is_active);
-  //   formdata.append("destination_country", inputdata.destination_country);
-  //   formdata.append("comment", inputdata.comment);
-  //   formdata.append("no_of_packages", inputdata.no_of_packages);
-  //   formdata.append("fcl_lcl", inputdata.fcl_lcl);
-  //   formdata.append("package_type", inputdata.package_type);
-  //   formdata.append("insurance", inputdata.insurance);
-  //   formdata.append("commodity", inputdata.commodity);
-  //   formdata.append("hazardous", inputdata.hazardous);
-  //   formdata.append("country_of_origin", inputdata.country_of_origin);
-  //   formdata.append("supplier_address", inputdata.supplier_address);
-  //   formdata.append("port_of_loading", inputdata.port_of_loading);
-  //   formdata.append("post_of_discharge", inputdata.post_of_discharge);
-  //   formdata.append("place_of_delivery", inputdata.place_of_delivery);
-  //   formdata.append("ready_for_collection", inputdata.ready_for_collection);
-  //   formdata.append("transit_time", inputdata.transit_time);
-  //   formdata.append("priority", inputdata.priority);
-  //   formdata.append("nature_of_hazard", inputdata.nature_of_hazard);
-  //   formdata.append(
-  //     "volumetric_weight",
-  //     inputdata.dimension
-  //       ? 167 * inputdata.dimension
-  //       : inputdata.volumetric_weight,
-  //   );
-  //   formdata.append("assign_for_estimate", inputdata.assign_for_estimate);
-  //   formdata.append("add_attachments", inputdata.add_attachments);
-  //   formdata.append("assign_to_transporter", inputdata.assign_to_transporter);
-  //   formdata.append("assign_warehouse", inputdata.assign_warehouse);
-  //   formdata.append("assign_to_clearing", inputdata.assign_to_clearing);
-  //   formdata.append("shipment_ref", inputdata.shipment_ref);
-  //   formdata.append("send_to_warehouse", inputdata.send_to_warehouse);
-  //   formdata.append("shipment_origin", inputdata.shipment_origin);
-  //   formdata.append("shipment_des", inputdata.shipment_des);
-  //   formdata.append("product_desc", inputdata.product_desc);
-  //   formdata.append("shipper_name", inputdata.shipper_name);
-  //   formdata.append("supplier_address", inputdata.supplier_address);
-  //   formdata.append("client_ref_name", inputdata.client_ref_name);
-  //   formdata.append("cargo_pickup", inputdata.cargo_pickup);
-  //   formdata.append("sales_representative", inputdata.sales_representative);
-  //   formdata.append("documentName", inputdata.documentName);
-  //   selectedDocs.forEach((doc) => {
-  //     doc.files.forEach((file) => {
-  //       formdata.append(doc.name, file); // 👈 each file append
-  //       console.log("File:", file.name, "| Size:", file.size, "bytes");
-  //     });
-  //   });
-  // await  axios.post(`${process.env.REACT_APP_BASE_URL}edit-freight`, formdata)
-  //     .then((response) => {
-  //       setLoader(true);
-  //       console.log(response.data.message);
-  //       if (response.data.success === true) {
-  //         // getFreightWithoutpermission();
-  //         setLoader(true);
-  //       frightData(currentPage);
-  //         // postData()
-  //         setLoader(false);
-  //         toast.success(response.data.message);
-  //       }
-
-  //     })
-  //     .catch((error) => {
-  //       console.error(error.response);
-  //       toast.error(error.response?.data || "An error occurred");
-  //     });
-  // };
-  //////////////////////////////////////get app api////////////////////////////////////////////////////
   const clientlist = () => {
     axios
       .get(`${process.env.REACT_APP_BASE_URL}clientlist`)
@@ -499,7 +416,6 @@ export default function Managefreight() {
         console.log(error.response.data);
       });
   };
-  ////////////////////////////////////////////////////////update///////////////////////////////////////////////////
   const handlelcickseedata = (freight_id) => {
     const alldtaaa = data.filter((item) => {
       return item?.freight_id === freight_id;
@@ -519,7 +435,6 @@ export default function Managefreight() {
       `${process.env.REACT_APP_BASE_URL}CheckPermission`,
       datapost,
     );
-
     if (permission.data.success === true) {
       const payload = {
         freight_id: item?.freight_id,
@@ -552,7 +467,6 @@ export default function Managefreight() {
         route_url: "/Admin/shipping-estimate",
         user_type: usertype,
       };
-
       const permission = await axios.post(
         `${process.env.REACT_APP_BASE_URL}CheckPermission`,
         datapost,
@@ -573,9 +487,7 @@ export default function Managefreight() {
     console.log(freight_id);
     JSON.stringify(localStorage.setItem("freightid", freight_id));
     navigate("/Admin/SupplierEstimation", { state: { data: freight_id } });
-
   };
-
   ///////////////////////pegenation//////////////////////////////////////////
   const filteredData = data.filter((item) => {
     return (

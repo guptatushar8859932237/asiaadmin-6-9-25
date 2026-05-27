@@ -182,8 +182,8 @@ export default function Supplierestimationview() {
   const oriforewarding3 = parseFloat(freight.origin_pickup_forewarding_gp) || 0;
   const oriforewarding4 = freight.origin_pick_up_forewarding_unitType
     ? oriforewarding1 *
-      oriforewarding2 *
-      freight.origin_pick_up_forewarding_unitTypeQTY
+    oriforewarding2 *
+    freight.origin_pick_up_forewarding_unitTypeQTY
     : 0.0;
   let finalValueforewarding = 0;
   if (oriforewarding4 > 0) {
@@ -276,8 +276,8 @@ export default function Supplierestimationview() {
   const oriinsurance3 = parseFloat(freight.freightorigin_insurance_gp) || 0;
   const oriinsurance4 = freight.freight_currency_insurance_unittype
     ? oriinsurance1 *
-      oriindsurance2 *
-      freight.freight_currency_insurance_unittypeQTY
+    oriindsurance2 *
+    freight.freight_currency_insurance_unittypeQTY
     : 0.0;
   let finalValueinsurance = 0;
   if (oriinsurance4 > 0) {
@@ -447,8 +447,8 @@ export default function Supplierestimationview() {
     parseFloat(freight.transit_change_Documentation_gp) || 0;
   const oridocumentation4 = freight.transit_change_Documentation_unitType
     ? oridocumentation1 *
-      oridocumentation2 *
-      freight.transit_change_Documentation_unitTypeQTY
+    oridocumentation2 *
+    freight.transit_change_Documentation_unitTypeQTY
     : 0.0;
   let finalValuedocumantation = 0;
   if (oridocumentation4 > 0) {
@@ -498,8 +498,8 @@ export default function Supplierestimationview() {
   const destinationdocumentation4 =
     freight.Destination_freight_currency_unitType
       ? destinationdocumentation1 *
-        destinationdocumentation2 *
-        freight.Destination_freight_currency_unitTypeQTY
+      destinationdocumentation2 *
+      freight.Destination_freight_currency_unitTypeQTY
       : 0.0;
   let finalValuedestanion = 0;
   if (destinationdocumentation4 > 0) {
@@ -525,8 +525,8 @@ export default function Supplierestimationview() {
     parseFloat(freight.Destination_THC_currency_gp) || 0;
   const destinationTHCdocumentation4 = freight.Destination_THC_currency_unitType
     ? destinationTHCdocumentation1 *
-      destinationTHCdocumentation2 *
-      freight.Destination_THC_currency_unitTypeQTY
+    destinationTHCdocumentation2 *
+    freight.Destination_THC_currency_unitTypeQTY
     : 0.0;
   let finalValueTHCdestanion = 0;
   if (destinationTHCdocumentation4 > 0) {
@@ -553,8 +553,8 @@ export default function Supplierestimationview() {
   const destinationUnpackdocumentation4 =
     freight.Destination_Unpack_currency_unitType
       ? destinationUnpackdocumentation1 *
-        destinationUnpackdocumentation2 *
-        freight.Destination_Unpack_currency_unitTypeQTY
+      destinationUnpackdocumentation2 *
+      freight.Destination_Unpack_currency_unitTypeQTY
       : 0.0;
   let finalValueUnpackdestanion = 0;
   if (destinationUnpackdocumentation4 > 0) {
@@ -583,8 +583,8 @@ export default function Supplierestimationview() {
   const destinationfuelsurchargedocumentation4 =
     freight.Destination_fuelsurcharge_currency_typeUnit
       ? destinationfuelsurchargedocumentation1 *
-        destinationfuelsurchargedocumentation2 *
-        freight.Destination_fuelsurcharge_currency_typeUnitQTY
+      destinationfuelsurchargedocumentation2 *
+      freight.Destination_fuelsurcharge_currency_typeUnitQTY
       : 0.0;
   let finalValueFulesurchargedestanion = 0;
   if (destinationfuelsurchargedocumentation4 > 0) {
@@ -615,8 +615,8 @@ export default function Supplierestimationview() {
   const destinatiadminsurcharge4 =
     freight.Destination_adminsurcharge_currency_unitType
       ? destinatiadminsurcharge1 *
-        destinatiadminsurcharge2 *
-        freight.Destination_adminsurcharge_currency_unitTypeQTY
+      destinatiadminsurcharge2 *
+      freight.Destination_adminsurcharge_currency_unitTypeQTY
       : 0.0;
   let finalValueadminsurchargedestanion = 0;
   if (destinatiadminsurcharge4 > 0) {
@@ -643,8 +643,8 @@ export default function Supplierestimationview() {
     parseFloat(freight.Destination_portcargo_currency_gp) || 0;
   const destinatiportcargo4 = freight.Destination_portcargo_currency_unitType
     ? destinatiportcargo1 *
-      destinatiportcargo2 *
-      freight.Destination_portcargo_currency_unitTypeQTY
+    destinatiportcargo2 *
+    freight.Destination_portcargo_currency_unitTypeQTY
     : 0.0;
   let finalValueportcargostanion = 0;
   if (destinatiportcargo4 > 0) {
@@ -697,8 +697,8 @@ export default function Supplierestimationview() {
   const destinati3rdpartyload4 =
     freight.Destination_3rdpartyDesc_currency_unitType
       ? destinati3rdpartyDesc1 *
-        destinati3rdpartyDesc2 *
-        freight.Destination_3rdpartyDesc_currency_unitTypeQTY
+      destinati3rdpartyDesc2 *
+      freight.Destination_3rdpartyDesc_currency_unitTypeQTY
       : 0.0;
   let finalValue3rdpartyloadstanion = 0;
   if (destinati3rdpartyload4 > 0) {
@@ -726,8 +726,8 @@ export default function Supplierestimationview() {
     parseFloat(freight.Destination_delivery_currency_gp) || 0;
   const destindeliveryyDesc4 = freight.Destination_delivery_currency_unitType
     ? destindeliveryyDesc1 *
-      destindeliveryyDesc2 *
-      freight.Destination_delivery_currency_unitTypeQTY
+    destindeliveryyDesc2 *
+    freight.Destination_delivery_currency_unitTypeQTY
     : 0.0;
   let finaldeliveryrtyloadstanion = 0;
   if (destindeliveryyDesc4 > 0) {
@@ -755,8 +755,8 @@ export default function Supplierestimationview() {
   const destindfuelchangerDesc4 =
     freight.Destination_fuelcharge_currency_unitType
       ? destindfuelchangerDesc1 *
-        destindfuelchangerDesc2 *
-        freight.Destination_fuelcharge_currency_unitTypeQTY
+      destindfuelchangerDesc2 *
+      freight.Destination_fuelcharge_currency_unitTypeQTY
       : 0.0;
   let finalfuelchangertyloadstanion = 0;
   if (destindfuelchangerDesc4 > 0) {
@@ -810,8 +810,8 @@ export default function Supplierestimationview() {
     parseFloat(freight.Destination_AdminAgrncy_currency_gp) || 0;
   const deadminAgencyesc4 = freight.Destination_AdminAgrncy_currency_unitType
     ? deadminAgencyesc1 *
-      deadminAgencyesc2 *
-      freight.Destination_AdminAgrncy_currency_unitQTY
+    deadminAgencyesc2 *
+    freight.Destination_AdminAgrncy_currency_unitQTY
     : 0.0;
   let finaldminAgencyestanion = 0;
   if (deadminAgencyesc4 > 0) {
@@ -837,8 +837,8 @@ export default function Supplierestimationview() {
     parseFloat(freight.Destination_disbursemant_currency_gp) || 0;
   const deaddisbursemantc4 = freight.Destination_disbursemant_currenc_unitType1
     ? deaddisbursemantc1 *
-      deaddisbursemantc2 *
-      freight.Destination_disbursemant_currency_unitTypeQTY
+    deaddisbursemantc2 *
+    freight.Destination_disbursemant_currency_unitTypeQTY
     : 0.0;
   let finaladdisbursematanion = 0;
   if (deaddisbursemantc4 > 0) {
@@ -894,7 +894,7 @@ export default function Supplierestimationview() {
     transitRoe +
     totalChangeRoeOriginaftercalcuinsurance +
     totalChangeRoeOrigin;
-      const userType = JSON.parse(localStorage.getItem("data123"));
+  const userType = JSON.parse(localStorage.getItem("data123"));
   const estimateCalculate = async () => {
     console.log(data1, data2);
     const payload = {
@@ -1860,8 +1860,8 @@ export default function Supplierestimationview() {
       <div className="wpWrapper ">
         <div className="container-fluid">
           <div className=" ">
-            <div className=" ">
-              <div className="row">
+            <div>
+              <div className="row mb-3">
                 <div className="col-12">
                   <div className="d-flex justify-content-between align-items-center">
                     <div className="d-flex">
@@ -1887,14 +1887,14 @@ export default function Supplierestimationview() {
                 <div
                   style={{
                     width: "100%",
-                    padding: "20px",
+                    padding: "10px",
                     outline: "auto",
                     height: "auto",
                   }}
                   className="pdf-page"
                 >
                   <p>
-                    <table style={{ margin: "20px" }}>
+                    <table>
                       <tbody>
                         <tr>
                           <td style={{ width: "50%" }}>
@@ -1914,18 +1914,18 @@ export default function Supplierestimationview() {
                                 marginBottom: "unset",
                                 borderBottom: "1px solid #cb191e",
                                 display: "inline-block",
-                                paddingBottom: 5,
+
                               }}
                             >
                               Asia Direct - Africa
                             </p>
                             <p
                               style={{
-                                fontSize: 14,
+                                fontSize: 13,
                                 fontWeight: 500,
                                 marginBottom: "unset",
                                 lineHeight: "1.5",
-                                marginTop: 10,
+
                               }}
                             >
                               Asia Direct, Unit 4 Villa Valencia 2 Anemoon Road
@@ -1942,31 +1942,13 @@ export default function Supplierestimationview() {
                         </tr>
                       </tbody>
                     </table>
-                    <table style={{ paddingTop: "20px", marginTop: "20px" }}>
-                      <tbody>
-                        <tr>
-                          <td
-                            style={{ fontSize: 14, textTransform: "lowercase" }}
-                          ></td>
-                          <td
-                            style={{
-                              fontSize: 14,
-                              padding: "0px 20px",
-                              textTransform: "lowercase",
-                            }}
-                          ></td>
-                          <td
-                            style={{ fontSize: 14, textTransform: "lowercase" }}
-                          ></td>
-                        </tr>
-                      </tbody>
-                    </table>
+
                     <table
                       style={{
                         border: "2px solid #1b2245",
                         padding: "10px 20px",
                         width: "100%",
-                        marginTop: 20,
+                        marginTop: 5,
                       }}
                     >
                       <tbody>
@@ -1974,7 +1956,7 @@ export default function Supplierestimationview() {
                           <td
                             style={{
                               textAlign: "center",
-                              fontSize: 14,
+                              fontSize: 13,
                               fontWeight: 600,
                               width: "100%",
                             }}
@@ -2005,7 +1987,7 @@ export default function Supplierestimationview() {
                                 <tr>
                                   <td
                                     style={{
-                                      fontSize: 14,
+                                      fontSize: 13,
                                       padding: "0px 10px",
                                     }}
                                   >
@@ -2023,15 +2005,15 @@ export default function Supplierestimationview() {
                                 background: "#1b2245",
                                 width: "100%",
                                 color: "white",
-                                fontSize: 14,
+                                fontSize: 13,
                                 textAlign: "center",
-                                margin: "10px 0px",
+                                margin: "5px 0px",
                                 padding: 2,
                               }}
                             >
                               <tbody>
                                 <tr>
-                                  <td style={{ fontSize: 14 }}>
+                                  <td style={{ fontSize: 13, }}>
                                     Shipment Details ISO Commodity
                                   </td>
                                 </tr>
@@ -2040,7 +2022,7 @@ export default function Supplierestimationview() {
                             <table style={{ width: "100%" }}>
                               <tbody>
                                 <tr>
-                                  {}
+                                  { }
                                   <td style={{ padding: "0px 10px" }}>
                                     <div
                                       style={{
@@ -2050,18 +2032,18 @@ export default function Supplierestimationview() {
                                     >
                                       <p
                                         style={{
-                                          fontSize: 14,
+                                          fontSize: 13,
                                           marginBottom: "unset",
-                                          marginTop: 10,
+
                                         }}
                                       >
                                         <strong> No. of Packages</strong>
                                       </p>
                                       <p
                                         style={{
-                                          fontSize: 14,
+                                          fontSize: 13,
                                           marginBottom: "unset",
-                                          marginTop: 10,
+
                                         }}
                                       >
                                         {freight?.no_of_packages}
@@ -2075,18 +2057,18 @@ export default function Supplierestimationview() {
                                     >
                                       <p
                                         style={{
-                                          fontSize: 14,
+                                          fontSize: 13,
                                           marginBottom: "unset",
-                                          marginTop: 10,
+                                          marginTop: 5,
                                         }}
                                       >
                                         <strong>Package Type</strong>
                                       </p>
                                       <p
                                         style={{
-                                          fontSize: 14,
+                                          fontSize: 13,
                                           marginBottom: "unset",
-                                          marginTop: 10,
+                                          marginTop: 5,
                                         }}
                                       >
                                         {freight?.package_type}
@@ -2100,18 +2082,18 @@ export default function Supplierestimationview() {
                                     >
                                       <p
                                         style={{
-                                          fontSize: 14,
+                                          fontSize: 13,
                                           marginBottom: "unset",
-                                          marginTop: 10,
+                                          marginTop: 5,
                                         }}
                                       >
                                         <strong>Weight</strong>
                                       </p>
                                       <p
                                         style={{
-                                          fontSize: 14,
+                                          fontSize: 13,
                                           marginBottom: "unset",
-                                          marginTop: 10,
+                                          marginTop: 5,
                                         }}
                                       >
                                         {freight?.weight}
@@ -2125,18 +2107,18 @@ export default function Supplierestimationview() {
                                     >
                                       <p
                                         style={{
-                                          fontSize: 14,
+                                          fontSize: 13,
                                           marginBottom: "unset",
-                                          marginTop: 10,
+                                          marginTop: 5,
                                         }}
                                       >
                                         <strong>M3</strong>
                                       </p>
                                       <p
                                         style={{
-                                          fontSize: 14,
+                                          fontSize: 13,
                                           marginBottom: "unset",
-                                          marginTop: 10,
+                                          marginTop: 5,
                                         }}
                                       ></p>
                                     </div>
@@ -2148,18 +2130,18 @@ export default function Supplierestimationview() {
                                     >
                                       <p
                                         style={{
-                                          fontSize: 14,
+                                          fontSize: 13,
                                           marginBottom: "unset",
-                                          marginTop: 10,
+                                          marginTop: 5,
                                         }}
                                       >
                                         <strong>Volumetric (kgs)</strong>
                                       </p>
                                       <p
                                         style={{
-                                          fontSize: 14,
+                                          fontSize: 13,
                                           marginBottom: "unset",
-                                          marginTop: 10,
+                                          marginTop: 5,
                                         }}
                                       >
                                         {freight?.volumetric_weight}
@@ -2173,18 +2155,18 @@ export default function Supplierestimationview() {
                                     >
                                       <p
                                         style={{
-                                          fontSize: 14,
+                                          fontSize: 13,
                                           marginBottom: "unset",
-                                          marginTop: 10,
+                                          marginTop: 5,
                                         }}
                                       >
                                         <strong>Chargeable</strong>
                                       </p>
                                       <p
                                         style={{
-                                          fontSize: 14,
+                                          fontSize: 13,
                                           marginBottom: "unset",
-                                          marginTop: 10,
+                                          marginTop: 5,
                                         }}
                                       >
                                         <input
@@ -2204,18 +2186,18 @@ export default function Supplierestimationview() {
                                     >
                                       <p
                                         style={{
-                                          fontSize: 14,
+                                          fontSize: 13,
                                           marginBottom: "unset",
-                                          marginTop: 10,
+                                          marginTop: 5,
                                         }}
                                       >
                                         <strong>Commodity</strong>
                                       </p>
                                       <p
                                         style={{
-                                          fontSize: 14,
+                                          fontSize: 13,
                                           marginBottom: "unset",
-                                          marginTop: 10,
+                                          marginTop: 5,
                                         }}
                                       >
                                         {freight?.commodity}
@@ -2229,18 +2211,18 @@ export default function Supplierestimationview() {
                                     >
                                       <p
                                         style={{
-                                          fontSize: 14,
+                                          fontSize: 13,
                                           marginBottom: "unset",
-                                          marginTop: 10,
+                                          marginTop: 5,
                                         }}
                                       >
                                         <strong>Hazardous</strong>
                                       </p>
                                       <p
                                         style={{
-                                          fontSize: 14,
+                                          fontSize: 13,
                                           marginBottom: "unset",
-                                          marginTop: 10,
+                                          marginTop: 5,
                                         }}
                                       >
                                         {freight?.hazardous}
@@ -2254,18 +2236,18 @@ export default function Supplierestimationview() {
                                     >
                                       <p
                                         style={{
-                                          fontSize: 14,
+                                          fontSize: 13,
                                           marginBottom: "unset",
-                                          marginTop: 10,
+                                          marginTop: 5,
                                         }}
                                       >
                                         <strong>Incoterm</strong>
                                       </p>
                                       <p
                                         style={{
-                                          fontSize: 14,
+                                          fontSize: 13,
                                           marginBottom: "unset",
-                                          marginTop: 10,
+                                          marginTop: 5,
                                         }}
                                       >
                                         {freight?.incoterm}
@@ -2279,7 +2261,7 @@ export default function Supplierestimationview() {
                                                 >
                                                   <p
                                                     style={{
-                                                      fontSize: 14,
+                                                      fontSize: 13,
                                                       marginBottom: "unset",
                                                       marginTop: 10,
                                                     }}
@@ -2288,7 +2270,7 @@ export default function Supplierestimationview() {
                                                   </p>
                                                   <p
                                                     style={{
-                                                      fontSize: 14,
+                                                      fontSize: 13,
                                                       marginBottom: "unset",
                                                       marginTop: 10,
                                                     }}
@@ -2305,18 +2287,18 @@ export default function Supplierestimationview() {
                                     >
                                       <p
                                         style={{
-                                          fontSize: 14,
+                                          fontSize: 13,
                                           marginBottom: "unset",
-                                          marginTop: 10,
+                                          marginTop: 5,
                                         }}
                                       >
                                         <strong> Freight</strong>
                                       </p>
                                       <p
                                         style={{
-                                          fontSize: 14,
+                                          fontSize: 13,
                                           marginBottom: "unset",
-                                          marginTop: 10,
+                                          marginTop: 5,
                                         }}
                                       >
                                         {freight?.freight}
@@ -2331,9 +2313,9 @@ export default function Supplierestimationview() {
                                 background: "#1b2245",
                                 width: "100%",
                                 color: "white",
-                                fontSize: 14,
+                                fontSize: 13,
                                 textAlign: "center",
-                                margin: "10px 0px",
+                                margin: "5px 0px",
                                 padding: 2,
                               }}
                             >
@@ -2353,15 +2335,14 @@ export default function Supplierestimationview() {
                                       style={{
                                         display: "flex",
                                         justifyContent: "space-between",
-                                        padding: 10,
+                                        padding: "5px 10px",
                                       }}
                                     >
                                       <p
                                         style={{
-                                          fontSize: 14,
+                                          fontSize: 13,
                                           marginBottom: "unset",
-                                          marginTop: 10,
-                                        }}
+                                         }}
                                       >
                                         <strong>Final Base Currency</strong>
                                       </p>
@@ -2391,7 +2372,7 @@ export default function Supplierestimationview() {
                               </tbody>
                             </table>
                           </td>
-                          <td style={{ width: "50%", paddingTop: 10 }}>
+                          <td style={{ width: "50%", paddingTop: 5 }}>
                             <table>
                               <tbody>
                                 <tr>
@@ -2399,14 +2380,14 @@ export default function Supplierestimationview() {
                                     style={{
                                       width: 170,
                                       display: "block",
-                                      padding: "0px 10px 10px 10px",
-                                      fontSize: 14,
+                                      padding: "0px 10px 5px 10px",
+                                      fontSize: 13,
                                     }}
                                   >
                                     <strong>Reference</strong>
                                   </td>
                                   <td
-                                    style={{ paddingBottom: 10, fontSize: 14 }}
+                                    style={{ paddingBottom: 5, fontSize: 14 }}
                                   >
                                     {freight?.client_ref_name}
                                   </td>
@@ -2414,11 +2395,11 @@ export default function Supplierestimationview() {
                                 <tr>
                                   <td
                                     style={{
-                                      padding: "0px 10px 10px 10px",
+                                      padding: "0px 10px 5px 10px",
                                       width: 170,
                                       display: "block",
-                                      paddingBottom: 10,
-                                      fontSize: 14,
+
+                                      fontSize: 13,
                                     }}
                                   >
                                     <strong>Quote Date</strong>
@@ -2426,8 +2407,8 @@ export default function Supplierestimationview() {
                                   <td
                                     style={{
                                       paddingBottom: 15,
-                                      fontSize: 14,
-                                      padding: "0px 10px 10px 10px",
+                                      fontSize: 13,
+                                      padding: "0px 10px 5px 10px",
                                     }}
                                   >
                                     {new Date(freight?.date).toLocaleDateString(
@@ -2442,7 +2423,7 @@ export default function Supplierestimationview() {
                                                   width: 170,
                                                   display: "block",
                                                   paddingBottom: 10,
-                                                  fontSize: 14,
+                                                  fontSize: 13,
                                                 }}
                                               >
                                                 <strong>Valid Until</strong>
@@ -2460,9 +2441,9 @@ export default function Supplierestimationview() {
                                 background: "#1b2245",
                                 width: "100%",
                                 color: "white",
-                                fontSize: 14,
+                                fontSize: 13,
                                 textAlign: "center",
-                                margin: "10px 0px",
+                                margin: "5px 0px",
                                 padding: 2,
                               }}
                             >
@@ -2486,18 +2467,18 @@ export default function Supplierestimationview() {
                                     >
                                       <p
                                         style={{
-                                          fontSize: 14,
+                                          fontSize: 13,
                                           marginBottom: "unset",
-                                          marginTop: 10,
+
                                         }}
                                       >
                                         <strong> Country of Origin</strong>
                                       </p>
                                       <p
                                         style={{
-                                          fontSize: 14,
+                                          fontSize: 13,
                                           marginBottom: "unset",
-                                          marginTop: 10,
+
                                         }}
                                       >
                                         {freight.collection_from_name}
@@ -2511,18 +2492,18 @@ export default function Supplierestimationview() {
                                     >
                                       <p
                                         style={{
-                                          fontSize: 14,
+                                          fontSize: 13,
                                           marginBottom: "unset",
-                                          marginTop: 10,
+                                          marginTop: 5,
                                         }}
                                       >
                                         <strong> Place of Receipt</strong>
                                       </p>
                                       <p
                                         style={{
-                                          fontSize: 14,
+                                          fontSize: 13,
                                           marginBottom: "unset",
-                                          marginTop: 10,
+                                          marginTop: 5,
                                         }}
                                       >
                                         {freight?.port_of_loading}
@@ -2536,18 +2517,18 @@ export default function Supplierestimationview() {
                                     >
                                       <p
                                         style={{
-                                          fontSize: 14,
+                                          fontSize: 13,
                                           marginBottom: "unset",
-                                          marginTop: 10,
+                                          marginTop: 5,
                                         }}
                                       >
                                         <strong>Port of Loading</strong>
                                       </p>
                                       <p
                                         style={{
-                                          fontSize: 14,
+                                          fontSize: 13,
                                           marginBottom: "unset",
-                                          marginTop: 10,
+                                          marginTop: 5,
                                         }}
                                       >
                                         {freight?.port_of_loading}
@@ -2561,9 +2542,9 @@ export default function Supplierestimationview() {
                                     >
                                       <p
                                         style={{
-                                          fontSize: 14,
+                                          fontSize: 13,
                                           marginBottom: "unset",
-                                          marginTop: 10,
+                                          marginTop: 5,
                                         }}
                                       >
                                         <strong>Port of Discharge</strong>
@@ -2571,9 +2552,9 @@ export default function Supplierestimationview() {
                                       <p
                                         className="text-dark"
                                         style={{
-                                          fontSize: 14,
+                                          fontSize: 13,
                                           marginBottom: "unset",
-                                          marginTop: 10,
+                                          marginTop: 5,
                                         }}
                                       >
                                         {freight?.post_of_discharge}
@@ -2587,18 +2568,18 @@ export default function Supplierestimationview() {
                                     >
                                       <p
                                         style={{
-                                          fontSize: 14,
+                                          fontSize: 13,
                                           marginBottom: "unset",
-                                          marginTop: 10,
+                                          marginTop: 5,
                                         }}
                                       >
                                         <strong> Place of Delivery</strong>
                                       </p>
                                       <p
                                         style={{
-                                          fontSize: 14,
+                                          fontSize: 13,
                                           marginBottom: "unset",
-                                          marginTop: 10,
+                                          marginTop: 5,
                                         }}
                                       >
                                         {freight?.delivery_to_name}
@@ -2612,9 +2593,9 @@ export default function Supplierestimationview() {
                                     >
                                       <p
                                         style={{
-                                          fontSize: 14,
+                                          fontSize: 13,
                                           marginBottom: "unset",
-                                          marginTop: 10,
+                                          marginTop: 5,
                                         }}
                                       >
                                         <strong>
@@ -2624,9 +2605,9 @@ export default function Supplierestimationview() {
                                       </p>
                                       <p
                                         style={{
-                                          fontSize: 14,
+                                          fontSize: 13,
                                           marginBottom: "unset",
-                                          marginTop: 10,
+                                          marginTop: 5,
                                         }}
                                       >
                                         {freight?.quote_received}
@@ -2640,18 +2621,18 @@ export default function Supplierestimationview() {
                                     >
                                       <p
                                         style={{
-                                          fontSize: 14,
+                                          fontSize: 13,
                                           marginBottom: "unset",
-                                          marginTop: 10,
+                                          marginTop: 5,
                                         }}
                                       >
                                         <strong> Date</strong>
                                       </p>
                                       <p
                                         style={{
-                                          fontSize: 14,
+                                          fontSize: 13,
                                           marginBottom: "unset",
-                                          marginTop: 10,
+                                          marginTop: 5,
                                         }}
                                       >
                                         {new Date(
@@ -8431,7 +8412,7 @@ export default function Supplierestimationview() {
                           </select>
                         </td>
                         <td>
-                           <input
+                          <input
                             style={{
                               marginBottom: 0,
                               fontSize: 13,
@@ -8452,7 +8433,7 @@ export default function Supplierestimationview() {
                             id="floatingInput"
                             placeholder="0.00"
                           />
-                          </td>
+                        </td>
                         <td>
                           <select
                             className="select_supplier"
@@ -8833,7 +8814,7 @@ export default function Supplierestimationview() {
                       <div className="col-6 d-flex">
                         <div>
                           <button
-                            className="btn btn-success"
+                            className="blueBtn"
                             onClick={() => {
                               handleclAssign(1);
                             }}
@@ -8843,7 +8824,7 @@ export default function Supplierestimationview() {
                         </div>
                         <div className="mx-2">
                           <button
-                            className="btn btn-danger btn btn-success"
+                            className="redBtn"
                             onClick={() => {
                               handleclAssign(2);
                             }}

@@ -11,8 +11,7 @@ export default function SupplierEstimation() {
   const pageSize = 10;
   const navigate = useNavigate();
   const location = useLocation();
-    const id  = location.state.data
-
+  const id = location.state.data
   console.log(id);
   // console.log("location", location.state.data);
   const frightData = async () => {
@@ -30,7 +29,6 @@ export default function SupplierEstimation() {
   useEffect(() => {
     frightData();
   }, []);
-
   const filterdata = data?.filter((item) => {
     return (
       item?.email?.toLowerCase()?.includes(searchQuery?.toLowerCase()) ||
@@ -51,8 +49,7 @@ export default function SupplierEstimation() {
     // navigate("/Admin/FreightSupplier");
     window.history.back();
   }
-
-   const querryinQChat = (item) => {
+  const querryinQChat = (item) => {
     console.log("item", item);
     navigate("/Admin/QuotationInFreightSupplier", { state: { data: item } });
   };
@@ -60,7 +57,7 @@ export default function SupplierEstimation() {
     <div className="wpWrapper ">
       <div className="container-fluid">
         <div className="table-responsive mt-3">
-        <ArrowBack  style={{ cursor: "pointer" }} onClick={handleclicknav} />
+          <ArrowBack style={{ cursor: "pointer" }} onClick={handleclicknav} />
           <table className="table table-striped tableICon">
             <thead>
               <tr>

@@ -16,7 +16,7 @@ export default function SupplierChat() {
   const [conversationId, setConversationId] = useState(null);
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState([]);
-console.log(location.state.data)
+  console.log(location.state.data)
   const activeChat =
     location.state?.data || JSON.parse(localStorage.getItem("activeChat"));
 
@@ -30,10 +30,10 @@ console.log(location.state.data)
     //   reconnection: true,
     // });
     socketRef.current = io("https://sisccltd.com", {
-  path: "/socket.io",
-  transports: ["websocket"],
-  reconnection: true,
-});
+      path: "/socket.io",
+      transports: ["websocket"],
+      reconnection: true,
+    });
 
     socketRef.current.on("connect", () => {
       console.log("✅ Socket connected");
@@ -50,7 +50,7 @@ console.log(location.state.data)
 
     socketRef.current.on("connect_error", (err) => {
       console.log("⚠️ Socket error:", err.message);
-      setSocketConnected(false);    
+      setSocketConnected(false);
     });
 
     socketRef.current.on("receiveMessage", (data) => {
@@ -70,92 +70,92 @@ console.log(location.state.data)
   }, []);
 
   /* ================= CREATE CONVERSATION ================= */
-//   const createConversation = async () => {
-//     try {
-//       if (!LOGGED_IN_USER_ID || !RECEIVER_ID) return;
+  //   const createConversation = async () => {
+  //     try {
+  //       if (!LOGGED_IN_USER_ID || !RECEIVER_ID) return;
 
-//       const res = await axios.post(
-//         `${process.env.REACT_APP_BASE_URL}chat/createConversation`,
-//         {
-//           sender_id: LOGGED_IN_USER_ID,
-//           receiver_id: RECEIVER_ID,
-//         }
-//       );
-//       console.log(res.data.conversation_id)
-//        setConversationId(res.data.conversation_id.trim());
-//       if (res?.data?.conversation_id) {
-//         console.log("work")
-//        setConversationId(res.data.conversation_id.trim());
-//       }
-//     } catch (error) {
-//       toast.error("Failed to create conversation");
-//     }
-//   };
-// const createConversation = async () => {
-//   try {
-//     if (!LOGGED_IN_USER_ID || !RECEIVER_ID) return;
+  //       const res = await axios.post(
+  //         `${process.env.REACT_APP_BASE_URL}chat/createConversation`,
+  //         {
+  //           sender_id: LOGGED_IN_USER_ID,
+  //           receiver_id: RECEIVER_ID,
+  //         }
+  //       );
+  //       console.log(res.data.conversation_id)
+  //        setConversationId(res.data.conversation_id.trim());
+  //       if (res?.data?.conversation_id) {
+  //         console.log("work")
+  //        setConversationId(res.data.conversation_id.trim());
+  //       }
+  //     } catch (error) {
+  //       toast.error("Failed to create conversation");
+  //     }
+  //   };
+  // const createConversation = async () => {
+  //   try {
+  //     if (!LOGGED_IN_USER_ID || !RECEIVER_ID) return;
 
-//     const res = await axios.post(
-//       `${process.env.REACT_APP_BASE_URL}chat/createConversation`,
-//       {
-//         sender_type:"user", receiver_type:"supplier",
-//         sender_id: LOGGED_IN_USER_ID,
-//         receiver_id: RECEIVER_ID,
-//       }
-//     );
+  //     const res = await axios.post(
+  //       `${process.env.REACT_APP_BASE_URL}chat/createConversation`,
+  //       {
+  //         sender_type:"user", receiver_type:"supplier",
+  //         sender_id: LOGGED_IN_USER_ID,
+  //         receiver_id: RECEIVER_ID,
+  //       }
+  //     );
 
-//     const conversationId = res?.data?.conversation_id;
-// if(res.status===200){
-//     console.log(res.data)
-//       setConversationId(conversationId);
-// }
-//     if (!conversationId) {
-//       toast.error("Conversation ID not received");
-//       return;
-//     }
-// if(res.data.success===true){
-//     setConversationId(conversationId);
+  //     const conversationId = res?.data?.conversation_id;
+  // if(res.status===200){
+  //     console.log(res.data)
+  //       setConversationId(conversationId);
+  // }
+  //     if (!conversationId) {
+  //       toast.error("Conversation ID not received");
+  //       return;
+  //     }
+  // if(res.data.success===true){
+  //     setConversationId(conversationId);
 
-// }
-//   } catch (error) {
-//     toast.error(
-//       error?.response?.data?.message || "Failed to create conversation"
-//     );
-//   }
-// };
-const createConversation = async () => {
-  try {
-    if (!LOGGED_IN_USER_ID || !RECEIVER_ID) return;
+  // }
+  //   } catch (error) {
+  //     toast.error(
+  //       error?.response?.data?.message || "Failed to create conversation"
+  //     );
+  //   }
+  // };
+  const createConversation = async () => {
+    try {
+      if (!LOGGED_IN_USER_ID || !RECEIVER_ID) return;
 
-    const res = await axios.post(
-      `${process.env.REACT_APP_BASE_URL}chat/createConversation`,
-      {
-        sender_type: "user",
-        receiver_type: "supplier",
-        sender_id: LOGGED_IN_USER_ID,
-        receiver_id: RECEIVER_ID,
+      const res = await axios.post(
+        `${process.env.REACT_APP_BASE_URL}chat/createConversation`,
+        {
+          sender_type: "user",
+          receiver_type: "supplier",
+          sender_id: LOGGED_IN_USER_ID,
+          receiver_id: RECEIVER_ID,
+        }
+      );
+
+      const conversationId = res?.data?.conversation_id;
+
+      // ❗ First validate response
+      if (!conversationId) {
+        toast.error("Conversation ID not received");
+        return;
       }
-    );
 
-    const conversationId = res?.data?.conversation_id;
+      // ✅ Single clean state update
+      setConversationId(conversationId);
 
-    // ❗ First validate response
-    if (!conversationId) {
-      toast.error("Conversation ID not received");
-      return;
+      console.log("Conversation created:", conversationId);
+
+    } catch (error) {
+      toast.error(
+        error?.response?.data?.message || "Failed to create conversation"
+      );
     }
-
-    // ✅ Single clean state update
-    setConversationId(conversationId);
-
-    console.log("Conversation created:", conversationId);
-
-  } catch (error) {
-    toast.error(
-      error?.response?.data?.message || "Failed to create conversation"
-    );
-  }
-};
+  };
 
   useEffect(() => {
     if (!conversationId && RECEIVER_ID) {
@@ -178,13 +178,13 @@ const createConversation = async () => {
   /* ================= LOAD MESSAGES ================= */
   useEffect(() => {
     if (!conversationId) return;
-    const payload ={
+    const payload = {
       conversation_id: conversationId,
       receiver_id: LOGGED_IN_USER_ID
     }
     axios
       .post(
-        `${process.env.REACT_APP_BASE_URL}chat/getMessages`,payload
+        `${process.env.REACT_APP_BASE_URL}chat/getMessages`, payload
       )
       .then((res) => {
         console.log("Loaded messages:", res.data.messages);
@@ -201,7 +201,7 @@ const createConversation = async () => {
   /* ================= SEND MESSAGE ================= */
   const sendMessage = async () => {
     console.log("A")
- 
+
     const payload = {
       sender_id: LOGGED_IN_USER_ID,
       receiver_id: RECEIVER_ID,
@@ -218,7 +218,7 @@ const createConversation = async () => {
         sender: "me",
       },
     ]);
-console.log(payload)
+    console.log(payload)
     const res = await axios.post(
       `${process.env.REACT_APP_BASE_URL}chat/sendMessage`,
       payload
@@ -242,26 +242,26 @@ console.log(payload)
           ⚠️ Chat disconnected. Reconnecting...
         </div>
       )}
-<div className="d-flex align-items-center gap-2 px-3 py-2 border-bottom bg-white">
-  {/* Profile Image */}
-  <img
-    src={`${process.env.REACT_APP_BASE_URL_image}${activeChat?.profile}`}
-    alt="profile"
-    style={{
-      width: "40px",
-      height: "40px",
-      borderRadius: "50%",
-      objectFit: "cover",
-    }}
-  />
-  <div>
-    <h6 className="mb-0 fw-bold">
-      {activeChat?.name || "Unknown"}
-    </h6>
-    {/* <small className="text-muted">Online</small> */}
-  </div>
+      <div className="d-flex align-items-center gap-2 px-3 py-2 border-bottom bg-white">
+        {/* Profile Image */}
+        <img
+          src={`${process.env.REACT_APP_BASE_URL_image}${activeChat?.profile}`}
+          alt="profile"
+          style={{
+            width: "40px",
+            height: "40px",
+            borderRadius: "50%",
+            objectFit: "cover",
+          }}
+        />
+        <div>
+          <h6 className="mb-0 fw-bold">
+            {activeChat?.name || "Unknown"}
+          </h6>
+          {/* <small className="text-muted">Online</small> */}
+        </div>
 
-</div>
+      </div>
       <div className="d-flex flex-column h-100">
         <div style={{ flex: 1, overflowY: "auto", padding: 12 }}>
           {messages.map((msg) => (
@@ -274,7 +274,7 @@ console.log(payload)
             >
               <span
                 style={{
-                  background: msg.sender === "me" ? "#0d6efd" : "#eee",
+                  background: msg.sender === "me" ? "#1b2245" : "#eee",
                   color: msg.sender === "me" ? "#fff" : "#000",
                   padding: "8px 12px",
                   borderRadius: 12,
@@ -296,7 +296,7 @@ console.log(payload)
             onKeyDown={(e) => e.key === "Enter" && sendMessage()}
           />
           <button
-            className="btn btn-primary"
+            className="blueBtn"
             onClick={sendMessage}
             disabled={!socketConnected}
           >

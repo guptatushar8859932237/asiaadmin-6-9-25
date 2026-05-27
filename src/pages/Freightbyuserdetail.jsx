@@ -48,7 +48,7 @@ export default function Freightbyuserdetail() {
       <div className="container-fluid">
         <div className="formDetails">
           <div className="row">
-            <div className="col-lg-12 px-0">
+            <div className="col-lg-12">
               <div className="d-flex">
                 <div>
                   <ArrowBackIcon

@@ -1544,11 +1544,11 @@ const CustomClearaceOrder = () => {
                   </div>
                 </div>
                 <div className="row mb-3 ">
-                  <div className="col-md-6">
+                  <div className="col-md-6 col-sm-6">
                     <h4 className="freight_hd">Document Section</h4>
                     <span class="line"></span>
                   </div>
-                  <div className="col-md-6 mt-3 mt-md-0 text-end">
+                  <div className="col-md-6 col-sm-6 mt-3 mt-sm-0 text-sm-end">
                     <button className="blueBtn" onClick={handleShow}>
                       Upload Documents
                     </button>

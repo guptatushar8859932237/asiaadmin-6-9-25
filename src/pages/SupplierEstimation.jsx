@@ -11,7 +11,7 @@ export default function SupplierEstimation() {
   const pageSize = 10;
   const navigate = useNavigate();
   const location = useLocation();
-    const id  = location.state.data
+  const id = location.state.data
 
   console.log(id);
   // console.log("location", location.state.data);
@@ -52,15 +52,15 @@ export default function SupplierEstimation() {
     window.history.back();
   }
 
-   const querryinQChat = (item) => {
+  const querryinQChat = (item) => {
     console.log("item", item);
     navigate("/Admin/QuotationInFreightSupplier", { state: { data: item } });
   };
   return (
     <div className="wpWrapper ">
       <div className="container-fluid">
+        <ArrowBack style={{ cursor: "pointer" }} onClick={handleclicknav} />
         <div className="table-responsive mt-3">
-        <ArrowBack  style={{ cursor: "pointer" }} onClick={handleclicknav} />
           <table className="table table-striped tableICon">
             <thead>
               <tr>
@@ -78,7 +78,7 @@ export default function SupplierEstimation() {
                 currentData.map((item, index) => {
                   return (
                     <tr className="border-bottom" key={index}>
-                      <th>{startIndex + index + 1}</th>
+                      <td>{startIndex + index + 1}</td>
                       <td>{item?.name}</td>
                       <td>{item?.email}</td>
                       <td>{item?.phone_no}</td>

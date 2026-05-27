@@ -883,9 +883,9 @@ export default function UserFreight() {
         <div className="container-fluid">
           <div className="row manageFreight">
             <div className="col-12">
-              <div className="d-flex justify-content-between align-items-center">
+              <div className="d-flex justify-content-between align-items-center flex-wrap gap-2">
                 <h4 className="freight_hd">Freight By User</h4>
-                <div className="d-flex">
+                <div className="d-flex flex-wrap gap-2">
                   <div className="me-2">
                     <input
                       className="py-1 rounded ps-1"
@@ -1744,14 +1744,14 @@ export default function UserFreight() {
                                             </div>
                                           </div>
                                           <div className="borderShip">
-                                            <div className="row mb-3 mt-4">
-                                              <div className="col-md-6">
+                                            <div className="row g-2 mb-3">
+                                              <div className="col-md-6 col-sm-6">
                                                 <h4 className="freight_hd">
                                                   Document Section
                                                 </h4>
                                                 <span class="line"></span>
                                               </div>
-                                              <div className="col-md-6 text-end">
+                                              <div className="col-md-6 col-sm-6 text-md-end text-start">
                                                 <button
                                                   className="redBtn"
                                                   onClick={handleShow}
@@ -2096,14 +2096,14 @@ export default function UserFreight() {
                                                 </div>
                                               </div>
                                               <div className="col-lg-6 col-md-6">
-                                                <div className="mb-3">
+                                                <div>
                                                   <label>Comment</label>
                                                   <input
                                                     type="text"
                                                     name="comment"
                                                     onChange={handleupdateapi}
                                                     value={inputdata.comment}
-                                                    className="mb-3"
+
                                                   />
                                                 </div>
                                               </div>
@@ -2268,9 +2268,14 @@ export default function UserFreight() {
               top: "50%",
               left: "50%",
               transform: "translate(-50%, -50%)",
-              minWidth: 450,
               bgcolor: "background.paper",
               boxShadow: 24,
+              width: {
+                xs: "95%",   // mobile
+                sm: "80%",   // tablet
+                md: "60%",   // small laptop
+                lg: "40%",   // desktop
+              },
             }}
           >
             <div className="modal-header">

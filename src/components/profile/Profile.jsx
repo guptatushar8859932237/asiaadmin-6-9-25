@@ -3,6 +3,7 @@ import { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { MyContext1 } from "../../Context/MyContext";
+import CloseIcon from "@mui/icons-material/Close";
 export default function Profile() {
   const [data, setData] = useState({});
   const { text, setText } = useContext(MyContext1);
@@ -61,156 +62,133 @@ export default function Profile() {
     <>
       <div className="wpWrapper">
         <div className="container-fluid">
-          <div className="card">
-            <div className="card-body">
-              <div className="row">
-                <div className="col-12">
-                  <div className="d-flex justify-content-between align-items-center">
-                    <div className="">
-                      <h4 className="freight_hd">Profile </h4>
-                    </div>
-                    <div className="">
-                      <button
-                        type="button"
-                        className="btn up_btn"
-                        data-bs-toggle="modal"
-                        data-bs-target="#staticBackdrop"
-                      >
-                        Update
-                      </button>
-                    </div>
-                  </div>
+          
+          <div className="row mt-4 justify-content-center">
+            <div className="col-lg-4 col-md-5 mb-4">
+              <div className="card border-0 shadow-md rounded-4 h-100 text-center py-5">
+                <div className="position-relative d-inline-block mx-auto mb-3">
+                  <img
+                    src={`${process.env.REACT_APP_BASE_URL_image}${text}`}
+                    style={{ width: '150px', height: '150px', objectFit: 'cover', border: '4px solid #fff', boxShadow: '0 4px 15px rgba(0,0,0,0.1)' }}
+                    className="rounded-circle"
+                    alt="Profile"
+                  />
                 </div>
+                <h5 className="fw-bold mb-1" style={{ color: '#1b2245' }}>{data?.full_name}</h5>
+                <p className="text-muted mb-4">{data?.Role || 'Administrator'}</p>
+                <button
+                  type="button"
+                  className="btn mx-4 py-2 rounded-pill text-white fw-medium shadow-md"
+                  style={{ background: "linear-gradient(135deg, #0b4170 0%, #1b2245 100%)" }}
+                  data-bs-toggle="modal"
+                  data-bs-target="#staticBackdrop"
+                >
+                  Update Profile
+                </button>
               </div>
-              <div
-                className="modal fade"
-                id="staticBackdrop"
-                data-bs-backdrop="static"
-                data-bs-keyboard="false"
-                tabIndex={-1}
-                aria-labelledby="staticBackdropLabel"
-                aria-hidden="true"
-              >
-                <div className="modal-dialog">
-                  <div className="modal-content">
-                    <div className="modal-header">
-                      <h1 className="modal-title fs-5" id="staticBackdropLabel">
-                        Update Profile
-                      </h1>
-                      <button
-                        type="button"
-                        className="btn-close"
-                        data-bs-dismiss="modal"
-                        aria-label="Close"
-                      />
-                    </div>
-                    <div className="modal-body">
-                      <div className="row mb-0">
-                        <div className="profileImgAdmin mb-5 text-center">
-                          <img
-                            src={`${process.env.REACT_APP_BASE_URL_image}${data?.profile}`}
-                            name="profile"
-                            style={{
-                              width: "130px",
-                              height: "130px",
-                              borderRadius: "50%",
-                            }}
-                            alt="Profile"
-                          />
-                        </div>
-                        <div className="profileContent">
-                          <div className="row">
-                            <div className="col-12">
-                              <input
-                                type="file"
-                                name="profile"
-                                onChange={handleChangeFile}
-                                className="w-100 mb-3 px-2 py-2 rounded border"
-                              />
-                            </div>
-                            <div className="col-12">
-                              <input
-                                value={data?.full_name || ""}
-                                name="full_name"
-                                onChange={handleChange}
-                                className="w-100 mb-3 px-2 py-2 rounded border"
-                              />
-                            </div>
-                            <div className="col-12">
-                              <input
-                                value={data?.email || ""}
-                                name="email"
-                                onChange={handleChange}
-                                className="w-100 mb-3 px-2 py-2 rounded border"
-                              />
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                      <div className="modal-footer">
-                        <button
-                          type="button"
-                          className="btn btn-secondary"
-                          data-bs-dismiss="modal"
-                        >
-                          Close
-                        </button>
-                        <button
-                          type="button"
-                          className="btn btn-primary"
-                          onClick={handlePostData}
-                          disabled={loading}
-                        >
-                          {loading ? "Saving..." : "Save Changes"}
-                        </button>
-                      </div>
-                    </div>
-                  </div>
+            </div>
+            
+            <div className="col-lg-8 col-md-7 mb-4">
+              <div className="card border-0 shadow-md rounded-4 h-100 p-4">
+                <h5 className="fw-bold mb-4" style={{ color: '#1b2245', borderBottom: '2px solid #f1f5f9', paddingBottom: '15px' }}>Basic Information</h5>
+                
+                <div className="row mb-4">
+                  <div className="col-sm-4 text-muted fw-semibold">Full Name</div>
+                  <div className="col-sm-8 fw-medium">{data?.full_name}</div>
                 </div>
-              </div>
-              <div className="row mt-3">
-                <div className="col-3">
-                  <div className="pro_box1">
-                    <div className="img_profile">
-                      <img
-                        src={`${process.env.REACT_APP_BASE_URL_image}${text}`}
-                        className="pro_img"
-                        alt="Profile"
-                      />
-                    </div>
-                    <p className="img_para">Profile Image</p>
-                  </div>
+                
+                <div className="row mb-4">
+                  <div className="col-sm-4 text-muted fw-semibold">Email Address</div>
+                  <div className="col-sm-8 fw-medium">{data?.email}</div>
                 </div>
-                <div className="col-9">
-                  <div className="pro_box">
-                    <div className="profileContent">
-                      <h4>Basic Information</h4>
-                      <div className="row">
-                        <div className="col-lg-6">
-                          <p>
-                            <strong>Role:</strong> <span>{data?.Role}</span>
-                          </p>
-                        </div>
-                        <div className="col-lg-6">
-                          <p>
-                            <strong>Full Name:</strong>{" "}
-                            <span>{data?.full_name}</span>
-                          </p>
-                        </div>
-                      </div>
-                      <div className="row">
-                        <div className="col-lg-12">
-                          <p>
-                            <strong>Email:</strong> <span>{data?.email}</span>
-                          </p>
-                        </div>
-                      </div>
-                    </div>
+                
+                <div className="row mb-4">
+                  <div className="col-sm-4 text-muted fw-semibold">Role</div>
+                  <div className="col-sm-8 fw-medium">
+                    <span className="badge rounded-pill px-3 py-2 text-white" style={{ background: "linear-gradient(135deg, #0b4170 0%, #1b2245 100%)" }}>
+                       {data?.Role || 'Admin'}
+                    </span>
                   </div>
                 </div>
               </div>
             </div>
           </div>
+
+          <div
+            className="modal fade"
+            id="staticBackdrop"
+            data-bs-backdrop="static"
+            data-bs-keyboard="false"
+            tabIndex={-1}
+            aria-labelledby="staticBackdropLabel"
+            aria-hidden="true"
+          >
+            <div className="modal-dialog modal-dialog-centered">
+              <div className="modal-content border-0 shadow-lg rounded-4 overflow-hidden">
+                <div className="modal-header border-0 pb-0" style={{ background: '#f8f9fa' }}>
+                  <h5 className="modal-title fw-bold" id="staticBackdropLabel" style={{ color: '#1b2245' }}>
+                    Update Profile
+                  </h5>
+                  <button
+                    type="button"
+                    className="btn border-0 text-muted p-0 m-0 d-flex align-items-center justify-content-center"
+                    data-bs-dismiss="modal"
+                    aria-label="Close"
+                  >
+                     <CloseIcon />
+                  </button>
+                </div>
+                <div className="modal-body p-4" style={{ background: '#f8f9fa' }}>
+                  <div className="text-center mb-4">
+                    <div className="position-relative d-inline-block">
+                       <img
+                         src={`${process.env.REACT_APP_BASE_URL_image}${data?.profile}`}
+                         style={{ width: "120px", height: "120px", objectFit: "cover", borderRadius: "50%", border: "3px solid white", boxShadow: "0 4px 10px rgba(0,0,0,0.1)" }}
+                         alt="Profile"
+                       />
+                       <div className="mt-3">
+                         <input
+                           type="file"
+                           name="profile"
+                           onChange={handleChangeFile}
+                           className="form-control form-control-sm rounded-pill"
+                         />
+                       </div>
+                    </div>
+                  </div>
+                  
+                  <div className="mb-3">
+                    <label className="form-label fw-semibold small text-muted">Full Name</label>
+                    <input
+                      value={data?.full_name || ""}
+                      name="full_name"
+                      onChange={handleChange}
+                      className="form-control form-control-lg rounded-3 fs-6"
+                    />
+                  </div>
+                  
+                  <div className="mb-4">
+                    <label className="form-label fw-semibold small text-muted">Email Address</label>
+                    <input
+                      value={data?.email || ""}
+                      name="email"
+                      onChange={handleChange}
+                      className="form-control form-control-lg rounded-3 fs-6"
+                    />
+                  </div>
+                </div>
+                <div className="modal-footer border-0 pt-0" style={{ background: '#f8f9fa' }}>
+                  <button type="button" className="btn btn-light rounded-pill px-4 fw-medium shadow-sm" data-bs-dismiss="modal">
+                    Cancel
+                  </button>
+                  <button type="button" className="btn text-white rounded-pill px-4 fw-medium shadow-sm" style={{ background: "linear-gradient(135deg, #0b4170 0%, #1b2245 100%)" }} onClick={handlePostData} disabled={loading}>
+                    {loading ? "Saving..." : "Save Changes"}
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+          
         </div>
       </div>
     </>

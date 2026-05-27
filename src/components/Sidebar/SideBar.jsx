@@ -316,7 +316,7 @@ const SideBar = ({ children }) => {
     <div className="main-container sideBarpageMain">
       <motion.div
         animate={{
-          width: isOpen ? "300px" : "42px",
+          width: isOpen ? "300px" : "65px",
           transition: {
             duration: 0.5,
             type: "spring",
@@ -325,7 +325,7 @@ const SideBar = ({ children }) => {
         }}
         className={`sidebar`}
       >
-        <div className="top_section">
+        <div className="top_section" style={{ justifyContent: isOpen ? "space-between" : "center", padding: isOpen ? "5px" : "15px 0" }}>
           <AnimatePresence>
             {isOpen && (
               <motion.h1
@@ -349,14 +349,24 @@ const SideBar = ({ children }) => {
                 onClick={toggle}
                 style={{ fontSize: "2rem", cursor: "pointer" }}
               />
-            </div>) : (<BiRightArrowCircle size={30} onClick={toggle} color="blue" />)
+            </div>) : (<BiRightArrowCircle size={30} onClick={toggle} style={{ cursor: "pointer" }} />)
           }
         </div>
         <div className="text-center mt-5 mt-md-0">
           <div>
             <button
               className="search"
-              style={{ cursor: "pointer" }}
+              style={{ 
+                cursor: "pointer",
+                padding: isOpen ? "10px 20px" : "10px",
+                borderRadius: isOpen ? "8px" : "50%",
+                width: isOpen ? "90%" : "45px",
+                height: isOpen ? "auto" : "45px",
+                margin: "10px auto",
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center"
+              }}
               onClick={() => {
                 navigate("/Admin/Addfreight");
               }}
@@ -457,7 +467,7 @@ const SideBar = ({ children }) => {
       </motion.div>
       <motion.div
         animate={{
-          width: isOpen ? "calc(100% - 250px)" : "100%",
+           width: isOpen ? "85%" : "100%",
           transition: {
             duration: 0.5,
             type: "spring",

@@ -25,12 +25,50 @@ const Donutchart = () => {
       <div className="pie_chart">
         <div id="chart">
           <Chart
-            type="pie"
-            width={330}
-            height={520}
-            series={[parseInt(data), parseInt(data1), parseInt(data2)]}
+            type="donut"
+            width={"100%"}
+            height={350}
+            series={[parseInt(data) || 0, parseInt(data1) || 0, parseInt(data2) || 0]}
             options={{
-              labels: ['Air Freight', 'Road Freight', 'Sea Freight'], colors: ['#9eece3', '#be191d', '#1b2245']
+              labels: ['Air Freight', 'Road Freight', 'Sea Freight'],
+              colors: ['#0b4170', '#1cc88a', '#e74a3b'],
+              chart: {
+                fontFamily: 'inherit'
+              },
+              dataLabels: {
+                enabled: false
+              },
+              plotOptions: {
+                pie: {
+                  donut: {
+                    size: '70%',
+                    labels: {
+                      show: true,
+                      name: { fontSize: '14px', color: '#6c757d' },
+                      value: { fontSize: '24px', fontWeight: 700, color: '#1b2245' },
+                      total: {
+                        show: true,
+                        label: 'Total',
+                        color: '#6c757d',
+                        formatter: function (w) {
+                          return w.globals.seriesTotals.reduce((a, b) => {
+                            return a + b
+                          }, 0)
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              stroke: { width: 0 },
+              legend: {
+                position: 'bottom',
+                markers: { radius: 12 },
+                itemMargin: { horizontal: 10, vertical: 5 }
+              },
+              tooltip: {
+                theme: 'light'
+              }
             }}
           >
           </Chart>

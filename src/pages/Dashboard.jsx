@@ -31,7 +31,7 @@ export default function Dashboard() {
           <div class="row g-4">
             <div class=" col-xl-3 col-lg-4 col-md-6 col-sm-6" onClick={() => { navigaet('/Admin/manage-customer') }}>
               <div class="cardDash">
-                <h4 className="hd_dash">Clients</h4>
+                <h5 className="hd_dash">Clients</h5>
                 <div class="iconParent">
                   <div class="cardContent">
                     <p className="para_dash"><CountUp end={countdata?.no_of_clients} /></p>
@@ -48,7 +48,7 @@ export default function Dashboard() {
             </div>
             <div class="col-xl-3 col-lg-4 col-md-6 col-sm-6" onClick={() => { navigaet('/Admin/managefreight') }}>
               <div class="cardDash">
-                <h4 className="hd_dash">Freights</h4>
+                <h5 className="hd_dash">Freights</h5>
                 <div class="iconParent">
                   <div class="cardContent">
                     <p className="para_dash"><CountUp end={countdata?.no_of_freights} /></p>
@@ -65,7 +65,7 @@ export default function Dashboard() {
             </div>
             <div class="col-xl-3 col-lg-4 col-md-6 col-sm-6" onClick={() => { navigaet('/Admin/order') }}>
               <div class="cardDash">
-                <h4 className="hd_dash">Orders</h4>
+                <h5 className="hd_dash">Orders</h5>
                 <div class="iconParent">
                   <div class="cardContent">
                     <p className="para_dash"><CountUp end={countdata?.no_of_orders} /></p>
@@ -82,7 +82,7 @@ export default function Dashboard() {
             </div>
             <div class="col-xl-3 col-lg-4 col-md-6 col-sm-6" onClick={() => { navigaet('/Admin/custom-clearance-order') }}>
               <div class="cardDash">
-                <h4 className="hd_dash">Clearances</h4>
+                <h5 className="hd_dash">Clearances</h5>
                 <div class="iconParent">
                   <div class="cardContent">
                     <p className="para_dash"><CountUp end={countdata?.no_of_clearance} /></p>
@@ -99,7 +99,7 @@ export default function Dashboard() {
             </div>
             <div class="col-xl-3 col-lg-4 col-md-6 col-sm-6" onClick={() => { navigaet('/Admin/calculation-order') }} >
               <div class="cardDash">
-                <h4 className="hd_dash">Clearance Orders</h4>
+                <h5 className="hd_dash">Clearance Orders</h5>
                 <div class="iconParent">
                   <div class="cardContent">
                     <p className="para_dash"><CountUp end={countdata?.no_Of_clearanceOrder} /></p>
@@ -115,22 +115,22 @@ export default function Dashboard() {
               </div>
             </div>
             <div class="col-lg-3" onClick={() => { navigaet('/Admin/KPIDashboard') }}>
-                  <div class="cardDash">
-                    <h4 className="hd_dash">Leave</h4>
-                    <div class="iconParent">
-                      <div class="cardContent">
-                      <p className="para_dash"><CountUp end={countdata?.no_of_invoices} /></p>
-                      </div>
-                      <div class="iconGrad">
-                        <i className="fa fa-calendar"></i>
-                      </div>
-                    </div>
-                    <div class="cardBottom bg2">
-                      <p>View More</p>
-                      <i class="fi fi-rr-angle-double-small-right"></i>
-                    </div>
+              <div class="cardDash">
+                <h6 className="hd_dash">Leave</h6>
+                <div class="iconParent">
+                  <div class="cardContent">
+                    <p className="para_dash"><CountUp end={countdata?.no_of_invoices} /></p>
                   </div>
+                  <div class="iconGrad">
+                    <i className="fa fa-calendar"></i>
+                  </div>
+                </div>
+                <div class="cardBottom bg2">
+                  <p>View More</p>
+                  <i class="fi fi-rr-angle-double-small-right"></i>
+                </div>
               </div>
+            </div>
           </div>
           <div className="chart mt-4">
             <div className="row g-4">

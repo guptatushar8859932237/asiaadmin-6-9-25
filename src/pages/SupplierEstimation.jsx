@@ -12,7 +12,6 @@ export default function SupplierEstimation() {
   const navigate = useNavigate();
   const location = useLocation();
   const id = location.state.data
-
   console.log(id);
   // console.log("location", location.state.data);
   const frightData = async () => {
@@ -30,7 +29,6 @@ export default function SupplierEstimation() {
   useEffect(() => {
     frightData();
   }, []);
-
   const filterdata = data?.filter((item) => {
     return (
       item?.email?.toLowerCase()?.includes(searchQuery?.toLowerCase()) ||
@@ -51,7 +49,6 @@ export default function SupplierEstimation() {
     // navigate("/Admin/FreightSupplier");
     window.history.back();
   }
-
   const querryinQChat = (item) => {
     console.log("item", item);
     navigate("/Admin/QuotationInFreightSupplier", { state: { data: item } });

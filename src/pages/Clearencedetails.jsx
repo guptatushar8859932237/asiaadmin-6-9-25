@@ -829,7 +829,7 @@ export default function Clearencedetails() {
                                       return (
                                         <>
                                           <tr>
-                                            <th
+                                            <td
                                               style={{
                                                 padding: 5,
                                                 border: "1px solid #1a2142",
@@ -838,7 +838,7 @@ export default function Clearencedetails() {
                                               }}
                                             >
                                               {item.HS_tariff_code}
-                                            </th>
+                                            </td>
                                             <td
                                               style={{
                                                 padding: 5,
@@ -926,7 +926,7 @@ export default function Clearencedetails() {
                                         fontSize: 14,
                                       }}
                                     />
-                                    <th
+                                    <td
                                       style={{
                                         padding: 5,
                                         border: "1px solid #1a2142",
@@ -934,7 +934,7 @@ export default function Clearencedetails() {
                                       }}
                                     >
                                       Extra Charge
-                                    </th>
+                                    </td>
                                     <td
                                       style={{
                                         padding: 5,
@@ -942,28 +942,28 @@ export default function Clearencedetails() {
                                         fontSize: 14,
                                       }}
                                     />
-                                    <th
+                                    <td
                                       style={{
                                         padding: 5,
                                         border: "1px solid #1a2142",
                                         fontSize: 14,
                                       }}
-                                    ></th>
-                                    <th
+                                    ></td>
+                                    <td
                                       style={{
                                         padding: 5,
                                         border: "1px solid #1a2142",
                                         fontSize: 14,
                                       }}
-                                    ></th>
-                                    <th
+                                    ></td>
+                                    <td
                                       style={{
                                         padding: 5,
                                         border: "1px solid #1a2142",
                                         fontSize: 14,
                                       }}
-                                    ></th>
-                                    <th
+                                    ></td>
+                                    <td
                                       style={{
                                         padding: 5,
                                         border: "1px solid #1a2142",
@@ -971,7 +971,7 @@ export default function Clearencedetails() {
                                       }}
                                     >
                                       {extrachange ? extrachange : 0}
-                                    </th>
+                                    </td>
                                     {/* <th
                                       style={{
                                         padding: 5,

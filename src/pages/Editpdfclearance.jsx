@@ -881,7 +881,7 @@ export default function Editpdfclearance() {
                     </div>
 
                   </div>
-                  <div>
+                  <div className="mt-3">
                     <div className="updateLoading">
                       <div className="table-responsive estTableEdit">
                         <table className="table">

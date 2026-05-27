@@ -842,7 +842,7 @@ ul.navbar-nav i {
   position: relative;
   cursor: pointer;
   overflow: hidden;
-  border: 1px solid rgba(0,0,0,0.02);
+  border: 1px solid rgba(0, 0, 0, 0.02);
 }
 
 .cardDash:hover {
@@ -872,7 +872,7 @@ ul.navbar-nav i {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  border-top: 1px solid rgba(0,0,0,0.04);
+  border-top: 1px solid rgba(0, 0, 0, 0.04);
   transition: background 0.3s ease;
 }
 
@@ -917,12 +917,13 @@ ul.navbar-nav i {
   border-bottom: unset;
 }
 
-.chartCol, .pieSpace {
+.chartCol,
+.pieSpace {
   background: #ffffff;
   border-radius: 16px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
   padding: 24px;
-  border: 1px solid rgba(0,0,0,0.02);
+  border: 1px solid rgba(0, 0, 0, 0.02);
 }
 
 .graph_hd {
@@ -2939,7 +2940,7 @@ table .esti_tbody tr th {
 }
 
 .updateLoading button {
-  background-color: #1b2245 !important;
+  background-color: #1b2245;
   color: #fff;
   border: unset;
   padding: 10px 20px;
@@ -5835,6 +5836,9 @@ td {
   align-items: center;
   justify-content: center;
   border-left: unset;
+  background: #e7e6e6;
+  border: 1px solid #d3d3d3;
+  color: #000000;
 }
 
 .hsCodeParent input {
@@ -6017,4 +6021,12 @@ td {
 
 .tableResFixed {
   min-height: 50vh;
+}
+
+.tableBtn {
+  border: 1px solid #1b224557;
+  padding: 1px 10px;
+  border-radius: 5px;
+  background: #a7a7a71c;
+  font-size: 12px;
 }

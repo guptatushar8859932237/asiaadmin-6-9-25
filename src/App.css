@@ -127,7 +127,17 @@ th {
 .sidebar {
   width: 5px;
   background: var(--blue);
-  min-height: 100vh;
+  height: 100vh;
+  overflow-y: auto;
+}
+
+.sidebar::-webkit-scrollbar {
+  width: 5px;
+}
+
+.sidebar::-webkit-scrollbar-thumb {
+  background-color: #e0e4e9 !important;
+  border-radius: 5px;
 }
 
 .sidebar svg {

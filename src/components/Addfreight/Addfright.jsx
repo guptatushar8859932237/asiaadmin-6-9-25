@@ -54,6 +54,7 @@ const Addfright = () => {
     post_of_discharge: "",
     place_of_delivery: "",
     ready_for_collection: "",
+    require_for_delivery: "",
     transit_time: "",
     priority: "",
     shipment_details: "",
@@ -108,6 +109,7 @@ const Addfright = () => {
   const handleclick = () => {
     handlevalidate(data);
   };
+
   const useridsales = JSON.parse(localStorage.getItem("data123"));
   const handlevalidate = (value) => {
     console.log(useridsales.id);
@@ -168,7 +170,10 @@ const Addfright = () => {
       error.place_of_delivery = "Place of delivery is required";
     }
     if (!value.ready_for_collection) {
-      error.ready_for_collection = "Ready for collection is required";
+      error.ready_for_collection = "Require for collection is required";
+    }
+    if (!value.require_for_delivery) {
+      error.require_for_delivery = "Require for Delivery is required";
     }
     if (!value.Product_Description) {
       error.Product_Description = "Product Description is required";
@@ -209,6 +214,7 @@ const Addfright = () => {
     }
     setError(error);
   };
+
   const apihit = () => {
     setLoader(true);
     console.log(reemail?.clientemail);
@@ -244,6 +250,7 @@ const Addfright = () => {
     formdata.append("post_of_discharge", data.post_of_discharge);
     formdata.append("place_of_delivery", data.place_of_delivery);
     formdata.append("ready_for_collection", data.ready_for_collection);
+    formdata.append("require_for_delivery", data.require_for_delivery);
     formdata.append("transit_time", data.transit_time);
     formdata.append("priority", data.priority);
     formdata.append("user_id", useridsales.id);
@@ -686,32 +693,6 @@ const Addfright = () => {
                           </div>
                           <p className="text-danger mb-0">{error.is_active}</p>
                         </div>
-                        <div className="col-xl-6 col-lg-12 col-md-12">
-                          <label>Ready for Collection</label>
-                          <div className="shipRefer1">
-                            <input
-                              type="radio"
-                              id="collectOne"
-                              name="ready_for_collection"
-                              style={{ cursor: "pointer" }}
-                              defaultValue="yes"
-                              onChange={handlechange}
-                            />
-                            <label htmlFor="collectOne">Yes</label>
-                            <input
-                              type="radio"
-                              id="collectOne"
-                              name="ready_for_collection"
-                              style={{ cursor: "pointer" }}
-                              defaultValue="no"
-                              onChange={handlechange}
-                            />
-                            <label htmlFor="collectTwo">No</label>
-                          </div>
-                          <p className="text-danger mb-0">
-                            {error.ready_for_collection}
-                          </p>
-                        </div>
 
                         <div className="col-xl-6 col-lg-12 col-md-12">
                           <label>Assign to Clearing</label>
@@ -763,6 +744,60 @@ const Addfright = () => {
                           </div>
                           <p className="text-danger mb-0">
                             {error.send_to_warehouse}
+                          </p>
+                        </div>
+
+                        <div className="col-xl-6 col-lg-12 col-md-12">
+                          <label>Required for Collection</label>
+                          <div className="shipRefer1">
+                            <input
+                              type="radio"
+                              id="collectOne"
+                              name="ready_for_collection"
+                              style={{ cursor: "pointer" }}
+                              defaultValue="yes"
+                              onChange={handlechange}
+                            />
+                            <label htmlFor="collectOne">Yes</label>
+                            <input
+                              type="radio"
+                              id="collectOne"
+                              name="ready_for_collection"
+                              style={{ cursor: "pointer" }}
+                              defaultValue="no"
+                              onChange={handlechange}
+                            />
+                            <label htmlFor="collectTwo">No</label>
+                          </div>
+                          <p className="text-danger mb-0">
+                            {error.ready_for_collection}
+                          </p>
+                        </div>
+
+                         <div className="col-xl-6 col-lg-12 col-md-12">
+                          <label>Required for Delivery</label>
+                          <div className="shipRefer1">
+                            <input
+                              type="radio"
+                              id="collectOne"
+                              name="require_for_delivery"
+                              style={{ cursor: "pointer" }}
+                              defaultValue="yes"
+                              onChange={handlechange}
+                            />
+                            <label htmlFor="collectOne">Yes</label>
+                            <input
+                              type="radio"
+                              id="collectOne"
+                              name="require_for_delivery"
+                              style={{ cursor: "pointer" }}
+                              defaultValue="no"
+                              onChange={handlechange}
+                            />
+                            <label htmlFor="collectTwo">No</label>
+                          </div>
+                          <p className="text-danger mb-0">
+                            {error.require_for_delivery}
                           </p>
                         </div>
                       </div>

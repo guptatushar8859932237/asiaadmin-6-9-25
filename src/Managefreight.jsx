@@ -89,6 +89,7 @@ export default function Managefreight() {
     priority: "",
     is_active: "",
     ready_for_collection: "",
+    require_for_delivery:"",
     quote_received: "",
     client_ref_name: "",
     client_quoted: "",
@@ -138,6 +139,7 @@ export default function Managefreight() {
     getStaff();
     getstaff();
   }, []);
+
   const getStaff = () => {
     axios
       .get(`${process.env.REACT_APP_BASE_URL}staff-list`)
@@ -172,6 +174,7 @@ export default function Managefreight() {
   }, []);
   const userid = JSON.parse(localStorage.getItem("data123"))?.id;
   const usertype = JSON.parse(localStorage.getItem("data123"))?.user_type;
+
   const getFreightWithoutpermission = async (page) => {
     const payload = { user_id: userid, user_type: usertype, page: page };
     try {
@@ -187,6 +190,7 @@ export default function Managefreight() {
       toast.error(error.response?.data?.message || "Something went wrong");
     }
   };
+
   const frightData = async (page) => {
     try {
       const postdata = {
@@ -224,6 +228,7 @@ export default function Managefreight() {
       toast.error("You don't have permission to access this page");
     }
   };
+
   useEffect(() => {
     if (userid && usertype) {
       frightData(currentPage);
@@ -345,6 +350,7 @@ export default function Managefreight() {
     formdata.append("post_of_discharge", inputdata.post_of_discharge);
     formdata.append("place_of_delivery", inputdata.place_of_delivery);
     formdata.append("ready_for_collection", inputdata.ready_for_collection);
+    formdata.append("require_for_delivery", inputdata.require_for_delivery);
     formdata.append("transit_time", inputdata.transit_time);
     formdata.append("priority", inputdata.priority);
     formdata.append("nature_of_hazard", inputdata.nature_of_hazard);
@@ -571,6 +577,13 @@ export default function Managefreight() {
       ready_for_collection: event.target.value,
     }));
   };
+
+  const handleRequireforDelivery = (event) => {
+    setInputdata((prevData) => ({
+      ...prevData,
+      require_for_delivery: event.target.value,
+    }));
+  }
   const handlereadyhazardous = (event) => {
     setInputdata((prevData) => ({
       ...prevData,
@@ -936,7 +949,7 @@ export default function Managefreight() {
           </div>
         </Box>
       </Modal>
-      <div className="wpWrapper ">
+      <div className="wpWrapper">
         <div className="container-fluid">
           <div className="row manageFreight">
             <div className="col-12">
@@ -1024,9 +1037,9 @@ export default function Managefreight() {
           <div className="row">
             <div className="mt-4">
               {loader ? (
-                <div class="loader-container">
-                  <div class="loader"></div>
-                  <p class="loader-text">Updating... This may take some time</p>
+                <div className="loader-container">
+                  <div className="loader"></div>
+                  <p className="loader-text">Updating... This may take some time</p>
                 </div>
               ) : (
                 <div>
@@ -2414,7 +2427,7 @@ export default function Managefreight() {
                                                     <FormControl>
                                                       <FormLabel id="demo-row-radio-buttons-group-label">
                                                         <label>
-                                                          Ready for collection
+                                                          Require for collection
                                                         </label>
                                                       </FormLabel>
                                                       <RadioGroup
@@ -2440,6 +2453,37 @@ export default function Managefreight() {
                                                       </RadioGroup>
                                                     </FormControl>
                                                   </div>
+                                                   <div className="shipRefer mb-3">
+                                                    <FormControl>
+                                                      <FormLabel id="demo-row-radio-buttons-group-label">
+                                                        <label>
+                                                          Require for Delivery
+                                                        </label>
+                                                      </FormLabel>
+                                                      <RadioGroup
+                                                        aria-labelledby="demo-row-radio-buttons-group-label"
+                                                        value={
+                                                          inputdata.require_for_delivery
+                                                        }
+                                                        name="require_for_delivery"
+                                                        onChange={
+                                                          handleRequireforDelivery
+                                                        }
+                                                      >
+                                                        <FormControlLabel
+                                                          value="Yes"
+                                                          control={<Radio />}
+                                                          label="Yes"
+                                                        />
+                                                        <FormControlLabel
+                                                          value="No"
+                                                          control={<Radio />}
+                                                          label="No"
+                                                        />
+                                                      </RadioGroup>
+                                                    </FormControl>
+                                                  </div>
+
                                                   <div className=" col-md-6 mb-3">
                                                     <div className="shipRefer">
                                                       <FormControl>

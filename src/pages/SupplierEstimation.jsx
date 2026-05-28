@@ -53,6 +53,7 @@ export default function SupplierEstimation() {
     console.log("item", item);
     navigate("/Admin/QuotationInFreightSupplier", { state: { data: item } });
   };
+  
   return (
     <div className="wpWrapper ">
       <div className="container-fluid">

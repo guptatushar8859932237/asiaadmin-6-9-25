@@ -875,8 +875,8 @@ export default function Editclearenceuser() {
                 width: {
                   xs: "95%",   // mobile
                   sm: "80%",   // tablet
-                  md: "60%",   // small laptop
-                  lg: "40%",   // desktop
+                  md: "70%",   // small laptop
+                  lg: "60%",   // desktop
                 },
 
               }}
@@ -890,9 +890,10 @@ export default function Editclearenceuser() {
               </div>
               <div className="newModalGap noFormaControl">
                 <div className="row mb-3">
+                  <label>Enter your HS code</label>
                   <div className="d-flex">
-                    <div>
-                      <label>Enter your HS code</label>
+                    <div className="d-flex hsCodeParent">
+
                       <input
                         type="text"
                         className="form-control"
@@ -902,100 +903,102 @@ export default function Editclearenceuser() {
                         onChange={handleInputChange}
                         onKeyPress={handleValidate}
                       />
-                    </div>
-                    <div className="" style={{ marginLeft: "20px" }}>
                       <button className="add_hscode" onClick={handleClickHf}>
                         +
                       </button>
+
+
+
+                    </div>
+
+                  </div>
+                  <div className="updateLoading mt-4">
+                    <div className="table-responsive estTableEdit">
+                      <table clsassName="table table-striped " style={{ width: "100%" }}>
+                        <thead className="esti_thead">
+                          <tr>
+                            <th>HS Code</th>
+                            <th>Description</th>
+                            <th>VAT%</th>
+                            <th>Value of Goods</th>
+                            <th>Quoted Rate</th>
+                            <th></th>
+                            <th>Value Of Goods</th>
+                            <th>VAT</th>
+                            <th>Import Duty</th>
+                            <th>Calculate</th>
+                          </tr>
+                        </thead>
+                        {rows123.map((row, index) => {
+                          console.log(row);
+                          return (
+                            <>
+                              <tr key={index}>
+                                <td>
+                                  {" "}
+                                  <strong>{row.hs_code}</strong>{" "}
+                                </td>
+                                <td>{row.hs_cod_desc}</td>
+                                <td>15%</td>
+                                <td>
+                                  <input
+                                    onKeyPress={handleValidate}
+                                    name="valueofgoods"
+                                    className="form-control"
+                                    value={row.valueofgoods}
+                                    onChange={(e) =>
+                                      handleChangeValueOfGood(e, index)
+                                    }
+                                  />
+                                </td>
+                                <td>
+                                  <input
+                                    onKeyPress={handleValidate}
+                                    name="quotedRate"
+                                    className="form-control"
+                                    value={row.quotedRate}
+                                    onChange={(e) =>
+                                      handleChangeValueOfGood(e, index)
+                                    }
+                                  />
+                                </td>
+                                <td>
+                                  <div className="unsetLt">
+                                    <button
+                                      className="ms-2 py-1 btn rounded"
+                                      onClick={() => handleClickValue(index)}
+                                      style={{
+                                        backgroundColor: "red",
+                                        color: "white",
+                                      }}
+                                    >
+                                      Add
+                                    </button>
+                                  </div>
+                                </td>
+                                <td>{row.csercount}</td>
+                                <td>{row.datavalttac}</td>
+                                <td>{row.datavat}</td>
+                                <td>{row.estimate}</td>
+                              </tr>
+                            </>
+                          );
+                        })}
+                      </table>
                     </div>
                   </div>
 
-                  <div className="d-flex align-items-center">
-                    <div className="updateLoading">
-                      <div className="table-responsive estTableEdit">
-                        <table>
-                          <thead className="esti_thead">
-                            <tr>
-                              <th>HS Code</th>
-                              <th>Description</th>
-                              <th>VAT%</th>
-                              <th>Value of Goods</th>
-                              <th>Quoted Rate</th>
-                              <th></th>
-                              <th>Value Of Goods</th>
-                              <th>VAT</th>
-                              <th>Import Duty</th>
-                              <th>Calculate</th>
-                            </tr>
-                          </thead>
-                          {rows123.map((row, index) => {
-                            console.log(row);
-                            return (
-                              <>
-                                <tr key={index}>
-                                  <td>
-                                    {" "}
-                                    <strong>{row.hs_code}</strong>{" "}
-                                  </td>
-                                  <td>{row.hs_cod_desc}</td>
-                                  <td>15%</td>
-                                  <td>
-                                    <input
-                                      onKeyPress={handleValidate}
-                                      name="valueofgoods"
-                                      className="form-control"
-                                      value={row.valueofgoods}
-                                      onChange={(e) =>
-                                        handleChangeValueOfGood(e, index)
-                                      }
-                                    />
-                                  </td>
-                                  <td>
-                                    <input
-                                      onKeyPress={handleValidate}
-                                      name="quotedRate"
-                                      className="form-control"
-                                      value={row.quotedRate}
-                                      onChange={(e) =>
-                                        handleChangeValueOfGood(e, index)
-                                      }
-                                    />
-                                  </td>
-                                  <td>
-                                    <div className="unsetLt">
-                                      <button
-                                        className="ms-2 py-1 btn rounded"
-                                        onClick={() => handleClickValue(index)}
-                                        style={{
-                                          backgroundColor: "red",
-                                          color: "white",
-                                        }}
-                                      >
-                                        Add
-                                      </button>
-                                    </div>
-                                  </td>
-                                  <td>{row.csercount}</td>
-                                  <td>{row.datavalttac}</td>
-                                  <td>{row.datavat}</td>
-                                  <td>{row.estimate}</td>
-                                </tr>
-                              </>
-                            );
-                          })}
-                        </table>
-                      </div>
-                    </div>
-                  </div>
                 </div>
+                <div className="text-center">
+                  <button
+                    variant="contained"
+                    className="blueBtn"
+                    onClick={handleclickchnagedata}
+                  >
+                    Submit
+                  </button>
 
-                <Button
-                  variant="contained"
-                  className="btn btn-secondary"
-                  onClick={handleclickchnagedata}
-                >
-                  Submit
-                </Button>
+                </div>
               </div>
             </Box>
           </Modal>

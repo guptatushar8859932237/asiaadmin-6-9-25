@@ -927,7 +927,7 @@ export default function ViewDetails() {
                                         fontSize: 14,
                                       }}
                                     />
-                                    <th
+                                    <td
                                       style={{
                                         padding: 5,
                                         border: "1px solid #1a2142",
@@ -936,7 +936,7 @@ export default function ViewDetails() {
                                     >
                                       Extra Charge
 
-                                    </th>
+                                    </td>
                                     <td
                                       style={{
                                         padding: 5,
@@ -944,29 +944,29 @@ export default function ViewDetails() {
                                         fontSize: 14,
                                       }}
                                     />
-                                    <th
+                                    <td
                                       style={{
                                         padding: 5,
                                         border: "1px solid #1a2142",
                                         fontSize: 14,
                                       }}
-                                    ></th>
-                                    <th
+                                    ></td>
+                                    <td
                                       style={{
                                         padding: 5,
                                         border: "1px solid #1a2142",
                                         fontSize: 14,
                                       }}
-                                    ></th>
-                                    <th
+                                    ></td>
+                                    <td
                                       style={{
                                         padding: 5,
                                         border: "1px solid #1a2142",
                                         fontSize: 14,
                                       }}
                                     >
-                                    </th>
-                                    <th
+                                    </td>
+                                    <td
                                       style={{
                                         padding: 5,
                                         border: "1px solid #1a2142",
@@ -976,7 +976,7 @@ export default function ViewDetails() {
                                       {extrachange ? extrachange : 0}
 
 
-                                    </th>
+                                    </td>
                                     {/* <th
                                       style={{
                                         padding: 5,

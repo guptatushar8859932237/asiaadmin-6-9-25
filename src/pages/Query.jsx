@@ -192,35 +192,36 @@ const Query = () => {
     <>
       <div className="wpWrapper">
         <div className="container-fluid">
-          <div>
-            <div>
-              <div className="row manageFreight">
-                <div className="col-12">
-                  <div className="d-flex justify-content-between align-items-center">
-                    <div className="">
-                      <h4 className="freight_hd">Customer Query</h4>
-                    </div>
-                    <div className="d-flex gap-2">
 
-                      <input
-                        className="py-1 rounded ps-1"
-                        type="text"
-                        placeholder="Search by name"
-                        value={searchQuery}
-                        onChange={(e) => {
-                          setSearchQuery(e.target.value);
-                          setCurrentPage(1);
-                        }}
-                      />
-                      <div className="">
-                        <button className="freight_hd" onClick={handleclickopen}>
-                          Add Dispute
-                        </button>
-                      </div>
-                    </div>
+          <div className="row manageFreight">
+            <div className="col-md-12">
+              <div className="d-flex justify-content-between align-items-center flex-wrap gap-2">
+                <div className="">
+                  <h4 className="freight_hd">Customer Query</h4>
+                </div>
+                <div className="d-flex gap-2 flex-wrap align-items-center">
+
+                  <input
+                    className="py-1 rounded ps-1"
+                    type="text"
+                    placeholder="Search by name"
+                    value={searchQuery}
+                    onChange={(e) => {
+                      setSearchQuery(e.target.value);
+                      setCurrentPage(1);
+                    }}
+                  />
+                  <div className="">
+                    <button className="freight_hd" onClick={handleclickopen}>
+                      Add Dispute
+                    </button>
                   </div>
                 </div>
               </div>
+            </div>
+          </div>
+          <div className="row">
+            <div className="col-md-12">
               <div className="table-responsive mt-2">
                 <table className="table mt-4 table-striped tableICon">
                   <thead>
@@ -270,7 +271,7 @@ const Query = () => {
                                   <div className="action_btn1">
                                     <Edit
                                       style={{ cursor: "pointer" }}
-                                      className="text-danger"
+
                                       onClick={() => {
                                         handledit(item.id);
                                       }}
@@ -520,6 +521,13 @@ const Query = () => {
                   </Box>
                 </Modal>
               </div>
+
+            </div>
+
+          </div>
+          <div className="row">
+            <div className="col-md-12">
+
               <div className="text-center d-flex justify-content-end align-items-center">
                 <button
                   disabled={currentPage === 1}
@@ -537,9 +545,11 @@ const Query = () => {
                   <i class="fi fi-rr-angle-small-right page_icon"></i>
                 </button>
               </div>
-              <ToastContainer />
             </div>
           </div>
+          <ToastContainer />
+
+
         </div>
       </div>
     </>

@@ -438,7 +438,7 @@ export default function Sageinvoices() {
         } catch (error) {
           toast.error(
             error.response?.data?.message ||
-              "Something went wrong while fetching data",
+            "Something went wrong while fetching data",
           );
         }
       } else {
@@ -447,7 +447,7 @@ export default function Sageinvoices() {
     } catch (error) {
       toast.error(
         error.response?.data?.message ||
-          "Something went wrong while checking permissions",
+        "Something went wrong while checking permissions",
       );
     } finally {
       setLoader(false);
@@ -566,30 +566,29 @@ export default function Sageinvoices() {
           <div className="container-fluid">
             <div className="card-body">
               {/* HEADER */}
-              <div className="d-flex justify-content-between align-items-center mb-3">
+              <div className="d-flex justify-content-between align-items-center mb-3 manageFreight">
                 <h4 className="freight_hd">Sage Invoice</h4>
 
-                <div className="d-flex align-items-center">
+                <div className="d-flex align-items-center gap-2">
                   <input
                     name="search"
                     value={namess.search}
-                    className="mx-2 rounded px-2 py-1"
+                    className="form-control"
                     placeholder="Search..."
                     onChange={handlechange}
                   />
 
-                  <button className="btn btn-primary" onClick={handleSearch}>
+                  <button className="blueBtn" onClick={handleSearch}>
                     Search
                   </button>
                 </div>
               </div>
               <div className="d-flex gap-2 mb-4 flex-wrap">
                 <button
-                  className={`btn ${
-                    activeTab === "general"
-                      ? "btn-primary"
-                      : "btn-outline-primary"
-                  }`}
+                  className={`btn ${activeTab === "general"
+                    ? "btn-primary"
+                    : "btn-outline-primary"
+                    }`}
                   onClick={() => {
                     setActiveTab("general");
                     setCurrentPage(1);
@@ -598,11 +597,10 @@ export default function Sageinvoices() {
                   All
                 </button>
                 <button
-                  className={`btn ${
-                    activeTab === "South Africa"
-                      ? "btn-primary"
-                      : "btn-outline-primary"
-                  }`}
+                  className={`btn ${activeTab === "South Africa"
+                    ? "btn-primary"
+                    : "btn-outline-primary"
+                    }`}
                   onClick={() => {
                     setActiveTab("South Africa");
                     setCurrentPage(1);
@@ -611,11 +609,10 @@ export default function Sageinvoices() {
                   South Africa
                 </button>
                 <button
-                  className={`btn ${
-                    activeTab === "Zimbabwe"
-                      ? "btn-primary"
-                      : "btn-outline-primary"
-                  }`}
+                  className={`btn ${activeTab === "Zimbabwe"
+                    ? "btn-primary"
+                    : "btn-outline-primary"
+                    }`}
                   onClick={() => {
                     setActiveTab("Zimbabwe");
                     setCurrentPage(1);
@@ -624,11 +621,10 @@ export default function Sageinvoices() {
                   Zimbabwe
                 </button>
                 <button
-                  className={`btn ${
-                    activeTab === "Zambia"
-                      ? "btn-primary"
-                      : "btn-outline-primary"
-                  }`}
+                  className={`btn ${activeTab === "Zambia"
+                    ? "btn-primary"
+                    : "btn-outline-primary"
+                    }`}
                   onClick={() => {
                     setActiveTab("Zambia");
                     setCurrentPage(1);
@@ -665,10 +661,10 @@ export default function Sageinvoices() {
                               {new Date(item.date).toLocaleDateString("EN-gb")}
                             </td>
                             <td>{item.total}</td>
-                           
+
                             <td>
                               <button
-                                className="btn btn-secondary"
+                                className="tableBtn"
                                 onClick={() => {
                                   handleclick(item);
                                 }}

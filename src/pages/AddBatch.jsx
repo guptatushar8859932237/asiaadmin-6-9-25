@@ -11,6 +11,7 @@ const AddBatch = () => {
   const location = useLocation();
   const [formData2, setFormData2] = useState(null);
   const data123 = location?.state?.data;
+
   const [data, setData] = useState({
     date_created: data123?.date_created || "",
     date_of_first_received: data123?.date_first_received || "",
@@ -66,9 +67,11 @@ const AddBatch = () => {
       data123?.Destination_registration_number || "",
     comment: data123?.comment || "",
   });
+
   const [error, setError] = useState({});
   const [countries, setCountruies] = useState([]);
   const navigate = useNavigate();
+  
   const handlechange = (e) => {
     const { name, value } = e.target;
     setData((prevData) => ({
@@ -77,19 +80,23 @@ const AddBatch = () => {
     }));
     setShowhazardous(data.hazardous);
   };
+
   const handlehange1 = (e) => {
     setData1(e.target.value);
     console.log(data1);
   };
+
   ////////////////////////////////////////////////////////////////getdate///////////////////////////////////////////////////////////////////////////
   let today = new Date();
   let year = today.getFullYear();
   let month = String(today.getMonth() + 1).padStart(2, "0");
   let day = String(today.getDate()).padStart(2, "0");
   let formattedDate = `${year}-${month}-${day}`;
+
   useEffect(() => {
     getcountry();
   }, []);
+
   const getcountry = () => {
     axios
       .get(`${process.env.REACT_APP_BASE_URL}GetCountries`)
@@ -100,9 +107,11 @@ const AddBatch = () => {
         console.log(error.response.data.data);
       });
   };
+
   const handleclick = () => {
     apihit();
   };
+
   const apihit = () => {
     const data123 = {
       // warehouse_id,
@@ -175,19 +184,23 @@ const AddBatch = () => {
         toast.error(error.response.data.message);
       });
   };
+
   const handlekey123 = (e) => {
     if ((e.charCode < 44 || e.charCode > 57) && e.charCode !== 46) {
       e.preventDefault();
     }
   };
+
   const handlekey = (e) => {
     if (e.charCode < 44 || e.charCode > 57) {
       e.preventDefault();
     }
   };
+
   useEffect(() => {
     getClient();
   }, []);
+
   const getClient = () => {
     axios
       .get(`${process.env.REACT_APP_BASE_URL}client-list`)
@@ -199,9 +212,11 @@ const AddBatch = () => {
         console.log(error.response.data);
       });
   };
+
   useEffect(() => {
     getwarehouse();
   }, []);
+
   const getwarehouse = () => {
     axios
       .get(`${process.env.REACT_APP_BASE_URL}getWarehouse`)
@@ -213,10 +228,12 @@ const AddBatch = () => {
         console.log(error.response.data);
       });
   };
+
   const handleFileChange2 = (event) => {
     const files = event.target.files;
     setFormData2({ ...formData2, licenses: files });
   };
+
   return (
     <>
       <div className="wpWrapper ">

@@ -45,16 +45,56 @@ export default function Negativevalue() {
       {chartData && (
         <Chart
           type='bar'
-          height={"100%"}
+          height={350}
           width={"100%"}
           series={chartData.series}
           options={{
-            title: { text: "Orders " },
-            chart: { stacked: true },
+            chart: { 
+              stacked: true,
+              toolbar: { show: false },
+              fontFamily: 'inherit'
+            },
+            plotOptions: {
+              bar: {
+                borderRadius: 4,
+                columnWidth: '40%'
+              }
+            },
+            dataLabels: {
+              enabled: false
+            },
+            stroke: {
+              width: 0
+            },
             xaxis: {
-              title: { text: "Month" },
-              categories: chartData.categories
-            }, colors: ['#8ee9de', '#33FF57', '#be191d', '#1b2245']
+              categories: chartData.categories,
+              labels: {
+                style: { colors: '#6c757d', fontSize: '13px' }
+              },
+              axisBorder: { show: false },
+              axisTicks: { show: false }
+            },
+            yaxis: {
+              labels: {
+                style: { colors: '#6c757d', fontSize: '13px' }
+              }
+            },
+            grid: {
+              borderColor: '#f1f1f1',
+              strokeDashArray: 4,
+              yaxis: { lines: { show: true } },
+              padding: { top: 0, right: 0, bottom: 0, left: 10 }
+            },
+            colors: ['#e74a3b', '#f6c23e', '#1cc88a', '#0b4170'],
+            legend: {
+              position: 'top',
+              horizontalAlign: 'right',
+              markers: { radius: 12 }
+            },
+            tooltip: {
+              theme: 'light',
+              y: { formatter: function (val) { return val + " orders" } }
+            }
           }}
         />
       )}

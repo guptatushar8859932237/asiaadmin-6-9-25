@@ -38,7 +38,7 @@ export default function Dashboard() {
               }}
             >
               <div class="cardDash">
-                <h4 className="hd_dash">Clients</h4>
+                <h5 className="hd_dash">Clients</h5>
                 <div class="iconParent">
                   <div class="cardContent">
                     <p className="para_dash">
@@ -62,7 +62,7 @@ export default function Dashboard() {
               }}
             >
               <div class="cardDash">
-                <h4 className="hd_dash">Freights</h4>
+                <h5 className="hd_dash">Freights</h5>
                 <div class="iconParent">
                   <div class="cardContent">
                     <p className="para_dash">
@@ -86,7 +86,7 @@ export default function Dashboard() {
               }}
             >
               <div class="cardDash">
-                <h4 className="hd_dash">Orders</h4>
+                <h5 className="hd_dash">Orders</h5>
                 <div class="iconParent">
                   <div class="cardContent">
                     <p className="para_dash">
@@ -110,7 +110,7 @@ export default function Dashboard() {
               }}
             >
               <div class="cardDash">
-                <h4 className="hd_dash">Clearances</h4>
+                <h5 className="hd_dash">Clearances</h5>
                 <div class="iconParent">
                   <div class="cardContent">
                     <p className="para_dash">
@@ -134,7 +134,7 @@ export default function Dashboard() {
               }}
             >
               <div class="cardDash">
-                <h4 className="hd_dash">Clearance Orders</h4>
+                <h5 className="hd_dash">Clearance Orders</h5>
                 <div class="iconParent">
                   <div class="cardContent">
                     <p className="para_dash">
@@ -151,19 +151,12 @@ export default function Dashboard() {
                 </div>
               </div>
             </div>
-            <div
-              class="col-lg-3"
-              onClick={() => {
-                navigaet("/Admin/KPIDashboard");
-              }}
-            >
+            <div class="col-lg-3" onClick={() => { navigaet('/Admin/KPIDashboard') }}>
               <div class="cardDash">
-                <h4 className="hd_dash">Leave</h4>
+                <h6 className="hd_dash">Leave</h6>
                 <div class="iconParent">
                   <div class="cardContent">
-                    <p className="para_dash">
-                      <CountUp end={countdata?.no_of_invoices} />
-                    </p>
+                    <p className="para_dash"><CountUp end={countdata?.no_of_invoices} /></p>
                   </div>
                   <div class="iconGrad">
                     <i className="fa fa-calendar"></i>

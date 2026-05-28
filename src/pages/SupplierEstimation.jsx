@@ -57,8 +57,8 @@ export default function SupplierEstimation() {
   return (
     <div className="wpWrapper ">
       <div className="container-fluid">
-        <ArrowBack style={{ cursor: "pointer" }} onClick={handleclicknav} />
         <div className="table-responsive mt-3">
+          <ArrowBack style={{ cursor: "pointer" }} onClick={handleclicknav} />
           <table className="table table-striped tableICon">
             <thead>
               <tr>
@@ -76,7 +76,7 @@ export default function SupplierEstimation() {
                 currentData.map((item, index) => {
                   return (
                     <tr className="border-bottom" key={index}>
-                      <td>{startIndex + index + 1}</td>
+                      <th>{startIndex + index + 1}</th>
                       <td>{item?.name}</td>
                       <td>{item?.email}</td>
                       <td>{item?.phone_no}</td>

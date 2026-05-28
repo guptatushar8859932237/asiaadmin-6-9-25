@@ -76,6 +76,11 @@ const routes = [
       },
     ],
   },
+    {
+    path: "/Admin/manage-collection-delivery",
+    name: "Collection & Delivery",
+    icon: <LanguageOutlinedIcon/>
+  },
   {
     path: "",
     name: "Freight Management",
@@ -228,7 +233,7 @@ const routes = [
     path: "/Admin/ClientKPIModule",
     name: "Client KPI Module",
     icon: <LanguageOutlinedIcon />,
-  },
+  }
 ];
 const userControlRoutes = {
   path: "",

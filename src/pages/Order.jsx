@@ -2217,6 +2217,13 @@ export default function Order() {
             transform: "translate(-50%, -50%)",
             bgcolor: "background.paper",
             boxShadow: 24,
+            width: {
+              xs: "95%",   // mobile
+              sm: "80%",   // tablet
+              md: "60%",   // small laptop
+              lg: "40%",   // desktop
+            },
+
           }}
         >
           <div className="modal-header">

@@ -152,7 +152,7 @@ export default function MAnageFreightDetails() {
       <div className="container-fluid">
         <div className="formDetails">
           <div className="row">
-            <div className="col-lg-12 px-0">
+            <div className="col-lg-12">
               <div className="d-flex">
                 <div>
                   <ArrowBackIcon
@@ -167,1002 +167,640 @@ export default function MAnageFreightDetails() {
               </div>
             </div>
           </div>
-          <section className="my-4">
+          <section className="my-4 viewDetails">
             <div className="row">
-              <div className="col-md-4 pe-4">
+              <div className="col-lg-4 col-md-6 col-sm-6">
                 <div className="card desti_card">
                   <div className="card-body">
-                    <div className="">
+                    <div>
                       <h6 className="orgin_hd">Shipper Details</h6>
-                      <span className="line"></span>
                     </div>
-                    <div className="main_det">
-                      <div class="table-responsive">
-                        <table class="det_show">
-                          <tbody>
-                            <tr>
-                              <td class="fright_num">
-                                <p class="client_para1">Shipper:</p>
-                              </td>
-                              <td>
-                                <p class="client_para1">
-                                  {info.shipment_ref === "consignee"
-                                    ? info.shipper_name
-                                    : info.client_name}
-                                </p>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>
-                                <p class="client_para1">Contact Person:</p>
-                              </td>
-                              <td>
-                                <p class="client_para1">
-                                  {info.shipment_ref === "consignee"
-                                    ? ""
-                                    : info.client_email}
-                                </p>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>
-                                <p class="client_para1">Cell:</p>
-                              </td>
-                              <td>
-                                <p class="client_para1">
-                                  {info.shipment_ref === "consignee"
-                                    ? info.telephone
-                                    : info.cellphone}
-                                </p>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>
-                                <p class="client_para1">Telephone:</p>
-                              </td>
-                              <td>
-                                <p class="client_para1">
-                                  {info.shipment_ref === "consignee"
-                                    ? info.telephone
-                                    : info.cellphone}
-                                </p>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>
-                                <p class="client_para1 mb-3">Email:</p>
-                              </td>
-                              <td>
-                                <p class="client_para1 mb-3">
-                                  {info.shipment_ref === "consignee"
-                                    ? ""
-                                    : info.client_email}
-                                </p>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>
-                                <p className="ship_hd fw-600" style={{ fontWeight: 'bold' }}>Pickup Address</p>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>
-                                <p class="client_para1">Address1:</p>
-                              </td>
-                              <td>
-                                <p class="client_para1">
-                                  {info.shipment_ref === "consignee"
-                                    ? info.supplier_address
-                                    : info?.address_1 +
-                                      " " +
-                                      info.address_2 +
-                                      " " +
-                                      <br /> +
-                                      info.province +
-                                      " " +
-                                      <br /> +
-                                      info.delivery_to_name}
-                                </p>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>
-                                <p class="client_para1">City:</p>
-                              </td>
-                              <td>
-                                <p class="client_para1">{info?.city}</p>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>
-                                <p class="client_para1">Country:</p>
-                              </td>
-                              <td>
-                                <p class="client_para1">
-                                  {info?.collection_from_country}
-                                </p>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>
-                                <p class="client_para1 mb-3">Postal Code:</p>
-                              </td>
-                              <td>
-                                <p class="client_para1 mb-3">{info?.code}</p>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>
-                                <p className="ship_hd fw-600" style={{ fontWeight: 'bold' }}>Export details</p>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>
-                                <p class="client_para1">Exporter:</p>
-                              </td>
-                              <td>
-                                <p class="client_para1">{info?.shipper_name}</p>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>
-                                <p class="client_para1">Export Code:</p>
-                              </td>
-                              <td>
-                                <p class="client_para1">{info?.code}</p>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>
-                                <p class="client_para1">Vat/Tax No:</p>
-                              </td>
-                              <td>
-                                <p class="client_para1">{info?.tax_ref}</p>
-                              </td>
-                            </tr>
-                          </tbody>
-                        </table>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div className="col-md-4">
-                <div className="card desti_card">
-                  <div className="card-body">
-                    <div className="">
-                      <h6 className="orgin_hd">Consignee Details</h6>
-                      <span className="line"></span>
-                    </div>
-                    <div className="main_det">
-                      <div class="table-responsive">
-                        <table class="det_show">
-                          <tbody>
-                            <tr>
-                              <td class="fright_num">
-                                <p class="client_para1">Consignee:</p>
-                              </td>
-                              <td>
-                                <p class="client_para1">
-                                  {info.shipment_ref === "consignee"
-                                    ? info.client_name
-                                    : info.shipper_name}
-                                </p>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>
-                                <p class="client_para1">Contact Person:</p>
-                              </td>
-                              <td>
-                                <p class="client_para1">
-                                  {info.shipment_ref === "consignee"
-                                    ? info.client_email
-                                    : ""}
-                                </p>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>
-                                <p class="client_para1">Cell:</p>
-                              </td>
-                              <td>
-                                <p class="client_para1">
-                                  {info.shipment_ref === "consignee"
-                                    ? info.cellphone
-                                    : info.telephone}
-                                </p>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>
-                                <p class="client_para1">Telephone:</p>
-                              </td>
-                              <td>
-                                <p class="client_para1">
-                                  {info?.shipment_ref === "shipper"
-                                    ? ""
-                                    : info?.cellphone}
-                                </p>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>
-                                <p class="client_para1 mb-3">Email:</p>
-                              </td>
-                              <td>
-                                <p class="client_para1 mb-3">
-                                  {info.shipment_ref === "consignee"
-                                    ? info.client_email
-                                    : ""}
-                                </p>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>
-                                <p className="ship_hd fw-600" style={{ fontWeight: 'bold' }}>Delivery Address</p>
-                              </td>
-                              <td>
-                                <p className="client_para">
-                                  {/* {info.shipment_ref === "consignee"
-                              ? info?.address_1 +" " + info.address_2 + " " +info.province+ " " + info.delivery_to_name
-                              : info.supplier_address} */}
-                                </p>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>
-                                <p class="client_para1">Address1:</p>
-                              </td>
-                              <td>
-                                <p class="client_para1">
-                                  {/* {info?.supplier_address} */}
-                                  {info.shipment_ref === "consignee"
-                                    ? info?.address_1 +
-                                      " " +
-                                      info.address_2 +
-                                      " " +
-                                      info.province
-                                    : info.supplier_address}
-                                </p>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>
-                                <p class="client_para1">City:</p>
-                              </td>
-                              <td>
-                                <p class="client_para1"></p>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>
-                                <p class="client_para1">Country:</p>
-                              </td>
-                              <td>
-                                <p class="client_para1">
-                                  {info?.delivery_to_country}
-                                </p>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>
-                                <p class="client_para1 mb-3">Postal Code:</p>
-                              </td>
-                              <td>
-                                <p class="client_para1 mb-3"></p>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>
-                                <p className="ship_hd fw-600" style={{ fontWeight: 'bold' }}>Export details</p>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>
-                                <p class="client_para1">Importer:</p>
-                              </td>
-                              <td>
-                                <p class="client_para1">Asia Direct</p>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>
-                                <p class="client_para1">Export Code:</p>
-                              </td>
-                              <td>
-                                <p class="client_para1">{info?.code}</p>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>
-                                <p class="client_para1">Vat/Tax No:</p>
-                              </td>
-                              <td>
-                                <p class="client_para1">{info?.tax_ref}</p>
-                              </td>
-                            </tr>
-                          </tbody>
-                        </table>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div className="col-md-4 ps-4">
-                <div className="card desti_card">
-                  <div className="card-body">
-                    <div className="">
-                      <h6 className="orgin_hd">Booking Information</h6>
-                      <span className="line"></span>
-                    </div>
-                    <div className="main_det">
-                      <div class="table-responsive">
-                        <table class="det_show">
-                          <tbody>
-                            <tr>
-                              <td>
-                                <p className="ship_hd fw-600" style={{ fontWeight: 'bold' }}>
-                                  POL Information
-                                </p>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>
-                                <p class="client_para1">Freight Number:</p>
-                              </td>
-                              <td>
-                                <p class="client_para1">
-                                  {data?.freight_number}
-                                </p>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>
-                                <p class="client_para1">Origin Handler:</p>
-                              </td>
-                              <td>
-                                <p class="client_para1">
-                                  {data?.shipments_origin_agent}
-                                </p>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td class="fright_num">
-                                <p class="client_para1">Place of loading:</p>
-                              </td>
-                              <td>
-                                <p class="client_para1">
-                                  {info?.shipper_address}
-                                </p>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>
-                                <p class="client_para1">Port of Loading:</p>
-                              </td>
-                              <td>
-                                <p class="client_para1">
-                                  {info?.port_of_loading}
-                                </p>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td className="instr_td">
-                                <p className="client_para1 mb-3">
-                                  Instructions:
-                                </p>
-                              </td>
-                              <td>
-                                <p className="client_para1 mb-3">
-                                  {info?.shipment_origin}
-                                </p>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>
-                                <p className="ship_hd fw-600" style={{ fontWeight: 'bold' }}>
-                                  Transit Information
-                                </p>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>
-                                <p class="client_para1">Freight Option:</p>
-                              </td>
-                              <td>
-                                <p class="client_para1">{info?.freight}</p>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>
-                                <p class="client_para1">Efficiency:</p>
-                              </td>
-                              <td>
-                                <p class="client_para1">{info?.type}</p>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>
-                                <p class="client_para1">Incoterms:</p>
-                              </td>
-                              <td>
-                                <p class="client_para1">{info?.incoterm}</p>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>
-                                <p class="client_para1">Insurance:</p>
-                              </td>
-                              <td>
-                                <p class="client_para1">{info?.insurance}</p>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>
-                                <p class="client_para1">Type:</p>
-                              </td>
-                              <td>
-                                <p class="client_para1">{info?.fcl_lcl}</p>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>
-                                <p class="client_para1">Warehouse:</p>
-                              </td>
-                              <td>
-                                <p class="client_para1">
-                                  {info?.assign_warehouse}
-                                </p>
-                              </td>
-                            </tr>
 
-                            <tr>
-                              <td>
-                                <p class="client_para1">ETD:</p>
-                              </td>
-                              <td>
-                                <p class="client_para1">
-                                  {new Date(info?.ETA).toLocaleDateString(
-                                    "en-GB",
-                                  )}
-                                </p>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>
-                                <p class="client_para1">Carrier:</p>
-                              </td>
-                              <td>
-                                <p class="client_para1">{data?.carrier}</p>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>
-                                <p class="client_para1">Vessel Name:</p>
-                              </td>
-                              <td>
-                                <p class="client_para1">{data?.vessel}</p>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>
-                                <p class="client_para1">Master Bill:</p>
-                              </td>
-                              <td>
-                                <p class="client_para1">
-                                  {data?.shipments_waybill}
-                                </p>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>
-                                <p class="client_para1">House Bill:</p>
-                              </td>
-                              <td>
-                                <p class="client_para1">
-                                  {data?.house_bill_landing}
-                                </p>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>
-                                <p class="client_para1">Container No:</p>
-                              </td>
-                              <td>
-                                <p class="client_para1">{data?.container_no}</p>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>
-                                <p class="client_para1 mb-3">Release Type:</p>
-                              </td>
-                              <td>
-                                <p class="client_para1 mb-3">
-                                  {data?.shipments_release_type}
-                                </p>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>
-                                <p className="ship_hd fw-600" style={{ fontWeight: 'bold' }}>POD Information</p>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>
-                                <p class="client_para1">Destination Handler:</p>
-                              </td>
-                              <td>
-                                <p class="client_para1">
-                                  {data?.shipments_destination_agent}
-                                </p>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>
-                                <p class="client_para1">Place of Delivery:</p>
-                              </td>
-                              <td>
-                                <p class="client_para1">
-                                  {info?.place_of_delivery}
-                                </p>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>
-                                <p class="client_para1">Port of Discharge:</p>
-                              </td>
-                              <td>
-                                <p class="client_para1">
-                                  {info?.post_of_discharge}
-                                </p>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td className="instr_td">
-                                <p className="client_para1 mb-3">
-                                  Instructions:
-                                </p>
-                              </td>
-                              <td>
-                                <p className="client_para1 mb-3">
-                                  {info?.shipment_des}
-                                </p>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>
-                                <p class="client_para1">Local Carrier:</p>
-                              </td>
-                              <td>
-                                <p class="client_para1">
-                                  {data?.local_carrier}
-                                </p>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>
-                                <p class="client_para1">Driver Name:</p>
-                              </td>
-                              <td>
-                                <p class="client_para1">{data?.driver_name}</p>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>
-                                <p class="client_para1">
-                                  Vehicle Registration:
-                                </p>
-                              </td>
-                              <td>
-                                <p class="client_para1">
-                                  {data?.vehicle_registration}
-                                </p>
-                              </td>
-                            </tr>
-                          </tbody>
-                        </table>
+                    <div className="main_det">
+
+                      {/* Shipper Details */}
+                      <div className="view_box">
+                        <h6 className="ship_hd">
+                          <i className="fi fi-rs-building build_icon"></i>
+                          Shipper
+                        </h6>
+
+                        <div className="d-flex align-items-start">
+                          <div>
+                            <p className="or_para">
+                              {info.shipment_ref === "consignee"
+                                ? info.shipper_name
+                                : info.client_name}
+                            </p>
+
+                            <p className="client_para">
+                              Contact Person :
+                              {info.shipment_ref === "consignee"
+                                ? ""
+                                : info.client_email}
+                            </p>
+
+                            <p className="client_para">
+                              Cell :
+                              {info.shipment_ref === "consignee"
+                                ? info.telephone
+                                : info.cellphone}
+                            </p>
+
+                            <p className="client_para">
+                              Telephone :
+                              {info.shipment_ref === "consignee"
+                                ? info.telephone
+                                : info.cellphone}
+                            </p>
+
+                            <p className="client_para">
+                              Email :
+                              {info.shipment_ref === "consignee"
+                                ? ""
+                                : info.client_email}
+                            </p>
+                          </div>
+                        </div>
                       </div>
+
+                      {/* Pickup Address */}
+                      <div className="view_box">
+                        <h6 className="ship_hd">
+                          <i className="fi fi-rr-marker build_icon"></i>
+                          Pickup Address
+                        </h6>
+
+                        <div className="d-flex align-items-start">
+                          <div>
+                            <p className="client_para">
+                              Address :
+                              {info.shipment_ref === "consignee" ? (
+                                info.supplier_address
+                              ) : (
+                                <>
+                                  {info?.address_1} {info?.address_2}
+                                  <br />
+                                  {info?.province}
+                                  <br />
+                                  {info?.delivery_to_name}
+                                </>
+                              )}
+                            </p>
+
+                            <p className="client_para">
+                              City : {info?.city}
+                            </p>
+
+                            <p className="client_para">
+                              Country : {info?.collection_from_country}
+                            </p>
+
+                            <p className="client_para">
+                              Postal Code : {info?.code}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Export Details */}
+                      <div className="view_box">
+                        <h6 className="ship_hd">
+                          <i className="fi fi-rs-building build_icon"></i>
+                          Export Details
+                        </h6>
+
+                        <div className="d-flex align-items-start">
+                          <div>
+                            <p className="or_para">
+                              {info?.shipper_name}
+                            </p>
+
+                            <p className="client_para">
+                              Export Code : {info?.code}
+                            </p>
+
+                            <p className="client_para">
+                              Vat/Tax No : {info?.tax_ref}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+
                     </div>
                   </div>
                 </div>
               </div>
+              <div className="col-lg-4 col-md-6 col-sm-6">
+                <div className="card desti_card">
+                  <div className="card-body">
+
+                    <div>
+                      <h6 className="orgin_hd">Consignee Details</h6>
+                    </div>
+
+                    <div className="main_det">
+
+                      {/* Consignee Details */}
+                      <div className="view_box">
+                        <h6 className="ship_hd">
+                          <i className="fi fi-rs-building build_icon"></i>
+                          Consignee
+                        </h6>
+
+                        <div className="d-flex align-items-start">
+                          <div>
+
+                            <p className="or_para">
+                              {info.shipment_ref === "consignee"
+                                ? info.client_name
+                                : info.shipper_name}
+                            </p>
+
+                            <p className="client_para">
+                              Contact Person :
+                              {info.shipment_ref === "consignee"
+                                ? info.client_email
+                                : ""}
+                            </p>
+
+                            <p className="client_para">
+                              Cell :
+                              {info.shipment_ref === "consignee"
+                                ? info.cellphone
+                                : info.telephone}
+                            </p>
+
+                            <p className="client_para">
+                              Telephone :
+                              {info?.shipment_ref === "shipper"
+                                ? ""
+                                : info?.cellphone}
+                            </p>
+
+                            <p className="client_para">
+                              Email :
+                              {info.shipment_ref === "consignee"
+                                ? info.client_email
+                                : ""}
+                            </p>
+
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Delivery Address */}
+                      <div className="view_box">
+                        <h6 className="ship_hd">
+                          <i className="fi fi-rr-marker build_icon"></i>
+                          Delivery Address
+                        </h6>
+
+                        <div className="d-flex align-items-start">
+                          <div>
+
+                            <p className="client_para">
+                              Address :
+                              {info.shipment_ref === "consignee" ? (
+                                <>
+                                  {info?.address_1} {info?.address_2}
+                                  <br />
+                                  {info?.province}
+                                </>
+                              ) : (
+                                info.supplier_address
+                              )}
+                            </p>
+
+                            <p className="client_para">
+                              City :
+                            </p>
+
+                            <p className="client_para">
+                              Country : {info?.delivery_to_country}
+                            </p>
+
+                            <p className="client_para">
+                              Postal Code :
+                            </p>
+
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Export Details */}
+                      <div className="view_box">
+                        <h6 className="ship_hd">
+                          <i className="fi fi-rs-building build_icon"></i>
+                          Export Details
+                        </h6>
+
+                        <div className="d-flex align-items-start">
+                          <div>
+
+                            <p className="or_para">
+                              Asia Direct
+                            </p>
+
+                            <p className="client_para">
+                              Export Code : {info?.code}
+                            </p>
+
+                            <p className="client_para">
+                              Vat/Tax No : {info?.tax_ref}
+                            </p>
+
+                          </div>
+                        </div>
+                      </div>
+
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div className="col-lg-4 col-md-6 col-sm-6">
+                <div className="card desti_card cargoBold">
+                  <div className="card-body">
+
+                    <div>
+                      <h6 className="orgin_hd">Cargo Details</h6>
+                    </div>
+
+                    <div className="main_det">
+
+                      {/* Product Details */}
+                      <div className="view_box">
+                        <h6 className="ship_hd">
+                          <i className="fi fi-rs-box build_icon"></i>
+                          Product Details
+                        </h6>
+
+                        <div className="d-flex align-items-start">
+                          <div>
+
+                            <p className="or_para">
+                              {info?.product_desc}
+                            </p>
+
+                            <p className="client_para">
+                              Commodity : {data?.commodity_name}
+                            </p>
+
+                            <p className="client_para">
+                              Industry : {info?.nature_of_hazard}
+                            </p>
+
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Cargo Info */}
+                      <div className="view_box">
+                        <h6 className="ship_hd">
+                          <i className="fi fi-rs-package build_icon"></i>
+                          Cargo Info
+                        </h6>
+
+                        <div className="d-flex align-items-start">
+                          <div>
+
+                            <p className="client_para">
+                              Hazardous : {info?.hazardous}
+                            </p>
+
+                            <p className="client_para">
+                              Packaging : {info?.package_type}
+                            </p>
+
+                            <p className="client_para">
+                              No of Packages : {info?.no_of_packages}
+                            </p>
+
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Weight & Dimensions */}
+                      <div className="view_box">
+                        <h6 className="ship_hd">
+                          <i className="fi fi-rr-scale build_icon"></i>
+                          Weight & Dimensions
+                        </h6>
+
+                        <div className="d-flex align-items-start">
+                          <div>
+
+                            <p className="client_para">
+                              Dimensions (CBM) : {info?.dimension}
+                            </p>
+
+                            <p className="client_para">
+                              Weight (KGS) : {info?.weight}
+                            </p>
+
+                            <p className="client_para">
+                              Vol weight(kgs) : {info?.volumetric_weight}
+                            </p>
+
+                            <p className="client_para">
+                              Chargeable Weight :
+                            </p>
+
+                          </div>
+                        </div>
+                      </div>
+
+                    </div>
+
+                  </div>
+                </div>
+              </div>
+
             </div>
-          </section>
-          <div className="details_box">
-            <div className="row">
-              <div className="col-md-8">
-                <div className="row">
-                  <div className="col-md-6 pe-4">
-                    <div className="card desti_card1 cargoBold">
-                      <div className="card-body">
-                        <div className="">
-                          <h6 className="orgin_hd">Cargo Details</h6>
-                          <span className="line"></span>
-                        </div>
-                        <div className="main_det">
-                          <div class="table-responsive">
-                            <table class="det_show">
-                              <tbody>
-                                <tr>
-                                  <td class="fright_num">
-                                    <p class="client_para1">
-                                      Product Description:
-                                    </p>
-                                  </td>
-                                  <td>
-                                    <p class="client_para1">
-                                      {info?.product_desc}
-                                    </p>
-                                  </td>
-                                </tr>
-                                <tr>
-                                  <td>
-                                    <p class="client_para1">Hazardous:</p>
-                                  </td>
-                                  <td>
-                                    <p class="client_para1">
-                                      {info?.hazardous}
-                                    </p>
-                                  </td>
-                                </tr>
-                                <tr>
-                                  <td>
-                                    <p class="client_para1">Industry:</p>
-                                  </td>
-                                  <td>
-                                    <p class="client_para1">
-                                      {info?.nature_of_hazard}
-                                    </p>
-                                  </td>
-                                </tr>
-                                <tr>
-                                  <td>
-                                    <p class="client_para1">Packaging:</p>
-                                  </td>
-                                  <td>
-                                    <p class="client_para1">
-                                      {info?.package_type}
-                                    </p>
-                                  </td>
-                                </tr>
-                                <tr>
-                                  <td>
-                                    <p class="client_para1">No of Packages:</p>
-                                  </td>
-                                  <td>
-                                    <p class="client_para1">
-                                      {info?.no_of_packages}
-                                    </p>
-                                  </td>
-                                </tr>
-                                <tr>
-                                  <td>
-                                    <p class="client_para1">Dimensions(cbm):</p>
-                                  </td>
-                                  <td>
-                                    <p class="client_para1">
-                                      {info?.dimension}
-                                    </p>
-                                  </td>
-                                </tr>
-                                <tr>
-                                  <td>
-                                    <p class="client_para1">Commodity:</p>
-                                  </td>
-                                  <td>
-                                    <p class="client_para1">
-                                      {data?.commodity_name}
-                                    </p>
-                                  </td>
-                                </tr>
-                                <tr>
-                                  <td>
-                                    <p class="client_para1">Weight(kgs):</p>
-                                  </td>
-                                  <td>
-                                    <p class="client_para1">{info?.weight}</p>
-                                  </td>
-                                </tr>
-                                <tr>
-                                  <td>
-                                    <p class="client_para1">Vol weight(kgs):</p>
-                                  </td>
-                                  <td>
-                                    <p class="client_para1">
-                                      {info?.volumetric_weight}
-                                    </p>
-                                  </td>
-                                </tr>
-                                <tr>
-                                  <td>
-                                    <p class="client_para1">
-                                      Chargeable weight:
-                                    </p>
-                                  </td>
-                                  <td>
-                                    <p class="client_para1"></p>
-                                  </td>
-                                </tr>
-                              </tbody>
-                            </table>
-                          </div>
-                        </div>
+            <div className="details_box">
+              <div className="row">
+                <div className="col-lg-4 col-md-6 col-sm-6">
+                  <div className="card desti_card">
+                    <div className="card-body">
+
+                      <div>
+                        <h6 className="orgin_hd">Booking Information</h6>
                       </div>
-                    </div>
-                  </div>
-                  <div className="col-md-6">
-                    <div className="card desti_card1">
-                      <div className="card-body">
-                        <div className="">
-                          <h6 className="orgin_hd">Shipping Estimate</h6>
-                          <span className="line"></span>
-                        </div>
-                        <div className="main_det">
-                          <div className="table-responsive">
-                            <table className="det_show">
-                              <thead>
-                                <tr>
-                                  <td className="ship_hd1"></td>
-                                  <td className="ship_hd2">Cost</td>
-                                  <td className="ship_hd3">Billing</td>
-                                </tr>
-                              </thead>
-                              <tbody>
-                                <tr>
-                                  <td className="ship_hd">
-                                    Freight
-                                    <br />
-                                    <p className="client_para1 mb-3">
-                                      {dat.freight}
-                                    </p>
-                                  </td>
-                                  <td>
-                                    <p className="client_para1 mb-3">
-                                      {dat.freight_amount}
-                                    </p>
-                                  </td>
-                                  <td>
-                                    <p className="client_para1 mb-3">
-                                      {dat.freight_final_amount}
-                                    </p>
-                                  </td>
-                                </tr>
-                                <tr>
-                                  <td className="ship_hd">
-                                    Origin Charges
-                                    <br />
-                                    <p className="client_para1">
-                                      Origin Pickup
-                                    </p>
-                                  </td>
-                                  <td>
-                                    <p className="client_para1">
-                                      {dat.origin_pick_up}
-                                    </p>
-                                  </td>
-                                  <td>
-                                    <p className="client_para1">
-                                      {dat.origin_pick_final_amt}
-                                    </p>
-                                  </td>
-                                </tr>
-                                <tr>
-                                  <td>
-                                    <p className="client_para1">
-                                      Origin Customs
-                                    </p>
-                                  </td>
-                                  <td>
-                                    <p className="client_para1">
-                                      {dat.origin_customs}
-                                    </p>
-                                  </td>
-                                  <td>
-                                    <p className="client_para1">
-                                      {dat.origin_cust_final_amt}
-                                    </p>
-                                  </td>
-                                </tr>
-                                <tr>
-                                  <td>
-                                    <p className="client_para1">
-                                      Origin Document
-                                    </p>
-                                  </td>
-                                  <td>
-                                    <p className="client_para1">
-                                      {dat.origin_document}
-                                    </p>
-                                  </td>
-                                  <td>
-                                    <p className="client_para1">
-                                      {dat.origin_doc_final_amt}
-                                    </p>
-                                  </td>
-                                </tr>
-                                <tr>
-                                  <td>
-                                    <p className="client_para1">
-                                      Origin Warehouse
-                                    </p>
-                                  </td>
-                                  <td>
-                                    <p className="client_para1">
-                                      {dat.origin_warehouse}
-                                    </p>
-                                  </td>
-                                  <td>
-                                    <p className="client_para1">
-                                      {dat.origin_ware_final_amt}
-                                    </p>
-                                  </td>
-                                </tr>
-                                <tr>
-                                  <td>
-                                    <p className="client_para1">
-                                      Origin Port Fees
-                                    </p>
-                                  </td>
-                                  <td>
-                                    <p className="client_para1">
-                                      {dat.origin_port_fees}
-                                    </p>
-                                  </td>
-                                  <td>
-                                    <p className="client_para1">
-                                      {dat.org_port_fee_final_amt}
-                                    </p>
-                                  </td>
-                                </tr>
-                                <tr>
-                                  <td>
-                                    <p className="client_para1 mb-3">
-                                      Origin Other
-                                    </p>
-                                  </td>
-                                  <td>
-                                    <p className="client_para1 mb-3">
-                                      {dat.origin_other}
-                                    </p>
-                                  </td>
-                                  <td>
-                                    <p className="client_para1 mb-3">
-                                      {dat.org_other_final_amt}
-                                    </p>
-                                  </td>
-                                </tr>
-                                <tr>
-                                  <td className="ship_hd">
-                                    Destination Charges
-                                    <br />
-                                    <p className="client_para1">
-                                      Destination Delivery
-                                    </p>
-                                  </td>
-                                  <td>
-                                    <p className="client_para1">
-                                      {dat.des_delivery}
-                                    </p>
-                                  </td>
-                                  <td>
-                                    <p className="client_para1">
-                                      {dat.des_delivery_final_amt}
-                                    </p>
-                                  </td>
-                                </tr>
-                                <tr>
-                                  <td>
-                                    <p className="client_para1">
-                                      Destination Customs
-                                    </p>
-                                  </td>
-                                  <td>
-                                    <p className="client_para1">
-                                      {dat.des_customs}
-                                    </p>
-                                  </td>
-                                  <td>
-                                    <p className="client_para1">
-                                      {dat.des_cust_final_amt}
-                                    </p>
-                                  </td>
-                                </tr>
-                                <tr>
-                                  <td>
-                                    <p className="client_para1">
-                                      Destination Documents
-                                    </p>
-                                  </td>
-                                  <td>
-                                    <p className="client_para1">
-                                      {dat.des_document}
-                                    </p>
-                                  </td>
-                                  <td>
-                                    <p className="client_para1">
-                                      {dat.des_doc_final_amt}
-                                    </p>
-                                  </td>
-                                </tr>
-                                <tr>
-                                  <td>
-                                    <p className="client_para1">
-                                      Destination Warehouse
-                                    </p>
-                                  </td>
-                                  <td>
-                                    <p className="client_para1">
-                                      {dat.des_warehouse}
-                                    </p>
-                                  </td>
-                                  <td>
-                                    <p className="client_para1">
-                                      {dat.des_ware_final_amt}
-                                    </p>
-                                  </td>
-                                </tr>
-                                <tr>
-                                  <td>
-                                    <p className="client_para1">
-                                      Destination Port Fees
-                                    </p>
-                                  </td>
-                                  <td>
-                                    <p className="client_para1">
-                                      {dat.des_port_fees}
-                                    </p>
-                                  </td>
-                                  <td>
-                                    <p className="client_para1">
-                                      {dat.des_portfees_final_amt}
-                                    </p>
-                                  </td>
-                                </tr>
-                                <tr>
-                                  <td>
-                                    <p className="client_para1">
-                                      Destination Unpack
-                                    </p>
-                                  </td>
-                                  <td>
-                                    <p className="client_para1">
-                                      {dat.des_unpack}
-                                    </p>
-                                  </td>
-                                  <td>
-                                    <p className="client_para1">
-                                      {dat.des_unpack_final_amt}
-                                    </p>
-                                  </td>
-                                </tr>
-                                <tr>
-                                  <td>
-                                    <p className="client_para1">
-                                      Destination Other
-                                    </p>
-                                  </td>
-                                  <td>
-                                    <p className="client_para1">
-                                      {dat.des_other}
-                                    </p>
-                                  </td>
-                                  <td>
-                                    <p className="client_para1">
-                                      {dat.des_other_final_amt}
-                                    </p>
-                                  </td>
-                                </tr>
-                              </tbody>
-                            </table>
+
+                      <div className="main_det">
+
+                        {/* POL Information */}
+                        <div className="view_box">
+                          <h6 className="ship_hd">
+                            <i className="fi fi-rs-flag build_icon"></i>
+                            POL Information
+                          </h6>
+
+                          <div className="d-flex align-items-start">
+                            <div>
+
+                              <p className="client_para">
+                                Freight Number : {data?.freight_number}
+                              </p>
+
+                              <p className="client_para">
+                                Origin Handler : {data?.shipments_origin_agent}
+                              </p>
+
+                              <p className="client_para">
+                                Place of Loading : {info?.shipper_address}
+                              </p>
+
+                              <p className="client_para">
+                                Port of Loading : {info?.port_of_loading}
+                              </p>
+
+                              <p className="client_para">
+                                Instructions : {info?.shipment_origin}
+                              </p>
+
+                            </div>
                           </div>
                         </div>
+
+                        {/* Transit Information */}
+                        <div className="view_box">
+                          <h6 className="ship_hd">
+                            <i className="fi fi-rs-route build_icon"></i>
+                            Transit Information
+                          </h6>
+
+                          <div className="d-flex align-items-start">
+                            <div>
+
+                              <p className="client_para">
+                                Freight Option : {info?.freight}
+                              </p>
+
+                              <p className="client_para">
+                                Efficiency : {info?.type}
+                              </p>
+
+                              <p className="client_para">
+                                Incoterms : {info?.incoterm}
+                              </p>
+
+                              <p className="client_para">
+                                Insurance : {info?.insurance}
+                              </p>
+
+                              <p className="client_para">
+                                Type : {info?.fcl_lcl}
+                              </p>
+
+                              <p className="client_para">
+                                Warehouse : {info?.assign_warehouse}
+                              </p>
+
+                              <p className="client_para">
+                                ETD : {new Date(info?.ETA).toLocaleDateString(
+                                  "en-GB",
+                                )}
+                              </p>
+
+                              <p className="client_para">
+                                Carrier : {data?.carrier}
+                              </p>
+
+                              <p className="client_para">
+                                Vessel Name : {data?.vessel}
+                              </p>
+
+                              <p className="client_para">
+                                Master Bill : {data?.shipments_waybill}
+                              </p>
+
+                              <p className="client_para">
+                                House Bill : {data?.house_bill_landing}
+                              </p>
+
+                              <p className="client_para">
+                                Container No : {data?.container_no}
+                              </p>
+
+                              <p className="client_para">
+                                Release Type : {data?.shipments_release_type}
+                              </p>
+
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* POD Information */}
+                        <div className="view_box">
+                          <h6 className="ship_hd">
+                            <i className="fi fi-rr-marker build_icon"></i>
+                            POD Information
+                          </h6>
+
+                          <div className="d-flex align-items-start">
+                            <div>
+
+                              <p className="client_para">
+                                Destination Handler : {data?.shipments_destination_agent}
+                              </p>
+
+                              <p className="client_para">
+                                Place of Delivery : {info?.place_of_delivery}
+                              </p>
+
+                              <p className="client_para">
+                                Port of Discharge : {info?.post_of_discharge}
+                              </p>
+
+                              <p className="client_para">
+                                Instructions : {info?.shipment_des}
+                              </p>
+
+                              <p className="client_para">
+                                Local Carrier : {data?.local_carrier}
+                              </p>
+
+                              <p className="client_para">
+                                Driver Name : {data?.driver_name}
+                              </p>
+
+                              <p className="client_para">
+                                Vehicle Registration : {data?.vehicle_registration}
+                              </p>
+
+                            </div>
+                          </div>
+                        </div>
+
                       </div>
                     </div>
                   </div>
                 </div>
-              </div>
-              {/* <div className="col-md-4 ps-4">
+
+                <div className="col-lg-4 col-md-6 col-sm-6">
+                  <div className="card desti_card">
+                    <div className="card-body">
+
+                      <div>
+                        <h6 className="orgin_hd">Shipping Estimate</h6>
+                      </div>
+
+                      <div className="main_det">
+
+                        {/* Freight */}
+                        <div className="view_box">
+                          <h6 className="ship_hd">
+                            <i className="fi fi-rs-truck-side build_icon"></i>
+                            Freight
+                          </h6>
+
+                          <div className="d-flex align-items-start">
+                            <div>
+
+                              <p className="client_para">
+                                Type : {dat.freight}
+                              </p>
+
+                              <p className="client_para">
+                                Cost : {dat.freight_amount}
+                              </p>
+
+                              <p className="client_para">
+                                Billing : {dat.freight_final_amount}
+                              </p>
+
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Origin Charges */}
+                        <div className="view_box">
+                          <h6 className="ship_hd">
+                            <i className="fi fi-rs-map build_icon"></i>
+                            Origin Charges
+                          </h6>
+
+                          <div className="d-flex align-items-start">
+                            <div>
+
+                              <p className="client_para">
+                                Pickup : {dat.origin_pick_up} / {dat.origin_pick_final_amt}
+                              </p>
+
+                              <p className="client_para">
+                                Customs : {dat.origin_customs} / {dat.origin_cust_final_amt}
+                              </p>
+
+                              <p className="client_para">
+                                Document : {dat.origin_document} / {dat.origin_doc_final_amt}
+                              </p>
+
+                              <p className="client_para">
+                                Warehouse : {dat.origin_warehouse} / {dat.origin_ware_final_amt}
+                              </p>
+
+                              <p className="client_para">
+                                Port Fees : {dat.origin_port_fees} / {dat.org_port_fee_final_amt}
+                              </p>
+
+                              <p className="client_para">
+                                Other : {dat.origin_other} / {dat.org_other_final_amt}
+                              </p>
+
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Destination Charges */}
+                        <div className="view_box">
+                          <h6 className="ship_hd">
+                            <i className="fi fi-rs-flag build_icon"></i>
+                            Destination Charges
+                          </h6>
+
+                          <div className="d-flex align-items-start">
+                            <div>
+
+                              <p className="client_para">
+                                Delivery : {dat.des_delivery} / {dat.des_delivery_final_amt}
+                              </p>
+
+                              <p className="client_para">
+                                Customs : {dat.des_cust} / {dat.des_cust_final_amt}
+                              </p>
+
+                              <p className="client_para">
+                                Documents : {dat.des_document} / {dat.des_doc_final_amt}
+                              </p>
+
+                              <p className="client_para">
+                                Warehouse : {dat.des_warehouse} / {dat.des_ware_final_amt}
+                              </p>
+
+                              <p className="client_para">
+                                Port Fees : {dat.des_port_fees} / {dat.des_portfees_final_amt}
+                              </p>
+
+                              <p className="client_para">
+                                Unpack : {dat.des_unpack} / {dat.des_unpack_final_amt}
+                              </p>
+
+                              <p className="client_para">
+                                Other : {dat.des_other} / {dat.des_other_final_amt}
+                              </p>
+
+                            </div>
+                          </div>
+                        </div>
+
+                      </div>
+
+                    </div>
+                  </div>
+                </div>
+
+                {/* <div className="col-md-4 ps-4">
                 <div className="card desti_card">
                   <div className="card-body">
                     <div className="">
@@ -1376,7 +1014,7 @@ export default function MAnageFreightDetails() {
                   </div>
                 </div>
               </div> */}{" "}
-              {/* <div className="col-md-4  ">
+                {/* <div className="col-md-4  ">
                 <div className="card desti_card">
                   <div className="card-body">
                     <div className="">
@@ -1494,54 +1132,55 @@ export default function MAnageFreightDetails() {
                   </div>
                 </div>
               </div> */}
-              <div className="col-md-4">
-                <div className="card desti_card">
-                  <div className="card-body mb-3">
-                    {Object.keys(documents).map((groupName, groupIndex) => (
-                      <div key={groupIndex} className="mb-2">
-                        <label>{groupName} :</label>
-                        {documents[groupName]?.map((item, index) => (
-                          <div
-                            key={item.id}
-                            className="d-flex align-items-center"
-                          >
-                            <a
-                              href={`${process.env.REACT_APP_BASE_URLdocument}${item?.document}`}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="view_docu ms-2"
+                <div className="col-md-4">
+                  <div className="card desti_card">
+                    <div className="card-body mb-3">
+                      {Object.keys(documents).map((groupName, groupIndex) => (
+                        <div key={groupIndex} className="mb-2">
+                          <label className="orgin_hd">{groupName} :</label>
+                          {documents[groupName]?.map((item, index) => (
+                            <div
+                              key={item.id}
+                              className="d-flex align-items-center gap-2 mt-3"
                             >
-                              View Document
-                            </a>
-                            <DeleteIcon
-                              onClick={() => deleteapi(item.id)}
-                              className="text-danger ms-2"
-                              style={{ cursor: "pointer" }}
-                            />
-                          </div>
-                        ))}
-                      </div>
-                    ))}
+                              <a
+                                href={`${process.env.REACT_APP_BASE_URLdocument}${item?.document}`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="view_docu mt-0"
+                              >
+                                View Document
+                              </a>
+                              <DeleteIcon
+                                onClick={() => deleteapi(item.id)}
+                                className="text-danger ms-2"
+                                style={{ cursor: "pointer" }}
+                              />
+                            </div>
+                          ))}
+                        </div>
+                      ))}
 
-                    {/* Quotation (separate because it's not part of groups) */}
-                    <div className="mb-2">
-                      <label>Attach Quotation :</label>
-                      {info.attachment_Estimate && (
-                        <a
-                          href={`${process.env.REACT_APP_BASE_URLdocument}${info?.attachment_Estimate}`}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="view_docu ms-2"
-                        >
-                          View Document
-                        </a>
-                      )}
+                      {/* Quotation (separate because it's not part of groups) */}
+                      <div className="mb-2">
+                        <label>Attach Quotation :</label>
+                        {info.attachment_Estimate && (
+                          <a
+                            href={`${process.env.REACT_APP_BASE_URLdocument}${info?.attachment_Estimate}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="view_docu ms-2"
+                          >
+                            View Document
+                          </a>
+                        )}
+                      </div>
                     </div>
                   </div>
                 </div>
               </div>
             </div>
-          </div>
+          </section>
         </div>
       </div>
       <ToastContainer />

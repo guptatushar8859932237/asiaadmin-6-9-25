@@ -2484,7 +2484,7 @@ const BookingInstruction = () => {
             <DownloadForOffline onClick={() => toPDF()} />
           </div>
         </div>
-        <div className="customInsPdf " ref={targetRef}>
+        <div className="customInsPdf leftTh" ref={targetRef}>
           <table>
             <tr>
               <td>
@@ -2555,14 +2555,14 @@ const BookingInstruction = () => {
                                   {info.shipment_ref === "consignee"
                                     ? info.supplier_address
                                     : info?.address_1 +
-                                      " " +
-                                      info.address_2 +
-                                      " " +
-                                      <br /> +
-                                      info.province +
-                                      " " +
-                                      <br /> +
-                                      info.delivery_to_name}
+                                    " " +
+                                    info.address_2 +
+                                    " " +
+                                    <br /> +
+                                    info.province +
+                                    " " +
+                                    <br /> +
+                                    info.delivery_to_name}
                                 </td>
                               </tr>
                               <tr>
@@ -2778,7 +2778,7 @@ const BookingInstruction = () => {
                                     borderLeft: "none",
                                     borderTop: "none",
                                   }}
-                                  //  className= {data.bk_comm_Invoice==="Yes"?"fa fa-check":""}
+                                //  className= {data.bk_comm_Invoice==="Yes"?"fa fa-check":""}
                                 >
                                   <i
                                     className={
@@ -2797,7 +2797,7 @@ const BookingInstruction = () => {
                                     borderLeft: "none",
                                     borderTop: "none",
                                   }}
-                                  // className= {data.bk_comm_Invoice==="No"?"fa fa-check":""}                                >
+                                // className= {data.bk_comm_Invoice==="No"?"fa fa-check":""}                                >
                                 >
                                   {" "}
                                   <i
@@ -2852,7 +2852,7 @@ const BookingInstruction = () => {
                                     borderBottom: "none",
                                     textAlign: "center",
                                   }}
-                                  // className= {data.bk_packing_list==="Yes"?"fa fa-check":""}
+                                // className= {data.bk_packing_list==="Yes"?"fa fa-check":""}
                                 >
                                   <i
                                     className={
@@ -2868,7 +2868,7 @@ const BookingInstruction = () => {
                                     borderTop: "1px solid #000",
                                     textAlign: "center",
                                   }}
-                                  // className= {data.bk_packing_list==="No"?"fa fa-check":""}
+                                // className= {data.bk_packing_list==="No"?"fa fa-check":""}
                                 >
                                   <i
                                     className={
@@ -2897,7 +2897,7 @@ const BookingInstruction = () => {
                                     borderLeft: "none",
                                     borderBottom: "none",
                                   }}
-                                  // className= {data.bk_trasprt_doc==="Yes"?"fa fa-check":""}
+                                // className= {data.bk_trasprt_doc==="Yes"?"fa fa-check":""}
                                 >
                                   {" "}
                                   <i
@@ -2914,7 +2914,7 @@ const BookingInstruction = () => {
                                     borderTop: "1px solid #000",
                                     textAlign: "center",
                                   }}
-                                  // className= {data.bk_trasprt_doc==="No"?"fa fa-check":""}
+                                // className= {data.bk_trasprt_doc==="No"?"fa fa-check":""}
                                 >
                                   <i
                                     className={
@@ -3458,7 +3458,7 @@ const BookingInstruction = () => {
                                   }}
                                 >
                                   {data.bk_charges_destination ===
-                                  "Consignee" ? (
+                                    "Consignee" ? (
                                     <i className="fa fa-check"></i>
                                   ) : (
                                     ""
@@ -3584,10 +3584,10 @@ const BookingInstruction = () => {
                                   {/* address_1 */}
                                   {info.shipment_ref === "consignee"
                                     ? info?.address_1 +
-                                      " " +
-                                      info.address_2 +
-                                      " " +
-                                      info.province
+                                    " " +
+                                    info.address_2 +
+                                    " " +
+                                    info.province
                                     : info.supplier_address}
                                 </td>
                               </tr>
@@ -3765,7 +3765,7 @@ const BookingInstruction = () => {
                                     borderLeft: "unset",
                                     backgroundColor:
                                       data.bk_exprt_modTransport ===
-                                      "RoadConsole"
+                                        "RoadConsole"
                                         ? "lightgreen"
                                         : "white",
                                   }}
@@ -3782,7 +3782,7 @@ const BookingInstruction = () => {
                                     borderLeft: "unset",
                                     backgroundColor:
                                       data.bk_exprt_modTransport ===
-                                      "RoadDedicated"
+                                        "RoadDedicated"
                                         ? "lightgreen"
                                         : "white",
                                   }}
@@ -3853,7 +3853,7 @@ const BookingInstruction = () => {
                                     borderRight: "none",
                                     backgroundColor:
                                       data.bk_exprt_modTransport ===
-                                      "AirExpress"
+                                        "AirExpress"
                                         ? "lightgreen"
                                         : "white",
                                     textAlign: "center",
@@ -3873,7 +3873,7 @@ const BookingInstruction = () => {
                                   <i
                                     className={
                                       data.bk_exprt_modTransport ===
-                                      "RoadConsole"
+                                        "RoadConsole"
                                         ? "fa fa-check"
                                         : ""
                                     }
@@ -3889,7 +3889,7 @@ const BookingInstruction = () => {
                                   <i
                                     className={
                                       data.bk_exprt_modTransport ===
-                                      "RoadDedicated"
+                                        "RoadDedicated"
                                         ? "fa fa-check  "
                                         : ""
                                     }
@@ -3975,7 +3975,7 @@ const BookingInstruction = () => {
                                   <i
                                     className={
                                       data.bk_exprt_modTransport ===
-                                      "AirExpress"
+                                        "AirExpress"
                                         ? "fa fa-check"
                                         : ""
                                     }

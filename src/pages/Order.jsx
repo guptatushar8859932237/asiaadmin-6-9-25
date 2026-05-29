@@ -854,7 +854,7 @@ export default function Order() {
                 <CloseIcon />
               </button>
             </div>
-            <div className="modalManageFreight frightFormSec md_update p-2">
+            <div className="modalManageFreight frightFormSec md_update p-4">
               <div className="modal-body">
                 <div className="row">
                   <div className="col-lg-12 mb-3">
@@ -1343,7 +1343,7 @@ export default function Order() {
         onClose={closeModalclose}
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
-        className="newModal"
+
       >
         <Box
           sx={{
@@ -1353,6 +1353,13 @@ export default function Order() {
             transform: "translate(-50%, -50%)",
             bgcolor: "background.paper",
             boxShadow: 24,
+            width: {
+              xs: "95%",   // mobile
+              sm: "80%",   // tablet
+              md: "75%",   // small laptop
+              lg: "70%",   // desktop
+            },
+
           }}
         >
           <div className="">
@@ -1369,352 +1376,365 @@ export default function Order() {
                   <CloseIcon />
                 </button>
               </div>
-              <div className=" modalManageFreight frightFormSec md_update p-2">
+              <div className="modalManageFreight frightFormSec md_update p-4">
                 <div className="modal-body">
                   <div className="row">
                     <div className="col-lg-8">
-                      <div className="">
+                      <div className="mb-3">
                         <h4 className="">Shipment details</h4>
                       </div>
-                      <div className=" mt-3">
-                        <div className="row borderShip">
-                          <div className="col-lg-6 mb-3">
-                            <label>Date</label>
-                            <input
-                              className="mt-0"
-                              type="date"
-                              value={formattedDate}
-                              name="date"
-                            />
-                          </div>
-                          <div className="col-lg-6 mb-3">
-                            <label>Client</label>
-                            <select
-                              value={inputdata?.client_id}
-                              onChange={handleupdateapi}
-                              placeholder="client refrence"
-                              name="client_ref"
-                            >
-                              {lcientlist &&
-                                lcientlist.length > 0 &&
-                                lcientlist.map((item, index) => {
-                                  return (
-                                    <>
-                                      <option key={index} value={item.id}>
-                                        {item.full_name}
-                                      </option>
-                                    </>
-                                  );
-                                })}
-                            </select>
-                          </div>
-                          <div className=" col-lg-6  mb-3">
-                            <label>Freight</label>
-                            <select
-                              name="type"
-                              value={inputdata?.type}
-                              onChange={handleupdateapi}
-                            >
-                              <option value="">Select...</option>
-                              <option value="express">Express</option>
-                              <option value="normal">Normal</option>
-                            </select>
-                          </div>
-                          <div className=" col-lg-6  mb-3">
-                            <label>Freight Type</label>
-                            <select
-                              name="freight"
-                              value={inputdata?.freight}
-                              onChange={handleupdateapi}
-                            >
-                              <option value="">Select...</option>
-                              <option value="Sea">Sea</option>
-                              <option value="Air">Air</option>
-                              <option value="Road">Road</option>
-                            </select>
-                          </div>
-                          <div className=" col-lg-6  mb-3">
-                            <label>Client Reference</label>
-                            <input
-                              name="client_ref_name"
-                              value={inputdata?.client_ref_name}
-                              onChange={handleupdateapi}
-                            ></input>
-                          </div>
-                          <div className=" col-lg-6  mb-3">
-                            <label>Product Description</label>
-                            <input
-                              name="product_desc"
-                              value={inputdata?.product_desc}
-                              onChange={handleupdateapi}
-                            ></input>
-                          </div>
-                          <div className="col-lg-12 mb-3">
-                            <label>Estimated Transit Time</label>
-                            <input
-                              type="text"
-                              onKeyPress={handlekey}
-                              placeholder="Transit Time"
-                              value={inputdata?.transit_time}
-                              onChange={handleupdateapi}
-                              name="transit_time"
-                            />
-                          </div>
-                          <div className="col-lg-6 mb-3 spaceAssignEst">
-                            <FormControl>
-                              <FormLabel id="demo-row-radio-buttons-group-label">
-                                <label>Priority</label>
-                              </FormLabel>
-                              <RadioGroup
-                                aria-labelledby="demo-row-radio-buttons-group-label"
-                                value={inputdata?.priority}
-                                name="priority"
-                                onChange={handlePriorityChange}
-                              >
-                                <FormControlLabel
-                                  value="High"
-                                  control={<Radio />}
-                                  label="High"
-                                />
-                                <FormControlLabel
-                                  value="Medium"
-                                  control={<Radio />}
-                                  label="Medium"
-                                />
-                                <FormControlLabel
-                                  value="Low"
-                                  control={<Radio />}
-                                  label="Low"
-                                />
-                              </RadioGroup>
-                            </FormControl>
-                          </div>
-                          <div className="col-lg-6 mb-3 spaceAssignEst">
-                            <FormControl>
-                              <FormLabel id="demo-row-radio-buttons-group-label">
-                                <label>Shipment Reference</label>
-                              </FormLabel>
-                              <RadioGroup
-                                aria-labelledby="demo-row-radio-buttons-group-label"
-                                value={inputdata?.shipment_ref} // Ensure this is correctly bound to the state
-                                name="shipment_ref"
-                                onChange={handleshipmentrefChange}
-                              >
-                                <FormControlLabel
-                                  value="shipper"
-                                  control={<Radio />}
-                                  label="shipper"
-                                />
-                                <FormControlLabel
-                                  value="consignee"
-                                  control={<Radio />}
-                                  label="consignee"
-                                />
-                              </RadioGroup>
-                            </FormControl>
-                          </div>
-                        </div>
-                      </div>
-                      <div className="mt-4">
-                        <h4>Cargo transit details</h4>
-                      </div>
-                      <div className="">
-                        <div className="row borderShip">
-                          <div className="col-lg-6 mb-3">
-                            <label>Country of Origin</label>
-                            <select
-                              name="collection_from"
-                              onChange={handleupdateapi}
-                              value={inputdata?.collection_from}
-                            >
-                              <option value="">select....</option>
-                              {updatedata &&
-                                updatedata.length > 0 &&
-                                updatedata.map((item, index) => (
-                                  <option key={index} value={item.id}>
-                                    {item.name}
-                                  </option>
-                                ))}
-                            </select>
-                          </div>
-                          <div className=" col-lg-6  mb-3">
-                            <label> Destination Country</label>
-                            <select
-                              name="delivery_to"
-                              onChange={handleupdateapi}
-                              value={inputdata?.delivery_to}
-                            >
-                              <option>select....</option>
-                              {updatedata &&
-                                updatedata.length > 0 &&
-                                updatedata.map((item, index) => {
-                                  // console.log(item);
-                                  return (
-                                    <>
-                                      <option key={index} value={item.id}>
-                                        {item.name}
-                                      </option>
-                                    </>
-                                  );
-                                })}
-                            </select>
-                          </div>
-                          <div className="col-lg-6 mb-3">
-                            <label>Port of Loading</label>
-                            <input
-                              type="text"
-                              name="port_of_loading"
-                              value={inputdata?.port_of_loading}
-                              onChange={handleupdateapi}
-                              placeholder="Port of Loading"
-                            />
-                          </div>
-                          <div className="col-lg-6 mb-3">
-                            <label> Port of Discharge</label>
-                            <input
-                              type="text"
-                              name="post_of_discharge"
-                              onChange={handleupdateapi}
-                              value={inputdata?.post_of_discharge}
-                              placeholder="Port of Discharge"
-                            />
-                          </div>
-                          <div className="col-lg-6 mb-3">
-                            <label>Place of Delivery</label>
-                            <input
-                              type="text"
-                              name="place_of_delivery"
-                              onChange={handleupdateapi}
-                              value={inputdata?.place_of_delivery}
-                              placeholder="Place of Delivery"
-                            />
-                          </div>
-                          <div className="col-lg-6">
-                            <label> Incoterm </label>
-                            <select
-                              name="incoterm"
-                              onChange={handleupdateapi}
-                              value={inputdata?.incoterm}
-                            >
-                              <option value="">Select...</option>
-                              <option value="CFR">CFR</option>
-                              <option value="CIF">CIF</option>
-                              <option value="DAP">DAP</option>
-                              <option value="DDU">DDU</option>
-                              <option value="DDP">DDP</option>
-                              <option value="EXW">EXW</option>
-                              <option value="FCA">FCA</option>
-                              <option value="FOB">FOB </option>
-                            </select>
-                          </div>
-                          <div className="col-lg-6 mb-3">
-                            <label>Place of Receipt/ Supplier Address</label>
-                            <input
-                              type="text"
-                              name="supplier_address"
-                              onChange={handleupdateapi}
-                              value={inputdata?.supplier_address}
-                              placeholder="Supplier Address"
-                            />
-                          </div>
-                          <div className="col-lg-6 mb-3">
-                            <label>Type</label>
+                      <div>
+                        <div className="row ">
+                          <div className="col-md-12">
+                            <div className="borderShip mt-0">
+                              <div className="row">
 
-                            <select
-                              name="fcl_lcl"
-                              onChange={handleupdateapi}
-                              value={inputdata?.fcl_lcl}
-                            >
-                              <option>Select...</option>
-                              <option value={"FCL"}>FCL</option>
-                              <option value={"LCL"}>LCL</option>
-                            </select>
-                          </div>
-
-                          <div>
-                            <div className="row">
-                              <div className="col-lg-6">
-                                <FormControl>
-                                  <FormLabel id="demo-row-radio-buttons-group-label">
-                                    <label>Origin</label>
-                                  </FormLabel>
-                                  <RadioGroup
-                                    aria-labelledby="demo-row-radio-buttons-group-label"
-                                    value={inputdata?.shipment_origin}
-                                    name="shipment_origin"
-                                    onChange={shipment_origin}
+                                <div className="col-lg-6 mb-3">
+                                  <label>Date</label>
+                                  <input
+                                    className="mt-0"
+                                    type="date"
+                                    value={formattedDate}
+                                    name="date"
+                                  />
+                                </div>
+                                <div className="col-lg-6 mb-3">
+                                  <label>Client</label>
+                                  <select
+                                    value={inputdata?.client_id}
+                                    onChange={handleupdateapi}
+                                    placeholder="client refrence"
+                                    name="client_ref"
                                   >
-                                    <FormControlLabel
-                                      value="Shipper will deliver at Asia Direct - Africa warehouse"
-                                      control={<Radio />}
-                                      label="Shipper will deliver at Asia Direct - Africa warehouse"
-                                    />
-                                    <FormControlLabel
-                                      value="Asia Direct will collect from shipper address"
-                                      control={<Radio />}
-                                      label="Asia Direct will collect from shipper address"
-                                    />
-                                    <FormControlLabel
-                                      value="Shipper will deliver to the port of loading"
-                                      control={<Radio />}
-                                      label="Shipper will deliver to the port of loading"
-                                    />
-                                    <FormControlLabel
-                                      value="Shipper will deliver and facilitate export at the Port of loading"
-                                      control={<Radio />}
-                                      label="Shipper will deliver and facilitate export at the Port of loading"
-                                    />
-                                  </RadioGroup>
-                                </FormControl>
-                              </div>
-                              <div className="col-lg-6">
-                                <label>Destination</label>
-                                <FormControl>
-                                  <RadioGroup
-                                    aria-labelledby="demo-row-radio-buttons-group-label"
-                                    value={inputdata?.shipment_des}
-                                    name="shipment_des"
-                                    onChange={shipment_des}
+                                    {lcientlist &&
+                                      lcientlist.length > 0 &&
+                                      lcientlist.map((item, index) => {
+                                        return (
+                                          <>
+                                            <option key={index} value={item.id}>
+                                              {item.full_name}
+                                            </option>
+                                          </>
+                                        );
+                                      })}
+                                  </select>
+                                </div>
+                                <div className=" col-lg-6  mb-3">
+                                  <label>Freight</label>
+                                  <select
+                                    name="type"
+                                    value={inputdata?.type}
+                                    onChange={handleupdateapi}
                                   >
-                                    <FormControlLabel
-                                      value="Asia Direct will deliver to the Address"
-                                      control={<Radio />}
-                                      label="Asia Direct will deliver to the Address"
-                                    />
-                                    <FormControlLabel
-                                      value="Consignee will collect at Asia Direct - Africa warehouse"
-                                      control={<Radio />}
-                                      label="Consignee will collect at Asia Direct - Africa warehouse"
-                                    />
-                                    <FormControlLabel
-                                      value="Consignee will collect at the nearest port"
-                                      control={<Radio />}
-                                      label="Consignee will collect at the nearest port"
-                                    />
-                                    <FormControlLabel
-                                      value="Consignee will collect and facilitate import at destination port"
-                                      control={<Radio />}
-                                      label="Consignee will collect and facilitate import at destination port"
-                                    />
-                                  </RadioGroup>
-                                </FormControl>
+                                    <option value="">Select...</option>
+                                    <option value="express">Express</option>
+                                    <option value="normal">Normal</option>
+                                  </select>
+                                </div>
+                                <div className=" col-lg-6  mb-3">
+                                  <label>Freight Type</label>
+                                  <select
+                                    name="freight"
+                                    value={inputdata?.freight}
+                                    onChange={handleupdateapi}
+                                  >
+                                    <option value="">Select...</option>
+                                    <option value="Sea">Sea</option>
+                                    <option value="Air">Air</option>
+                                    <option value="Road">Road</option>
+                                  </select>
+                                </div>
+                                <div className=" col-lg-6  mb-3">
+                                  <label>Client Reference</label>
+                                  <input
+                                    name="client_ref_name"
+                                    value={inputdata?.client_ref_name}
+                                    onChange={handleupdateapi}
+                                  ></input>
+                                </div>
+                                <div className=" col-lg-6  mb-3">
+                                  <label>Product Description</label>
+                                  <input
+                                    name="product_desc"
+                                    value={inputdata?.product_desc}
+                                    onChange={handleupdateapi}
+                                  ></input>
+                                </div>
+                                <div className="col-lg-12 mb-3">
+                                  <label>Estimated Transit Time</label>
+                                  <input
+                                    type="text"
+                                    onKeyPress={handlekey}
+                                    placeholder="Transit Time"
+                                    value={inputdata?.transit_time}
+                                    onChange={handleupdateapi}
+                                    name="transit_time"
+                                  />
+                                </div>
+                                <div className="col-lg-6 mb-3 spaceAssignEst">
+                                  <FormControl>
+                                    <FormLabel id="demo-row-radio-buttons-group-label">
+                                      <label>Priority</label>
+                                    </FormLabel>
+                                    <RadioGroup
+                                      aria-labelledby="demo-row-radio-buttons-group-label"
+                                      value={inputdata?.priority}
+                                      name="priority"
+                                      onChange={handlePriorityChange}
+                                    >
+                                      <FormControlLabel
+                                        value="High"
+                                        control={<Radio size="small" />}
+                                        label="High"
+                                      />
+                                      <FormControlLabel
+                                        value="Medium"
+                                        control={<Radio size="small" />}
+                                        label="Medium"
+                                      />
+                                      <FormControlLabel
+                                        value="Low"
+                                        control={<Radio size="small" />}
+                                        label="Low"
+                                      />
+                                    </RadioGroup>
+                                  </FormControl>
+                                </div>
+                                <div className="col-lg-6 mb-3 spaceAssignEst">
+                                  <FormControl>
+                                    <FormLabel id="demo-row-radio-buttons-group-label">
+                                      <label>Shipment Reference</label>
+                                    </FormLabel>
+                                    <RadioGroup
+                                      aria-labelledby="demo-row-radio-buttons-group-label"
+                                      value={inputdata?.shipment_ref} // Ensure this is correctly bound to the state
+                                      name="shipment_ref"
+                                      onChange={handleshipmentrefChange}
+                                    >
+                                      <FormControlLabel
+                                        value="shipper"
+                                        control={<Radio size="small" />}
+                                        label="shipper"
+                                      />
+                                      <FormControlLabel
+                                        value="consignee"
+                                        control={<Radio size="small" />}
+                                        label="consignee"
+                                      />
+                                    </RadioGroup>
+                                  </FormControl>
+                                </div>
                               </div>
                             </div>
                           </div>
                         </div>
                       </div>
-                      <div className="row mb-3 mt-4">
-                        <div className="col-9 mt-3">
+                      <div className="mt-4 mb-3">
+                        <h4>Cargo transit details</h4>
+                      </div>
+                      <div className="row">
+                        <div className="col-md-12">
+                          <div className="borderShip mt-3">
+                            <div className="row">
+                              <div className="col-lg-6 mb-3">
+                                <label>Country of Origin</label>
+                                <select
+                                  name="collection_from"
+                                  onChange={handleupdateapi}
+                                  value={inputdata?.collection_from}
+                                >
+                                  <option value="">select....</option>
+                                  {updatedata &&
+                                    updatedata.length > 0 &&
+                                    updatedata.map((item, index) => (
+                                      <option key={index} value={item.id}>
+                                        {item.name}
+                                      </option>
+                                    ))}
+                                </select>
+                              </div>
+                              <div className=" col-lg-6  mb-3">
+                                <label> Destination Country</label>
+                                <select
+                                  name="delivery_to"
+                                  onChange={handleupdateapi}
+                                  value={inputdata?.delivery_to}
+                                >
+                                  <option>select....</option>
+                                  {updatedata &&
+                                    updatedata.length > 0 &&
+                                    updatedata.map((item, index) => {
+                                      // console.log(item);
+                                      return (
+                                        <>
+                                          <option key={index} value={item.id}>
+                                            {item.name}
+                                          </option>
+                                        </>
+                                      );
+                                    })}
+                                </select>
+                              </div>
+                              <div className="col-lg-6 mb-3">
+                                <label>Port of Loading</label>
+                                <input
+                                  type="text"
+                                  name="port_of_loading"
+                                  value={inputdata?.port_of_loading}
+                                  onChange={handleupdateapi}
+                                  placeholder="Port of Loading"
+                                />
+                              </div>
+                              <div className="col-lg-6 mb-3">
+                                <label> Port of Discharge</label>
+                                <input
+                                  type="text"
+                                  name="post_of_discharge"
+                                  onChange={handleupdateapi}
+                                  value={inputdata?.post_of_discharge}
+                                  placeholder="Port of Discharge"
+                                />
+                              </div>
+                              <div className="col-lg-6 mb-3">
+                                <label>Place of Delivery</label>
+                                <input
+                                  type="text"
+                                  name="place_of_delivery"
+                                  onChange={handleupdateapi}
+                                  value={inputdata?.place_of_delivery}
+                                  placeholder="Place of Delivery"
+                                />
+                              </div>
+                              <div className="col-lg-6">
+                                <label> Incoterm </label>
+                                <select
+                                  name="incoterm"
+                                  onChange={handleupdateapi}
+                                  value={inputdata?.incoterm}
+                                >
+                                  <option value="">Select...</option>
+                                  <option value="CFR">CFR</option>
+                                  <option value="CIF">CIF</option>
+                                  <option value="DAP">DAP</option>
+                                  <option value="DDU">DDU</option>
+                                  <option value="DDP">DDP</option>
+                                  <option value="EXW">EXW</option>
+                                  <option value="FCA">FCA</option>
+                                  <option value="FOB">FOB </option>
+                                </select>
+                              </div>
+                              <div className="col-lg-6 mb-3">
+                                <label>Place of Receipt/ Supplier Address</label>
+                                <input
+                                  type="text"
+                                  name="supplier_address"
+                                  onChange={handleupdateapi}
+                                  value={inputdata?.supplier_address}
+                                  placeholder="Supplier Address"
+                                />
+                              </div>
+                              <div className="col-lg-6 mb-3">
+                                <label>Type</label>
+
+                                <select
+                                  name="fcl_lcl"
+                                  onChange={handleupdateapi}
+                                  value={inputdata?.fcl_lcl}
+                                >
+                                  <option>Select...</option>
+                                  <option value={"FCL"}>FCL</option>
+                                  <option value={"LCL"}>LCL</option>
+                                </select>
+                              </div>
+
+                              <div>
+                                <div className="row">
+                                  <div className="col-lg-6">
+                                    <FormControl>
+                                      <FormLabel id="demo-row-radio-buttons-group-label">
+                                        <label>Origin</label>
+                                      </FormLabel>
+                                      <RadioGroup
+                                        aria-labelledby="demo-row-radio-buttons-group-label"
+                                        value={inputdata?.shipment_origin}
+                                        name="shipment_origin"
+                                        onChange={shipment_origin}
+                                      >
+                                        <FormControlLabel
+                                          value="Shipper will deliver at Asia Direct - Africa warehouse"
+                                          control={<Radio size="small" />}
+                                          label="Shipper will deliver at Asia Direct - Africa warehouse"
+                                        />
+                                        <FormControlLabel
+                                          value="Asia Direct will collect from shipper address"
+                                          control={<Radio size="small" />}
+                                          label="Asia Direct will collect from shipper address"
+                                        />
+                                        <FormControlLabel
+                                          value="Shipper will deliver to the port of loading"
+                                          control={<Radio size="small" />}
+                                          label="Shipper will deliver to the port of loading"
+                                        />
+                                        <FormControlLabel
+                                          value="Shipper will deliver and facilitate export at the Port of loading"
+                                          control={<Radio size="small" />}
+                                          label="Shipper will deliver and facilitate export at the Port of loading"
+                                        />
+                                      </RadioGroup>
+                                    </FormControl>
+                                  </div>
+                                  <div className="col-lg-6">
+                                    <label>Destination</label>
+                                    <FormControl>
+                                      <RadioGroup
+                                        aria-labelledby="demo-row-radio-buttons-group-label"
+                                        value={inputdata?.shipment_des}
+                                        name="shipment_des"
+                                        onChange={shipment_des}
+                                      >
+                                        <FormControlLabel
+                                          value="Asia Direct will deliver to the Address"
+                                          control={<Radio size="small" />}
+                                          label="Asia Direct will deliver to the Address"
+                                        />
+                                        <FormControlLabel
+                                          value="Consignee will collect at Asia Direct - Africa warehouse"
+                                          control={<Radio size="small" />}
+                                          label="Consignee will collect at Asia Direct - Africa warehouse"
+                                        />
+                                        <FormControlLabel
+                                          value="Consignee will collect at the nearest port"
+                                          control={<Radio size="small" />}
+                                          label="Consignee will collect at the nearest port"
+                                        />
+                                        <FormControlLabel
+                                          value="Consignee will collect and facilitate import at destination port"
+                                          control={<Radio size="small" />}
+                                          label="Consignee will collect and facilitate import at destination port"
+                                        />
+                                      </RadioGroup>
+                                    </FormControl>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+
+                          </div>
+                        </div>
+
+                      </div>
+                      <div className="row mb-3 mt-5 g-2">
+                        <div className="col-md-6">
                           <h4 className="freight_hd">Document Section</h4>
                           <span class="line"></span>
                         </div>
-                        <div className="col-3">
-                          <Button
-                            className="btn  btn-primary"
+                        <div className="col-md-6 text-md-end text-sm-start">
+                          <button
+                            className="blueBtn"
                             onClick={handleShow}
                           >
                             Upload Documents
-                          </Button>
+                          </button>
                           {show1 ? (
                             <Modal
                               open={show1}
@@ -1800,175 +1820,183 @@ export default function Order() {
                       <div className="mt-4">
                         <h4>Product Description</h4>
                       </div>
-                      <div className="">
-                        <div className="row borderShip">
-                          <div className="col-lg-6 mb-3">
-                            <label>Package Type</label>
-                            <br />
-                            <select
-                              name="package_type"
-                              value={inputdata?.package_type}
-                              onChange={handleupdateapi}
-                              className="form-control"
-                            >
-                              <option value="">Select...</option>
-                              <option value="box">Box</option>
-                              <option value="crate">Crate</option>
-                              <option value="pallet">Pallet</option>
-                              <option value="bags">Bags</option>
-                            </select>
-                          </div>
-                          <div className="col-lg-6 mb-3">
-                            <label> No. of Packages</label>
-                            <input
-                              type="text"
-                              onKeyPress={handlekey}
-                              name="no_of_packages"
-                              onChange={handleupdateapi}
-                              value={inputdata?.no_of_packages}
-                              placeholder="Num.. of Package"
-                            />
-                          </div>
-                          <div className="col-lg-6 mb-3">
-                            <label>Commodity</label>
-                            <select
-                              name="commodity"
-                              onChange={handleupdateapi}
-                              value={inputdata?.commodity}
-                              placeholder="Comment"
-                            >
-                              <option>Select...</option>
-                              {apidata &&
-                                apidata.length > 0 &&
-                                apidata.map((item, index) => {
-                                  return (
-                                    <>
-                                      <option key={index} value={item.id}>
-                                        {item.name}
-                                      </option>
-                                    </>
-                                  );
-                                })}
-                            </select>
-                          </div>
-                          <div className="col-lg-6 mb-3">
-                            <label> Dimension</label>
-                            <input
-                              type="text"
-                              onChange={handleupdateapi}
-                              value={inputdata?.dimension}
-                              onKeyPress={handlekey}
-                              name="dimension"
-                              placeholder="Dimension"
-                            />
-                          </div>
-                          <div className="col-lg-6 mb-3">
-                            <label> Weight</label>
-                            <input
-                              type="text"
-                              onKeyPress={handlekey}
-                              onChange={handleupdateapi}
-                              value={inputdata?.weight}
-                              name="weight"
-                              placeholder="Weight"
-                            />
-                          </div>
-                          <div className="col-lg-6 mb-3">
-                            <label> Volumetric Weight</label>
-                            <input
-                              type="text"
-                              disabled
-                              onKeyPress={handlekey}
-                              name="volumetric_weight"
-                              value={
-                                inputdata?.dimension
-                                  ? 167 * inputdata?.dimension
-                                  : inputdata?.volumetric_weight
-                              }
-                              placeholder="Volumetric Weight"
-                            />
-                          </div>
-                          {inputdata.hazardous === "yes" ? (
-                            <div className=" col-lg-6  mb-3">
-                              <label> Nature of hazard</label>
-                              <select
-                                name="nature_of_hazard"
-                                onChange={handleupdateapi}
-                                value={inputdata?.nature_of_hazard}
-                              >
-                                <option value="">Select...</option>
-                                <option value="General Cargo">
-                                  General Cargo
-                                </option>
-                                <option value="Explosive">Explosive</option>
-                                <option
-                                  value="Class 3 flammable
+                      <div className="row">
+                        <div className="col-md-12">
+                          <div className="borderShip mt-3">
+                            <div className="row ">
+                              <div className="col-lg-6 mb-3">
+                                <label>Package Type</label>
+                                <br />
+                                <select
+                                  name="package_type"
+                                  value={inputdata?.package_type}
+                                  onChange={handleupdateapi}
+                                  className="form-control"
+                                >
+                                  <option value="">Select...</option>
+                                  <option value="box">Box</option>
+                                  <option value="crate">Crate</option>
+                                  <option value="pallet">Pallet</option>
+                                  <option value="bags">Bags</option>
+                                </select>
+                              </div>
+                              <div className="col-lg-6 mb-3">
+                                <label> No. of Packages</label>
+                                <input
+                                  type="text"
+                                  onKeyPress={handlekey}
+                                  name="no_of_packages"
+                                  onChange={handleupdateapi}
+                                  value={inputdata?.no_of_packages}
+                                  placeholder="Num.. of Package"
+                                />
+                              </div>
+                              <div className="col-lg-6 mb-3">
+                                <label>Commodity</label>
+                                <select
+                                  name="commodity"
+                                  onChange={handleupdateapi}
+                                  value={inputdata?.commodity}
+                                  placeholder="Comment"
+                                >
+                                  <option>Select...</option>
+                                  {apidata &&
+                                    apidata.length > 0 &&
+                                    apidata.map((item, index) => {
+                                      return (
+                                        <>
+                                          <option key={index} value={item.id}>
+                                            {item.name}
+                                          </option>
+                                        </>
+                                      );
+                                    })}
+                                </select>
+                              </div>
+                              <div className="col-lg-6 mb-3">
+                                <label> Dimension</label>
+                                <input
+                                  type="text"
+                                  onChange={handleupdateapi}
+                                  value={inputdata?.dimension}
+                                  onKeyPress={handlekey}
+                                  name="dimension"
+                                  placeholder="Dimension"
+                                />
+                              </div>
+                              <div className="col-lg-6 mb-3">
+                                <label> Weight</label>
+                                <input
+                                  type="text"
+                                  onKeyPress={handlekey}
+                                  onChange={handleupdateapi}
+                                  value={inputdata?.weight}
+                                  name="weight"
+                                  placeholder="Weight"
+                                />
+                              </div>
+                              <div className="col-lg-6 mb-3">
+                                <label> Volumetric Weight</label>
+                                <input
+                                  type="text"
+                                  disabled
+                                  onKeyPress={handlekey}
+                                  name="volumetric_weight"
+                                  value={
+                                    inputdata?.dimension
+                                      ? 167 * inputdata?.dimension
+                                      : inputdata?.volumetric_weight
+                                  }
+                                  placeholder="Volumetric Weight"
+                                />
+                              </div>
+                              {inputdata.hazardous === "yes" ? (
+                                <div className=" col-lg-6  mb-3">
+                                  <label> Nature of hazard</label>
+                                  <select
+                                    name="nature_of_hazard"
+                                    onChange={handleupdateapi}
+                                    value={inputdata?.nature_of_hazard}
+                                  >
+                                    <option value="">Select...</option>
+                                    <option value="General Cargo">
+                                      General Cargo
+                                    </option>
+                                    <option value="Explosive">Explosive</option>
+                                    <option
+                                      value="Class 3 flammable
                                                                liquids"
-                                >
-                                  Class 3 flammable liquids
-                                </option>
-                                <option value="Corrosives">Corrosives</option>
-                                <option value="Class 2 gases">
-                                  Class 2 gases
-                                </option>
-                                <option value="Compressed gas">
-                                  Compressed gas
-                                </option>
-                                <option value="Infection">Infection</option>
-                                <option value="Corrosive">Corrosive</option>
-                                <option value="Flammable">Flammable</option>
-                                <option value="Flammable solids">
-                                  Flammable solids
-                                </option>
-                                <option value="Organic peroxides">
-                                  Organic peroxides
-                                </option>
-                                <option value="Toxic substances">
-                                  Toxic substances
-                                </option>
-                                <option
-                                  value="Class 9 other substances
+                                    >
+                                      Class 3 flammable liquids
+                                    </option>
+                                    <option value="Corrosives">Corrosives</option>
+                                    <option value="Class 2 gases">
+                                      Class 2 gases
+                                    </option>
+                                    <option value="Compressed gas">
+                                      Compressed gas
+                                    </option>
+                                    <option value="Infection">Infection</option>
+                                    <option value="Corrosive">Corrosive</option>
+                                    <option value="Flammable">Flammable</option>
+                                    <option value="Flammable solids">
+                                      Flammable solids
+                                    </option>
+                                    <option value="Organic peroxides">
+                                      Organic peroxides
+                                    </option>
+                                    <option value="Toxic substances">
+                                      Toxic substances
+                                    </option>
+                                    <option
+                                      value="Class 9 other substances
                                                                and articles"
-                                >
-                                  Class 9 other substances and articles
-                                </option>
-                                <option value="Dry ice">Dry ice</option>
-                                <option value="Poison">Poison</option>
-                                <option value="Batteries">Batteries</option>
-                                <option value="Gases">Gases</option>
-                                <option value="Refrigerated">
-                                  Refrigerated
-                                </option>
-                                <option value="Inflammable">Inflammable</option>
-                                <option value="Air bags">Air bags</option>
-                                <option value="Ammunition">Ammunition</option>
-                                <option value="Cigarette lighters">
-                                  Cigarette lighters
-                                </option>
-                                <option value="Lithium batteries">
-                                  Lithium batteries
-                                </option>
-                              </select>
+                                    >
+                                      Class 9 other substances and articles
+                                    </option>
+                                    <option value="Dry ice">Dry ice</option>
+                                    <option value="Poison">Poison</option>
+                                    <option value="Batteries">Batteries</option>
+                                    <option value="Gases">Gases</option>
+                                    <option value="Refrigerated">
+                                      Refrigerated
+                                    </option>
+                                    <option value="Inflammable">Inflammable</option>
+                                    <option value="Air bags">Air bags</option>
+                                    <option value="Ammunition">Ammunition</option>
+                                    <option value="Cigarette lighters">
+                                      Cigarette lighters
+                                    </option>
+                                    <option value="Lithium batteries">
+                                      Lithium batteries
+                                    </option>
+                                  </select>
+                                </div>
+                              ) : (
+                                ""
+                              )}
+                              <div className="col-lg-12 mb-3">
+                                <label> Comment</label>
+                                <textarea
+                                  name="comment"
+                                  id=""
+                                  onChange={handleupdateapi}
+                                  value={inputdata?.comment}
+                                  placeholder="write your comment here.."
+                                ></textarea>
+                              </div>
                             </div>
-                          ) : (
-                            ""
-                          )}
-                          <div className="col-lg-6 mb-3">
-                            <label> Comment</label>
-                            <textarea
-                              name="comment"
-                              id=""
-                              onChange={handleupdateapi}
-                              value={inputdata?.comment}
-                              placeholder="write your comment here.."
-                            ></textarea>
                           </div>
                         </div>
                       </div>
                     </div>
                     <div className="col-lg-4 spaceAssignEst">
-                      <div className="   rightSecFre ">
-                        <div className=" borderShip">
+                      <div className="mb-3">
+
+                        <h4 class="text-white">Shipment details</h4>
+                      </div>
+                      <div>
+                        <div className=" borderShip mt-0">
                           <div className="shipRefer mb-3">
                             <FormControl>
                               <FormLabel id="demo-row-radio-buttons-group-label">
@@ -1982,12 +2010,12 @@ export default function Order() {
                               >
                                 <FormControlLabel
                                   value="Yes"
-                                  control={<Radio />}
+                                  control={<Radio size="small" />}
                                   label="Yes"
                                 />
                                 <FormControlLabel
                                   value="No"
-                                  control={<Radio />}
+                                  control={<Radio size="small" />}
                                   label="No"
                                 />
                               </RadioGroup>
@@ -2006,12 +2034,12 @@ export default function Order() {
                               >
                                 <FormControlLabel
                                   value="Yes"
-                                  control={<Radio />}
+                                  control={<Radio size="small" />}
                                   label="Yes"
                                 />
                                 <FormControlLabel
                                   value="No"
-                                  control={<Radio />}
+                                  control={<Radio size="small" />}
                                   label="No"
                                 />
                               </RadioGroup>
@@ -2030,12 +2058,12 @@ export default function Order() {
                               >
                                 <FormControlLabel
                                   value="yes"
-                                  control={<Radio />}
+                                  control={<Radio size="small" />}
                                   label="Yes"
                                 />
                                 <FormControlLabel
                                   value="no"
-                                  control={<Radio />}
+                                  control={<Radio size="small" />}
                                   label="No"
                                 />
                               </RadioGroup>
@@ -2066,26 +2094,29 @@ export default function Order() {
                           </div>
                           <div className="shipRefer mb-3">
                             <label>Send to Warehouse</label>
-                            <FormControl>
-                              <FormLabel id="demo-row-radio-buttons-group-label"></FormLabel>
-                              <RadioGroup
-                                aria-labelledby="demo-row-radio-buttons-group-label"
-                                value={inputdata?.send_to_warehouse}
-                                name="send_to_warehouse"
-                                onChange={send_to_warehouse}
-                              >
-                                <FormControlLabel
-                                  value="Yes"
-                                  control={<Radio />}
-                                  label="Yes"
-                                />
-                                <FormControlLabel
-                                  value="No"
-                                  control={<Radio />}
-                                  label="No"
-                                />
-                              </RadioGroup>
-                            </FormControl>
+                            <div>
+                              <FormControl>
+                                <FormLabel id="demo-row-radio-buttons-group-label"></FormLabel>
+                                <RadioGroup
+                                  aria-labelledby="demo-row-radio-buttons-group-label"
+                                  value={inputdata?.send_to_warehouse}
+                                  name="send_to_warehouse"
+                                  onChange={send_to_warehouse}
+                                >
+                                  <FormControlLabel
+                                    value="Yes"
+                                    control={<Radio size="small" />}
+                                    label="Yes"
+                                  />
+                                  <FormControlLabel
+                                    value="No"
+                                    control={<Radio size="small" />}
+                                    label="No"
+                                  />
+                                </RadioGroup>
+                              </FormControl>
+
+                            </div>
                           </div>
                         </div>
                         <div className="borderShip mt-4">
@@ -2116,26 +2147,30 @@ export default function Order() {
                           </div>
                           <div className="shipRefer mb-3">
                             <label>Assign to Clearing</label>
-                            <FormControl>
-                              <FormLabel id="demo-row-radio-buttons-group-label"></FormLabel>
-                              <RadioGroup
-                                aria-labelledby="demo-row-radio-buttons-group-label"
-                                value={inputdata?.assign_to_clearing}
-                                name="assign_to_clearing"
-                                onChange={assign_to_clearing}
-                              >
-                                <FormControlLabel
-                                  value="Yes"
-                                  control={<Radio />}
-                                  label="Yes"
-                                />
-                                <FormControlLabel
-                                  value="No"
-                                  control={<Radio />}
-                                  label="No"
-                                />
-                              </RadioGroup>
-                            </FormControl>
+                            <div>
+                              <FormControl>
+                                <FormLabel id="demo-row-radio-buttons-group-label"></FormLabel>
+                                <RadioGroup
+                                  aria-labelledby="demo-row-radio-buttons-group-label"
+                                  value={inputdata?.assign_to_clearing}
+                                  name="assign_to_clearing"
+                                  onChange={assign_to_clearing}
+                                >
+                                  <FormControlLabel
+                                    value="Yes"
+                                    control={<Radio size="small" />}
+                                    label="Yes"
+                                  />
+                                  <FormControlLabel
+                                    value="No"
+                                    control={<Radio size="small" />}
+                                    label="No"
+                                  />
+                                </RadioGroup>
+                              </FormControl>
+
+                            </div>
+
                           </div>
                         </div>
                       </div>
@@ -2143,18 +2178,19 @@ export default function Order() {
                   </div>
                 </div>
               </div>
-              <div className="modal-footer">
+              <div className="modal-footer gap-2 pb-4">
                 <button
                   type="button"
                   onClick={() => {
                     handleupdateapipost();
                   }}
+                  className="blueBtn"
                 >
                   Update
                 </button>
                 <button
                   type="button"
-                  className="btn cross_btn"
+                  className="redBtn"
                   onClick={closeModalclose}
                 >
                   Close
@@ -2236,8 +2272,8 @@ export default function Order() {
           </div>
 
           <div className="newModalGap   noFormaControl">
-            <div className="row my-3  ">
-              <div className="col-6">
+            <div className="row g-3">
+              <div className="col-md-6">
                 <label>Delivery Type</label>
                 <select name="type" onChange={handlechange}>
                   <option value="">Select</option>
@@ -2245,9 +2281,9 @@ export default function Order() {
                   <option value="normal">Consolidation</option>
                 </select>
               </div>
-              <div className="col-6">
+              <div className="col-md-6">
                 <label>Priority </label>
-                <div className="shipRefer1 d-flex">
+                <div className="shipRefer1 d-flex radioBtn">
                   <div>
                     <input
                       type="radio"
@@ -2283,10 +2319,8 @@ export default function Order() {
                   </div>
                 </div>
               </div>
-            </div>
 
-            <div className="row mb-3 ">
-              <div className="col-6">
+              <div className="col-md-6">
                 <label>Country of Origin</label>
                 <select name="origin" onChange={handlechange}>
                   <option value="">Select</option>
@@ -2303,7 +2337,7 @@ export default function Order() {
                     })}
                 </select>
               </div>
-              <div className="col-6">
+              <div className="col-md-6">
                 <label>Delivery to Country </label>
                 <select name="destination" onChange={handlechange}>
                   <option value="">Select</option>
@@ -2320,9 +2354,8 @@ export default function Order() {
                     })}
                 </select>
               </div>
-            </div>
-            <div className="row mb-3">
-              <div className="col-6">
+
+              <div className="col-md-6">
                 <label>Start Date</label>
                 <input
                   type="date"
@@ -2333,7 +2366,7 @@ export default function Order() {
                   onChange={handlechange}
                 />
               </div>
-              <div className="col-6">
+              <div className="col-md-6">
                 <label>End Date </label>
                 <input
                   type="date"
@@ -2344,9 +2377,8 @@ export default function Order() {
                   onChange={handlechange}
                 />
               </div>
-            </div>
-            <div className="row mb-3">
-              <div className="col-6">
+
+              <div className="col-md-6">
                 <label>Freight</label>
                 <select name="freight" onChange={handlechange}>
                   <option value="">Select...</option>
@@ -2356,9 +2388,12 @@ export default function Order() {
                 </select>
               </div>
             </div>
-            <Button variant="contained" onClick={postData1}>
-              Apply
-            </Button>
+            <div className="col-md-12 text-center mt-4">
+              <button variant="contained" className="blueBtn" onClick={postData1}>
+                Apply
+              </button>
+
+            </div>
           </div>
         </Box>
       </Modal>

@@ -36,9 +36,11 @@ export default function ClientKpiModule() {
     setLoader(false);
   }
 };
+
 useEffect(() => {
   getdata(currentPage, searchQuery);
 }, [currentPage, searchQuery]);
+
 const totalPages = pagenationData?.totalPages || 1;
   const getcountry = () => {
     axios

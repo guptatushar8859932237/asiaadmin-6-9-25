@@ -102,7 +102,9 @@ import SupplierSageInvoice from "./components/Billing/SupplierSageInvoice";
 import Addsupplierinvoice from "./components/Billing/Addsupplierinvoice";
 import Editsupplierinvoice from "./components/Billing/Editsupplierinvoiceedit";
 import Editsupplierinvoiceedit from "./components/Billing/Editsupplierinvoiceedit";
-// import Loader from "./Loader";
+import Loader from "./Loader";
+import ManageCollectionDelivery from "./ManageCollectionDelivery";
+
 const Dashboard = lazy(() => import("./pages/Dashboard"));
 const Users = lazy(() => import("./pages/Users"));
 const Messages = lazy(() => import("./pages/Messages"));
@@ -125,15 +127,17 @@ const Profile = lazy(() => import("./components/profile/Profile"));
 const Managefreight = lazy(() => import("./Managefreight"));
 const Changepassword = lazy(() => import("./pages/Changepassword"));
 const Uniovwersalpage = lazy(() => import("./components/Uniovwersalpage"));
+// const ManageCollectionDelivery = lazy(() => import("./ManageCollectionDelivery"));
+
 export default function App() {
   const [text, setText] = useState("");
   const [permission, setPermission] = useState("");
-  console.log("29test -1");
+  console.log("28-05-26");
   return (
     <MyContext1.Provider value={{ text, setText }}>
       <MyContext2.Provider value={{ permission, setPermission }}>
         <Router basename="Admin">
-          <Suspense fallback={<div>Loading...</div>}>
+          <Suspense fallback={<Loader />}>
             <Routes>
               <Route path="/" element={<Login />} />
               <Route
@@ -388,6 +392,11 @@ export default function App() {
                   index
                   path="/Admin/managefreight"
                   element={<Managefreight />}
+                />
+                <Route
+                  index
+                  path="/Admin/manage-collection-delivery"
+                  element={<ManageCollectionDelivery />}
                 />
                 <Route
                   index

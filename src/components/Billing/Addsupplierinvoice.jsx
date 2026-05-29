@@ -33,7 +33,9 @@ export default function Addsupplierinvoice() {
   const navigate = useNavigate();
   const getdata122 = location?.state?.data?.[0];
   const copyInvoiceData = location?.state?.copyInvoiceData;
-  const isCopyPreview = Boolean(location?.state?.isCopyPreview && copyInvoiceData);
+  const isCopyPreview = Boolean(
+    location?.state?.isCopyPreview && copyInvoiceData,
+  );
   console.log("[Add Invoice] location.state:", location?.state);
   console.log("[Add Invoice] copyInvoiceData:", copyInvoiceData);
   console.log("[Add Invoice] isCopyPreview:", isCopyPreview);
@@ -42,9 +44,6 @@ export default function Addsupplierinvoice() {
     if (isCopyPreview) return;
     getFreightDataById();
   }, [isCopyPreview]);
-
-
-
 
   const usershipmentid = location?.state?.copyInvoiceData?.shipment_id;
   console.log("usershipmentid:", usershipmentid);
@@ -57,7 +56,6 @@ export default function Addsupplierinvoice() {
       apidataget(usershipmentid);
     }
   }, [usershipmentid]);
-
 
   const getFreightDataById = async () => {
     const payload = {
@@ -179,8 +177,8 @@ export default function Addsupplierinvoice() {
   const oriforewarding3 = parseFloat(freight.origin_pickup_forewarding_gp) || 0;
   const oriforewarding4 = freight.origin_pick_up_forewarding_unitType
     ? oriforewarding1 *
-    oriforewarding2 *
-    freight.origin_pick_up_forewarding_unitTypeQTY
+      oriforewarding2 *
+      freight.origin_pick_up_forewarding_unitTypeQTY
     : 0.0;
   let finalValueforewarding = 0;
   if (oriforewarding4 > 0) {
@@ -273,8 +271,8 @@ export default function Addsupplierinvoice() {
   const oriinsurance3 = parseFloat(freight.freightorigin_insurance_gp) || 0;
   const oriinsurance4 = freight.freight_currency_insurance_unittype
     ? oriinsurance1 *
-    oriindsurance2 *
-    freight.freight_currency_insurance_unittypeQTY
+      oriindsurance2 *
+      freight.freight_currency_insurance_unittypeQTY
     : 0.0;
   let finalValueinsurance = 0;
   if (oriinsurance4 > 0) {
@@ -444,8 +442,8 @@ export default function Addsupplierinvoice() {
     parseFloat(freight.transit_change_Documentation_gp) || 0;
   const oridocumentation4 = freight.transit_change_Documentation_unitType
     ? oridocumentation1 *
-    oridocumentation2 *
-    freight.transit_change_Documentation_unitTypeQTY
+      oridocumentation2 *
+      freight.transit_change_Documentation_unitTypeQTY
     : 0.0;
   let finalValuedocumantation = 0;
   if (oridocumentation4 > 0) {
@@ -495,8 +493,8 @@ export default function Addsupplierinvoice() {
   const destinationdocumentation4 =
     freight.Destination_freight_currency_unitType
       ? destinationdocumentation1 *
-      destinationdocumentation2 *
-      freight.Destination_freight_currency_unitTypeQTY
+        destinationdocumentation2 *
+        freight.Destination_freight_currency_unitTypeQTY
       : 0.0;
   let finalValuedestanion = 0;
   if (destinationdocumentation4 > 0) {
@@ -522,8 +520,8 @@ export default function Addsupplierinvoice() {
     parseFloat(freight.Destination_THC_currency_gp) || 0;
   const destinationTHCdocumentation4 = freight.Destination_THC_currency_unitType
     ? destinationTHCdocumentation1 *
-    destinationTHCdocumentation2 *
-    freight.Destination_THC_currency_unitTypeQTY
+      destinationTHCdocumentation2 *
+      freight.Destination_THC_currency_unitTypeQTY
     : 0.0;
   let finalValueTHCdestanion = 0;
   if (destinationTHCdocumentation4 > 0) {
@@ -550,8 +548,8 @@ export default function Addsupplierinvoice() {
   const destinationUnpackdocumentation4 =
     freight.Destination_Unpack_currency_unitType
       ? destinationUnpackdocumentation1 *
-      destinationUnpackdocumentation2 *
-      freight.Destination_Unpack_currency_unitTypeQTY
+        destinationUnpackdocumentation2 *
+        freight.Destination_Unpack_currency_unitTypeQTY
       : 0.0;
   let finalValueUnpackdestanion = 0;
   if (destinationUnpackdocumentation4 > 0) {
@@ -580,8 +578,8 @@ export default function Addsupplierinvoice() {
   const destinationfuelsurchargedocumentation4 =
     freight.Destination_fuelsurcharge_currency_typeUnit
       ? destinationfuelsurchargedocumentation1 *
-      destinationfuelsurchargedocumentation2 *
-      freight.Destination_fuelsurcharge_currency_typeUnitQTY
+        destinationfuelsurchargedocumentation2 *
+        freight.Destination_fuelsurcharge_currency_typeUnitQTY
       : 0.0;
   let finalValueFulesurchargedestanion = 0;
   if (destinationfuelsurchargedocumentation4 > 0) {
@@ -612,8 +610,8 @@ export default function Addsupplierinvoice() {
   const destinatiadminsurcharge4 =
     freight.Destination_adminsurcharge_currency_unitType
       ? destinatiadminsurcharge1 *
-      destinatiadminsurcharge2 *
-      freight.Destination_adminsurcharge_currency_unitTypeQTY
+        destinatiadminsurcharge2 *
+        freight.Destination_adminsurcharge_currency_unitTypeQTY
       : 0.0;
   let finalValueadminsurchargedestanion = 0;
   if (destinatiadminsurcharge4 > 0) {
@@ -640,8 +638,8 @@ export default function Addsupplierinvoice() {
     parseFloat(freight.Destination_portcargo_currency_gp) || 0;
   const destinatiportcargo4 = freight.Destination_portcargo_currency_unitType
     ? destinatiportcargo1 *
-    destinatiportcargo2 *
-    freight.Destination_portcargo_currency_unitTypeQTY
+      destinatiportcargo2 *
+      freight.Destination_portcargo_currency_unitTypeQTY
     : 0.0;
   let finalValueportcargostanion = 0;
   if (destinatiportcargo4 > 0) {
@@ -694,8 +692,8 @@ export default function Addsupplierinvoice() {
   const destinati3rdpartyload4 =
     freight.Destination_3rdpartyDesc_currency_unitType
       ? destinati3rdpartyDesc1 *
-      destinati3rdpartyDesc2 *
-      freight.Destination_3rdpartyDesc_currency_unitTypeQTY
+        destinati3rdpartyDesc2 *
+        freight.Destination_3rdpartyDesc_currency_unitTypeQTY
       : 0.0;
   let finalValue3rdpartyloadstanion = 0;
   if (destinati3rdpartyload4 > 0) {
@@ -723,8 +721,8 @@ export default function Addsupplierinvoice() {
     parseFloat(freight.Destination_delivery_currency_gp) || 0;
   const destindeliveryyDesc4 = freight.Destination_delivery_currency_unitType
     ? destindeliveryyDesc1 *
-    destindeliveryyDesc2 *
-    freight.Destination_delivery_currency_unitTypeQTY
+      destindeliveryyDesc2 *
+      freight.Destination_delivery_currency_unitTypeQTY
     : 0.0;
   let finaldeliveryrtyloadstanion = 0;
   if (destindeliveryyDesc4 > 0) {
@@ -752,8 +750,8 @@ export default function Addsupplierinvoice() {
   const destindfuelchangerDesc4 =
     freight.Destination_fuelcharge_currency_unitType
       ? destindfuelchangerDesc1 *
-      destindfuelchangerDesc2 *
-      freight.Destination_fuelcharge_currency_unitTypeQTY
+        destindfuelchangerDesc2 *
+        freight.Destination_fuelcharge_currency_unitTypeQTY
       : 0.0;
   let finalfuelchangertyloadstanion = 0;
   if (destindfuelchangerDesc4 > 0) {
@@ -807,8 +805,8 @@ export default function Addsupplierinvoice() {
     parseFloat(freight.Destination_AdminAgrncy_currency_gp) || 0;
   const deadminAgencyesc4 = freight.Destination_AdminAgrncy_currency_unitType
     ? deadminAgencyesc1 *
-    deadminAgencyesc2 *
-    freight.Destination_AdminAgrncy_currency_unitQTY
+      deadminAgencyesc2 *
+      freight.Destination_AdminAgrncy_currency_unitQTY
     : 0.0;
   let finaldminAgencyestanion = 0;
   if (deadminAgencyesc4 > 0) {
@@ -834,8 +832,8 @@ export default function Addsupplierinvoice() {
     parseFloat(freight.Destination_disbursemant_currency_gp) || 0;
   const deaddisbursemantc4 = freight.Destination_disbursemant_currenc_unitType1
     ? deaddisbursemantc1 *
-    deaddisbursemantc2 *
-    freight.Destination_disbursemant_currency_unitTypeQTY
+      deaddisbursemantc2 *
+      freight.Destination_disbursemant_currency_unitTypeQTY
     : 0.0;
   let finaladdisbursematanion = 0;
   if (deaddisbursemantc4 > 0) {
@@ -1292,7 +1290,10 @@ export default function Addsupplierinvoice() {
         }),
       };
       console.log("[Add Invoice] addEstimatSupplierInvoice payload:", payload);
-      console.log("[Add Invoice] payload keys count:", Object.keys(payload).length);
+      console.log(
+        "[Add Invoice] payload keys count:",
+        Object.keys(payload).length,
+      );
 
       const response = await axios.post(
         `${process.env.REACT_APP_BASE_URL}addEstimatSupplierInvoice`,
@@ -1319,9 +1320,7 @@ export default function Addsupplierinvoice() {
 
       console.log("Status Code =>", error.response?.status);
 
-      toast.error(
-        error.response?.data?.message || "Something went wrong"
-      );
+      toast.error(error.response?.data?.message || "Something went wrong");
     }
   };
   const supplier = () => {
@@ -1444,8 +1443,8 @@ export default function Addsupplierinvoice() {
     setOpenmodal1(false);
   };
   useEffect(() => {
-    getdatsupplier()
-  }, [])
+    getdatsupplier();
+  }, []);
   const getdatsupplier = () => {
     axios
       .get(`${process.env.REACT_APP_BASE_URL}supplier-list`)
@@ -1499,7 +1498,7 @@ export default function Addsupplierinvoice() {
   // };
   const downloadPDF = () => {
     setShowData(false); // PDF ke liye limited UI
-    downloadPDF1()
+    downloadPDF1();
     navigate("/Admin/Downloadestimate", { state: { data: freight } });
   };
   const downloadPDF1 = () => {
@@ -1541,10 +1540,11 @@ export default function Addsupplierinvoice() {
     };
     try {
       const response = await axios.post(
-        `${process.env.REACT_APP_BASE_URL}GetShipmentDetails`, payload,
+        `${process.env.REACT_APP_BASE_URL}GetShipmentDetails`,
+        payload,
       );
-      console.log(response.data)
-      setOpenmodal(false)
+      console.log(response.data);
+      setOpenmodal(false);
       setGetdata(response.data.shipment);
     } catch (error) {
       console.log("Full Error:", error);
@@ -1552,9 +1552,9 @@ export default function Addsupplierinvoice() {
       console.log("Error Data:", error?.response?.data);
       toast.error(
         error?.response?.data?.message ||
-        error?.response?.data?.error ||
-        error?.message ||
-        "Something went wrong"
+          error?.response?.data?.error ||
+          error?.message ||
+          "Something went wrong",
       );
     }
   };
@@ -1564,7 +1564,7 @@ export default function Addsupplierinvoice() {
     setSelectedSupplier(value);
     setTimeout(() => {
       setOpenmodal1(false);
-    }, 1000)
+    }, 1000);
   };
   return (
     <>
@@ -1659,7 +1659,11 @@ export default function Addsupplierinvoice() {
                       </h4>
                     </div>
                     <div className="d-flex gap-3 align-items-center blueText">
-                      <i onClick={() => downloadPDF1()} class="fa fa-download" aria-hidden="true"></i>
+                      <i
+                        onClick={() => downloadPDF1()}
+                        class="fa fa-download"
+                        aria-hidden="true"
+                      ></i>
 
                       {/* <i class="fa fa-address-card" onClick={() => downloadPDF()}></i>  */}
 
@@ -1815,7 +1819,7 @@ export default function Addsupplierinvoice() {
                             <table style={{ width: "100%" }}>
                               <tbody>
                                 <tr>
-                                  { }
+                                  {}
                                   <td style={{ padding: "10px" }}>
                                     <div
                                       style={{
@@ -1912,7 +1916,9 @@ export default function Addsupplierinvoice() {
                                           marginTop: 5,
                                         }}
                                       >
-                                        {new Date(getdata?.ETD).toLocaleDateString("en-GB")}
+                                        {new Date(
+                                          getdata?.ETD,
+                                        ).toLocaleDateString("en-GB")}
                                       </p>
                                     </div>
                                     <div
@@ -1937,7 +1943,9 @@ export default function Addsupplierinvoice() {
                                           marginTop: 5,
                                         }}
                                       >
-                                        {new Date(getdata?.ATD).toLocaleDateString("en-GB")}
+                                        {new Date(
+                                          getdata?.ATD,
+                                        ).toLocaleDateString("en-GB")}
                                       </p>
                                     </div>
                                     <div
@@ -2174,9 +2182,9 @@ export default function Addsupplierinvoice() {
                                       padding: "0px 10px 0px 10px",
                                     }}
                                   >
-                                    {new Date(getdata?.created_at).toLocaleDateString(
-                                      "en-GB",
-                                    )}
+                                    {new Date(
+                                      getdata?.created_at,
+                                    ).toLocaleDateString("en-GB")}
                                   </td>
                                 </tr>
                               </tbody>
@@ -2343,10 +2351,7 @@ export default function Addsupplierinvoice() {
                                           marginTop: 5,
                                         }}
                                       >
-                                        <strong>
-                                          {" "}
-                                          Release Type
-                                        </strong>
+                                        <strong> Release Type</strong>
                                       </p>
                                       <p
                                         style={{
@@ -2396,7 +2401,10 @@ export default function Addsupplierinvoice() {
                                           marginTop: 5,
                                         }}
                                       >
-                                        <strong> Destination Country Name</strong>
+                                        <strong>
+                                          {" "}
+                                          Destination Country Name
+                                        </strong>
                                       </p>
                                       <p
                                         style={{
@@ -2449,7 +2457,6 @@ export default function Addsupplierinvoice() {
                     </tbody>
                   </table>
                   <div className="table-responsive">
-
                     <table class="cost-table">
                       <thead>
                         <tr>
@@ -2474,10 +2481,11 @@ export default function Addsupplierinvoice() {
                           <th>ROE</th>
                           <th>Final Amount</th>
                           <th>VAT Type </th>
-                          <th>Disc %  </th>
+                          <th>Disc % </th>
                           <th>Discount </th>
-                          <th>Exclusive  </th>
-                          <th>Total  </th>
+                          <th>Exclusive </th>
+                          <th>VAT </th>
+                          <th>Total </th>
                         </tr>
                       </thead>
 
@@ -2688,16 +2696,84 @@ export default function Addsupplierinvoice() {
                               className="supplier_form"
                             />
                           </td>
-                          <td> <select>
-                            <option value="">Select</option>
-                            <option value="inclusive">GST Inclusive</option>
-                            <option value="exclusive">GST Exclusive</option>
-                            <option value="non-gst">Non GST</option>
-                          </select> </td>
-                          <td> <input type="text" placeholder="0.00" className="supplier_form" /> </td>
-                          <td> <input type="text" placeholder="0.00" className="supplier_form" /> </td>
-                          <td> <input type="text" placeholder="0.00" className="supplier_form" /> </td>
-                          <td> <input type="text" placeholder="0.00" className="supplier_form" /> </td>
+                          <td>
+                            {" "}
+                            <select name="org_pickUp_vatTyp">
+                              <option value="">No Vat</option>
+                              <option value="15">Standard Rate(15.00%)</option>
+                              <option value="15">
+                                Standard Rate (Capital Goods) (15.00%)
+                              </option>
+                              <option value="0">Zero Rate</option>
+                              <option value="0">
+                                Zero Rate Exports(0.00%)
+                              </option>
+                              <option value="0">
+                                Exempt and Non-Suppliers(0.00%)
+                              </option>
+                              <option value="15">
+                                Export of Second Hands Goods(15.00%)
+                              </option>
+                              <option value="15">Change in Use(15.00%)</option>
+                              <option value="100">Customs VAT(100.00%)</option>
+                              <option value="100">
+                                Goods and Services Imported(100.00%)
+                              </option>
+                              <option value="100">
+                                Capital Goods and Imported(100.00%)
+                              </option>
+                              <option value="100">
+                                VAT Adjustment (100.00%)
+                              </option>
+                              <option value="15">
+                                Domestic Reverse Charge (15.00%)
+                              </option>
+                              <option value="">Manual VAT</option>
+                              <option value="">
+                                Manual VAT (Capital Goods)
+                              </option>
+                            </select>{" "}
+                          </td>
+                          <td>
+                            {" "}
+                            <input
+                              type="text"
+                              placeholder="0.00"
+                              className="supplier_form"
+                            />{" "}
+                          </td>
+                          <td>
+                            {" "}
+                            <input
+                              type="text"
+                              placeholder="0.00"
+                              className="supplier_form"
+                            />{" "}
+                          </td>
+                          <td>
+                            {" "}
+                            <input
+                              type="text"
+                              placeholder="0.00"
+                              className="supplier_form"
+                            />{" "}
+                          </td>
+                          <td>
+                            {" "}
+                            <input
+                              type="text"
+                              placeholder="0.00"
+                              className="supplier_form"
+                            />{" "}
+                          </td>
+                          <td>
+                            {" "}
+                            <input
+                              type="text"
+                              placeholder="0.00"
+                              className="supplier_form"
+                            />{" "}
+                          </td>
                         </tr>
                         <tr>
                           <td></td>
@@ -2902,17 +2978,84 @@ export default function Addsupplierinvoice() {
                               className="supplier_form"
                             />
                           </td>
-                          <td> <select>
-                            <option value="">Select</option>
-                            <option value="inclusive">GST Inclusive</option>
-                            <option value="exclusive">GST Exclusive</option>
-                            <option value="non-gst">Non GST</option>
-                          </select> </td>
-                          <td> <input type="text" placeholder="0.00" className="supplier_form" /> </td>
-                          <td> <input type="text" placeholder="0.00" className="supplier_form" /> </td>
-                          <td> <input type="text" placeholder="0.00" className="supplier_form" /> </td>
-                          <td> <input type="text" placeholder="0.00" className="supplier_form" /> </td>
-
+                          <td>
+                            {" "}
+                            <select name="origin_fuelSur_vatTyp">
+                              <option value="">No Vat</option>
+                              <option value="15">Standard Rate(15.00%)</option>
+                              <option value="15">
+                                Standard Rate (Capital Goods) (15.00%)
+                              </option>
+                              <option value="0">Zero Rate</option>
+                              <option value="0">
+                                Zero Rate Exports(0.00%)
+                              </option>
+                              <option value="0">
+                                Exempt and Non-Suppliers(0.00%)
+                              </option>
+                              <option value="15">
+                                Export of Second Hands Goods(15.00%)
+                              </option>
+                              <option value="15">Change in Use(15.00%)</option>
+                              <option value="100">Customs VAT(100.00%)</option>
+                              <option value="100">
+                                Goods and Services Imported(100.00%)
+                              </option>
+                              <option value="100">
+                                Capital Goods and Imported(100.00%)
+                              </option>
+                              <option value="100">
+                                VAT Adjustment (100.00%)
+                              </option>
+                              <option value="15">
+                                Domestic Reverse Charge (15.00%)
+                              </option>
+                              <option value="">Manual VAT</option>
+                              <option value="">
+                                Manual VAT (Capital Goods)
+                              </option>
+                            </select>{" "}
+                          </td>
+                          <td>
+                            {" "}
+                            <input
+                              type="text"
+                              placeholder="0.00"
+                              className="supplier_form"
+                            />{" "}
+                          </td>
+                          <td>
+                            {" "}
+                            <input
+                              type="text"
+                              placeholder="0.00"
+                              className="supplier_form"
+                            />{" "}
+                          </td>
+                          <td>
+                            {" "}
+                            <input
+                              type="text"
+                              placeholder="0.00"
+                              className="supplier_form"
+                            />{" "}
+                          </td>
+                          <td>
+                            {" "}
+                            <input
+                              type="text"
+                              placeholder="0.00"
+                              className="supplier_form"
+                            />{" "}
+                          </td>
+                          <td>
+                            {" "}
+                            <input
+                              type="text"
+                              placeholder="0.00"
+                              className="supplier_form"
+                            />{" "}
+                          </td>
                         </tr>
                         <tr>
                           <td></td>
@@ -3118,16 +3261,84 @@ export default function Addsupplierinvoice() {
                               className="supplier_form"
                             />
                           </td>
-                          <td> <select>
-                            <option value="">Select</option>
-                            <option value="inclusive">GST Inclusive</option>
-                            <option value="exclusive">GST Exclusive</option>
-                            <option value="non-gst">Non GST</option>
-                          </select> </td>
-                          <td> <input type="text" placeholder="0.00" className="supplier_form" /> </td>
-                          <td> <input type="text" placeholder="0.00" className="supplier_form" /> </td>
-                          <td> <input type="text" placeholder="0.00" className="supplier_form" /> </td>
-                          <td> <input type="text" placeholder="0.00" className="supplier_form" /> </td>
+                          <td>
+                            {" "}
+                             <select name="origin_cfs_vatTyp">
+                              <option value="">No Vat</option>
+                              <option value="15">Standard Rate(15.00%)</option>
+                              <option value="15">
+                                Standard Rate (Capital Goods) (15.00%)
+                              </option>
+                              <option value="0">Zero Rate</option>
+                              <option value="0">
+                                Zero Rate Exports(0.00%)
+                              </option>
+                              <option value="0">
+                                Exempt and Non-Suppliers(0.00%)
+                              </option>
+                              <option value="15">
+                                Export of Second Hands Goods(15.00%)
+                              </option>
+                              <option value="15">Change in Use(15.00%)</option>
+                              <option value="100">Customs VAT(100.00%)</option>
+                              <option value="100">
+                                Goods and Services Imported(100.00%)
+                              </option>
+                              <option value="100">
+                                Capital Goods and Imported(100.00%)
+                              </option>
+                              <option value="100">
+                                VAT Adjustment (100.00%)
+                              </option>
+                              <option value="15">
+                                Domestic Reverse Charge (15.00%)
+                              </option>
+                              <option value="">Manual VAT</option>
+                              <option value="">
+                                Manual VAT (Capital Goods)
+                              </option>
+                            </select>{" "}
+                          </td>
+                          <td>
+                            {" "}
+                            <input
+                              type="text"
+                              placeholder="0.00"
+                              className="supplier_form"
+                            />{" "}
+                          </td>
+                          <td>
+                            {" "}
+                            <input
+                              type="text"
+                              placeholder="0.00"
+                              className="supplier_form"
+                            />{" "}
+                          </td>
+                          <td>
+                            {" "}
+                            <input
+                              type="text"
+                              placeholder="0.00"
+                              className="supplier_form"
+                            />{" "}
+                          </td>
+                          <td>
+                            {" "}
+                            <input
+                              type="text"
+                              placeholder="0.00"
+                              className="supplier_form"
+                            />{" "}
+                          </td>
+                          <td>
+                            {" "}
+                            <input
+                              type="text"
+                              placeholder="0.00"
+                              className="supplier_form"
+                            />{" "}
+                          </td>
                         </tr>
                         <tr>
                           <td></td>
@@ -3336,16 +3547,84 @@ export default function Addsupplierinvoice() {
                               className="supplier_form"
                             />
                           </td>
-                          <td> <select>
-                            <option value="">Select</option>
-                            <option value="inclusive">GST Inclusive</option>
-                            <option value="exclusive">GST Exclusive</option>
-                            <option value="non-gst">Non GST</option>
-                          </select> </td>
-                          <td> <input type="text" placeholder="0.00" className="supplier_form" /> </td>
-                          <td> <input type="text" placeholder="0.00" className="supplier_form" /> </td>
-                          <td> <input type="text" placeholder="0.00" className="supplier_form" /> </td>
-                          <td> <input type="text" placeholder="0.00" className="supplier_form" /> </td>
+                          <td>
+                            {" "}
+                            <select name="org_docFee_vatTyp">
+                              <option value="">No Vat</option>
+                              <option value="15">Standard Rate(15.00%)</option>
+                              <option value="15">
+                                Standard Rate (Capital Goods) (15.00%)
+                              </option>
+                              <option value="0">Zero Rate</option>
+                              <option value="0">
+                                Zero Rate Exports(0.00%)
+                              </option>
+                              <option value="0">
+                                Exempt and Non-Suppliers(0.00%)
+                              </option>
+                              <option value="15">
+                                Export of Second Hands Goods(15.00%)
+                              </option>
+                              <option value="15">Change in Use(15.00%)</option>
+                              <option value="100">Customs VAT(100.00%)</option>
+                              <option value="100">
+                                Goods and Services Imported(100.00%)
+                              </option>
+                              <option value="100">
+                                Capital Goods and Imported(100.00%)
+                              </option>
+                              <option value="100">
+                                VAT Adjustment (100.00%)
+                              </option>
+                              <option value="15">
+                                Domestic Reverse Charge (15.00%)
+                              </option>
+                              <option value="">Manual VAT</option>
+                              <option value="">
+                                Manual VAT (Capital Goods)
+                              </option>
+                            </select>{" "}
+                          </td>
+                          <td>
+                            {" "}
+                            <input
+                              type="text"
+                              placeholder="0.00"
+                              className="supplier_form"
+                            />{" "}
+                          </td>
+                          <td>
+                            {" "}
+                            <input
+                              type="text"
+                              placeholder="0.00"
+                              className="supplier_form"
+                            />{" "}
+                          </td>
+                          <td>
+                            {" "}
+                            <input
+                              type="text"
+                              placeholder="0.00"
+                              className="supplier_form"
+                            />{" "}
+                          </td>
+                          <td>
+                            {" "}
+                            <input
+                              type="text"
+                              placeholder="0.00"
+                              className="supplier_form"
+                            />{" "}
+                          </td>
+                          <td>
+                            {" "}
+                            <input
+                              type="text"
+                              placeholder="0.00"
+                              className="supplier_form"
+                            />{" "}
+                          </td>
                         </tr>
                         <tr>
                           <td></td>
@@ -3426,7 +3705,9 @@ export default function Addsupplierinvoice() {
                               }}
                               onChange={handlechangecalc}
                               name="origin_pick_up_forewarding_unitType"
-                              value={freight?.origin_pick_up_forewarding_unitType}
+                              value={
+                                freight?.origin_pick_up_forewarding_unitType
+                              }
                             >
                               <option>Select</option>
                               <option value="1">L/S</option>
@@ -3553,16 +3834,84 @@ export default function Addsupplierinvoice() {
                               className="supplier_form"
                             />
                           </td>
-                          <td> <select>
-                            <option value="">Select</option>
-                            <option value="inclusive">GST Inclusive</option>
-                            <option value="exclusive">GST Exclusive</option>
-                            <option value="non-gst">Non GST</option>
-                          </select> </td>
-                          <td> <input type="text" placeholder="0.00" className="supplier_form" /> </td>
-                          <td> <input type="text" placeholder="0.00" className="supplier_form" /> </td>
-                          <td> <input type="text" placeholder="0.00" className="supplier_form" /> </td>
-                          <td> <input type="text" placeholder="0.00" className="supplier_form" /> </td>
+                          <td>
+                            {" "}
+                             <select name="org_forwFee_vatTyp">
+                              <option value="">No Vat</option>
+                              <option value="15">Standard Rate(15.00%)</option>
+                              <option value="15">
+                                Standard Rate (Capital Goods) (15.00%)
+                              </option>
+                              <option value="0">Zero Rate</option>
+                              <option value="0">
+                                Zero Rate Exports(0.00%)
+                              </option>
+                              <option value="0">
+                                Exempt and Non-Suppliers(0.00%)
+                              </option>
+                              <option value="15">
+                                Export of Second Hands Goods(15.00%)
+                              </option>
+                              <option value="15">Change in Use(15.00%)</option>
+                              <option value="100">Customs VAT(100.00%)</option>
+                              <option value="100">
+                                Goods and Services Imported(100.00%)
+                              </option>
+                              <option value="100">
+                                Capital Goods and Imported(100.00%)
+                              </option>
+                              <option value="100">
+                                VAT Adjustment (100.00%)
+                              </option>
+                              <option value="15">
+                                Domestic Reverse Charge (15.00%)
+                              </option>
+                              <option value="">Manual VAT</option>
+                              <option value="">
+                                Manual VAT (Capital Goods)
+                              </option>
+                            </select>{" "}
+                          </td>
+                          <td>
+                            {" "}
+                            <input
+                              type="text"
+                              placeholder="0.00"
+                              className="supplier_form"
+                            />{" "}
+                          </td>
+                          <td>
+                            {" "}
+                            <input
+                              type="text"
+                              placeholder="0.00"
+                              className="supplier_form"
+                            />{" "}
+                          </td>
+                          <td>
+                            {" "}
+                            <input
+                              type="text"
+                              placeholder="0.00"
+                              className="supplier_form"
+                            />{" "}
+                          </td>
+                          <td>
+                            {" "}
+                            <input
+                              type="text"
+                              placeholder="0.00"
+                              className="supplier_form"
+                            />{" "}
+                          </td>
+                          <td>
+                            {" "}
+                            <input
+                              type="text"
+                              placeholder="0.00"
+                              className="supplier_form"
+                            />{" "}
+                          </td>
                         </tr>
                         <tr>
                           <td></td>
@@ -3581,7 +3930,9 @@ export default function Addsupplierinvoice() {
                               type="text"
                               className="supplier_form"
                               onChange={handlechangecalc}
-                              value={freight?.origin_pick_up_custome_unitTypeQTY}
+                              value={
+                                freight?.origin_pick_up_custome_unitTypeQTY
+                              }
                               name="origin_pick_up_custome_unitTypeQTY"
                               id="floatingInput"
                               placeholder="0.00"
@@ -3766,16 +4117,84 @@ export default function Addsupplierinvoice() {
                               className="supplier_form"
                             />
                           </td>
-                          <td> <select>
-                            <option value="">Select</option>
-                            <option value="inclusive">GST Inclusive</option>
-                            <option value="exclusive">GST Exclusive</option>
-                            <option value="non-gst">Non GST</option>
-                          </select> </td>
-                          <td> <input type="text" placeholder="0.00" className="supplier_form" /> </td>
-                          <td> <input type="text" placeholder="0.00" className="supplier_form" /> </td>
-                          <td> <input type="text" placeholder="0.00" className="supplier_form" /> </td>
-                          <td> <input type="text" placeholder="0.00" className="supplier_form" /> </td>
+                          <td>
+                            {" "}
+                            <select name="org_clearance_vatTyp">
+                              <option value="">No Vat</option>
+                              <option value="15">Standard Rate(15.00%)</option>
+                              <option value="15">
+                                Standard Rate (Capital Goods) (15.00%)
+                              </option>
+                              <option value="0">Zero Rate</option>
+                              <option value="0">
+                                Zero Rate Exports(0.00%)
+                              </option>
+                              <option value="0">
+                                Exempt and Non-Suppliers(0.00%)
+                              </option>
+                              <option value="15">
+                                Export of Second Hands Goods(15.00%)
+                              </option>
+                              <option value="15">Change in Use(15.00%)</option>
+                              <option value="100">Customs VAT(100.00%)</option>
+                              <option value="100">
+                                Goods and Services Imported(100.00%)
+                              </option>
+                              <option value="100">
+                                Capital Goods and Imported(100.00%)
+                              </option>
+                              <option value="100">
+                                VAT Adjustment (100.00%)
+                              </option>
+                              <option value="15">
+                                Domestic Reverse Charge (15.00%)
+                              </option>
+                              <option value="">Manual VAT</option>
+                              <option value="">
+                                Manual VAT (Capital Goods)
+                              </option>
+                            </select>{" "}
+                          </td>
+                          <td>
+                            {" "}
+                            <input
+                              type="text"
+                              placeholder="0.00"
+                              className="supplier_form"
+                            />{" "}
+                          </td>
+                          <td>
+                            {" "}
+                            <input
+                              type="text"
+                              placeholder="0.00"
+                              className="supplier_form"
+                            />{" "}
+                          </td>
+                          <td>
+                            {" "}
+                            <input
+                              type="text"
+                              placeholder="0.00"
+                              className="supplier_form"
+                            />{" "}
+                          </td>
+                          <td>
+                            {" "}
+                            <input
+                              type="text"
+                              placeholder="0.00"
+                              className="supplier_form"
+                            />{" "}
+                          </td>
+                          <td>
+                            {" "}
+                            <input
+                              type="text"
+                              placeholder="0.00"
+                              className="supplier_form"
+                            />{" "}
+                          </td>
                         </tr>
                         <tr>
                           <td></td>
@@ -3811,7 +4230,9 @@ export default function Addsupplierinvoice() {
                               type="text"
                               className="supplier_form"
                               onChange={handlechangecalc}
-                              value={freight?.freight_charge_currency_unitTypeQTY}
+                              value={
+                                freight?.freight_charge_currency_unitTypeQTY
+                              }
                               name="freight_charge_currency_unitTypeQTY"
                               id="floatingInput"
                               placeholder="0.00"
@@ -3995,16 +4416,84 @@ export default function Addsupplierinvoice() {
                               className="supplier_form"
                             />
                           </td>
-                          <td> <select>
-                            <option value="">Select</option>
-                            <option value="inclusive">GST Inclusive</option>
-                            <option value="exclusive">GST Exclusive</option>
-                            <option value="non-gst">Non GST</option>
-                          </select> </td>
-                          <td> <input type="text" placeholder="0.00" className="supplier_form" /> </td>
-                          <td> <input type="text" placeholder="0.00" className="supplier_form" /> </td>
-                          <td> <input type="text" placeholder="0.00" className="supplier_form" /> </td>
-                          <td> <input type="text" placeholder="0.00" className="supplier_form" /> </td>
+                          <td>
+                            {" "}
+                            <select name="ocenfreight_charge_vatTyp">
+                              <option value="">No Vat</option>
+                              <option value="15">Standard Rate(15.00%)</option>
+                              <option value="15">
+                                Standard Rate (Capital Goods) (15.00%)
+                              </option>
+                              <option value="0">Zero Rate</option>
+                              <option value="0">
+                                Zero Rate Exports(0.00%)
+                              </option>
+                              <option value="0">
+                                Exempt and Non-Suppliers(0.00%)
+                              </option>
+                              <option value="15">
+                                Export of Second Hands Goods(15.00%)
+                              </option>
+                              <option value="15">Change in Use(15.00%)</option>
+                              <option value="100">Customs VAT(100.00%)</option>
+                              <option value="100">
+                                Goods and Services Imported(100.00%)
+                              </option>
+                              <option value="100">
+                                Capital Goods and Imported(100.00%)
+                              </option>
+                              <option value="100">
+                                VAT Adjustment (100.00%)
+                              </option>
+                              <option value="15">
+                                Domestic Reverse Charge (15.00%)
+                              </option>
+                              <option value="">Manual VAT</option>
+                              <option value="">
+                                Manual VAT (Capital Goods)
+                              </option>
+                            </select>{" "}
+                          </td>
+                          <td>
+                            {" "}
+                            <input
+                              type="text"
+                              placeholder="0.00"
+                              className="supplier_form"
+                            />{" "}
+                          </td>
+                          <td>
+                            {" "}
+                            <input
+                              type="text"
+                              placeholder="0.00"
+                              className="supplier_form"
+                            />{" "}
+                          </td>
+                          <td>
+                            {" "}
+                            <input
+                              type="text"
+                              placeholder="0.00"
+                              className="supplier_form"
+                            />{" "}
+                          </td>
+                          <td>
+                            {" "}
+                            <input
+                              type="text"
+                              placeholder="0.00"
+                              className="supplier_form"
+                            />{" "}
+                          </td>
+                          <td>
+                            {" "}
+                            <input
+                              type="text"
+                              placeholder="0.00"
+                              className="supplier_form"
+                            />{" "}
+                          </td>
                         </tr>
                         <tr>
                           <td>Insurance</td>
@@ -4085,7 +4574,9 @@ export default function Addsupplierinvoice() {
                               }}
                               onChange={handlechangecalc}
                               name="freight_currency_insurance_unittype"
-                              value={freight?.freight_currency_insurance_unittype}
+                              value={
+                                freight?.freight_currency_insurance_unittype
+                              }
                             >
                               <option>Select</option>
                               <option value="1">L/S</option>
@@ -4210,16 +4701,84 @@ export default function Addsupplierinvoice() {
                               className="supplier_form"
                             />
                           </td>
-                          <td> <select>
-                            <option value="">Select</option>
-                            <option value="inclusive">GST Inclusive</option>
-                            <option value="exclusive">GST Exclusive</option>
-                            <option value="non-gst">Non GST</option>
-                          </select> </td>
-                          <td> <input type="text" placeholder="0.00" className="supplier_form" /> </td>
-                          <td> <input type="text" placeholder="0.00" className="supplier_form" /> </td>
-                          <td> <input type="text" placeholder="0.00" className="supplier_form" /> </td>
-                          <td> <input type="text" placeholder="0.00" className="supplier_form" /> </td>
+                          <td>
+                            {" "}
+                            <select name="insurance_vatTyp">
+                              <option value="">No Vat</option>
+                              <option value="15">Standard Rate(15.00%)</option>
+                              <option value="15">
+                                Standard Rate (Capital Goods) (15.00%)
+                              </option>
+                              <option value="0">Zero Rate</option>
+                              <option value="0">
+                                Zero Rate Exports(0.00%)
+                              </option>
+                              <option value="0">
+                                Exempt and Non-Suppliers(0.00%)
+                              </option>
+                              <option value="15">
+                                Export of Second Hands Goods(15.00%)
+                              </option>
+                              <option value="15">Change in Use(15.00%)</option>
+                              <option value="100">Customs VAT(100.00%)</option>
+                              <option value="100">
+                                Goods and Services Imported(100.00%)
+                              </option>
+                              <option value="100">
+                                Capital Goods and Imported(100.00%)
+                              </option>
+                              <option value="100">
+                                VAT Adjustment (100.00%)
+                              </option>
+                              <option value="15">
+                                Domestic Reverse Charge (15.00%)
+                              </option>
+                              <option value="">Manual VAT</option>
+                              <option value="">
+                                Manual VAT (Capital Goods)
+                              </option>
+                            </select>{" "}
+                          </td>
+                          <td>
+                            {" "}
+                            <input
+                              type="text"
+                              placeholder="0.00"
+                              className="supplier_form"
+                            />{" "}
+                          </td>
+                          <td>
+                            {" "}
+                            <input
+                              type="text"
+                              placeholder="0.00"
+                              className="supplier_form"
+                            />{" "}
+                          </td>
+                          <td>
+                            {" "}
+                            <input
+                              type="text"
+                              placeholder="0.00"
+                              className="supplier_form"
+                            />{" "}
+                          </td>
+                          <td>
+                            {" "}
+                            <input
+                              type="text"
+                              placeholder="0.00"
+                              className="supplier_form"
+                            />{" "}
+                          </td>
+                          <td>
+                            {" "}
+                            <input
+                              type="text"
+                              placeholder="0.00"
+                              className="supplier_form"
+                            />{" "}
+                          </td>
                         </tr>
                         <tr>
                           <td></td>
@@ -4228,7 +4787,9 @@ export default function Addsupplierinvoice() {
                           </td>
                           <td colSpan={2}>
                             {" "}
-                            {totalChageswithOutExchangeinsurance.toFixed(2)}{" "}
+                            {totalChageswithOutExchangeinsurance.toFixed(
+                              2,
+                            )}{" "}
                           </td>
                           <td>
                             {" "}
@@ -4444,16 +5005,84 @@ export default function Addsupplierinvoice() {
                               className="supplier_form"
                             />
                           </td>
-                          <td> <select>
-                            <option value="">Select</option>
-                            <option value="inclusive">GST Inclusive</option>
-                            <option value="exclusive">GST Exclusive</option>
-                            <option value="non-gst">Non GST</option>
-                          </select> </td>
-                          <td> <input type="text" placeholder="0.00" className="supplier_form" /> </td>
-                          <td> <input type="text" placeholder="0.00" className="supplier_form" /> </td>
-                          <td> <input type="text" placeholder="0.00" className="supplier_form" /> </td>
-                          <td> <input type="text" placeholder="0.00" className="supplier_form" /> </td>
+                          <td>
+                            {" "}
+                             <select name="trans_clear_fees_vatTyp">
+                              <option value="">No Vat</option>
+                              <option value="15">Standard Rate(15.00%)</option>
+                              <option value="15">
+                                Standard Rate (Capital Goods) (15.00%)
+                              </option>
+                              <option value="0">Zero Rate</option>
+                              <option value="0">
+                                Zero Rate Exports(0.00%)
+                              </option>
+                              <option value="0">
+                                Exempt and Non-Suppliers(0.00%)
+                              </option>
+                              <option value="15">
+                                Export of Second Hands Goods(15.00%)
+                              </option>
+                              <option value="15">Change in Use(15.00%)</option>
+                              <option value="100">Customs VAT(100.00%)</option>
+                              <option value="100">
+                                Goods and Services Imported(100.00%)
+                              </option>
+                              <option value="100">
+                                Capital Goods and Imported(100.00%)
+                              </option>
+                              <option value="100">
+                                VAT Adjustment (100.00%)
+                              </option>
+                              <option value="15">
+                                Domestic Reverse Charge (15.00%)
+                              </option>
+                              <option value="">Manual VAT</option>
+                              <option value="">
+                                Manual VAT (Capital Goods)
+                              </option>
+                            </select>{" "}
+                          </td>
+                          <td>
+                            {" "}
+                            <input
+                              type="text"
+                              placeholder="0.00"
+                              className="supplier_form"
+                            />{" "}
+                          </td>
+                          <td>
+                            {" "}
+                            <input
+                              type="text"
+                              placeholder="0.00"
+                              className="supplier_form"
+                            />{" "}
+                          </td>
+                          <td>
+                            {" "}
+                            <input
+                              type="text"
+                              placeholder="0.00"
+                              className="supplier_form"
+                            />{" "}
+                          </td>
+                          <td>
+                            {" "}
+                            <input
+                              type="text"
+                              placeholder="0.00"
+                              className="supplier_form"
+                            />{" "}
+                          </td>
+                          <td>
+                            {" "}
+                            <input
+                              type="text"
+                              placeholder="0.00"
+                              className="supplier_form"
+                            />{" "}
+                          </td>
                         </tr>
                         <tr>
                           <td> </td>
@@ -4657,16 +5286,84 @@ export default function Addsupplierinvoice() {
                               className="supplier_form"
                             />
                           </td>
-                          <td> <select>
-                            <option value="">Select</option>
-                            <option value="inclusive">GST Inclusive</option>
-                            <option value="exclusive">GST Exclusive</option>
-                            <option value="non-gst">Non GST</option>
-                          </select> </td>
-                          <td> <input type="text" placeholder="0.00" className="supplier_form" /> </td>
-                          <td> <input type="text" placeholder="0.00" className="supplier_form" /> </td>
-                          <td> <input type="text" placeholder="0.00" className="supplier_form" /> </td>
-                          <td> <input type="text" placeholder="0.00" className="supplier_form" /> </td>
+                          <td>
+                            {" "}
+                           <select name="trans_THC_levy_vatTyp">
+                              <option value="">No Vat</option>
+                              <option value="15">Standard Rate(15.00%)</option>
+                              <option value="15">
+                                Standard Rate (Capital Goods) (15.00%)
+                              </option>
+                              <option value="0">Zero Rate</option>
+                              <option value="0">
+                                Zero Rate Exports(0.00%)
+                              </option>
+                              <option value="0">
+                                Exempt and Non-Suppliers(0.00%)
+                              </option>
+                              <option value="15">
+                                Export of Second Hands Goods(15.00%)
+                              </option>
+                              <option value="15">Change in Use(15.00%)</option>
+                              <option value="100">Customs VAT(100.00%)</option>
+                              <option value="100">
+                                Goods and Services Imported(100.00%)
+                              </option>
+                              <option value="100">
+                                Capital Goods and Imported(100.00%)
+                              </option>
+                              <option value="100">
+                                VAT Adjustment (100.00%)
+                              </option>
+                              <option value="15">
+                                Domestic Reverse Charge (15.00%)
+                              </option>
+                              <option value="">Manual VAT</option>
+                              <option value="">
+                                Manual VAT (Capital Goods)
+                              </option>
+                            </select>{" "}
+                          </td>
+                          <td>
+                            {" "}
+                            <input
+                              type="text"
+                              placeholder="0.00"
+                              className="supplier_form"
+                            />{" "}
+                          </td>
+                          <td>
+                            {" "}
+                            <input
+                              type="text"
+                              placeholder="0.00"
+                              className="supplier_form"
+                            />{" "}
+                          </td>
+                          <td>
+                            {" "}
+                            <input
+                              type="text"
+                              placeholder="0.00"
+                              className="supplier_form"
+                            />{" "}
+                          </td>
+                          <td>
+                            {" "}
+                            <input
+                              type="text"
+                              placeholder="0.00"
+                              className="supplier_form"
+                            />{" "}
+                          </td>
+                          <td>
+                            {" "}
+                            <input
+                              type="text"
+                              placeholder="0.00"
+                              className="supplier_form"
+                            />{" "}
+                          </td>
                         </tr>
                         <tr>
                           <td> </td>
@@ -4869,16 +5566,84 @@ export default function Addsupplierinvoice() {
                               className="supplier_form"
                             />
                           </td>
-                          <td> <select>
-                            <option value="">Select</option>
-                            <option value="inclusive">GST Inclusive</option>
-                            <option value="exclusive">GST Exclusive</option>
-                            <option value="non-gst">Non GST</option>
-                          </select> </td>
-                          <td> <input type="text" placeholder="0.00" className="supplier_form" /> </td>
-                          <td> <input type="text" placeholder="0.00" className="supplier_form" /> </td>
-                          <td> <input type="text" placeholder="0.00" className="supplier_form" /> </td>
-                          <td> <input type="text" placeholder="0.00" className="supplier_form" /> </td>
+                          <td>
+                            {" "}
+                             <select name="trans_unpack_charg_vatTyp">
+                              <option value="">No Vat</option>
+                              <option value="15">Standard Rate(15.00%)</option>
+                              <option value="15">
+                                Standard Rate (Capital Goods) (15.00%)
+                              </option>
+                              <option value="0">Zero Rate</option>
+                              <option value="0">
+                                Zero Rate Exports(0.00%)
+                              </option>
+                              <option value="0">
+                                Exempt and Non-Suppliers(0.00%)
+                              </option>
+                              <option value="15">
+                                Export of Second Hands Goods(15.00%)
+                              </option>
+                              <option value="15">Change in Use(15.00%)</option>
+                              <option value="100">Customs VAT(100.00%)</option>
+                              <option value="100">
+                                Goods and Services Imported(100.00%)
+                              </option>
+                              <option value="100">
+                                Capital Goods and Imported(100.00%)
+                              </option>
+                              <option value="100">
+                                VAT Adjustment (100.00%)
+                              </option>
+                              <option value="15">
+                                Domestic Reverse Charge (15.00%)
+                              </option>
+                              <option value="">Manual VAT</option>
+                              <option value="">
+                                Manual VAT (Capital Goods)
+                              </option>
+                            </select>{" "}
+                          </td>
+                          <td>
+                            {" "}
+                            <input
+                              type="text"
+                              placeholder="0.00"
+                              className="supplier_form"
+                            />{" "}
+                          </td>
+                          <td>
+                            {" "}
+                            <input
+                              type="text"
+                              placeholder="0.00"
+                              className="supplier_form"
+                            />{" "}
+                          </td>
+                          <td>
+                            {" "}
+                            <input
+                              type="text"
+                              placeholder="0.00"
+                              className="supplier_form"
+                            />{" "}
+                          </td>
+                          <td>
+                            {" "}
+                            <input
+                              type="text"
+                              placeholder="0.00"
+                              className="supplier_form"
+                            />{" "}
+                          </td>
+                          <td>
+                            {" "}
+                            <input
+                              type="text"
+                              placeholder="0.00"
+                              className="supplier_form"
+                            />{" "}
+                          </td>
                         </tr>
                         <tr>
                           <td> </td>
@@ -5082,16 +5847,84 @@ export default function Addsupplierinvoice() {
                               className="supplier_form"
                             />
                           </td>
-                          <td> <select>
-                            <option value="">Select</option>
-                            <option value="inclusive">GST Inclusive</option>
-                            <option value="exclusive">GST Exclusive</option>
-                            <option value="non-gst">Non GST</option>
-                          </select> </td>
-                          <td> <input type="text" placeholder="0.00" className="supplier_form" /> </td>
-                          <td> <input type="text" placeholder="0.00" className="supplier_form" /> </td>
-                          <td> <input type="text" placeholder="0.00" className="supplier_form" /> </td>
-                          <td> <input type="text" placeholder="0.00" className="supplier_form" /> </td>
+                          <td>
+                            {" "}
+                            <select name="trans_CFS_charg_vatTyp">
+                              <option value="">No Vat</option>
+                              <option value="15">Standard Rate(15.00%)</option>
+                              <option value="15">
+                                Standard Rate (Capital Goods) (15.00%)
+                              </option>
+                              <option value="0">Zero Rate</option>
+                              <option value="0">
+                                Zero Rate Exports(0.00%)
+                              </option>
+                              <option value="0">
+                                Exempt and Non-Suppliers(0.00%)
+                              </option>
+                              <option value="15">
+                                Export of Second Hands Goods(15.00%)
+                              </option>
+                              <option value="15">Change in Use(15.00%)</option>
+                              <option value="100">Customs VAT(100.00%)</option>
+                              <option value="100">
+                                Goods and Services Imported(100.00%)
+                              </option>
+                              <option value="100">
+                                Capital Goods and Imported(100.00%)
+                              </option>
+                              <option value="100">
+                                VAT Adjustment (100.00%)
+                              </option>
+                              <option value="15">
+                                Domestic Reverse Charge (15.00%)
+                              </option>
+                              <option value="">Manual VAT</option>
+                              <option value="">
+                                Manual VAT (Capital Goods)
+                              </option>
+                            </select>{" "}
+                          </td>
+                          <td>
+                            {" "}
+                            <input
+                              type="text"
+                              placeholder="0.00"
+                              className="supplier_form"
+                            />{" "}
+                          </td>
+                          <td>
+                            {" "}
+                            <input
+                              type="text"
+                              placeholder="0.00"
+                              className="supplier_form"
+                            />{" "}
+                          </td>
+                          <td>
+                            {" "}
+                            <input
+                              type="text"
+                              placeholder="0.00"
+                              className="supplier_form"
+                            />{" "}
+                          </td>
+                          <td>
+                            {" "}
+                            <input
+                              type="text"
+                              placeholder="0.00"
+                              className="supplier_form"
+                            />{" "}
+                          </td>
+                          <td>
+                            {" "}
+                            <input
+                              type="text"
+                              placeholder="0.00"
+                              className="supplier_form"
+                            />{" "}
+                          </td>
                         </tr>
                         <tr>
                           <td> </td>
@@ -5294,16 +6127,84 @@ export default function Addsupplierinvoice() {
                               className="supplier_form"
                             />
                           </td>
-                          <td> <select>
-                            <option value="">Select</option>
-                            <option value="inclusive">GST Inclusive</option>
-                            <option value="exclusive">GST Exclusive</option>
-                            <option value="non-gst">Non GST</option>
-                          </select> </td>
-                          <td> <input type="text" placeholder="0.00" className="supplier_form" /> </td>
-                          <td> <input type="text" placeholder="0.00" className="supplier_form" /> </td>
-                          <td> <input type="text" placeholder="0.00" className="supplier_form" /> </td>
-                          <td> <input type="text" placeholder="0.00" className="supplier_form" /> </td>
+                          <td>
+                            {" "}
+                            <select name="trans_admin_charg_vatTyp">
+                              <option value="">No Vat</option>
+                              <option value="15">Standard Rate(15.00%)</option>
+                              <option value="15">
+                                Standard Rate (Capital Goods) (15.00%)
+                              </option>
+                              <option value="0">Zero Rate</option>
+                              <option value="0">
+                                Zero Rate Exports(0.00%)
+                              </option>
+                              <option value="0">
+                                Exempt and Non-Suppliers(0.00%)
+                              </option>
+                              <option value="15">
+                                Export of Second Hands Goods(15.00%)
+                              </option>
+                              <option value="15">Change in Use(15.00%)</option>
+                              <option value="100">Customs VAT(100.00%)</option>
+                              <option value="100">
+                                Goods and Services Imported(100.00%)
+                              </option>
+                              <option value="100">
+                                Capital Goods and Imported(100.00%)
+                              </option>
+                              <option value="100">
+                                VAT Adjustment (100.00%)
+                              </option>
+                              <option value="15">
+                                Domestic Reverse Charge (15.00%)
+                              </option>
+                              <option value="">Manual VAT</option>
+                              <option value="">
+                                Manual VAT (Capital Goods)
+                              </option>
+                            </select>{" "}
+                          </td>
+                          <td>
+                            {" "}
+                            <input
+                              type="text"
+                              placeholder="0.00"
+                              className="supplier_form"
+                            />{" "}
+                          </td>
+                          <td>
+                            {" "}
+                            <input
+                              type="text"
+                              placeholder="0.00"
+                              className="supplier_form"
+                            />{" "}
+                          </td>
+                          <td>
+                            {" "}
+                            <input
+                              type="text"
+                              placeholder="0.00"
+                              className="supplier_form"
+                            />{" "}
+                          </td>
+                          <td>
+                            {" "}
+                            <input
+                              type="text"
+                              placeholder="0.00"
+                              className="supplier_form"
+                            />{" "}
+                          </td>
+                          <td>
+                            {" "}
+                            <input
+                              type="text"
+                              placeholder="0.00"
+                              className="supplier_form"
+                            />{" "}
+                          </td>
                         </tr>
                         <tr>
                           <td> </td>
@@ -5506,16 +6407,84 @@ export default function Addsupplierinvoice() {
                               className="supplier_form"
                             />
                           </td>
-                          <td> <select>
-                            <option value="">Select</option>
-                            <option value="inclusive">GST Inclusive</option>
-                            <option value="exclusive">GST Exclusive</option>
-                            <option value="non-gst">Non GST</option>
-                          </select> </td>
-                          <td> <input type="text" placeholder="0.00" className="supplier_form" /> </td>
-                          <td> <input type="text" placeholder="0.00" className="supplier_form" /> </td>
-                          <td> <input type="text" placeholder="0.00" className="supplier_form" /> </td>
-                          <td> <input type="text" placeholder="0.00" className="supplier_form" /> </td>
+                          <td>
+                            {" "}
+                           <select name="trans_portCargo_vatTyp">
+                              <option value="">No Vat</option>
+                              <option value="15">Standard Rate(15.00%)</option>
+                              <option value="15">
+                                Standard Rate (Capital Goods) (15.00%)
+                              </option>
+                              <option value="0">Zero Rate</option>
+                              <option value="0">
+                                Zero Rate Exports(0.00%)
+                              </option>
+                              <option value="0">
+                                Exempt and Non-Suppliers(0.00%)
+                              </option>
+                              <option value="15">
+                                Export of Second Hands Goods(15.00%)
+                              </option>
+                              <option value="15">Change in Use(15.00%)</option>
+                              <option value="100">Customs VAT(100.00%)</option>
+                              <option value="100">
+                                Goods and Services Imported(100.00%)
+                              </option>
+                              <option value="100">
+                                Capital Goods and Imported(100.00%)
+                              </option>
+                              <option value="100">
+                                VAT Adjustment (100.00%)
+                              </option>
+                              <option value="15">
+                                Domestic Reverse Charge (15.00%)
+                              </option>
+                              <option value="">Manual VAT</option>
+                              <option value="">
+                                Manual VAT (Capital Goods)
+                              </option>
+                            </select>{" "}
+                          </td>
+                          <td>
+                            {" "}
+                            <input
+                              type="text"
+                              placeholder="0.00"
+                              className="supplier_form"
+                            />{" "}
+                          </td>
+                          <td>
+                            {" "}
+                            <input
+                              type="text"
+                              placeholder="0.00"
+                              className="supplier_form"
+                            />{" "}
+                          </td>
+                          <td>
+                            {" "}
+                            <input
+                              type="text"
+                              placeholder="0.00"
+                              className="supplier_form"
+                            />{" "}
+                          </td>
+                          <td>
+                            {" "}
+                            <input
+                              type="text"
+                              placeholder="0.00"
+                              className="supplier_form"
+                            />{" "}
+                          </td>
+                          <td>
+                            {" "}
+                            <input
+                              type="text"
+                              placeholder="0.00"
+                              className="supplier_form"
+                            />{" "}
+                          </td>
                         </tr>
                         <tr>
                           <td> </td>
@@ -5718,16 +6687,84 @@ export default function Addsupplierinvoice() {
                               className="supplier_form"
                             />
                           </td>
-                          <td> <select>
-                            <option value="">Select</option>
-                            <option value="inclusive">GST Inclusive</option>
-                            <option value="exclusive">GST Exclusive</option>
-                            <option value="non-gst">Non GST</option>
-                          </select> </td>
-                          <td> <input type="text" placeholder="0.00" className="supplier_form" /> </td>
-                          <td> <input type="text" placeholder="0.00" className="supplier_form" /> </td>
-                          <td> <input type="text" placeholder="0.00" className="supplier_form" /> </td>
-                          <td> <input type="text" placeholder="0.00" className="supplier_form" /> </td>
+                          <td>
+                            {" "}
+                            <select name="trans_adv_loadHouse_vatTyp">
+                              <option value="">No Vat</option>
+                              <option value="15">Standard Rate(15.00%)</option>
+                              <option value="15">
+                                Standard Rate (Capital Goods) (15.00%)
+                              </option>
+                              <option value="0">Zero Rate</option>
+                              <option value="0">
+                                Zero Rate Exports(0.00%)
+                              </option>
+                              <option value="0">
+                                Exempt and Non-Suppliers(0.00%)
+                              </option>
+                              <option value="15">
+                                Export of Second Hands Goods(15.00%)
+                              </option>
+                              <option value="15">Change in Use(15.00%)</option>
+                              <option value="100">Customs VAT(100.00%)</option>
+                              <option value="100">
+                                Goods and Services Imported(100.00%)
+                              </option>
+                              <option value="100">
+                                Capital Goods and Imported(100.00%)
+                              </option>
+                              <option value="100">
+                                VAT Adjustment (100.00%)
+                              </option>
+                              <option value="15">
+                                Domestic Reverse Charge (15.00%)
+                              </option>
+                              <option value="">Manual VAT</option>
+                              <option value="">
+                                Manual VAT (Capital Goods)
+                              </option>
+                            </select>{" "}
+                          </td>
+                          <td>
+                            {" "}
+                            <input
+                              type="text"
+                              placeholder="0.00"
+                              className="supplier_form"
+                            />{" "}
+                          </td>
+                          <td>
+                            {" "}
+                            <input
+                              type="text"
+                              placeholder="0.00"
+                              className="supplier_form"
+                            />{" "}
+                          </td>
+                          <td>
+                            {" "}
+                            <input
+                              type="text"
+                              placeholder="0.00"
+                              className="supplier_form"
+                            />{" "}
+                          </td>
+                          <td>
+                            {" "}
+                            <input
+                              type="text"
+                              placeholder="0.00"
+                              className="supplier_form"
+                            />{" "}
+                          </td>
+                          <td>
+                            {" "}
+                            <input
+                              type="text"
+                              placeholder="0.00"
+                              className="supplier_form"
+                            />{" "}
+                          </td>
                         </tr>
                         <tr>
                           <td> </td>
@@ -5858,7 +6895,9 @@ export default function Addsupplierinvoice() {
                               type="text"
                               className="supplier_form"
                               value={
-                                isNaN(oridocumentation4) ? 0.0 : oridocumentation4
+                                isNaN(oridocumentation4)
+                                  ? 0.0
+                                  : oridocumentation4
                               }
                               id="floatingInput"
                               placeholder="0.00"
@@ -5934,16 +6973,84 @@ export default function Addsupplierinvoice() {
                               className="supplier_form"
                             />
                           </td>
-                          <td> <select>
-                            <option value="">Select</option>
-                            <option value="inclusive">GST Inclusive</option>
-                            <option value="exclusive">GST Exclusive</option>
-                            <option value="non-gst">Non GST</option>
-                          </select> </td>
-                          <td> <input type="text" placeholder="0.00" className="supplier_form" /> </td>
-                          <td> <input type="text" placeholder="0.00" className="supplier_form" /> </td>
-                          <td> <input type="text" placeholder="0.00" className="supplier_form" /> </td>
-                          <td> <input type="text" placeholder="0.00" className="supplier_form" /> </td>
+                          <td>
+                            {" "}
+                            <select name="trans_doc_fee_vatTyp">
+                              <option value="">No Vat</option>
+                              <option value="15">Standard Rate(15.00%)</option>
+                              <option value="15">
+                                Standard Rate (Capital Goods) (15.00%)
+                              </option>
+                              <option value="0">Zero Rate</option>
+                              <option value="0">
+                                Zero Rate Exports(0.00%)
+                              </option>
+                              <option value="0">
+                                Exempt and Non-Suppliers(0.00%)
+                              </option>
+                              <option value="15">
+                                Export of Second Hands Goods(15.00%)
+                              </option>
+                              <option value="15">Change in Use(15.00%)</option>
+                              <option value="100">Customs VAT(100.00%)</option>
+                              <option value="100">
+                                Goods and Services Imported(100.00%)
+                              </option>
+                              <option value="100">
+                                Capital Goods and Imported(100.00%)
+                              </option>
+                              <option value="100">
+                                VAT Adjustment (100.00%)
+                              </option>
+                              <option value="15">
+                                Domestic Reverse Charge (15.00%)
+                              </option>
+                              <option value="">Manual VAT</option>
+                              <option value="">
+                                Manual VAT (Capital Goods)
+                              </option>
+                            </select>{" "}
+                          </td>
+                          <td>
+                            {" "}
+                            <input
+                              type="text"
+                              placeholder="0.00"
+                              className="supplier_form"
+                            />{" "}
+                          </td>
+                          <td>
+                            {" "}
+                            <input
+                              type="text"
+                              placeholder="0.00"
+                              className="supplier_form"
+                            />{" "}
+                          </td>
+                          <td>
+                            {" "}
+                            <input
+                              type="text"
+                              placeholder="0.00"
+                              className="supplier_form"
+                            />{" "}
+                          </td>
+                          <td>
+                            {" "}
+                            <input
+                              type="text"
+                              placeholder="0.00"
+                              className="supplier_form"
+                            />{" "}
+                          </td>
+                          <td>
+                            {" "}
+                            <input
+                              type="text"
+                              placeholder="0.00"
+                              className="supplier_form"
+                            />{" "}
+                          </td>
                         </tr>
 
                         <tr>
@@ -5961,7 +7068,6 @@ export default function Addsupplierinvoice() {
                           <td>343</td>
                           <td>363</td>
                           <td>363</td>
-
                         </tr>
                         {/* Destination Charges */}
                         <tr>
@@ -6174,16 +7280,84 @@ export default function Addsupplierinvoice() {
                               className="supplier_form"
                             />
                           </td>
-                          <td> <select>
-                            <option value="">Select</option>
-                            <option value="inclusive">GST Inclusive</option>
-                            <option value="exclusive">GST Exclusive</option>
-                            <option value="non-gst">Non GST</option>
-                          </select> </td>
-                          <td> <input type="text" placeholder="0.00" className="supplier_form" /> </td>
-                          <td> <input type="text" placeholder="0.00" className="supplier_form" /> </td>
-                          <td> <input type="text" placeholder="0.00" className="supplier_form" /> </td>
-                          <td> <input type="text" placeholder="0.00" className="supplier_form" /> </td>
+                          <td>
+                            {" "}
+                            <select name="dest_clearing_fees_vatTyp">
+                              <option value="">No Vat</option>
+                              <option value="15">Standard Rate(15.00%)</option>
+                              <option value="15">
+                                Standard Rate (Capital Goods) (15.00%)
+                              </option>
+                              <option value="0">Zero Rate</option>
+                              <option value="0">
+                                Zero Rate Exports(0.00%)
+                              </option>
+                              <option value="0">
+                                Exempt and Non-Suppliers(0.00%)
+                              </option>
+                              <option value="15">
+                                Export of Second Hands Goods(15.00%)
+                              </option>
+                              <option value="15">Change in Use(15.00%)</option>
+                              <option value="100">Customs VAT(100.00%)</option>
+                              <option value="100">
+                                Goods and Services Imported(100.00%)
+                              </option>
+                              <option value="100">
+                                Capital Goods and Imported(100.00%)
+                              </option>
+                              <option value="100">
+                                VAT Adjustment (100.00%)
+                              </option>
+                              <option value="15">
+                                Domestic Reverse Charge (15.00%)
+                              </option>
+                              <option value="">Manual VAT</option>
+                              <option value="">
+                                Manual VAT (Capital Goods)
+                              </option>
+                            </select>{" "}
+                          </td>
+                          <td>
+                            {" "}
+                            <input
+                              type="text"
+                              placeholder="0.00"
+                              className="supplier_form"
+                            />{" "}
+                          </td>
+                          <td>
+                            {" "}
+                            <input
+                              type="text"
+                              placeholder="0.00"
+                              className="supplier_form"
+                            />{" "}
+                          </td>
+                          <td>
+                            {" "}
+                            <input
+                              type="text"
+                              placeholder="0.00"
+                              className="supplier_form"
+                            />{" "}
+                          </td>
+                          <td>
+                            {" "}
+                            <input
+                              type="text"
+                              placeholder="0.00"
+                              className="supplier_form"
+                            />{" "}
+                          </td>
+                          <td>
+                            {" "}
+                            <input
+                              type="text"
+                              placeholder="0.00"
+                              className="supplier_form"
+                            />{" "}
+                          </td>
                         </tr>
                         <tr>
                           {/* Destination Charges */}
@@ -6393,16 +7567,76 @@ export default function Addsupplierinvoice() {
                               className="supplier_form"
                             />
                           </td>
-                          <td> <select>
-                            <option value="">Select</option>
-                            <option value="inclusive">GST Inclusive</option>
-                            <option value="exclusive">GST Exclusive</option>
-                            <option value="non-gst">Non GST</option>
-                          </select> </td>
-                          <td> <input type="text" placeholder="0.00" className="supplier_form" /> </td>
-                          <td> <input type="text" placeholder="0.00" className="supplier_form" /> </td>
-                          <td> <input type="text" placeholder="0.00" className="supplier_form" /> </td>
-                          <td> <input type="text" placeholder="0.00" className="supplier_form" /> </td>
+                          <td>
+                            {" "}
+                            <select name="dest_THC_levy_vatTyp">
+                              <option value="">No Vat</option>
+                              <option value="15">Standard Rate(15.00%)</option>
+                              <option value="15">
+                                Standard Rate (Capital Goods) (15.00%)
+                              </option>
+                              <option value="0">Zero Rate</option>
+                              <option value="0">
+                                Zero Rate Exports(0.00%)
+                              </option>
+                              <option value="0">
+                                Exempt and Non-Suppliers(0.00%)
+                              </option>
+                              <option value="15">
+                                Export of Second Hands Goods(15.00%)
+                              </option>
+                              <option value="15">Change in Use(15.00%)</option>
+                              <option value="100">Customs VAT(100.00%)</option>
+                              <option value="100">
+                                Goods and Services Imported(100.00%)
+                              </option>
+                              <option value="100">
+                                Capital Goods and Imported(100.00%)
+                              </option>
+                              <option value="100">
+                                VAT Adjustment (100.00%)
+                              </option>
+                              <option value="15">
+                                Domestic Reverse Charge (15.00%)
+                              </option>
+                              <option value="">Manual VAT</option>
+                              <option value="">
+                                Manual VAT (Capital Goods)
+                              </option>
+                            </select>{" "}
+                          </td>
+                          <td>
+                            {" "}
+                            <input
+                              type="text"
+                              placeholder="0.00"
+                              className="supplier_form"
+                            />{" "}
+                          </td>
+                          <td>
+                            {" "}
+                            <input
+                              type="text"
+                              placeholder="0.00"
+                              className="supplier_form"
+                            />{" "}
+                          </td>
+                          <td>
+                            {" "}
+                            <input
+                              type="text"
+                              placeholder="0.00"
+                              className="supplier_form"
+                            />{" "}
+                          </td>
+                          <td>
+                            {" "}
+                            <input
+                              type="text"
+                              placeholder="0.00"
+                              className="supplier_form"
+                            />{" "}
+                          </td>
                         </tr>
                         <tr>
                           {/* Destination Charges */}
@@ -6626,16 +7860,84 @@ export default function Addsupplierinvoice() {
                               className="supplier_form"
                             />
                           </td>
-                          <td> <select>
-                            <option value="">Select</option>
-                            <option value="inclusive">GST Inclusive</option>
-                            <option value="exclusive">GST Exclusive</option>
-                            <option value="non-gst">Non GST</option>
-                          </select> </td>
-                          <td> <input type="text" placeholder="0.00" className="supplier_form" /> </td>
-                          <td> <input type="text" placeholder="0.00" className="supplier_form" /> </td>
-                          <td> <input type="text" placeholder="0.00" className="supplier_form" /> </td>
-                          <td> <input type="text" placeholder="0.00" className="supplier_form" /> </td>
+                          <td>
+                            {" "}
+                            <select name="dest_unpack_chrg_vatTyp">
+                              <option value="">No Vat</option>
+                              <option value="15">Standard Rate(15.00%)</option>
+                              <option value="15">
+                                Standard Rate (Capital Goods) (15.00%)
+                              </option>
+                              <option value="0">Zero Rate</option>
+                              <option value="0">
+                                Zero Rate Exports(0.00%)
+                              </option>
+                              <option value="0">
+                                Exempt and Non-Suppliers(0.00%)
+                              </option>
+                              <option value="15">
+                                Export of Second Hands Goods(15.00%)
+                              </option>
+                              <option value="15">Change in Use(15.00%)</option>
+                              <option value="100">Customs VAT(100.00%)</option>
+                              <option value="100">
+                                Goods and Services Imported(100.00%)
+                              </option>
+                              <option value="100">
+                                Capital Goods and Imported(100.00%)
+                              </option>
+                              <option value="100">
+                                VAT Adjustment (100.00%)
+                              </option>
+                              <option value="15">
+                                Domestic Reverse Charge (15.00%)
+                              </option>
+                              <option value="">Manual VAT</option>
+                              <option value="">
+                                Manual VAT (Capital Goods)
+                              </option>
+                            </select>{" "}
+                          </td>
+                          <td>
+                            {" "}
+                            <input
+                              type="text"
+                              placeholder="0.00"
+                              className="supplier_form"
+                            />{" "}
+                          </td>
+                          <td>
+                            {" "}
+                            <input
+                              type="text"
+                              placeholder="0.00"
+                              className="supplier_form"
+                            />{" "}
+                          </td>
+                          <td>
+                            {" "}
+                            <input
+                              type="text"
+                              placeholder="0.00"
+                              className="supplier_form"
+                            />{" "}
+                          </td>
+                          <td>
+                            {" "}
+                            <input
+                              type="text"
+                              placeholder="0.00"
+                              className="supplier_form"
+                            />{" "}
+                          </td>
+                          <td>
+                            {" "}
+                            <input
+                              type="text"
+                              placeholder="0.00"
+                              className="supplier_form"
+                            />{" "}
+                          </td>
                         </tr>
                         <tr>
                           {/* Destination Charges */}
@@ -6862,16 +8164,84 @@ export default function Addsupplierinvoice() {
                               className="supplier_form"
                             />
                           </td>
-                          <td> <select>
-                            <option value="">Select</option>
-                            <option value="inclusive">GST Inclusive</option>
-                            <option value="exclusive">GST Exclusive</option>
-                            <option value="non-gst">Non GST</option>
-                          </select> </td>
-                          <td> <input type="text" placeholder="0.00" className="supplier_form" /> </td>
-                          <td> <input type="text" placeholder="0.00" className="supplier_form" /> </td>
-                          <td> <input type="text" placeholder="0.00" className="supplier_form" /> </td>
-                          <td> <input type="text" placeholder="0.00" className="supplier_form" /> </td>
+                          <td>
+                            {" "}
+                            <select name="dest_fuel_Surchar_vatTyp">
+                              <option value="">No Vat</option>
+                              <option value="15">Standard Rate(15.00%)</option>
+                              <option value="15">
+                                Standard Rate (Capital Goods) (15.00%)
+                              </option>
+                              <option value="0">Zero Rate</option>
+                              <option value="0">
+                                Zero Rate Exports(0.00%)
+                              </option>
+                              <option value="0">
+                                Exempt and Non-Suppliers(0.00%)
+                              </option>
+                              <option value="15">
+                                Export of Second Hands Goods(15.00%)
+                              </option>
+                              <option value="15">Change in Use(15.00%)</option>
+                              <option value="100">Customs VAT(100.00%)</option>
+                              <option value="100">
+                                Goods and Services Imported(100.00%)
+                              </option>
+                              <option value="100">
+                                Capital Goods and Imported(100.00%)
+                              </option>
+                              <option value="100">
+                                VAT Adjustment (100.00%)
+                              </option>
+                              <option value="15">
+                                Domestic Reverse Charge (15.00%)
+                              </option>
+                              <option value="">Manual VAT</option>
+                              <option value="">
+                                Manual VAT (Capital Goods)
+                              </option>
+                            </select>{" "}
+                          </td>
+                          <td>
+                            {" "}
+                            <input
+                              type="text"
+                              placeholder="0.00"
+                              className="supplier_form"
+                            />{" "}
+                          </td>
+                          <td>
+                            {" "}
+                            <input
+                              type="text"
+                              placeholder="0.00"
+                              className="supplier_form"
+                            />{" "}
+                          </td>
+                          <td>
+                            {" "}
+                            <input
+                              type="text"
+                              placeholder="0.00"
+                              className="supplier_form"
+                            />{" "}
+                          </td>
+                          <td>
+                            {" "}
+                            <input
+                              type="text"
+                              placeholder="0.00"
+                              className="supplier_form"
+                            />{" "}
+                          </td>
+                          <td>
+                            {" "}
+                            <input
+                              type="text"
+                              placeholder="0.00"
+                              className="supplier_form"
+                            />{" "}
+                          </td>
                         </tr>
                         <tr>
                           {/* Destination Charges */}
@@ -7096,16 +8466,84 @@ export default function Addsupplierinvoice() {
                               className="supplier_form"
                             />
                           </td>
-                          <td> <select>
-                            <option value="">Select</option>
-                            <option value="inclusive">GST Inclusive</option>
-                            <option value="exclusive">GST Exclusive</option>
-                            <option value="non-gst">Non GST</option>
-                          </select> </td>
-                          <td> <input type="text" placeholder="0.00" className="supplier_form" /> </td>
-                          <td> <input type="text" placeholder="0.00" className="supplier_form" /> </td>
-                          <td> <input type="text" placeholder="0.00" className="supplier_form" /> </td>
-                          <td> <input type="text" placeholder="0.00" className="supplier_form" /> </td>
+                          <td>
+                            {" "}
+                            <select name="dest_admin_chrg_vatTyp">
+                              <option value="">No Vat</option>
+                              <option value="15">Standard Rate(15.00%)</option>
+                              <option value="15">
+                                Standard Rate (Capital Goods) (15.00%)
+                              </option>
+                              <option value="0">Zero Rate</option>
+                              <option value="0">
+                                Zero Rate Exports(0.00%)
+                              </option>
+                              <option value="0">
+                                Exempt and Non-Suppliers(0.00%)
+                              </option>
+                              <option value="15">
+                                Export of Second Hands Goods(15.00%)
+                              </option>
+                              <option value="15">Change in Use(15.00%)</option>
+                              <option value="100">Customs VAT(100.00%)</option>
+                              <option value="100">
+                                Goods and Services Imported(100.00%)
+                              </option>
+                              <option value="100">
+                                Capital Goods and Imported(100.00%)
+                              </option>
+                              <option value="100">
+                                VAT Adjustment (100.00%)
+                              </option>
+                              <option value="15">
+                                Domestic Reverse Charge (15.00%)
+                              </option>
+                              <option value="">Manual VAT</option>
+                              <option value="">
+                                Manual VAT (Capital Goods)
+                              </option>
+                            </select>{" "}
+                          </td>
+                          <td>
+                            {" "}
+                            <input
+                              type="text"
+                              placeholder="0.00"
+                              className="supplier_form"
+                            />{" "}
+                          </td>
+                          <td>
+                            {" "}
+                            <input
+                              type="text"
+                              placeholder="0.00"
+                              className="supplier_form"
+                            />{" "}
+                          </td>
+                          <td>
+                            {" "}
+                            <input
+                              type="text"
+                              placeholder="0.00"
+                              className="supplier_form"
+                            />{" "}
+                          </td>
+                          <td>
+                            {" "}
+                            <input
+                              type="text"
+                              placeholder="0.00"
+                              className="supplier_form"
+                            />{" "}
+                          </td>
+                          <td>
+                            {" "}
+                            <input
+                              type="text"
+                              placeholder="0.00"
+                              className="supplier_form"
+                            />{" "}
+                          </td>
                         </tr>
                         <tr>
                           {/* Destination Charges */}
@@ -7170,7 +8608,9 @@ export default function Addsupplierinvoice() {
                               onKeyPress={handlepresss}
                               className="supplier_form"
                               onChange={handlechangecalc}
-                              value={freight?.Destination_portcargo_currency_cost}
+                              value={
+                                freight?.Destination_portcargo_currency_cost
+                              }
                               name="Destination_portcargo_currency_cost"
                               id="floatingInput"
                               placeholder="0.00"
@@ -7317,16 +8757,84 @@ export default function Addsupplierinvoice() {
                               className="supplier_form"
                             />
                           </td>
-                          <td> <select>
-                            <option value="">Select</option>
-                            <option value="inclusive">GST Inclusive</option>
-                            <option value="exclusive">GST Exclusive</option>
-                            <option value="non-gst">Non GST</option>
-                          </select> </td>
-                          <td> <input type="text" placeholder="0.00" className="supplier_form" /> </td>
-                          <td> <input type="text" placeholder="0.00" className="supplier_form" /> </td>
-                          <td> <input type="text" placeholder="0.00" className="supplier_form" /> </td>
-                          <td> <input type="text" placeholder="0.00" className="supplier_form" /> </td>
+                          <td>
+                            {" "}
+                           <select name="dest_portCargo_vatTyp">
+                              <option value="">No Vat</option>
+                              <option value="15">Standard Rate(15.00%)</option>
+                              <option value="15">
+                                Standard Rate (Capital Goods) (15.00%)
+                              </option>
+                              <option value="0">Zero Rate</option>
+                              <option value="0">
+                                Zero Rate Exports(0.00%)
+                              </option>
+                              <option value="0">
+                                Exempt and Non-Suppliers(0.00%)
+                              </option>
+                              <option value="15">
+                                Export of Second Hands Goods(15.00%)
+                              </option>
+                              <option value="15">Change in Use(15.00%)</option>
+                              <option value="100">Customs VAT(100.00%)</option>
+                              <option value="100">
+                                Goods and Services Imported(100.00%)
+                              </option>
+                              <option value="100">
+                                Capital Goods and Imported(100.00%)
+                              </option>
+                              <option value="100">
+                                VAT Adjustment (100.00%)
+                              </option>
+                              <option value="15">
+                                Domestic Reverse Charge (15.00%)
+                              </option>
+                              <option value="">Manual VAT</option>
+                              <option value="">
+                                Manual VAT (Capital Goods)
+                              </option>
+                            </select>{" "}
+                          </td>
+                          <td>
+                            {" "}
+                            <input
+                              type="text"
+                              placeholder="0.00"
+                              className="supplier_form"
+                            />{" "}
+                          </td>
+                          <td>
+                            {" "}
+                            <input
+                              type="text"
+                              placeholder="0.00"
+                              className="supplier_form"
+                            />{" "}
+                          </td>
+                          <td>
+                            {" "}
+                            <input
+                              type="text"
+                              placeholder="0.00"
+                              className="supplier_form"
+                            />{" "}
+                          </td>
+                          <td>
+                            {" "}
+                            <input
+                              type="text"
+                              placeholder="0.00"
+                              className="supplier_form"
+                            />{" "}
+                          </td>
+                          <td>
+                            {" "}
+                            <input
+                              type="text"
+                              placeholder="0.00"
+                              className="supplier_form"
+                            />{" "}
+                          </td>
                         </tr>
                         <tr>
                           {/* Destination Charges */}
@@ -7543,16 +9051,84 @@ export default function Addsupplierinvoice() {
                               className="supplier_form"
                             />
                           </td>
-                          <td> <select>
-                            <option value="">Select</option>
-                            <option value="inclusive">GST Inclusive</option>
-                            <option value="exclusive">GST Exclusive</option>
-                            <option value="non-gst">Non GST</option>
-                          </select> </td>
-                          <td> <input type="text" placeholder="0.00" className="supplier_form" /> </td>
-                          <td> <input type="text" placeholder="0.00" className="supplier_form" /> </td>
-                          <td> <input type="text" placeholder="0.00" className="supplier_form" /> </td>
-                          <td> <input type="text" placeholder="0.00" className="supplier_form" /> </td>
+                          <td>
+                            {" "}
+                            <select name="dest_adv_loadHouse_vatTyp">
+                              <option value="">No Vat</option>
+                              <option value="15">Standard Rate(15.00%)</option>
+                              <option value="15">
+                                Standard Rate (Capital Goods) (15.00%)
+                              </option>
+                              <option value="0">Zero Rate</option>
+                              <option value="0">
+                                Zero Rate Exports(0.00%)
+                              </option>
+                              <option value="0">
+                                Exempt and Non-Suppliers(0.00%)
+                              </option>
+                              <option value="15">
+                                Export of Second Hands Goods(15.00%)
+                              </option>
+                              <option value="15">Change in Use(15.00%)</option>
+                              <option value="100">Customs VAT(100.00%)</option>
+                              <option value="100">
+                                Goods and Services Imported(100.00%)
+                              </option>
+                              <option value="100">
+                                Capital Goods and Imported(100.00%)
+                              </option>
+                              <option value="100">
+                                VAT Adjustment (100.00%)
+                              </option>
+                              <option value="15">
+                                Domestic Reverse Charge (15.00%)
+                              </option>
+                              <option value="">Manual VAT</option>
+                              <option value="">
+                                Manual VAT (Capital Goods)
+                              </option>
+                            </select>{" "}
+                          </td>
+                          <td>
+                            {" "}
+                            <input
+                              type="text"
+                              placeholder="0.00"
+                              className="supplier_form"
+                            />{" "}
+                          </td>
+                          <td>
+                            {" "}
+                            <input
+                              type="text"
+                              placeholder="0.00"
+                              className="supplier_form"
+                            />{" "}
+                          </td>
+                          <td>
+                            {" "}
+                            <input
+                              type="text"
+                              placeholder="0.00"
+                              className="supplier_form"
+                            />{" "}
+                          </td>
+                          <td>
+                            {" "}
+                            <input
+                              type="text"
+                              placeholder="0.00"
+                              className="supplier_form"
+                            />{" "}
+                          </td>
+                          <td>
+                            {" "}
+                            <input
+                              type="text"
+                              placeholder="0.00"
+                              className="supplier_form"
+                            />{" "}
+                          </td>
                         </tr>
                         <tr>
                           {/* Destination Charges */}
@@ -7770,15 +9346,82 @@ export default function Addsupplierinvoice() {
                             />
                           </td>
                           <td>
-                            <select><option value="">Select</option>
-                              <option value="inclusive">GST Inclusive</option>
-                              <option value="exclusive">GST Exclusive</option>
-                              <option value="non-gst">Non GST</option>
-                            </select> </td>
-                          <td> <input type="text" placeholder="0.00" className="supplier_form" /> </td>
-                          <td> <input type="text" placeholder="0.00" className="supplier_form" /> </td>
-                          <td> <input type="text" placeholder="0.00" className="supplier_form" /> </td>
-                          <td> <input type="text" placeholder="0.00" className="supplier_form" /> </td>
+                            <select name="dest_CFS_charg_vatTyp">
+                              <option value="">No Vat</option>
+                              <option value="15">Standard Rate(15.00%)</option>
+                              <option value="15">
+                                Standard Rate (Capital Goods) (15.00%)
+                              </option>
+                              <option value="0">Zero Rate</option>
+                              <option value="0">
+                                Zero Rate Exports(0.00%)
+                              </option>
+                              <option value="0">
+                                Exempt and Non-Suppliers(0.00%)
+                              </option>
+                              <option value="15">
+                                Export of Second Hands Goods(15.00%)
+                              </option>
+                              <option value="15">Change in Use(15.00%)</option>
+                              <option value="100">Customs VAT(100.00%)</option>
+                              <option value="100">
+                                Goods and Services Imported(100.00%)
+                              </option>
+                              <option value="100">
+                                Capital Goods and Imported(100.00%)
+                              </option>
+                              <option value="100">
+                                VAT Adjustment (100.00%)
+                              </option>
+                              <option value="15">
+                                Domestic Reverse Charge (15.00%)
+                              </option>
+                              <option value="">Manual VAT</option>
+                              <option value="">
+                                Manual VAT (Capital Goods)
+                              </option>
+                            </select>{" "}
+                          </td>
+                          <td>
+                            {" "}
+                            <input
+                              type="text"
+                              placeholder="0.00"
+                              className="supplier_form"
+                            />{" "}
+                          </td>
+                          <td>
+                            {" "}
+                            <input
+                              type="text"
+                              placeholder="0.00"
+                              className="supplier_form"
+                            />{" "}
+                          </td>
+                          <td>
+                            {" "}
+                            <input
+                              type="text"
+                              placeholder="0.00"
+                              className="supplier_form"
+                            />{" "}
+                          </td>
+                          <td>
+                            {" "}
+                            <input
+                              type="text"
+                              placeholder="0.00"
+                              className="supplier_form"
+                            />{" "}
+                          </td>
+                          <td>
+                            {" "}
+                            <input
+                              type="text"
+                              placeholder="0.00"
+                              className="supplier_form"
+                            />{" "}
+                          </td>
                         </tr>
                         <tr>
                           {/* Destination Charges */}
@@ -7842,7 +9485,9 @@ export default function Addsupplierinvoice() {
                               onKeyPress={handlepresss}
                               className="supplier_form"
                               onChange={handlechangecalc}
-                              value={freight?.Destination_delivery_currency_cost}
+                              value={
+                                freight?.Destination_delivery_currency_cost
+                              }
                               name="Destination_delivery_currency_cost"
                               id="floatingInput"
                               placeholder="0.00"
@@ -7989,16 +9634,84 @@ export default function Addsupplierinvoice() {
                               className="supplier_form"
                             />
                           </td>
-                          <td> <select>
-                            <option value="">Select</option>
-                            <option value="inclusive">GST Inclusive</option>
-                            <option value="exclusive">GST Exclusive</option>
-                            <option value="non-gst">Non GST</option>
-                          </select> </td>
-                          <td> <input type="text" placeholder="0.00" className="supplier_form" /> </td>
-                          <td> <input type="text" placeholder="0.00" className="supplier_form" /> </td>
-                          <td> <input type="text" placeholder="0.00" className="supplier_form" /> </td>
-                          <td> <input type="text" placeholder="0.00" className="supplier_form" /> </td>
+                          <td>
+                            {" "}
+                            <select name="dest_delivry_charge_vatTyp">
+                              <option value="">No Vat</option>
+                              <option value="15">Standard Rate(15.00%)</option>
+                              <option value="15">
+                                Standard Rate (Capital Goods) (15.00%)
+                              </option>
+                              <option value="0">Zero Rate</option>
+                              <option value="0">
+                                Zero Rate Exports(0.00%)
+                              </option>
+                              <option value="0">
+                                Exempt and Non-Suppliers(0.00%)
+                              </option>
+                              <option value="15">
+                                Export of Second Hands Goods(15.00%)
+                              </option>
+                              <option value="15">Change in Use(15.00%)</option>
+                              <option value="100">Customs VAT(100.00%)</option>
+                              <option value="100">
+                                Goods and Services Imported(100.00%)
+                              </option>
+                              <option value="100">
+                                Capital Goods and Imported(100.00%)
+                              </option>
+                              <option value="100">
+                                VAT Adjustment (100.00%)
+                              </option>
+                              <option value="15">
+                                Domestic Reverse Charge (15.00%)
+                              </option>
+                              <option value="">Manual VAT</option>
+                              <option value="">
+                                Manual VAT (Capital Goods)
+                              </option>
+                            </select>{" "}
+                          </td>
+                          <td>
+                            {" "}
+                            <input
+                              type="text"
+                              placeholder="0.00"
+                              className="supplier_form"
+                            />{" "}
+                          </td>
+                          <td>
+                            {" "}
+                            <input
+                              type="text"
+                              placeholder="0.00"
+                              className="supplier_form"
+                            />{" "}
+                          </td>
+                          <td>
+                            {" "}
+                            <input
+                              type="text"
+                              placeholder="0.00"
+                              className="supplier_form"
+                            />{" "}
+                          </td>
+                          <td>
+                            {" "}
+                            <input
+                              type="text"
+                              placeholder="0.00"
+                              className="supplier_form"
+                            />{" "}
+                          </td>
+                          <td>
+                            {" "}
+                            <input
+                              type="text"
+                              placeholder="0.00"
+                              className="supplier_form"
+                            />{" "}
+                          </td>
                         </tr>
                         <tr>
                           {/* Destination Charges */}
@@ -8189,7 +9902,9 @@ export default function Addsupplierinvoice() {
                               }}
                               name="Destination_fuelcharge_currency_roe"
                               onChange={handlechangecalc}
-                              value={freight.Destination_fuelcharge_currency_roe}
+                              value={
+                                freight.Destination_fuelcharge_currency_roe
+                              }
                               className="supplier_form"
                             />
                           </td>
@@ -8212,16 +9927,84 @@ export default function Addsupplierinvoice() {
                               className="supplier_form"
                             />
                           </td>
-                          <td> <select>
-                            <option value="">Select</option>
-                            <option value="inclusive">GST Inclusive</option>
-                            <option value="exclusive">GST Exclusive</option>
-                            <option value="non-gst">Non GST</option>
-                          </select> </td>
-                          <td> <input type="text" placeholder="0.00" className="supplier_form" /> </td>
-                          <td> <input type="text" placeholder="0.00" className="supplier_form" /> </td>
-                          <td> <input type="text" placeholder="0.00" className="supplier_form" /> </td>
-                          <td> <input type="text" placeholder="0.00" className="supplier_form" /> </td>
+                          <td>
+                            {" "}
+                           <select name="dest_fuel_surchrg_vatTyp">
+                              <option value="">No Vat</option>
+                              <option value="15">Standard Rate(15.00%)</option>
+                              <option value="15">
+                                Standard Rate (Capital Goods) (15.00%)
+                              </option>
+                              <option value="0">Zero Rate</option>
+                              <option value="0">
+                                Zero Rate Exports(0.00%)
+                              </option>
+                              <option value="0">
+                                Exempt and Non-Suppliers(0.00%)
+                              </option>
+                              <option value="15">
+                                Export of Second Hands Goods(15.00%)
+                              </option>
+                              <option value="15">Change in Use(15.00%)</option>
+                              <option value="100">Customs VAT(100.00%)</option>
+                              <option value="100">
+                                Goods and Services Imported(100.00%)
+                              </option>
+                              <option value="100">
+                                Capital Goods and Imported(100.00%)
+                              </option>
+                              <option value="100">
+                                VAT Adjustment (100.00%)
+                              </option>
+                              <option value="15">
+                                Domestic Reverse Charge (15.00%)
+                              </option>
+                              <option value="">Manual VAT</option>
+                              <option value="">
+                                Manual VAT (Capital Goods)
+                              </option>
+                            </select>{" "}
+                          </td>
+                          <td>
+                            {" "}
+                            <input
+                              type="text"
+                              placeholder="0.00"
+                              className="supplier_form"
+                            />{" "}
+                          </td>
+                          <td>
+                            {" "}
+                            <input
+                              type="text"
+                              placeholder="0.00"
+                              className="supplier_form"
+                            />{" "}
+                          </td>
+                          <td>
+                            {" "}
+                            <input
+                              type="text"
+                              placeholder="0.00"
+                              className="supplier_form"
+                            />{" "}
+                          </td>
+                          <td>
+                            {" "}
+                            <input
+                              type="text"
+                              placeholder="0.00"
+                              className="supplier_form"
+                            />{" "}
+                          </td>
+                          <td>
+                            {" "}
+                            <input
+                              type="text"
+                              placeholder="0.00"
+                              className="supplier_form"
+                            />{" "}
+                          </td>
                         </tr>
 
                         <tr>
@@ -8373,7 +10156,9 @@ export default function Addsupplierinvoice() {
                               type="text"
                               className="supplier_form"
                               value={
-                                isNaN(deadminAgencyesc4) ? 0.0 : deadminAgencyesc4
+                                isNaN(deadminAgencyesc4)
+                                  ? 0.0
+                                  : deadminAgencyesc4
                               }
                               id="floatingInput"
                               placeholder="0.00"
@@ -8426,7 +10211,9 @@ export default function Addsupplierinvoice() {
                               }}
                               name="Destination_AdminAgrncy_currency_roe"
                               onChange={handlechangecalc}
-                              value={freight.Destination_AdminAgrncy_currency_roe}
+                              value={
+                                freight.Destination_AdminAgrncy_currency_roe
+                              }
                               className="supplier_form"
                             />
                           </td>
@@ -8449,16 +10236,84 @@ export default function Addsupplierinvoice() {
                               className="supplier_form"
                             />
                           </td>
-                          <td> <select>
-                            <option value="">Select</option>
-                            <option value="inclusive">GST Inclusive</option>
-                            <option value="exclusive">GST Exclusive</option>
-                            <option value="non-gst">Non GST</option>
-                          </select> </td>
-                          <td> <input type="text" placeholder="0.00" className="supplier_form" /> </td>
-                          <td> <input type="text" placeholder="0.00" className="supplier_form" /> </td>
-                          <td> <input type="text" placeholder="0.00" className="supplier_form" /> </td>
-                          <td> <input type="text" placeholder="0.00" className="supplier_form" /> </td>
+                          <td>
+                            {" "}
+                            <select name="admin_agencyFee_vatTyp">
+                              <option value="">No Vat</option>
+                              <option value="15">Standard Rate(15.00%)</option>
+                              <option value="15">
+                                Standard Rate (Capital Goods) (15.00%)
+                              </option>
+                              <option value="0">Zero Rate</option>
+                              <option value="0">
+                                Zero Rate Exports(0.00%)
+                              </option>
+                              <option value="0">
+                                Exempt and Non-Suppliers(0.00%)
+                              </option>
+                              <option value="15">
+                                Export of Second Hands Goods(15.00%)
+                              </option>
+                              <option value="15">Change in Use(15.00%)</option>
+                              <option value="100">Customs VAT(100.00%)</option>
+                              <option value="100">
+                                Goods and Services Imported(100.00%)
+                              </option>
+                              <option value="100">
+                                Capital Goods and Imported(100.00%)
+                              </option>
+                              <option value="100">
+                                VAT Adjustment (100.00%)
+                              </option>
+                              <option value="15">
+                                Domestic Reverse Charge (15.00%)
+                              </option>
+                              <option value="">Manual VAT</option>
+                              <option value="">
+                                Manual VAT (Capital Goods)
+                              </option>
+                            </select>{" "}
+                          </td>
+                          <td>
+                            {" "}
+                            <input
+                              type="text"
+                              placeholder="0.00"
+                              className="supplier_form"
+                            />{" "}
+                          </td>
+                          <td>
+                            {" "}
+                            <input
+                              type="text"
+                              placeholder="0.00"
+                              className="supplier_form"
+                            />{" "}
+                          </td>
+                           <td>
+                            {" "}
+                            <input
+                              type="text"
+                              placeholder="0.00"
+                              className="supplier_form"
+                            />{" "}
+                          </td>
+                          <td>
+                            {" "}
+                            <input
+                              type="text"
+                              placeholder="0.00"
+                              className="supplier_form"
+                            />{" "}
+                          </td>
+                          <td>
+                            {" "}
+                            <input
+                              type="text"
+                              placeholder="0.00"
+                              className="supplier_form"
+                            />{" "}
+                          </td>
                         </tr>
                         <tr>
                           <td> </td>
@@ -8675,16 +10530,84 @@ export default function Addsupplierinvoice() {
                               className="supplier_form"
                             />
                           </td>
-                          <td> <select>
-                            <option value="">Select</option>
-                            <option value="inclusive">GST Inclusive</option>
-                            <option value="exclusive">GST Exclusive</option>
-                            <option value="non-gst">Non GST</option>
-                          </select> </td>
-                          <td> <input type="text" placeholder="0.00" className="supplier_form" /> </td>
-                          <td> <input type="text" placeholder="0.00" className="supplier_form" /> </td>
-                          <td> <input type="text" placeholder="0.00" className="supplier_form" /> </td>
-                          <td> <input type="text" placeholder="0.00" className="supplier_form" /> </td>
+                          <td>
+                            {" "}
+                            <select name="admin_disbur_fee_vatTyp">
+                              <option value="">No Vat</option>
+                              <option value="15">Standard Rate(15.00%)</option>
+                              <option value="15">
+                                Standard Rate (Capital Goods) (15.00%)
+                              </option>
+                              <option value="0">Zero Rate</option>
+                              <option value="0">
+                                Zero Rate Exports(0.00%)
+                              </option>
+                              <option value="0">
+                                Exempt and Non-Suppliers(0.00%)
+                              </option>
+                              <option value="15">
+                                Export of Second Hands Goods(15.00%)
+                              </option>
+                              <option value="15">Change in Use(15.00%)</option>
+                              <option value="100">Customs VAT(100.00%)</option>
+                              <option value="100">
+                                Goods and Services Imported(100.00%)
+                              </option>
+                              <option value="100">
+                                Capital Goods and Imported(100.00%)
+                              </option>
+                              <option value="100">
+                                VAT Adjustment (100.00%)
+                              </option>
+                              <option value="15">
+                                Domestic Reverse Charge (15.00%)
+                              </option>
+                              <option value="">Manual VAT</option>
+                              <option value="">
+                                Manual VAT (Capital Goods)
+                              </option>
+                            </select>{" "}
+                          </td>
+                          <td>
+                            {" "}
+                            <input
+                              type="text"
+                              placeholder="0.00"
+                              className="supplier_form"
+                            />{" "}
+                          </td>
+                          <td>
+                            {" "}
+                            <input
+                              type="text"
+                              placeholder="0.00"
+                              className="supplier_form"
+                            />{" "}
+                          </td>
+                           <td>
+                            {" "}
+                            <input
+                              type="text"
+                              placeholder="0.00"
+                              className="supplier_form"
+                            />{" "}
+                          </td>
+                          <td>
+                            {" "}
+                            <input
+                              type="text"
+                              placeholder="0.00"
+                              className="supplier_form"
+                            />{" "}
+                          </td>
+                          <td>
+                            {" "}
+                            <input
+                              type="text"
+                              placeholder="0.00"
+                              className="supplier_form"
+                            />{" "}
+                          </td>
                         </tr>
                         <tr>
                           <td> </td>
@@ -8881,22 +10804,92 @@ export default function Addsupplierinvoice() {
                                 verticalAlign: "middle",
                               }}
                               value={
-                                isNaN(dedisbudoon) ? 0.0 : dedisbudoon.toFixed(2)
+                                isNaN(dedisbudoon)
+                                  ? 0.0
+                                  : dedisbudoon.toFixed(2)
                               }
                               placeholder="0.00"
                               className="supplier_form"
                             />
                           </td>
-                          <td> <select>
-                            <option value="">Select</option>
-                            <option value="inclusive">GST Inclusive</option>
-                            <option value="exclusive">GST Exclusive</option>
-                            <option value="non-gst">Non GST</option>
-                          </select> </td>
-                          <td> <input type="text" placeholder="0.00" className="supplier_form" /> </td>
-                          <td> <input type="text" placeholder="0.00" className="supplier_form" /> </td>
-                          <td> <input type="text" placeholder="0.00" className="supplier_form" /> </td>
-                          <td> <input type="text" placeholder="0.00" className="supplier_form" /> </td>
+                          <td>
+                            {" "}
+                            <select name="admin_doc_adminFees_vatTyp">
+                              <option value="">No Vat</option>
+                              <option value="15">Standard Rate(15.00%)</option>
+                              <option value="15">
+                                Standard Rate (Capital Goods) (15.00%)
+                              </option>
+                              <option value="0">Zero Rate</option>
+                              <option value="0">
+                                Zero Rate Exports(0.00%)
+                              </option>
+                              <option value="0">
+                                Exempt and Non-Suppliers(0.00%)
+                              </option>
+                              <option value="15">
+                                Export of Second Hands Goods(15.00%)
+                              </option>
+                              <option value="15">Change in Use(15.00%)</option>
+                              <option value="100">Customs VAT(100.00%)</option>
+                              <option value="100">
+                                Goods and Services Imported(100.00%)
+                              </option>
+                              <option value="100">
+                                Capital Goods and Imported(100.00%)
+                              </option>
+                              <option value="100">
+                                VAT Adjustment (100.00%)
+                              </option>
+                              <option value="15">
+                                Domestic Reverse Charge (15.00%)
+                              </option>
+                              <option value="">Manual VAT</option>
+                              <option value="">
+                                Manual VAT (Capital Goods)
+                              </option>
+                            </select>{" "}
+                          </td>
+                          <td>
+                            {" "}
+                            <input
+                              type="text"
+                              placeholder="0.00"
+                              className="supplier_form"
+                            />{" "}
+                          </td>
+                          <td>
+                            {" "}
+                            <input
+                              type="text"
+                              placeholder="0.00"
+                              className="supplier_form"
+                            />{" "}
+                          </td>
+                          <td>
+                            {" "}
+                            <input
+                              type="text"
+                              placeholder="0.00"
+                              className="supplier_form"
+                            />{" "}
+                          </td>
+                          <td>
+                            {" "}
+                            <input
+                              type="text"
+                              placeholder="0.00"
+                              className="supplier_form"
+                            />{" "}
+                          </td>
+                          <td>
+                            {" "}
+                            <input
+                              type="text"
+                              placeholder="0.00"
+                              className="supplier_form"
+                            />{" "}
+                          </td>
                         </tr>
                         <tr>
                           <td></td>
@@ -8910,6 +10903,2307 @@ export default function Addsupplierinvoice() {
                           <td>4334</td>
                           <td>4334</td>
                           <td>4334</td>
+                          <td>4334</td>
+                        </tr>
+                          <tr>
+                          <td> Description</td>
+                          <td>Customs Duty</td>
+                          <td>
+                            <input
+                              style={{
+                                marginBottom: 0,
+                                fontSize: 13,
+                                color: "black",
+                                fontWeight: 400,
+                                border: "0px",
+
+                                verticalAlign: "middle",
+                              }}
+                              type="text"
+                              onKeyPress={handlepresss}
+                              className="supplier_form"
+                              onChange={handlechangecalc}
+                              value={
+                                freight?.Destination_AdminAgrncy_currency_unitQTY
+                              }
+                              name="Destination_AdminAgrncy_currency_unitQTY"
+                              id="floatingInput"
+                              placeholder="0.00"
+                            />
+                          </td>
+                          <td>
+                            <select
+                              className="select_supplier"
+                              style={{
+                                margin: 0,
+                                fontSize: 13,
+                                fontWeight: 700,
+                                paddingLeft: 5,
+                                border: 0,
+                              }}
+                              onChange={handlechangecalc}
+                              name="admin_currency_charge"
+                              value={freight?.admin_currency_charge}
+                            >
+                              <option>Select</option>
+                              <option value="RAND">RAND</option>
+                              <option value="USD">USD</option>
+                              <option value="INR">INR</option>
+                              <option value="EURO">EURO</option>
+                            </select>
+                          </td>
+                          <td>
+                            <input
+                              style={{
+                                marginBottom: 0,
+                                fontSize: 13,
+                                color: "black",
+                                fontWeight: 400,
+                                border: "0px",
+
+                                verticalAlign: "middle",
+                              }}
+                              type="text"
+                              onKeyPress={handlepresss}
+                              className="supplier_form"
+                              onChange={handlechangecalc}
+                              value={
+                                freight?.Destination_AdminAgrncy_currency_cost
+                              }
+                              name="Destination_AdminAgrncy_currency_cost"
+                              id="floatingInput"
+                              placeholder="0.00"
+                            />
+                          </td>
+                          <td>
+                            <select
+                              className="select_supplier"
+                              style={{
+                                margin: 0,
+                                fontSize: 13,
+                                fontWeight: 700,
+                                paddingLeft: 5,
+                                border: 0,
+                              }}
+                              onChange={handlechangecalc}
+                              name="Destination_AdminAgrncy_currency_unitType"
+                              value={
+                                freight?.Destination_AdminAgrncy_currency_unitType
+                              }
+                            >
+                              <option>Select</option>
+                              <option value="1">L/S</option>
+                              <option value="2">W/M</option>
+                            </select>
+                          </td>
+                          <td>
+                            <input
+                              style={{
+                                marginBottom: 0,
+                                fontSize: 13,
+                                color: "black",
+                                fontWeight: 400,
+                                border: "0px",
+
+                                verticalAlign: "middle",
+                              }}
+                              type="text"
+                              onKeyPress={handlepresss}
+                              className="supplier_form"
+                              onChange={handlechangecalc}
+                              disabled
+                              value={
+                                freight.Destination_AdminAgrncy_currency_unitType
+                                  ? deadminAgencyesc2
+                                    ? deadminAgencyesc2
+                                    : 0.0
+                                  : 0.0
+                              }
+                              name="Destination_AdminAgrncy_currency_unit"
+                              id="floatingInput"
+                              placeholder="0.00"
+                            />
+                          </td>
+                          <td>
+                            <input
+                              style={{
+                                marginBottom: 0,
+                                fontSize: 13,
+                                color: "black",
+                                fontWeight: 400,
+                                border: "0px",
+
+                                verticalAlign: "middle",
+                              }}
+                              type="text"
+                              className="supplier_form"
+                              value={
+                                isNaN(deadminAgencyesc4)
+                                  ? 0.0
+                                  : deadminAgencyesc4
+                              }
+                              id="floatingInput"
+                              placeholder="0.00"
+                            />
+                          </td>
+                          {/* <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              fontWeight: 400,
+                              width: "50px",
+                              border: "0px",
+
+                              verticalAlign: "middle",
+                            }}
+                            type="text"
+                            onKeyPress={handlepresss}
+                            className="supplier_form"
+                            onChange={handlechangecalc}
+                            value={freight?.Destination_AdminAgrncy_currency_gp}
+                            name="Destination_AdminAgrncy_currency_gp"
+                            id="floatingInput"
+                            placeholder="0.00%"
+                          />
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              border: "0px",
+                              verticalAlign: "middle",
+                            }}
+                            value={VAadminAgencyngeon}
+                            className="supplier_form"
+                          />{" "}
+                        </td> */}
+                          <td>
+                            <input
+                              style={{
+                                marginBottom: 0,
+                                fontSize: 13,
+                                color: "black",
+
+                                border: "0px",
+                                verticalAlign: "middle",
+                              }}
+                              name="Destination_AdminAgrncy_currency_roe"
+                              onChange={handlechangecalc}
+                              value={
+                                freight.Destination_AdminAgrncy_currency_roe
+                              }
+                              className="supplier_form"
+                            />
+                          </td>
+                          <td>
+                            <input
+                              style={{
+                                marginBottom: 0,
+                                fontSize: 13,
+                                color: "black",
+
+                                border: "0px",
+                                verticalAlign: "middle",
+                              }}
+                              value={
+                                isNaN(defuelchdminAgencyngangyion)
+                                  ? 0.0
+                                  : defuelchdminAgencyngangyion.toFixed(2)
+                              }
+                              placeholder="0.00"
+                              className="supplier_form"
+                            />
+                          </td>
+                          <td>
+                            {" "}
+                            <select name="cust_duty_vatTyp">
+                              <option value="">No Vat</option>
+                              <option value="15">Standard Rate(15.00%)</option>
+                              <option value="15">
+                                Standard Rate (Capital Goods) (15.00%)
+                              </option>
+                              <option value="0">Zero Rate</option>
+                              <option value="0">
+                                Zero Rate Exports(0.00%)
+                              </option>
+                              <option value="0">
+                                Exempt and Non-Suppliers(0.00%)
+                              </option>
+                              <option value="15">
+                                Export of Second Hands Goods(15.00%)
+                              </option>
+                              <option value="15">Change in Use(15.00%)</option>
+                              <option value="100">Customs VAT(100.00%)</option>
+                              <option value="100">
+                                Goods and Services Imported(100.00%)
+                              </option>
+                              <option value="100">
+                                Capital Goods and Imported(100.00%)
+                              </option>
+                              <option value="100">
+                                VAT Adjustment (100.00%)
+                              </option>
+                              <option value="15">
+                                Domestic Reverse Charge (15.00%)
+                              </option>
+                              <option value="">Manual VAT</option>
+                              <option value="">
+                                Manual VAT (Capital Goods)
+                              </option>
+                            </select>{" "}
+                          </td>
+                          <td>
+                            {" "}
+                            <input
+                              type="text"
+                              placeholder="0.00"
+                              className="supplier_form"
+                            />{" "}
+                          </td>
+                          <td>
+                            {" "}
+                            <input
+                              type="text"
+                              placeholder="0.00"
+                              className="supplier_form"
+                            />{" "}
+                          </td>
+                           <td>
+                            {" "}
+                            <input
+                              type="text"
+                              placeholder="0.00"
+                              className="supplier_form"
+                            />{" "}
+                          </td>
+                          <td>
+                            {" "}
+                            <input
+                              type="text"
+                              placeholder="0.00"
+                              className="supplier_form"
+                            />{" "}
+                          </td>
+                          <td>
+                            {" "}
+                            <input
+                              type="text"
+                              placeholder="0.00"
+                              className="supplier_form"
+                            />{" "}
+                          </td>
+                        </tr>
+                        <tr>
+                          <td> </td>
+                          <td>Customs Vat</td>
+                          <td>
+                            <input
+                              style={{
+                                marginBottom: 0,
+                                fontSize: 13,
+                                color: "black",
+                                fontWeight: 400,
+                                border: "0px",
+
+                                verticalAlign: "middle",
+                              }}
+                              type="text"
+                              onKeyPress={handlepresss}
+                              className="supplier_form"
+                              onChange={handlechangecalc}
+                              value={
+                                freight?.Destination_disbursemant_currency_unitTypeQTY
+                              }
+                              name="Destination_disbursemant_currency_unitTypeQTY"
+                              id="floatingInput"
+                              placeholder="0.00"
+                            />
+                          </td>
+                          <td>
+                            <select
+                              className="select_supplier"
+                              style={{
+                                margin: 0,
+                                fontSize: 13,
+                                fontWeight: 700,
+                                paddingLeft: 5,
+                                border: 0,
+                              }}
+                              name="admin_currency_charge"
+                              onChange={handlechangecalc}
+                              value={freight?.admin_currency_charge}
+                            >
+                              <option>Select</option>
+                              <option value="RAND">RAND</option>
+                              <option value="USD">USD</option>
+                              <option value="INR">INR</option>
+                              <option value="EURO">EURO</option>
+                            </select>
+                          </td>
+                          <td>
+                            <input
+                              style={{
+                                marginBottom: 0,
+                                fontSize: 13,
+                                color: "black",
+                                fontWeight: 400,
+                                border: "0px",
+
+                                verticalAlign: "middle",
+                              }}
+                              type="text"
+                              onKeyPress={handlepresss}
+                              className="supplier_form"
+                              onChange={handlechangecalc}
+                              value={
+                                freight?.Destination_disbursemant_currency_cost
+                              }
+                              name="Destination_disbursemant_currency_cost"
+                              id="floatingInput"
+                              placeholder="0.00"
+                            />
+                          </td>
+                          <td>
+                            <select
+                              className="select_supplier"
+                              style={{
+                                margin: 0,
+                                fontSize: 13,
+                                fontWeight: 700,
+                                paddingLeft: 5,
+                                border: 0,
+                              }}
+                              onChange={handlechangecalc}
+                              name="Destination_disbursemant_currenc_unitType1"
+                              value={
+                                freight?.Destination_disbursemant_currenc_unitType1
+                              }
+                            >
+                              <option>Select</option>
+                              <option value="1">L/S</option>
+                              <option value="2">W/M</option>
+                            </select>
+                          </td>
+                          <td>
+                            <input
+                              style={{
+                                marginBottom: 0,
+                                fontSize: 13,
+                                color: "black",
+                                fontWeight: 400,
+                                border: "0px",
+
+                                verticalAlign: "middle",
+                              }}
+                              type="text"
+                              onKeyPress={handlepresss}
+                              className="supplier_form"
+                              onChange={handlechangecalc}
+                              disabled
+                              value={
+                                freight.Destination_disbursemant_currenc_unitType1
+                                  ? deaddisbursemantc2
+                                    ? deaddisbursemantc2
+                                    : 0.0
+                                  : 0.0
+                              }
+                              name="Destination_disbursemant_currency_unit"
+                              id="floatingInput"
+                              placeholder="0.00"
+                            />
+                          </td>
+                          <td>
+                            <input
+                              style={{
+                                marginBottom: 0,
+                                fontSize: 13,
+                                color: "black",
+                                fontWeight: 400,
+                                border: "0px",
+
+                                verticalAlign: "middle",
+                              }}
+                              type="text"
+                              className="supplier_form"
+                              value={
+                                isNaN(deaddisbursemantc4)
+                                  ? 0.0
+                                  : deaddisbursemantc4
+                              }
+                              id="floatingInput"
+                              placeholder="0.00"
+                            />
+                          </td>
+                          {/* <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              fontWeight: 400,
+                              width: "50px",
+                              border: "0px",
+
+                              verticalAlign: "middle",
+                            }}
+                            type="text"
+                            onKeyPress={handlepresss}
+                            className="supplier_form"
+                            onChange={handlechangecalc}
+                            value={
+                              freight?.Destination_disbursemant_currency_gp
+                            }
+                            name="Destination_disbursemant_currency_gp"
+                            id="floatingInput"
+                            placeholder="0.00%"
+                          />
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              border: "0px",
+                              verticalAlign: "middle",
+                            }}
+                            value={VAdisbursemon}
+                            className="supplier_form"
+                          />{" "}
+                        </td> */}
+                          <td>
+                            <input
+                              style={{
+                                marginBottom: 0,
+                                fontSize: 13,
+                                color: "black",
+
+                                border: "0px",
+                                verticalAlign: "middle",
+                              }}
+                              name="Destination_disbursemant_currency_roe"
+                              onChange={handlechangecalc}
+                              value={
+                                freight.Destination_disbursemant_currency_roe
+                              }
+                              className="supplier_form"
+                            />
+                          </td>
+                          <td>
+                            <input
+                              style={{
+                                marginBottom: 0,
+                                fontSize: 13,
+                                color: "black",
+
+                                border: "0px",
+                                verticalAlign: "middle",
+                              }}
+                              value={
+                                isNaN(dedisbursementon)
+                                  ? 0.0
+                                  : dedisbursementon.toFixed(2)
+                              }
+                              placeholder="0.00"
+                              className="supplier_form"
+                            />
+                          </td>
+                          <td>
+                            {" "}
+                            <select name="cust_vat_vatTyp">
+                              <option value="">No Vat</option>
+                              <option value="15">Standard Rate(15.00%)</option>
+                              <option value="15">
+                                Standard Rate (Capital Goods) (15.00%)
+                              </option>
+                              <option value="0">Zero Rate</option>
+                              <option value="0">
+                                Zero Rate Exports(0.00%)
+                              </option>
+                              <option value="0">
+                                Exempt and Non-Suppliers(0.00%)
+                              </option>
+                              <option value="15">
+                                Export of Second Hands Goods(15.00%)
+                              </option>
+                              <option value="15">Change in Use(15.00%)</option>
+                              <option value="100">Customs VAT(100.00%)</option>
+                              <option value="100">
+                                Goods and Services Imported(100.00%)
+                              </option>
+                              <option value="100">
+                                Capital Goods and Imported(100.00%)
+                              </option>
+                              <option value="100">
+                                VAT Adjustment (100.00%)
+                              </option>
+                              <option value="15">
+                                Domestic Reverse Charge (15.00%)
+                              </option>
+                              <option value="">Manual VAT</option>
+                              <option value="">
+                                Manual VAT (Capital Goods)
+                              </option>
+                            </select>{" "}
+                          </td>
+                          <td>
+                            {" "}
+                            <input
+                              type="text"
+                              placeholder="0.00"
+                              className="supplier_form"
+                            />{" "}
+                          </td>
+                          <td>
+                            {" "}
+                            <input
+                              type="text"
+                              placeholder="0.00"
+                              className="supplier_form"
+                            />{" "}
+                          </td>
+                           <td>
+                            {" "}
+                            <input
+                              type="text"
+                              placeholder="0.00"
+                              className="supplier_form"
+                            />{" "}
+                          </td>
+                          <td>
+                            {" "}
+                            <input
+                              type="text"
+                              placeholder="0.00"
+                              className="supplier_form"
+                            />{" "}
+                          </td>
+                          <td>
+                            {" "}
+                            <input
+                              type="text"
+                              placeholder="0.00"
+                              className="supplier_form"
+                            />{" "}
+                          </td>
+                        </tr>
+                        <tr>
+                          <td> </td>
+                          <td>Advalorem Duty</td>
+                          <td>
+                            <input
+                              style={{
+                                marginBottom: 0,
+                                fontSize: 13,
+                                color: "black",
+                                fontWeight: 400,
+                                border: "0px",
+
+                                verticalAlign: "middle",
+                              }}
+                              type="text"
+                              onKeyPress={handlepresss}
+                              className="supplier_form"
+                              onChange={handlechangecalc}
+                              value={
+                                freight?.Destination_doc_currency_unittypeQTY
+                              }
+                              name="Destination_doc_currency_unittypeQTY"
+                              id="floatingInput"
+                              placeholder="0.00"
+                            />
+                          </td>
+                          <td>
+                            <select
+                              className="select_supplier"
+                              style={{
+                                margin: 0,
+                                fontSize: 13,
+                                fontWeight: 700,
+                                paddingLeft: 5,
+                                border: 0,
+                              }}
+                              onChange={handlechangecalc}
+                              name="admin_currency_charge"
+                              value={freight?.admin_currency_charge}
+                            >
+                              <option>Select</option>
+                              <option value="RAND">RAND</option>
+                              <option value="USD">USD</option>
+                              <option value="INR">INR</option>
+                              <option value="EURO">EURO</option>
+                            </select>
+                          </td>
+                          <td>
+                            <input
+                              style={{
+                                marginBottom: 0,
+                                fontSize: 13,
+                                color: "black",
+                                fontWeight: 400,
+                                border: "0px",
+
+                                verticalAlign: "middle",
+                              }}
+                              type="text"
+                              onKeyPress={handlepresss}
+                              className="supplier_form"
+                              onChange={handlechangecalc}
+                              value={freight?.Destination_doc_currency_cost}
+                              name="Destination_doc_currency_cost"
+                              id="floatingInput"
+                              placeholder="0.00"
+                            />
+                          </td>
+                          <td>
+                            <select
+                              className="select_supplier"
+                              style={{
+                                margin: 0,
+                                fontSize: 13,
+                                fontWeight: 700,
+                                paddingLeft: 5,
+                                border: 0,
+                              }}
+                              onChange={handlechangecalc}
+                              name="Destination_doc_currency_unittype"
+                              value={freight?.Destination_doc_currency_unittype}
+                            >
+                              <option>Select</option>
+                              <option value="1">L/S</option>
+                              <option value="2">W/M</option>
+                            </select>
+                          </td>
+                          <td>
+                            <input
+                              style={{
+                                marginBottom: 0,
+                                fontSize: 13,
+                                color: "black",
+                                fontWeight: 400,
+                                border: "0px",
+
+                                verticalAlign: "middle",
+                              }}
+                              type="text"
+                              onKeyPress={handlepresss}
+                              className="supplier_form"
+                              onChange={handlechangecalc}
+                              disabled
+                              value={
+                                freight.Destination_doc_currency_unittype
+                                  ? deadoctc2
+                                    ? deadoctc2
+                                    : 0.0
+                                  : 0.0
+                              }
+                              name="Destination_doc_currency_unit"
+                              id="floatingInput"
+                              placeholder="0.00"
+                            />
+                          </td>
+                          <td>
+                            <input
+                              style={{
+                                marginBottom: 0,
+                                fontSize: 13,
+                                color: "black",
+                                fontWeight: 400,
+                                border: "0px",
+
+                                verticalAlign: "middle",
+                              }}
+                              type="text"
+                              className="supplier_form"
+                              value={isNaN(deadoctc4) ? 0.0 : deadoctc4}
+                              id="floatingInput"
+                              placeholder="0.00"
+                            />
+                          </td>
+                          {/* <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              fontWeight: 400,
+                              width: "50px",
+                              border: "0px",
+
+                              verticalAlign: "middle",
+                            }}
+                            type="text"
+                            onKeyPress={handlepresss}
+                            className="supplier_form"
+                            onChange={handlechangecalc}
+                            value={freight?.Destination_doc_currency_gp}
+                            name="Destination_doc_currency_gp"
+                            id="floatingInput"
+                            placeholder="0.00%"
+                          />
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              border: "0px",
+                              verticalAlign: "middle",
+                            }}
+                            value={VAdocon}
+                            className="supplier_form"
+                          />{" "}
+                        </td> */}
+                          <td>
+                            <input
+                              style={{
+                                marginBottom: 0,
+                                fontSize: 13,
+                                color: "black",
+
+                                border: "0px",
+                                verticalAlign: "middle",
+                              }}
+                              name="Destination_doc_currency_roe"
+                              onChange={handlechangecalc}
+                              value={freight.Destination_doc_currency_roe}
+                              className="supplier_form"
+                            />
+                          </td>
+                          <td>
+                            <input
+                              style={{
+                                marginBottom: 0,
+                                fontSize: 13,
+                                color: "black",
+
+                                border: "0px",
+                                verticalAlign: "middle",
+                              }}
+                              value={
+                                isNaN(dedisbudoon)
+                                  ? 0.0
+                                  : dedisbudoon.toFixed(2)
+                              }
+                              placeholder="0.00"
+                              className="supplier_form"
+                            />
+                          </td>
+                          <td>
+                            {" "}
+                            <select name="adv_duty_vatTyp">
+                              <option value="">No Vat</option>
+                              <option value="15">Standard Rate(15.00%)</option>
+                              <option value="15">
+                                Standard Rate (Capital Goods) (15.00%)
+                              </option>
+                              <option value="0">Zero Rate</option>
+                              <option value="0">
+                                Zero Rate Exports(0.00%)
+                              </option>
+                              <option value="0">
+                                Exempt and Non-Suppliers(0.00%)
+                              </option>
+                              <option value="15">
+                                Export of Second Hands Goods(15.00%)
+                              </option>
+                              <option value="15">Change in Use(15.00%)</option>
+                              <option value="100">Customs VAT(100.00%)</option>
+                              <option value="100">
+                                Goods and Services Imported(100.00%)
+                              </option>
+                              <option value="100">
+                                Capital Goods and Imported(100.00%)
+                              </option>
+                              <option value="100">
+                                VAT Adjustment (100.00%)
+                              </option>
+                              <option value="15">
+                                Domestic Reverse Charge (15.00%)
+                              </option>
+                              <option value="">Manual VAT</option>
+                              <option value="">
+                                Manual VAT (Capital Goods)
+                              </option>
+                            </select>{" "}
+                          </td>
+                          <td>
+                            {" "}
+                            <input
+                              type="text"
+                              placeholder="0.00"
+                              className="supplier_form"
+                            />{" "}
+                          </td>
+                          <td>
+                            {" "}
+                            <input
+                              type="text"
+                              placeholder="0.00"
+                              className="supplier_form"
+                            />{" "}
+                          </td>
+                          <td>
+                            {" "}
+                            <input
+                              type="text"
+                              placeholder="0.00"
+                              className="supplier_form"
+                            />{" "}
+                          </td>
+                          <td>
+                            {" "}
+                            <input
+                              type="text"
+                              placeholder="0.00"
+                              className="supplier_form"
+                            />{" "}
+                          </td>
+                          <td>
+                            {" "}
+                            <input
+                              type="text"
+                              placeholder="0.00"
+                              className="supplier_form"
+                            />{" "}
+                          </td>
+                        </tr>
+                          <tr>
+                          <td></td>
+                          <td>Customs Penalty</td>
+                          <td>
+                            <input
+                              style={{
+                                marginBottom: 0,
+                                fontSize: 13,
+                                color: "black",
+                                fontWeight: 400,
+                                border: "0px",
+
+                                verticalAlign: "middle",
+                              }}
+                              type="text"
+                              onKeyPress={handlepresss}
+                              className="supplier_form"
+                              onChange={handlechangecalc}
+                              value={
+                                freight?.Destination_AdminAgrncy_currency_unitQTY
+                              }
+                              name="Destination_AdminAgrncy_currency_unitQTY"
+                              id="floatingInput"
+                              placeholder="0.00"
+                            />
+                          </td>
+                          <td>
+                            <select
+                              className="select_supplier"
+                              style={{
+                                margin: 0,
+                                fontSize: 13,
+                                fontWeight: 700,
+                                paddingLeft: 5,
+                                border: 0,
+                              }}
+                              onChange={handlechangecalc}
+                              name="admin_currency_charge"
+                              value={freight?.admin_currency_charge}
+                            >
+                              <option>Select</option>
+                              <option value="RAND">RAND</option>
+                              <option value="USD">USD</option>
+                              <option value="INR">INR</option>
+                              <option value="EURO">EURO</option>
+                            </select>
+                          </td>
+                          <td>
+                            <input
+                              style={{
+                                marginBottom: 0,
+                                fontSize: 13,
+                                color: "black",
+                                fontWeight: 400,
+                                border: "0px",
+
+                                verticalAlign: "middle",
+                              }}
+                              type="text"
+                              onKeyPress={handlepresss}
+                              className="supplier_form"
+                              onChange={handlechangecalc}
+                              value={
+                                freight?.Destination_AdminAgrncy_currency_cost
+                              }
+                              name="Destination_AdminAgrncy_currency_cost"
+                              id="floatingInput"
+                              placeholder="0.00"
+                            />
+                          </td>
+                          <td>
+                            <select
+                              className="select_supplier"
+                              style={{
+                                margin: 0,
+                                fontSize: 13,
+                                fontWeight: 700,
+                                paddingLeft: 5,
+                                border: 0,
+                              }}
+                              onChange={handlechangecalc}
+                              name="Destination_AdminAgrncy_currency_unitType"
+                              value={
+                                freight?.Destination_AdminAgrncy_currency_unitType
+                              }
+                            >
+                              <option>Select</option>
+                              <option value="1">L/S</option>
+                              <option value="2">W/M</option>
+                            </select>
+                          </td>
+                          <td>
+                            <input
+                              style={{
+                                marginBottom: 0,
+                                fontSize: 13,
+                                color: "black",
+                                fontWeight: 400,
+                                border: "0px",
+
+                                verticalAlign: "middle",
+                              }}
+                              type="text"
+                              onKeyPress={handlepresss}
+                              className="supplier_form"
+                              onChange={handlechangecalc}
+                              disabled
+                              value={
+                                freight.Destination_AdminAgrncy_currency_unitType
+                                  ? deadminAgencyesc2
+                                    ? deadminAgencyesc2
+                                    : 0.0
+                                  : 0.0
+                              }
+                              name="Destination_AdminAgrncy_currency_unit"
+                              id="floatingInput"
+                              placeholder="0.00"
+                            />
+                          </td>
+                          <td>
+                            <input
+                              style={{
+                                marginBottom: 0,
+                                fontSize: 13,
+                                color: "black",
+                                fontWeight: 400,
+                                border: "0px",
+
+                                verticalAlign: "middle",
+                              }}
+                              type="text"
+                              className="supplier_form"
+                              value={
+                                isNaN(deadminAgencyesc4)
+                                  ? 0.0
+                                  : deadminAgencyesc4
+                              }
+                              id="floatingInput"
+                              placeholder="0.00"
+                            />
+                          </td>
+                          {/* <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              fontWeight: 400,
+                              width: "50px",
+                              border: "0px",
+
+                              verticalAlign: "middle",
+                            }}
+                            type="text"
+                            onKeyPress={handlepresss}
+                            className="supplier_form"
+                            onChange={handlechangecalc}
+                            value={freight?.Destination_AdminAgrncy_currency_gp}
+                            name="Destination_AdminAgrncy_currency_gp"
+                            id="floatingInput"
+                            placeholder="0.00%"
+                          />
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              border: "0px",
+                              verticalAlign: "middle",
+                            }}
+                            value={VAadminAgencyngeon}
+                            className="supplier_form"
+                          />{" "}
+                        </td> */}
+                          <td>
+                            <input
+                              style={{
+                                marginBottom: 0,
+                                fontSize: 13,
+                                color: "black",
+
+                                border: "0px",
+                                verticalAlign: "middle",
+                              }}
+                              name="Destination_AdminAgrncy_currency_roe"
+                              onChange={handlechangecalc}
+                              value={
+                                freight.Destination_AdminAgrncy_currency_roe
+                              }
+                              className="supplier_form"
+                            />
+                          </td>
+                          <td>
+                            <input
+                              style={{
+                                marginBottom: 0,
+                                fontSize: 13,
+                                color: "black",
+
+                                border: "0px",
+                                verticalAlign: "middle",
+                              }}
+                              value={
+                                isNaN(defuelchdminAgencyngangyion)
+                                  ? 0.0
+                                  : defuelchdminAgencyngangyion.toFixed(2)
+                              }
+                              placeholder="0.00"
+                              className="supplier_form"
+                            />
+                          </td>
+                          <td>
+                            {" "}
+                            <select name="cust_penalty_vatTyp">
+                              <option value="">No Vat</option>
+                              <option value="15">Standard Rate(15.00%)</option>
+                              <option value="15">
+                                Standard Rate (Capital Goods) (15.00%)
+                              </option>
+                              <option value="0">Zero Rate</option>
+                              <option value="0">
+                                Zero Rate Exports(0.00%)
+                              </option>
+                              <option value="0">
+                                Exempt and Non-Suppliers(0.00%)
+                              </option>
+                              <option value="15">
+                                Export of Second Hands Goods(15.00%)
+                              </option>
+                              <option value="15">Change in Use(15.00%)</option>
+                              <option value="100">Customs VAT(100.00%)</option>
+                              <option value="100">
+                                Goods and Services Imported(100.00%)
+                              </option>
+                              <option value="100">
+                                Capital Goods and Imported(100.00%)
+                              </option>
+                              <option value="100">
+                                VAT Adjustment (100.00%)
+                              </option>
+                              <option value="15">
+                                Domestic Reverse Charge (15.00%)
+                              </option>
+                              <option value="">Manual VAT</option>
+                              <option value="">
+                                Manual VAT (Capital Goods)
+                              </option>
+                            </select>{" "}
+                          </td>
+                          <td>
+                            {" "}
+                            <input
+                              type="text"
+                              placeholder="0.00"
+                              className="supplier_form"
+                            />{" "}
+                          </td>
+                          <td>
+                            {" "}
+                            <input
+                              type="text"
+                              placeholder="0.00"
+                              className="supplier_form"
+                            />{" "}
+                          </td>
+                           <td>
+                            {" "}
+                            <input
+                              type="text"
+                              placeholder="0.00"
+                              className="supplier_form"
+                            />{" "}
+                          </td>
+                          <td>
+                            {" "}
+                            <input
+                              type="text"
+                              placeholder="0.00"
+                              className="supplier_form"
+                            />{" "}
+                          </td>
+                          <td>
+                            {" "}
+                            <input
+                              type="text"
+                              placeholder="0.00"
+                              className="supplier_form"
+                            />{" "}
+                          </td>
+                        </tr>
+                        <tr>
+                          <td> </td>
+                          <td>Customs Provisional payments</td>
+                          <td>
+                            <input
+                              style={{
+                                marginBottom: 0,
+                                fontSize: 13,
+                                color: "black",
+                                fontWeight: 400,
+                                border: "0px",
+
+                                verticalAlign: "middle",
+                              }}
+                              type="text"
+                              onKeyPress={handlepresss}
+                              className="supplier_form"
+                              onChange={handlechangecalc}
+                              value={
+                                freight?.Destination_disbursemant_currency_unitTypeQTY
+                              }
+                              name="Destination_disbursemant_currency_unitTypeQTY"
+                              id="floatingInput"
+                              placeholder="0.00"
+                            />
+                          </td>
+                          <td>
+                            <select
+                              className="select_supplier"
+                              style={{
+                                margin: 0,
+                                fontSize: 13,
+                                fontWeight: 700,
+                                paddingLeft: 5,
+                                border: 0,
+                              }}
+                              name="admin_currency_charge"
+                              onChange={handlechangecalc}
+                              value={freight?.admin_currency_charge}
+                            >
+                              <option>Select</option>
+                              <option value="RAND">RAND</option>
+                              <option value="USD">USD</option>
+                              <option value="INR">INR</option>
+                              <option value="EURO">EURO</option>
+                            </select>
+                          </td>
+                          <td>
+                            <input
+                              style={{
+                                marginBottom: 0,
+                                fontSize: 13,
+                                color: "black",
+                                fontWeight: 400,
+                                border: "0px",
+
+                                verticalAlign: "middle",
+                              }}
+                              type="text"
+                              onKeyPress={handlepresss}
+                              className="supplier_form"
+                              onChange={handlechangecalc}
+                              value={
+                                freight?.Destination_disbursemant_currency_cost
+                              }
+                              name="Destination_disbursemant_currency_cost"
+                              id="floatingInput"
+                              placeholder="0.00"
+                            />
+                          </td>
+                          <td>
+                            <select
+                              className="select_supplier"
+                              style={{
+                                margin: 0,
+                                fontSize: 13,
+                                fontWeight: 700,
+                                paddingLeft: 5,
+                                border: 0,
+                              }}
+                              onChange={handlechangecalc}
+                              name="Destination_disbursemant_currenc_unitType1"
+                              value={
+                                freight?.Destination_disbursemant_currenc_unitType1
+                              }
+                            >
+                              <option>Select</option>
+                              <option value="1">L/S</option>
+                              <option value="2">W/M</option>
+                            </select>
+                          </td>
+                          <td>
+                            <input
+                              style={{
+                                marginBottom: 0,
+                                fontSize: 13,
+                                color: "black",
+                                fontWeight: 400,
+                                border: "0px",
+
+                                verticalAlign: "middle",
+                              }}
+                              type="text"
+                              onKeyPress={handlepresss}
+                              className="supplier_form"
+                              onChange={handlechangecalc}
+                              disabled
+                              value={
+                                freight.Destination_disbursemant_currenc_unitType1
+                                  ? deaddisbursemantc2
+                                    ? deaddisbursemantc2
+                                    : 0.0
+                                  : 0.0
+                              }
+                              name="Destination_disbursemant_currency_unit"
+                              id="floatingInput"
+                              placeholder="0.00"
+                            />
+                          </td>
+                          <td>
+                            <input
+                              style={{
+                                marginBottom: 0,
+                                fontSize: 13,
+                                color: "black",
+                                fontWeight: 400,
+                                border: "0px",
+
+                                verticalAlign: "middle",
+                              }}
+                              type="text"
+                              className="supplier_form"
+                              value={
+                                isNaN(deaddisbursemantc4)
+                                  ? 0.0
+                                  : deaddisbursemantc4
+                              }
+                              id="floatingInput"
+                              placeholder="0.00"
+                            />
+                          </td>
+                          {/* <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              fontWeight: 400,
+                              width: "50px",
+                              border: "0px",
+
+                              verticalAlign: "middle",
+                            }}
+                            type="text"
+                            onKeyPress={handlepresss}
+                            className="supplier_form"
+                            onChange={handlechangecalc}
+                            value={
+                              freight?.Destination_disbursemant_currency_gp
+                            }
+                            name="Destination_disbursemant_currency_gp"
+                            id="floatingInput"
+                            placeholder="0.00%"
+                          />
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              border: "0px",
+                              verticalAlign: "middle",
+                            }}
+                            value={VAdisbursemon}
+                            className="supplier_form"
+                          />{" "}
+                        </td> */}
+                          <td>
+                            <input
+                              style={{
+                                marginBottom: 0,
+                                fontSize: 13,
+                                color: "black",
+
+                                border: "0px",
+                                verticalAlign: "middle",
+                              }}
+                              name="Destination_disbursemant_currency_roe"
+                              onChange={handlechangecalc}
+                              value={
+                                freight.Destination_disbursemant_currency_roe
+                              }
+                              className="supplier_form"
+                            />
+                          </td>
+                          <td>
+                            <input
+                              style={{
+                                marginBottom: 0,
+                                fontSize: 13,
+                                color: "black",
+
+                                border: "0px",
+                                verticalAlign: "middle",
+                              }}
+                              value={
+                                isNaN(dedisbursementon)
+                                  ? 0.0
+                                  : dedisbursementon.toFixed(2)
+                              }
+                              placeholder="0.00"
+                              className="supplier_form"
+                            />
+                          </td>
+                          <td>
+                            {" "}
+                            <select name="custProv_pay_vatTyp">
+                              <option value="">No Vat</option>
+                              <option value="15">Standard Rate(15.00%)</option>
+                              <option value="15">
+                                Standard Rate (Capital Goods) (15.00%)
+                              </option>
+                              <option value="0">Zero Rate</option>
+                              <option value="0">
+                                Zero Rate Exports(0.00%)
+                              </option>
+                              <option value="0">
+                                Exempt and Non-Suppliers(0.00%)
+                              </option>
+                              <option value="15">
+                                Export of Second Hands Goods(15.00%)
+                              </option>
+                              <option value="15">Change in Use(15.00%)</option>
+                              <option value="100">Customs VAT(100.00%)</option>
+                              <option value="100">
+                                Goods and Services Imported(100.00%)
+                              </option>
+                              <option value="100">
+                                Capital Goods and Imported(100.00%)
+                              </option>
+                              <option value="100">
+                                VAT Adjustment (100.00%)
+                              </option>
+                              <option value="15">
+                                Domestic Reverse Charge (15.00%)
+                              </option>
+                              <option value="">Manual VAT</option>
+                              <option value="">
+                                Manual VAT (Capital Goods)
+                              </option>
+                            </select>{" "}
+                          </td>
+                          <td>
+                            {" "}
+                            <input
+                              type="text"
+                              placeholder="0.00"
+                              className="supplier_form"
+                            />{" "}
+                          </td>
+                          <td>
+                            {" "}
+                            <input
+                              type="text"
+                              placeholder="0.00"
+                              className="supplier_form"
+                            />{" "}
+                          </td>
+                           <td>
+                            {" "}
+                            <input
+                              type="text"
+                              placeholder="0.00"
+                              className="supplier_form"
+                            />{" "}
+                          </td>
+                          <td>
+                            {" "}
+                            <input
+                              type="text"
+                              placeholder="0.00"
+                              className="supplier_form"
+                            />{" "}
+                          </td>
+                          <td>
+                            {" "}
+                            <input
+                              type="text"
+                              placeholder="0.00"
+                              className="supplier_form"
+                            />{" "}
+                          </td>
+                        </tr>
+                        <tr>
+                          <td> </td>
+                          <td>Clearing fee</td>
+                          <td>
+                            <input
+                              style={{
+                                marginBottom: 0,
+                                fontSize: 13,
+                                color: "black",
+                                fontWeight: 400,
+                                border: "0px",
+
+                                verticalAlign: "middle",
+                              }}
+                              type="text"
+                              onKeyPress={handlepresss}
+                              className="supplier_form"
+                              onChange={handlechangecalc}
+                              value={
+                                freight?.Destination_doc_currency_unittypeQTY
+                              }
+                              name="Destination_doc_currency_unittypeQTY"
+                              id="floatingInput"
+                              placeholder="0.00"
+                            />
+                          </td>
+                          <td>
+                            <select
+                              className="select_supplier"
+                              style={{
+                                margin: 0,
+                                fontSize: 13,
+                                fontWeight: 700,
+                                paddingLeft: 5,
+                                border: 0,
+                              }}
+                              onChange={handlechangecalc}
+                              name="admin_currency_charge"
+                              value={freight?.admin_currency_charge}
+                            >
+                              <option>Select</option>
+                              <option value="RAND">RAND</option>
+                              <option value="USD">USD</option>
+                              <option value="INR">INR</option>
+                              <option value="EURO">EURO</option>
+                            </select>
+                          </td>
+                          <td>
+                            <input
+                              style={{
+                                marginBottom: 0,
+                                fontSize: 13,
+                                color: "black",
+                                fontWeight: 400,
+                                border: "0px",
+
+                                verticalAlign: "middle",
+                              }}
+                              type="text"
+                              onKeyPress={handlepresss}
+                              className="supplier_form"
+                              onChange={handlechangecalc}
+                              value={freight?.Destination_doc_currency_cost}
+                              name="Destination_doc_currency_cost"
+                              id="floatingInput"
+                              placeholder="0.00"
+                            />
+                          </td>
+                          <td>
+                            <select
+                              className="select_supplier"
+                              style={{
+                                margin: 0,
+                                fontSize: 13,
+                                fontWeight: 700,
+                                paddingLeft: 5,
+                                border: 0,
+                              }}
+                              onChange={handlechangecalc}
+                              name="Destination_doc_currency_unittype"
+                              value={freight?.Destination_doc_currency_unittype}
+                            >
+                              <option>Select</option>
+                              <option value="1">L/S</option>
+                              <option value="2">W/M</option>
+                            </select>
+                          </td>
+                          <td>
+                            <input
+                              style={{
+                                marginBottom: 0,
+                                fontSize: 13,
+                                color: "black",
+                                fontWeight: 400,
+                                border: "0px",
+
+                                verticalAlign: "middle",
+                              }}
+                              type="text"
+                              onKeyPress={handlepresss}
+                              className="supplier_form"
+                              onChange={handlechangecalc}
+                              disabled
+                              value={
+                                freight.Destination_doc_currency_unittype
+                                  ? deadoctc2
+                                    ? deadoctc2
+                                    : 0.0
+                                  : 0.0
+                              }
+                              name="Destination_doc_currency_unit"
+                              id="floatingInput"
+                              placeholder="0.00"
+                            />
+                          </td>
+                          <td>
+                            <input
+                              style={{
+                                marginBottom: 0,
+                                fontSize: 13,
+                                color: "black",
+                                fontWeight: 400,
+                                border: "0px",
+
+                                verticalAlign: "middle",
+                              }}
+                              type="text"
+                              className="supplier_form"
+                              value={isNaN(deadoctc4) ? 0.0 : deadoctc4}
+                              id="floatingInput"
+                              placeholder="0.00"
+                            />
+                          </td>
+                          {/* <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              fontWeight: 400,
+                              width: "50px",
+                              border: "0px",
+
+                              verticalAlign: "middle",
+                            }}
+                            type="text"
+                            onKeyPress={handlepresss}
+                            className="supplier_form"
+                            onChange={handlechangecalc}
+                            value={freight?.Destination_doc_currency_gp}
+                            name="Destination_doc_currency_gp"
+                            id="floatingInput"
+                            placeholder="0.00%"
+                          />
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              border: "0px",
+                              verticalAlign: "middle",
+                            }}
+                            value={VAdocon}
+                            className="supplier_form"
+                          />{" "}
+                        </td> */}
+                          <td>
+                            <input
+                              style={{
+                                marginBottom: 0,
+                                fontSize: 13,
+                                color: "black",
+
+                                border: "0px",
+                                verticalAlign: "middle",
+                              }}
+                              name="Destination_doc_currency_roe"
+                              onChange={handlechangecalc}
+                              value={freight.Destination_doc_currency_roe}
+                              className="supplier_form"
+                            />
+                          </td>
+                          <td>
+                            <input
+                              style={{
+                                marginBottom: 0,
+                                fontSize: 13,
+                                color: "black",
+
+                                border: "0px",
+                                verticalAlign: "middle",
+                              }}
+                              value={
+                                isNaN(dedisbudoon)
+                                  ? 0.0
+                                  : dedisbudoon.toFixed(2)
+                              }
+                              placeholder="0.00"
+                              className="supplier_form"
+                            />
+                          </td>
+                          <td>
+                            {" "}
+                            <select name="clearing_fee_vatTyp">
+                              <option value="">No Vat</option>
+                              <option value="15">Standard Rate(15.00%)</option>
+                              <option value="15">
+                                Standard Rate (Capital Goods) (15.00%)
+                              </option>
+                              <option value="0">Zero Rate</option>
+                              <option value="0">
+                                Zero Rate Exports(0.00%)
+                              </option>
+                              <option value="0">
+                                Exempt and Non-Suppliers(0.00%)
+                              </option>
+                              <option value="15">
+                                Export of Second Hands Goods(15.00%)
+                              </option>
+                              <option value="15">Change in Use(15.00%)</option>
+                              <option value="100">Customs VAT(100.00%)</option>
+                              <option value="100">
+                                Goods and Services Imported(100.00%)
+                              </option>
+                              <option value="100">
+                                Capital Goods and Imported(100.00%)
+                              </option>
+                              <option value="100">
+                                VAT Adjustment (100.00%)
+                              </option>
+                              <option value="15">
+                                Domestic Reverse Charge (15.00%)
+                              </option>
+                              <option value="">Manual VAT</option>
+                              <option value="">
+                                Manual VAT (Capital Goods)
+                              </option>
+                            </select>{" "}
+                          </td>
+                          <td>
+                            {" "}
+                            <input
+                              type="text"
+                              placeholder="0.00"
+                              className="supplier_form"
+                            />{" "}
+                          </td>
+                          <td>
+                            {" "}
+                            <input
+                              type="text"
+                              placeholder="0.00"
+                              className="supplier_form"
+                            />{" "}
+                          </td>
+                          <td>
+                            {" "}
+                            <input
+                              type="text"
+                              placeholder="0.00"
+                              className="supplier_form"
+                            />{" "}
+                          </td>
+                          <td>
+                            {" "}
+                            <input
+                              type="text"
+                              placeholder="0.00"
+                              className="supplier_form"
+                            />{" "}
+                          </td>
+                          <td>
+                            {" "}
+                            <input
+                              type="text"
+                              placeholder="0.00"
+                              className="supplier_form"
+                            />{" "}
+                          </td>
+                        </tr>
+                        <tr>
+                          <td> </td>
+                          <td>Disbursement</td>
+                          <td>
+                            <input
+                              style={{
+                                marginBottom: 0,
+                                fontSize: 13,
+                                color: "black",
+                                fontWeight: 400,
+                                border: "0px",
+
+                                verticalAlign: "middle",
+                              }}
+                              type="text"
+                              onKeyPress={handlepresss}
+                              className="supplier_form"
+                              onChange={handlechangecalc}
+                              value={
+                                freight?.Destination_doc_currency_unittypeQTY
+                              }
+                              name="Destination_doc_currency_unittypeQTY"
+                              id="floatingInput"
+                              placeholder="0.00"
+                            />
+                          </td>
+                          <td>
+                            <select
+                              className="select_supplier"
+                              style={{
+                                margin: 0,
+                                fontSize: 13,
+                                fontWeight: 700,
+                                paddingLeft: 5,
+                                border: 0,
+                              }}
+                              onChange={handlechangecalc}
+                              name="admin_currency_charge"
+                              value={freight?.admin_currency_charge}
+                            >
+                              <option>Select</option>
+                              <option value="RAND">RAND</option>
+                              <option value="USD">USD</option>
+                              <option value="INR">INR</option>
+                              <option value="EURO">EURO</option>
+                            </select>
+                          </td>
+                          <td>
+                            <input
+                              style={{
+                                marginBottom: 0,
+                                fontSize: 13,
+                                color: "black",
+                                fontWeight: 400,
+                                border: "0px",
+
+                                verticalAlign: "middle",
+                              }}
+                              type="text"
+                              onKeyPress={handlepresss}
+                              className="supplier_form"
+                              onChange={handlechangecalc}
+                              value={freight?.Destination_doc_currency_cost}
+                              name="Destination_doc_currency_cost"
+                              id="floatingInput"
+                              placeholder="0.00"
+                            />
+                          </td>
+                          <td>
+                            <select
+                              className="select_supplier"
+                              style={{
+                                margin: 0,
+                                fontSize: 13,
+                                fontWeight: 700,
+                                paddingLeft: 5,
+                                border: 0,
+                              }}
+                              onChange={handlechangecalc}
+                              name="Destination_doc_currency_unittype"
+                              value={freight?.Destination_doc_currency_unittype}
+                            >
+                              <option>Select</option>
+                              <option value="1">L/S</option>
+                              <option value="2">W/M</option>
+                            </select>
+                          </td>
+                          <td>
+                            <input
+                              style={{
+                                marginBottom: 0,
+                                fontSize: 13,
+                                color: "black",
+                                fontWeight: 400,
+                                border: "0px",
+
+                                verticalAlign: "middle",
+                              }}
+                              type="text"
+                              onKeyPress={handlepresss}
+                              className="supplier_form"
+                              onChange={handlechangecalc}
+                              disabled
+                              value={
+                                freight.Destination_doc_currency_unittype
+                                  ? deadoctc2
+                                    ? deadoctc2
+                                    : 0.0
+                                  : 0.0
+                              }
+                              name="Destination_doc_currency_unit"
+                              id="floatingInput"
+                              placeholder="0.00"
+                            />
+                          </td>
+                          <td>
+                            <input
+                              style={{
+                                marginBottom: 0,
+                                fontSize: 13,
+                                color: "black",
+                                fontWeight: 400,
+                                border: "0px",
+
+                                verticalAlign: "middle",
+                              }}
+                              type="text"
+                              className="supplier_form"
+                              value={isNaN(deadoctc4) ? 0.0 : deadoctc4}
+                              id="floatingInput"
+                              placeholder="0.00"
+                            />
+                          </td>
+                          {/* <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              fontWeight: 400,
+                              width: "50px",
+                              border: "0px",
+
+                              verticalAlign: "middle",
+                            }}
+                            type="text"
+                            onKeyPress={handlepresss}
+                            className="supplier_form"
+                            onChange={handlechangecalc}
+                            value={freight?.Destination_doc_currency_gp}
+                            name="Destination_doc_currency_gp"
+                            id="floatingInput"
+                            placeholder="0.00%"
+                          />
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              border: "0px",
+                              verticalAlign: "middle",
+                            }}
+                            value={VAdocon}
+                            className="supplier_form"
+                          />{" "}
+                        </td> */}
+                          <td>
+                            <input
+                              style={{
+                                marginBottom: 0,
+                                fontSize: 13,
+                                color: "black",
+
+                                border: "0px",
+                                verticalAlign: "middle",
+                              }}
+                              name="Destination_doc_currency_roe"
+                              onChange={handlechangecalc}
+                              value={freight.Destination_doc_currency_roe}
+                              className="supplier_form"
+                            />
+                          </td>
+                          <td>
+                            <input
+                              style={{
+                                marginBottom: 0,
+                                fontSize: 13,
+                                color: "black",
+
+                                border: "0px",
+                                verticalAlign: "middle",
+                              }}
+                              value={
+                                isNaN(dedisbudoon)
+                                  ? 0.0
+                                  : dedisbudoon.toFixed(2)
+                              }
+                              placeholder="0.00"
+                              className="supplier_form"
+                            />
+                          </td>
+                          <td>
+                            {" "}
+                            <select name="disbursement_vatTyp">
+                              <option value="">No Vat</option>
+                              <option value="15">Standard Rate(15.00%)</option>
+                              <option value="15">
+                                Standard Rate (Capital Goods) (15.00%)
+                              </option>
+                              <option value="0">Zero Rate</option>
+                              <option value="0">
+                                Zero Rate Exports(0.00%)
+                              </option>
+                              <option value="0">
+                                Exempt and Non-Suppliers(0.00%)
+                              </option>
+                              <option value="15">
+                                Export of Second Hands Goods(15.00%)
+                              </option>
+                              <option value="15">Change in Use(15.00%)</option>
+                              <option value="100">Customs VAT(100.00%)</option>
+                              <option value="100">
+                                Goods and Services Imported(100.00%)
+                              </option>
+                              <option value="100">
+                                Capital Goods and Imported(100.00%)
+                              </option>
+                              <option value="100">
+                                VAT Adjustment (100.00%)
+                              </option>
+                              <option value="15">
+                                Domestic Reverse Charge (15.00%)
+                              </option>
+                              <option value="">Manual VAT</option>
+                              <option value="">
+                                Manual VAT (Capital Goods)
+                              </option>
+                            </select>{" "}
+                          </td>
+                          <td>
+                            {" "}
+                            <input
+                              type="text"
+                              placeholder="0.00"
+                              className="supplier_form"
+                            />{" "}
+                          </td>
+                          <td>
+                            {" "}
+                            <input
+                              type="text"
+                              placeholder="0.00"
+                              className="supplier_form"
+                            />{" "}
+                          </td>
+                          <td>
+                            {" "}
+                            <input
+                              type="text"
+                              placeholder="0.00"
+                              className="supplier_form"
+                            />{" "}
+                          </td>
+                          <td>
+                            {" "}
+                            <input
+                              type="text"
+                              placeholder="0.00"
+                              className="supplier_form"
+                            />{" "}
+                          </td>
+                          <td>
+                            {" "}
+                            <input
+                              type="text"
+                              placeholder="0.00"
+                              className="supplier_form"
+                            />{" "}
+                          </td>
+                        </tr>
+                        <tr>
+                          <td> </td>
+                          <td>Surcharge</td>
+                          <td>
+                            <input
+                              style={{
+                                marginBottom: 0,
+                                fontSize: 13,
+                                color: "black",
+                                fontWeight: 400,
+                                border: "0px",
+
+                                verticalAlign: "middle",
+                              }}
+                              type="text"
+                              onKeyPress={handlepresss}
+                              className="supplier_form"
+                              onChange={handlechangecalc}
+                              value={
+                                freight?.Destination_doc_currency_unittypeQTY
+                              }
+                              name="Destination_doc_currency_unittypeQTY"
+                              id="floatingInput"
+                              placeholder="0.00"
+                            />
+                          </td>
+                          <td>
+                            <select
+                              className="select_supplier"
+                              style={{
+                                margin: 0,
+                                fontSize: 13,
+                                fontWeight: 700,
+                                paddingLeft: 5,
+                                border: 0,
+                              }}
+                              onChange={handlechangecalc}
+                              name="admin_currency_charge"
+                              value={freight?.admin_currency_charge}
+                            >
+                              <option>Select</option>
+                              <option value="RAND">RAND</option>
+                              <option value="USD">USD</option>
+                              <option value="INR">INR</option>
+                              <option value="EURO">EURO</option>
+                            </select>
+                          </td>
+                          <td>
+                            <input
+                              style={{
+                                marginBottom: 0,
+                                fontSize: 13,
+                                color: "black",
+                                fontWeight: 400,
+                                border: "0px",
+
+                                verticalAlign: "middle",
+                              }}
+                              type="text"
+                              onKeyPress={handlepresss}
+                              className="supplier_form"
+                              onChange={handlechangecalc}
+                              value={freight?.Destination_doc_currency_cost}
+                              name="Destination_doc_currency_cost"
+                              id="floatingInput"
+                              placeholder="0.00"
+                            />
+                          </td>
+                          <td>
+                            <select
+                              className="select_supplier"
+                              style={{
+                                margin: 0,
+                                fontSize: 13,
+                                fontWeight: 700,
+                                paddingLeft: 5,
+                                border: 0,
+                              }}
+                              onChange={handlechangecalc}
+                              name="Destination_doc_currency_unittype"
+                              value={freight?.Destination_doc_currency_unittype}
+                            >
+                              <option>Select</option>
+                              <option value="1">L/S</option>
+                              <option value="2">W/M</option>
+                            </select>
+                          </td>
+                          <td>
+                            <input
+                              style={{
+                                marginBottom: 0,
+                                fontSize: 13,
+                                color: "black",
+                                fontWeight: 400,
+                                border: "0px",
+
+                                verticalAlign: "middle",
+                              }}
+                              type="text"
+                              onKeyPress={handlepresss}
+                              className="supplier_form"
+                              onChange={handlechangecalc}
+                              disabled
+                              value={
+                                freight.Destination_doc_currency_unittype
+                                  ? deadoctc2
+                                    ? deadoctc2
+                                    : 0.0
+                                  : 0.0
+                              }
+                              name="Destination_doc_currency_unit"
+                              id="floatingInput"
+                              placeholder="0.00"
+                            />
+                          </td>
+                          <td>
+                            <input
+                              style={{
+                                marginBottom: 0,
+                                fontSize: 13,
+                                color: "black",
+                                fontWeight: 400,
+                                border: "0px",
+
+                                verticalAlign: "middle",
+                              }}
+                              type="text"
+                              className="supplier_form"
+                              value={isNaN(deadoctc4) ? 0.0 : deadoctc4}
+                              id="floatingInput"
+                              placeholder="0.00"
+                            />
+                          </td>
+                          {/* <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              fontWeight: 400,
+                              width: "50px",
+                              border: "0px",
+
+                              verticalAlign: "middle",
+                            }}
+                            type="text"
+                            onKeyPress={handlepresss}
+                            className="supplier_form"
+                            onChange={handlechangecalc}
+                            value={freight?.Destination_doc_currency_gp}
+                            name="Destination_doc_currency_gp"
+                            id="floatingInput"
+                            placeholder="0.00%"
+                          />
+                        </td>
+                        <td>
+                          <input
+                            style={{
+                              marginBottom: 0,
+                              fontSize: 13,
+                              color: "black",
+                              border: "0px",
+                              verticalAlign: "middle",
+                            }}
+                            value={VAdocon}
+                            className="supplier_form"
+                          />{" "}
+                        </td> */}
+                          <td>
+                            <input
+                              style={{
+                                marginBottom: 0,
+                                fontSize: 13,
+                                color: "black",
+
+                                border: "0px",
+                                verticalAlign: "middle",
+                              }}
+                              name="Destination_doc_currency_roe"
+                              onChange={handlechangecalc}
+                              value={freight.Destination_doc_currency_roe}
+                              className="supplier_form"
+                            />
+                          </td>
+                          <td>
+                            <input
+                              style={{
+                                marginBottom: 0,
+                                fontSize: 13,
+                                color: "black",
+
+                                border: "0px",
+                                verticalAlign: "middle",
+                              }}
+                              value={
+                                isNaN(dedisbudoon)
+                                  ? 0.0
+                                  : dedisbudoon.toFixed(2)
+                              }
+                              placeholder="0.00"
+                              className="supplier_form"
+                            />
+                          </td>
+                          <td>
+                            {" "}
+                            <select name="surcharge_vatTyp">
+                              <option value="">No Vat</option>
+                              <option value="15">Standard Rate(15.00%)</option>
+                              <option value="15">
+                                Standard Rate (Capital Goods) (15.00%)
+                              </option>
+                              <option value="0">Zero Rate</option>
+                              <option value="0">
+                                Zero Rate Exports(0.00%)
+                              </option>
+                              <option value="0">
+                                Exempt and Non-Suppliers(0.00%)
+                              </option>
+                              <option value="15">
+                                Export of Second Hands Goods(15.00%)
+                              </option>
+                              <option value="15">Change in Use(15.00%)</option>
+                              <option value="100">Customs VAT(100.00%)</option>
+                              <option value="100">
+                                Goods and Services Imported(100.00%)
+                              </option>
+                              <option value="100">
+                                Capital Goods and Imported(100.00%)
+                              </option>
+                              <option value="100">
+                                VAT Adjustment (100.00%)
+                              </option>
+                              <option value="15">
+                                Domestic Reverse Charge (15.00%)
+                              </option>
+                              <option value="">Manual VAT</option>
+                              <option value="">
+                                Manual VAT (Capital Goods)
+                              </option>
+                            </select>{" "}
+                          </td>
+                          <td>
+                            {" "}
+                            <input
+                              type="text"
+                              placeholder="0.00"
+                              className="supplier_form"
+                            />{" "}
+                          </td>
+                          <td>
+                            {" "}
+                            <input
+                              type="text"
+                              placeholder="0.00"
+                              className="supplier_form"
+                            />{" "}
+                          </td>
+                          <td>
+                            {" "}
+                            <input
+                              type="text"
+                              placeholder="0.00"
+                              className="supplier_form"
+                            />{" "}
+                          </td>
+                          <td>
+                            {" "}
+                            <input
+                              type="text"
+                              placeholder="0.00"
+                              className="supplier_form"
+                            />{" "}
+                          </td>
+                          <td>
+                            {" "}
+                            <input
+                              type="text"
+                              placeholder="0.00"
+                              className="supplier_form"
+                            />{" "}
+                          </td>
                         </tr>
                         <tr>
                           <td></td>

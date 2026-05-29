@@ -30,141 +30,141 @@ export default function Dashboard() {
     <>
       <div className="wpWrapper dash_wrap">
         <div className="container-fluid">
-          <div class="row g-4">
+          <div className="row g-4">
             <div
-              class=" col-xl-3 col-lg-4 col-md-6 col-sm-6"
+              className=" col-xl-3 col-lg-4 col-md-6 col-sm-6"
               onClick={() => {
                 navigaet("/Admin/manage-customer");
               }}
             >
-              <div class="cardDash">
-                <h5 className="hd_dash">Clients</h5>
-                <div class="iconParent">
-                  <div class="cardContent">
+              <div className="cardDash shadow-md">
+                <h6 className="hd_dash">Clients</h6>
+                <div className="iconParent">
+                  <div className="cardContent">
                     <p className="para_dash">
                       <CountUp end={countdata?.no_of_clients} />
                     </p>
                   </div>
-                  <div class="iconGrad">
+                  <div className="iconGrad">
                     <i className="fa fa-user"></i>
                   </div>
                 </div>
-                <div class="cardBottom bg1">
+                <div className="cardBottom bg1">
                   <p>View More</p>
-                  <i class="fi fi-rr-angle-double-small-right"></i>
+                  <i className="fi fi-rr-angle-double-small-right"></i>
                 </div>
               </div>
             </div>
             <div
-              class="col-xl-3 col-lg-4 col-md-6 col-sm-6"
+              className="col-xl-3 col-lg-4 col-md-6 col-sm-6"
               onClick={() => {
                 navigaet("/Admin/managefreight");
               }}
             >
-              <div class="cardDash">
+              <div className="cardDash">
                 <h5 className="hd_dash">Freights</h5>
-                <div class="iconParent">
-                  <div class="cardContent">
+                <div className="iconParent">
+                  <div className="cardContent">
                     <p className="para_dash">
                       <CountUp end={countdata?.no_of_freights} />
                     </p>
                   </div>
-                  <div class="iconGrad">
+                  <div className="iconGrad">
                     <i className="fa fa-plane"></i>
                   </div>
                 </div>
-                <div class="cardBottom bg2">
+                <div className="cardBottom bg2">
                   <p>View More</p>
-                  <i class="fi fi-rr-angle-double-small-right"></i>
+                  <i className="fi fi-rr-angle-double-small-right"></i>
                 </div>
               </div>
             </div>
             <div
-              class="col-xl-3 col-lg-4 col-md-6 col-sm-6"
+              className="col-xl-3 col-lg-4 col-md-6 col-sm-6"
               onClick={() => {
                 navigaet("/Admin/order");
               }}
             >
-              <div class="cardDash">
+              <div className="cardDash">
                 <h5 className="hd_dash">Orders</h5>
-                <div class="iconParent">
-                  <div class="cardContent">
+                <div className="iconParent">
+                  <div className="cardContent">
                     <p className="para_dash">
                       <CountUp end={countdata?.no_of_orders} />
                     </p>
                   </div>
-                  <div class="iconGrad">
+                  <div className="iconGrad">
                     <i className="fa fa-truck"></i>
                   </div>
                 </div>
-                <div class="cardBottom bg3">
+                <div className="cardBottom bg3">
                   <p>View More</p>
-                  <i class="fi fi-rr-angle-double-small-right"></i>
+                  <i className="fi fi-rr-angle-double-small-right"></i>
                 </div>
               </div>
             </div>
             <div
-              class="col-xl-3 col-lg-4 col-md-6 col-sm-6"
+              className="col-xl-3 col-lg-4 col-md-6 col-sm-6"
               onClick={() => {
                 navigaet("/Admin/custom-clearance-order");
               }}
             >
-              <div class="cardDash">
+              <div className="cardDash">
                 <h5 className="hd_dash">Clearances</h5>
-                <div class="iconParent">
-                  <div class="cardContent">
+                <div className="iconParent">
+                  <div className="cardContent">
                     <p className="para_dash">
                       <CountUp end={countdata?.no_of_clearance} />
                     </p>
                   </div>
-                  <div class="iconGrad">
+                  <div className="iconGrad">
                     <i className="fa fa-bars"></i>
                   </div>
                 </div>
-                <div class="cardBottom bg1">
+                <div className="cardBottom bg1">
                   <p>View More</p>
-                  <i class="fi fi-rr-angle-double-small-right"></i>
+                  <i className="fi fi-rr-angle-double-small-right"></i>
                 </div>
               </div>
             </div>
             <div
-              class="col-xl-3 col-lg-4 col-md-6 col-sm-6"
+              className="col-xl-3 col-lg-4 col-md-6 col-sm-6"
               onClick={() => {
                 navigaet("/Admin/calculation-order");
               }}
             >
-              <div class="cardDash">
+              <div className="cardDash">
                 <h5 className="hd_dash">Clearance Orders</h5>
-                <div class="iconParent">
-                  <div class="cardContent">
+                <div className="iconParent">
+                  <div className="cardContent">
                     <p className="para_dash">
                       <CountUp end={countdata?.no_Of_clearanceOrder} />
                     </p>
                   </div>
-                  <div class="iconGrad">
+                  <div className="iconGrad">
                     <i className="fa fa-codepen"></i>
                   </div>
                 </div>
-                <div class="cardBottom bg2">
+                <div className="cardBottom bg2">
                   <p>View More</p>
-                  <i class="fi fi-rr-angle-double-small-right"></i>
+                  <i className="fi fi-rr-angle-double-small-right"></i>
                 </div>
               </div>
             </div>
-            <div class="col-lg-3" onClick={() => { navigaet('/Admin/KPIDashboard') }}>
-              <div class="cardDash">
+            <div className="col-xl-3 col-lg-4 col-md-6 col-sm-6" onClick={() => { navigaet('/Admin/KPIDashboard') }}>
+              <div className="cardDash">
                 <h6 className="hd_dash">Leave</h6>
-                <div class="iconParent">
-                  <div class="cardContent">
+                <div className="iconParent">
+                  <div className="cardContent">
                     <p className="para_dash"><CountUp end={countdata?.no_of_invoices} /></p>
                   </div>
-                  <div class="iconGrad">
+                  <div className="iconGrad">
                     <i className="fa fa-calendar"></i>
                   </div>
                 </div>
-                <div class="cardBottom bg2">
+                <div className="cardBottom bg2">
                   <p>View More</p>
-                  <i class="fi fi-rr-angle-double-small-right"></i>
+                  <i className="fi fi-rr-angle-double-small-right"></i>
                 </div>
               </div>
             </div>
@@ -185,7 +185,7 @@ export default function Dashboard() {
                   <div className="chartWrapper">
                     <Donutchart />
                   </div>
-                  <p className="mb-0 text-center">All Freight</p>
+                  <p className="mb-2 text-center">All Freight</p>
                 </div>
               </div>
             </div>

@@ -2504,7 +2504,7 @@ export default function Addsupplierinvoice() {
                           <th>Discount </th>
                           <th>Exclusive </th>
                           <th>VAT </th>
-                          <th>Total </th>
+                          <th>VAT Incl </th>
                         </tr>
                       </thead>
 

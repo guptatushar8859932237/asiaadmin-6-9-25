@@ -2566,8 +2566,8 @@ export default function Addsupplierinvoice() {
                                 verticalAlign: "middle",
                               }}
                               type="text"
-                              onKeyPress={handlepresss}
                               className="supplier_form"
+                              onKeyPress={handlepresss}
                               onChange={handlechangecalc}
                               value={freight?.origin_pick_up_cost}
                               name="origin_pick_up_cost"
@@ -2716,7 +2716,7 @@ export default function Addsupplierinvoice() {
                           </td>
                           <td>
                             {" "}
-                            <select name="org_pickUp_vatTyp">
+                            <select name="org_pickUp_vatTyp"  onChange={handlechangecalc}>
                               <option value="">No Vat</option>
                               <option value="15">Standard Rate(15.00%)</option>
                               <option value="15">
@@ -2756,7 +2756,7 @@ export default function Addsupplierinvoice() {
                             {" "}
                             <input
                               type="text"
-                              placeholder="0.00"
+                              placeholder="0.00"  onChange={handlechangecalc}
                               className="supplier_form"
                               name="org_pickUp_disc%"
                             />{" "}
@@ -2765,7 +2765,8 @@ export default function Addsupplierinvoice() {
                             {" "}
                             <input
                               type="text"
-                              placeholder="0.00"
+                              placeholder="0.00" onChange={handlechangecalc}
+                              name="org_pickUp_disc"
                               className="supplier_form"
                             />{" "}
                           </td>
@@ -2774,6 +2775,7 @@ export default function Addsupplierinvoice() {
                             <input
                               type="text"
                               placeholder="0.00"
+                              name='org_pickUp_exclusive' onChange={handlechangecalc}
                               className="supplier_form"
                             />{" "}
                           </td>
@@ -2781,7 +2783,8 @@ export default function Addsupplierinvoice() {
                             {" "}
                             <input
                               type="text"
-                              placeholder="0.00"
+                              placeholder="0.00" onChange={handlechangecalc}
+                              name='org_pickUp_vat'
                               className="supplier_form"
                             />{" "}
                           </td>
@@ -2999,7 +3002,7 @@ export default function Addsupplierinvoice() {
                           </td>
                           <td>
                             {" "}
-                            <select name="origin_fuelSur_vatTyp">
+                            <select name="origin_fuelSur_vatTyp" onChange={handlechangecalc}>
                               <option value="">No Vat</option>
                               <option value="15">Standard Rate(15.00%)</option>
                               <option value="15">
@@ -3042,6 +3045,7 @@ export default function Addsupplierinvoice() {
                               placeholder="0.00"
                               className="supplier_form"
                               name="origin_fuelSur_disc%"
+                              onChange={handlechangecalc}
                             />{" "}
                           </td>
                           <td>
@@ -3049,7 +3053,9 @@ export default function Addsupplierinvoice() {
                             <input
                               type="text"
                               placeholder="0.00"
+                               name="origin_fuelSur_disc"
                               className="supplier_form"
+                              onChange={handlechangecalc}
                             />{" "}
                           </td>
                           <td>
@@ -3057,14 +3063,18 @@ export default function Addsupplierinvoice() {
                             <input
                               type="text"
                               placeholder="0.00"
+                              name='origin_fuelSur_exclusive'
                               className="supplier_form"
+                              onChange={handlechangecalc}
                             />{" "}
                           </td>
                           <td>
                             {" "}
                             <input
                               type="text"
+                               onChange={handlechangecalc}
                               placeholder="0.00"
+                              name='origin_fuelSur_vat'
                               className="supplier_form"
                             />{" "}
                           </td>
@@ -3283,7 +3293,7 @@ export default function Addsupplierinvoice() {
                           </td>
                           <td>
                             {" "}
-                             <select name="origin_cfs_vatTyp">
+                             <select name="origin_cfs_vatTyp" onChange={handlechangecalc}>
                               <option value="">No Vat</option>
                               <option value="15">Standard Rate(15.00%)</option>
                               <option value="15">
@@ -3326,6 +3336,16 @@ export default function Addsupplierinvoice() {
                               placeholder="0.00"
                               className="supplier_form"
                               name="origin_cfs_disc%"
+                              onChange={handlechangecalc}
+                            />{" "}
+                          </td>
+                          <td>
+                            {" "}
+                            <input
+                              type="text"
+                              name="origin_cfs_disc"
+                              placeholder="0.00"
+                              className="supplier_form"onChange={handlechangecalc}
                             />{" "}
                           </td>
                           <td>
@@ -3333,6 +3353,7 @@ export default function Addsupplierinvoice() {
                             <input
                               type="text"
                               placeholder="0.00"
+                              name='origin_cfs_exclusive'onChange={handlechangecalc}
                               className="supplier_form"
                             />{" "}
                           </td>
@@ -3341,14 +3362,7 @@ export default function Addsupplierinvoice() {
                             <input
                               type="text"
                               placeholder="0.00"
-                              className="supplier_form"
-                            />{" "}
-                          </td>
-                          <td>
-                            {" "}
-                            <input
-                              type="text"
-                              placeholder="0.00"
+                              name='origin_cfs_vat'onChange={handlechangecalc}
                               className="supplier_form"
                             />{" "}
                           </td>
@@ -3570,7 +3584,7 @@ export default function Addsupplierinvoice() {
                           </td>
                           <td>
                             {" "}
-                            <select name="org_docFee_vatTyp">
+                            <select name="org_docFee_vatTyp" onChange={handlechangecalc}>
                               <option value="">No Vat</option>
                               <option value="15">Standard Rate(15.00%)</option>
                               <option value="15">
@@ -3609,7 +3623,7 @@ export default function Addsupplierinvoice() {
                           <td>
                             {" "}
                             <input
-                              type="text"
+                              type="text"onChange={handlechangecalc}
                               placeholder="0.00"
                               className="supplier_form"
                               name="org_docFee_disc%"
@@ -3619,7 +3633,8 @@ export default function Addsupplierinvoice() {
                             {" "}
                             <input
                               type="text"
-                              placeholder="0.00"
+                              placeholder="0.00"onChange={handlechangecalc}
+                              name="org_docFee_disc"
                               className="supplier_form"
                             />{" "}
                           </td>
@@ -3627,7 +3642,8 @@ export default function Addsupplierinvoice() {
                             {" "}
                             <input
                               type="text"
-                              placeholder="0.00"
+                              placeholder="0.00"onChange={handlechangecalc}
+                              name='org_docFee_exclusive'
                               className="supplier_form"
                             />{" "}
                           </td>
@@ -3635,7 +3651,8 @@ export default function Addsupplierinvoice() {
                             {" "}
                             <input
                               type="text"
-                              placeholder="0.00"
+                              placeholder="0.00"onChange={handlechangecalc}
+                              name='org_docFee_vat'
                               className="supplier_form"
                             />{" "}
                           </td>
@@ -3643,7 +3660,7 @@ export default function Addsupplierinvoice() {
                             {" "}
                             <input
                               type="text"
-                              placeholder="0.00"
+                              placeholder="0.00"onChange={handlechangecalc}
                               className="supplier_form"
                             />{" "}
                           </td>
@@ -3858,7 +3875,7 @@ export default function Addsupplierinvoice() {
                           </td>
                           <td>
                             {" "}
-                             <select name="org_forwFee_vatTyp">
+                             <select name="org_forwFee_vatTyp" onChange={handlechangecalc}>
                               <option value="">No Vat</option>
                               <option value="15">Standard Rate(15.00%)</option>
                               <option value="15">
@@ -3899,7 +3916,7 @@ export default function Addsupplierinvoice() {
                             <input
                               type="text"
                               placeholder="0.00"
-                              className="supplier_form"
+                              className="supplier_form"onChange={handlechangecalc}
                               name="org_forwFee_disc%"
                             />{" "}
                           </td>
@@ -3908,6 +3925,16 @@ export default function Addsupplierinvoice() {
                             <input
                               type="text"
                               placeholder="0.00"
+                              name="org_forwFee_disc"
+                              className="supplier_form"onChange={handlechangecalc}
+                            />{" "}
+                          </td>
+                          <td>
+                            {" "}
+                            <input
+                              type="text"
+                              placeholder="0.00"
+                              name='org_forwFee_exclusive'onChange={handlechangecalc}
                               className="supplier_form"
                             />{" "}
                           </td>
@@ -3916,6 +3943,7 @@ export default function Addsupplierinvoice() {
                             <input
                               type="text"
                               placeholder="0.00"
+                              name='org_forwFee_vat'onChange={handlechangecalc}
                               className="supplier_form"
                             />{" "}
                           </td>
@@ -3923,15 +3951,7 @@ export default function Addsupplierinvoice() {
                             {" "}
                             <input
                               type="text"
-                              placeholder="0.00"
-                              className="supplier_form"
-                            />{" "}
-                          </td>
-                          <td>
-                            {" "}
-                            <input
-                              type="text"
-                              placeholder="0.00"
+                              placeholder="0.00"onChange={handlechangecalc}
                               className="supplier_form"
                             />{" "}
                           </td>
@@ -4142,7 +4162,7 @@ export default function Addsupplierinvoice() {
                           </td>
                           <td>
                             {" "}
-                            <select name="org_clearance_vatTyp">
+                            <select name="org_clearance_vatTyp" onChange={handlechangecalc}>
                               <option value="">No Vat</option>
                               <option value="15">Standard Rate(15.00%)</option>
                               <option value="15">
@@ -4183,7 +4203,7 @@ export default function Addsupplierinvoice() {
                             <input
                               type="text"
                               placeholder="0.00"
-                              className="supplier_form"
+                              className="supplier_form"onChange={handlechangecalc}
                               name="org_clearance_disc%"
                             />{" "}
                           </td>
@@ -4191,7 +4211,8 @@ export default function Addsupplierinvoice() {
                             {" "}
                             <input
                               type="text"
-                              placeholder="0.00"
+                              placeholder="0.00"onChange={handlechangecalc}
+                              name="org_clearance_disc"
                               className="supplier_form"
                             />{" "}
                           </td>
@@ -4200,6 +4221,7 @@ export default function Addsupplierinvoice() {
                             <input
                               type="text"
                               placeholder="0.00"
+                              name="org_clearance_exclusive"onChange={handlechangecalc}
                               className="supplier_form"
                             />{" "}
                           </td>
@@ -4207,7 +4229,8 @@ export default function Addsupplierinvoice() {
                             {" "}
                             <input
                               type="text"
-                              placeholder="0.00"
+                              placeholder="0.00" onChange={handlechangecalc}
+                              name='org_clearance_vat'
                               className="supplier_form"
                             />{" "}
                           </td>
@@ -4442,7 +4465,7 @@ export default function Addsupplierinvoice() {
                           </td>
                           <td>
                             {" "}
-                            <select name="ocenfreight_charge_vatTyp">
+                            <select name="ocenfreight_charge_vatTyp" onChange={handlechangecalc}>
                               <option value="">No Vat</option>
                               <option value="15">Standard Rate(15.00%)</option>
                               <option value="15">
@@ -4483,7 +4506,7 @@ export default function Addsupplierinvoice() {
                             <input
                               type="text"
                               placeholder="0.00"
-                              className="supplier_form"
+                              className="supplier_form"onChange={handlechangecalc}
                               name="ocenfreight_charge_disc%"
                             />{" "}
                           </td>
@@ -4491,7 +4514,8 @@ export default function Addsupplierinvoice() {
                             {" "}
                             <input
                               type="text"
-                              placeholder="0.00"
+                              placeholder="0.00"onChange={handlechangecalc}
+                              name="ocenfreight_charge_disc"
                               className="supplier_form"
                             />{" "}
                           </td>
@@ -4500,6 +4524,7 @@ export default function Addsupplierinvoice() {
                             <input
                               type="text"
                               placeholder="0.00"
+                              name='ocenfreight_charge_exclusive'onChange={handlechangecalc}
                               className="supplier_form"
                             />{" "}
                           </td>
@@ -4507,7 +4532,8 @@ export default function Addsupplierinvoice() {
                             {" "}
                             <input
                               type="text"
-                              placeholder="0.00"
+                              placeholder="0.00"onChange={handlechangecalc}
+                              name='ocenfreight_charge_vat'
                               className="supplier_form"
                             />{" "}
                           </td>
@@ -4727,7 +4753,7 @@ export default function Addsupplierinvoice() {
                             />
                           </td>
                           <td>
-                            <select name="insurance_vatTyp">
+                            <select name="insurance_vatTyp"onChange={handlechangecalc}>
                               <option value="">No Vat</option>
                               <option value="15">Standard Rate(15.00%)</option>
                               <option value="15">
@@ -4766,7 +4792,7 @@ export default function Addsupplierinvoice() {
                           <td>
                             {" "}
                             <input
-                              type="text"
+                              type="text"onChange={handlechangecalc}
                               placeholder="0.00"
                               className="supplier_form"
                               name="insurance_disc%"
@@ -4776,7 +4802,17 @@ export default function Addsupplierinvoice() {
                             {" "}
                             <input
                               type="text"
+                              placeholder="0.00"onChange={handlechangecalc}
+                              name="insurance_disc"
+                              className="supplier_form"
+                            />{" "}
+                          </td>
+                          <td>
+                            {" "}
+                            <input
+                              type="text"onChange={handlechangecalc}
                               placeholder="0.00"
+                              name='insurance_exclusive'
                               className="supplier_form"
                             />{" "}
                           </td>
@@ -4784,15 +4820,8 @@ export default function Addsupplierinvoice() {
                             {" "}
                             <input
                               type="text"
-                              placeholder="0.00"
-                              className="supplier_form"
-                            />{" "}
-                          </td>
-                          <td>
-                            {" "}
-                            <input
-                              type="text"
-                              placeholder="0.00"
+                              placeholder="0.00"onChange={handlechangecalc}
+                              name='insurance_vat'
                               className="supplier_form"
                             />{" "}
                           </td>
@@ -5032,7 +5061,7 @@ export default function Addsupplierinvoice() {
                           </td>
                           <td>
                             {" "}
-                             <select name="trans_clear_fees_vatTyp">
+                             <select name="trans_clear_fees_vatTyp" onChange={handlechangecalc}>
                               <option value="">No Vat</option>
                               <option value="15">Standard Rate(15.00%)</option>
                               <option value="15">
@@ -5071,8 +5100,27 @@ export default function Addsupplierinvoice() {
                           <td>
                             {" "}
                             <input
-                              type="text"
+                              type="text"onChange={handlechangecalc}
                               placeholder="0.00"
+                              name="trans_clear_fees_disc%"
+                              className="supplier_form"
+                            />{" "}
+                          </td>
+                          <td>
+                            {" "}
+                            <input
+                              type="text"onChange={handlechangecalc}
+                              placeholder="0.00"
+                              name="trans_clear_fees_disc"
+                              className="supplier_form"
+                            />{" "}
+                          </td>
+                          <td>
+                            {" "}
+                            <input
+                              type="text"onChange={handlechangecalc}
+                              placeholder="0.00"
+                              name='trans_clear_fees_exclusive'
                               className="supplier_form"
                             />{" "}
                           </td>
@@ -5080,23 +5128,8 @@ export default function Addsupplierinvoice() {
                             {" "}
                             <input
                               type="text"
-                              placeholder="0.00"
-                              className="supplier_form"
-                            />{" "}
-                          </td>
-                          <td>
-                            {" "}
-                            <input
-                              type="text"
-                              placeholder="0.00"
-                              className="supplier_form"
-                            />{" "}
-                          </td>
-                          <td>
-                            {" "}
-                            <input
-                              type="text"
-                              placeholder="0.00"
+                              placeholder="0.00"onChange={handlechangecalc}
+                              name='trans_clear_fees_vat'
                               className="supplier_form"
                             />{" "}
                           </td>
@@ -5313,7 +5346,7 @@ export default function Addsupplierinvoice() {
                           </td>
                           <td>
                             {" "}
-                           <select name="trans_THC_levy_vatTyp">
+                           <select name="trans_THC_levy_vatTyp"onChange={handlechangecalc}>
                               <option value="">No Vat</option>
                               <option value="15">Standard Rate(15.00%)</option>
                               <option value="15">
@@ -5353,7 +5386,26 @@ export default function Addsupplierinvoice() {
                             {" "}
                             <input
                               type="text"
+                              placeholder="0.00"onChange={handlechangecalc}
+                              name="trans_THC_levy_disc%"
+                              className="supplier_form"
+                            />{" "}
+                          </td>
+                          <td>
+                            {" "}
+                            <input
+                              type="text"
+                              placeholder="0.00"onChange={handlechangecalc}
+                              name="trans_THC_levy_disc"
+                              className="supplier_form"
+                            />{" "}
+                          </td>
+                          <td>
+                            {" "}
+                            <input
+                              type="text"onChange={handlechangecalc}
                               placeholder="0.00"
+                              name='trans_THC_levy_exclusive'
                               className="supplier_form"
                             />{" "}
                           </td>
@@ -5362,22 +5414,7 @@ export default function Addsupplierinvoice() {
                             <input
                               type="text"
                               placeholder="0.00"
-                              className="supplier_form"
-                            />{" "}
-                          </td>
-                          <td>
-                            {" "}
-                            <input
-                              type="text"
-                              placeholder="0.00"
-                              className="supplier_form"
-                            />{" "}
-                          </td>
-                          <td>
-                            {" "}
-                            <input
-                              type="text"
-                              placeholder="0.00"
+                              name='trans_THC_levy_vat'onChange={handlechangecalc}
                               className="supplier_form"
                             />{" "}
                           </td>
@@ -5593,7 +5630,7 @@ export default function Addsupplierinvoice() {
                           </td>
                           <td>
                             {" "}
-                             <select name="trans_unpack_charg_vatTyp">
+                             <select name="trans_unpack_charg_vatTyp"onChange={handlechangecalc}>
                               <option value="">No Vat</option>
                               <option value="15">Standard Rate(15.00%)</option>
                               <option value="15">
@@ -5632,8 +5669,9 @@ export default function Addsupplierinvoice() {
                           <td>
                             {" "}
                             <input
-                              type="text"
+                              type="text"onChange={handlechangecalc}
                               placeholder="0.00"
+                              name="trans_unpack_charg_disc%"
                               className="supplier_form"
                             />{" "}
                           </td>
@@ -5641,7 +5679,17 @@ export default function Addsupplierinvoice() {
                             {" "}
                             <input
                               type="text"
+                              placeholder="0.00"onChange={handlechangecalc}
+                              name="trans_unpack_charg_disc"
+                              className="supplier_form"
+                            />{" "}
+                          </td>
+                          <td>
+                            {" "}
+                            <input
+                              type="text"onChange={handlechangecalc}
                               placeholder="0.00"
+                              name='trans_unpack_charg_exclusive'
                               className="supplier_form"
                             />{" "}
                           </td>
@@ -5649,15 +5697,8 @@ export default function Addsupplierinvoice() {
                             {" "}
                             <input
                               type="text"
-                              placeholder="0.00"
-                              className="supplier_form"
-                            />{" "}
-                          </td>
-                          <td>
-                            {" "}
-                            <input
-                              type="text"
-                              placeholder="0.00"
+                              placeholder="0.00"onChange={handlechangecalc}
+                              name='trans_unpack_charg_vat'
                               className="supplier_form"
                             />{" "}
                           </td>
@@ -5874,7 +5915,7 @@ export default function Addsupplierinvoice() {
                           </td>
                           <td>
                             {" "}
-                            <select name="trans_CFS_charg_vatTyp">
+                            <select name="trans_CFS_charg_vatTyp"onChange={handlechangecalc}>
                               <option value="">No Vat</option>
                               <option value="15">Standard Rate(15.00%)</option>
                               <option value="15">
@@ -5914,7 +5955,17 @@ export default function Addsupplierinvoice() {
                             {" "}
                             <input
                               type="text"
-                              placeholder="0.00"
+                              placeholder="0.00"onChange={handlechangecalc}
+                              name="trans_CFS_charg_disc%"
+                              className="supplier_form"
+                            />{" "}
+                          </td>
+                          <td>
+                            {" "}
+                            <input
+                              type="text"
+                              placeholder="0.00"onChange={handlechangecalc}
+                              name="trans_CFS_charg_disc"
                               className="supplier_form"
                             />{" "}
                           </td>
@@ -5923,6 +5974,7 @@ export default function Addsupplierinvoice() {
                             <input
                               type="text"
                               placeholder="0.00"
+                              name='trans_CFS_charg_exclusive'onChange={handlechangecalc}
                               className="supplier_form"
                             />{" "}
                           </td>
@@ -5931,14 +5983,7 @@ export default function Addsupplierinvoice() {
                             <input
                               type="text"
                               placeholder="0.00"
-                              className="supplier_form"
-                            />{" "}
-                          </td>
-                          <td>
-                            {" "}
-                            <input
-                              type="text"
-                              placeholder="0.00"
+                              name='trans_CFS_charg_vat'onChange={handlechangecalc}
                               className="supplier_form"
                             />{" "}
                           </td>
@@ -6154,7 +6199,7 @@ export default function Addsupplierinvoice() {
                           </td>
                           <td>
                             {" "}
-                            <select name="trans_admin_charg_vatTyp">
+                            <select name="trans_admin_charg_vatTyp"onChange={handlechangecalc}>
                               <option value="">No Vat</option>
                               <option value="15">Standard Rate(15.00%)</option>
                               <option value="15">
@@ -6194,7 +6239,8 @@ export default function Addsupplierinvoice() {
                             {" "}
                             <input
                               type="text"
-                              placeholder="0.00"
+                              placeholder="0.00"onChange={handlechangecalc}
+                              name="trans_admin_charg_disc%"
                               className="supplier_form"
                             />{" "}
                           </td>
@@ -6203,6 +6249,7 @@ export default function Addsupplierinvoice() {
                             <input
                               type="text"
                               placeholder="0.00"
+                              name='trans_admin_charg_disc'onChange={handlechangecalc}
                               className="supplier_form"
                             />{" "}
                           </td>
@@ -6211,6 +6258,7 @@ export default function Addsupplierinvoice() {
                             <input
                               type="text"
                               placeholder="0.00"
+                              name='trans_admin_charg_exclusive'onChange={handlechangecalc}
                               className="supplier_form"
                             />{" "}
                           </td>
@@ -6219,6 +6267,7 @@ export default function Addsupplierinvoice() {
                             <input
                               type="text"
                               placeholder="0.00"
+                              name='trans_admin_charg_vat'onChange={handlechangecalc}
                               className="supplier_form"
                             />{" "}
                           </td>
@@ -6434,7 +6483,7 @@ export default function Addsupplierinvoice() {
                           </td>
                           <td>
                             {" "}
-                           <select name="trans_portCargo_vatTyp">
+                           <select name="trans_portCargo_vatTyp"onChange={handlechangecalc}>
                               <option value="">No Vat</option>
                               <option value="15">Standard Rate(15.00%)</option>
                               <option value="15">
@@ -6474,7 +6523,17 @@ export default function Addsupplierinvoice() {
                             {" "}
                             <input
                               type="text"
+                              placeholder="0.00"onChange={handlechangecalc}
+                              name="trans_portCargo_disc%"
+                              className="supplier_form"
+                            />{" "}
+                          </td>
+                          <td>
+                            {" "}
+                            <input
+                              type="text"onChange={handlechangecalc}
                               placeholder="0.00"
+                              name="trans_portCargo_disc"
                               className="supplier_form"
                             />{" "}
                           </td>
@@ -6483,6 +6542,7 @@ export default function Addsupplierinvoice() {
                             <input
                               type="text"
                               placeholder="0.00"
+                              name='trans_portCargo_exclusive'onChange={handlechangecalc}
                               className="supplier_form"
                             />{" "}
                           </td>
@@ -6491,15 +6551,8 @@ export default function Addsupplierinvoice() {
                             <input
                               type="text"
                               placeholder="0.00"
-                              className="supplier_form"
-                            />{" "}
-                          </td>
-                          <td>
-                            {" "}
-                            <input
-                              type="text"
-                              placeholder="0.00"
-                              className="supplier_form"
+                              name='trans_portCargo_vat'
+                              className="supplier_form"onChange={handlechangecalc}
                             />{" "}
                           </td>
                           <td>
@@ -6714,7 +6767,7 @@ export default function Addsupplierinvoice() {
                           </td>
                           <td>
                             {" "}
-                            <select name="trans_adv_loadHouse_vatTyp">
+                            <select name="trans_adv_loadHouse_vatTyp"onChange={handlechangecalc}>
                               <option value="">No Vat</option>
                               <option value="15">Standard Rate(15.00%)</option>
                               <option value="15">
@@ -6754,7 +6807,8 @@ export default function Addsupplierinvoice() {
                             {" "}
                             <input
                               type="text"
-                              placeholder="0.00"
+                              placeholder="0.00"onChange={handlechangecalc}
+                              name="trans_adv_loadHouse_disc%"
                               className="supplier_form"
                             />{" "}
                           </td>
@@ -6762,7 +6816,8 @@ export default function Addsupplierinvoice() {
                             {" "}
                             <input
                               type="text"
-                              placeholder="0.00"
+                              placeholder="0.00"onChange={handlechangecalc}
+                              name="trans_adv_loadHouse_disc"
                               className="supplier_form"
                             />{" "}
                           </td>
@@ -6770,7 +6825,17 @@ export default function Addsupplierinvoice() {
                             {" "}
                             <input
                               type="text"
+                              placeholder="0.00"onChange={handlechangecalc}
+                              name='trans_adv_loadHouse_exclusive'
+                              className="supplier_form"
+                            />{" "}
+                          </td>
+                          <td>
+                            {" "}
+                            <input
+                              type="text"onChange={handlechangecalc}
                               placeholder="0.00"
+                              name='trans_adv_loadHouse_vat'
                               className="supplier_form"
                             />{" "}
                           </td>
@@ -6778,15 +6843,7 @@ export default function Addsupplierinvoice() {
                             {" "}
                             <input
                               type="text"
-                              placeholder="0.00"
-                              className="supplier_form"
-                            />{" "}
-                          </td>
-                          <td>
-                            {" "}
-                            <input
-                              type="text"
-                              placeholder="0.00"
+                              placeholder="0.00"onChange={handlechangecalc}
                               className="supplier_form"
                             />{" "}
                           </td>
@@ -7000,7 +7057,7 @@ export default function Addsupplierinvoice() {
                           </td>
                           <td>
                             {" "}
-                            <select name="trans_doc_fee_vatTyp">
+                            <select name="trans_doc_fee_vatTyp"onChange={handlechangecalc}>
                               <option value="">No Vat</option>
                               <option value="15">Standard Rate(15.00%)</option>
                               <option value="15">
@@ -7040,7 +7097,8 @@ export default function Addsupplierinvoice() {
                             {" "}
                             <input
                               type="text"
-                              placeholder="0.00"
+                              name="trans_doc_fee_disc%"
+                              placeholder="0.00"onChange={handlechangecalc}
                               className="supplier_form"
                             />{" "}
                           </td>
@@ -7049,6 +7107,7 @@ export default function Addsupplierinvoice() {
                             <input
                               type="text"
                               placeholder="0.00"
+                              name="trans_doc_fee_disc"onChange={handlechangecalc}
                               className="supplier_form"
                             />{" "}
                           </td>
@@ -7057,6 +7116,7 @@ export default function Addsupplierinvoice() {
                             <input
                               type="text"
                               placeholder="0.00"
+                              name='trans_doc_fee_exclusive'onChange={handlechangecalc}
                               className="supplier_form"
                             />{" "}
                           </td>
@@ -7064,7 +7124,8 @@ export default function Addsupplierinvoice() {
                             {" "}
                             <input
                               type="text"
-                              placeholder="0.00"
+                              placeholder="0.00"onChange={handlechangecalc}
+                              name='trans_doc_fee_vat'
                               className="supplier_form"
                             />{" "}
                           </td>
@@ -7072,7 +7133,7 @@ export default function Addsupplierinvoice() {
                             {" "}
                             <input
                               type="text"
-                              placeholder="0.00"
+                              placeholder="0.00"onChange={handlechangecalc}
                               className="supplier_form"
                             />{" "}
                           </td>
@@ -7307,7 +7368,7 @@ export default function Addsupplierinvoice() {
                           </td>
                           <td>
                             {" "}
-                            <select name="dest_clearing_fees_vatTyp">
+                            <select name="dest_clearing_fees_vatTyp"onChange={handlechangecalc}>
                               <option value="">No Vat</option>
                               <option value="15">Standard Rate(15.00%)</option>
                               <option value="15">
@@ -7346,8 +7407,9 @@ export default function Addsupplierinvoice() {
                           <td>
                             {" "}
                             <input
-                              type="text"
+                              type="text"onChange={handlechangecalc}
                               placeholder="0.00"
+                              name="dest_clearing_fees_disc%"
                               className="supplier_form"
                             />{" "}
                           </td>
@@ -7355,7 +7417,8 @@ export default function Addsupplierinvoice() {
                             {" "}
                             <input
                               type="text"
-                              placeholder="0.00"
+                              placeholder="0.00"onChange={handlechangecalc}
+                              name='dest_clearing_fees_disc'
                               className="supplier_form"
                             />{" "}
                           </td>
@@ -7363,7 +7426,8 @@ export default function Addsupplierinvoice() {
                             {" "}
                             <input
                               type="text"
-                              placeholder="0.00"
+                              placeholder="0.00"onChange={handlechangecalc}
+                              name='dest_clearing_fees_exclusive'
                               className="supplier_form"
                             />{" "}
                           </td>
@@ -7371,7 +7435,8 @@ export default function Addsupplierinvoice() {
                             {" "}
                             <input
                               type="text"
-                              placeholder="0.00"
+                              placeholder="0.00"onChange={handlechangecalc}
+                              name='dest_clearing_fees_vat'
                               className="supplier_form"
                             />{" "}
                           </td>
@@ -7379,7 +7444,7 @@ export default function Addsupplierinvoice() {
                             {" "}
                             <input
                               type="text"
-                              placeholder="0.00"
+                              placeholder="0.00"onChange={handlechangecalc}
                               className="supplier_form"
                             />{" "}
                           </td>
@@ -7594,7 +7659,7 @@ export default function Addsupplierinvoice() {
                           </td>
                           <td>
                             {" "}
-                            <select name="dest_THC_levy_vatTyp">
+                            <select name="dest_THC_levy_vatTyp"onChange={handlechangecalc}>
                               <option value="">No Vat</option>
                               <option value="15">Standard Rate(15.00%)</option>
                               <option value="15">
@@ -7634,6 +7699,16 @@ export default function Addsupplierinvoice() {
                             {" "}
                             <input
                               type="text"
+                              placeholder="0.00"onChange={handlechangecalc}
+                              className="supplier_form"
+                              name="dest_THC_levy_disc%"
+                            />{" "}
+                          </td>
+                          <td>
+                            {" "}
+                            <input
+                              type="text"onChange={handlechangecalc}
+                              name="dest_THC_levy_disc"
                               placeholder="0.00"
                               className="supplier_form"
                             />{" "}
@@ -7642,7 +7717,8 @@ export default function Addsupplierinvoice() {
                             {" "}
                             <input
                               type="text"
-                              placeholder="0.00"
+                              placeholder="0.00"onChange={handlechangecalc}
+                              name='dest_THC_levy_exclusive'
                               className="supplier_form"
                             />{" "}
                           </td>
@@ -7650,15 +7726,8 @@ export default function Addsupplierinvoice() {
                             {" "}
                             <input
                               type="text"
-                              placeholder="0.00"
-                              className="supplier_form"
-                            />{" "}
-                          </td>
-                          <td>
-                            {" "}
-                            <input
-                              type="text"
-                              placeholder="0.00"
+                              placeholder="0.00"onChange={handlechangecalc}
+                              name='dest_THC_levy_vat'
                               className="supplier_form"
                             />{" "}
                           </td>
@@ -7887,7 +7956,7 @@ export default function Addsupplierinvoice() {
                           </td>
                           <td>
                             {" "}
-                            <select name="dest_unpack_chrg_vatTyp">
+                            <select name="dest_unpack_chrg_vatTyp"onChange={handlechangecalc}>
                               <option value="">No Vat</option>
                               <option value="15">Standard Rate(15.00%)</option>
                               <option value="15">
@@ -7927,6 +7996,25 @@ export default function Addsupplierinvoice() {
                             {" "}
                             <input
                               type="text"
+                              placeholder="0.00"onChange={handlechangecalc}
+                              name="dest_unpack_chrg_disc%"
+                              className="supplier_form"
+                            />{" "}
+                          </td>
+                          <td>
+                            {" "}
+                            <input
+                              type="text"
+                              placeholder="0.00"onChange={handlechangecalc}
+                              name="dest_unpack_chrg_disc"
+                              className="supplier_form"
+                            />{" "}
+                          </td>
+                          <td>
+                            {" "}
+                            <input
+                              type="text"onChange={handlechangecalc}
+                                name='dest_unpack_chrg_exclusive'
                               placeholder="0.00"
                               className="supplier_form"
                             />{" "}
@@ -7935,23 +8023,8 @@ export default function Addsupplierinvoice() {
                             {" "}
                             <input
                               type="text"
-                              placeholder="0.00"
-                              className="supplier_form"
-                            />{" "}
-                          </td>
-                          <td>
-                            {" "}
-                            <input
-                              type="text"
-                              placeholder="0.00"
-                              className="supplier_form"
-                            />{" "}
-                          </td>
-                          <td>
-                            {" "}
-                            <input
-                              type="text"
-                              placeholder="0.00"
+                              placeholder="0.00"onChange={handlechangecalc}
+                              name='dest_unpack_chrg_vat'
                               className="supplier_form"
                             />{" "}
                           </td>
@@ -8191,7 +8264,7 @@ export default function Addsupplierinvoice() {
                           </td>
                           <td>
                             {" "}
-                            <select name="dest_fuel_Surchar_vatTyp">
+                            <select name="dest_fuel_Surchar_vatTyp"onChange={handlechangecalc}>
                               <option value="">No Vat</option>
                               <option value="15">Standard Rate(15.00%)</option>
                               <option value="15">
@@ -8231,7 +8304,8 @@ export default function Addsupplierinvoice() {
                             {" "}
                             <input
                               type="text"
-                              placeholder="0.00"
+                              placeholder="0.00"onChange={handlechangecalc}
+                              name="dest_fuel_Surchar_disc%"
                               className="supplier_form"
                             />{" "}
                           </td>
@@ -8239,8 +8313,9 @@ export default function Addsupplierinvoice() {
                             {" "}
                             <input
                               type="text"
+                              name="dest_fuel_Surchar_disc"
                               placeholder="0.00"
-                              className="supplier_form"
+                              className="supplier_form"onChange={handlechangecalc}
                             />{" "}
                           </td>
                           <td>
@@ -8248,6 +8323,7 @@ export default function Addsupplierinvoice() {
                             <input
                               type="text"
                               placeholder="0.00"
+                              name='dest_fuel_Surchar_exclusive'onChange={handlechangecalc}
                               className="supplier_form"
                             />{" "}
                           </td>
@@ -8255,7 +8331,8 @@ export default function Addsupplierinvoice() {
                             {" "}
                             <input
                               type="text"
-                              placeholder="0.00"
+                              placeholder="0.00"onChange={handlechangecalc}
+                              name='dest_fuel_Surchar_vat'
                               className="supplier_form"
                             />{" "}
                           </td>
@@ -8493,7 +8570,7 @@ export default function Addsupplierinvoice() {
                           </td>
                           <td>
                             {" "}
-                            <select name="dest_admin_chrg_vatTyp">
+                            <select name="dest_admin_chrg_vatTyp"onChange={handlechangecalc}>
                               <option value="">No Vat</option>
                               <option value="15">Standard Rate(15.00%)</option>
                               <option value="15">
@@ -8534,6 +8611,7 @@ export default function Addsupplierinvoice() {
                             <input
                               type="text"
                               placeholder="0.00"
+                              name="dest_admin_chrg_disc%"onChange={handlechangecalc}
                               className="supplier_form"
                             />{" "}
                           </td>
@@ -8542,6 +8620,16 @@ export default function Addsupplierinvoice() {
                             <input
                               type="text"
                               placeholder="0.00"
+                              name="dest_admin_chrg_disc"
+                              className="supplier_form"onChange={handlechangecalc}
+                            />{" "}
+                          </td>
+                          <td>
+                            {" "}
+                            <input
+                              type="text"
+                              placeholder="0.00"
+                              name='dest_admin_chrg_exclusive'onChange={handlechangecalc}
                               className="supplier_form"
                             />{" "}
                           </td>
@@ -8550,14 +8638,7 @@ export default function Addsupplierinvoice() {
                             <input
                               type="text"
                               placeholder="0.00"
-                              className="supplier_form"
-                            />{" "}
-                          </td>
-                          <td>
-                            {" "}
-                            <input
-                              type="text"
-                              placeholder="0.00"
+                              name='dest_admin_chrg_vat'onChange={handlechangecalc}
                               className="supplier_form"
                             />{" "}
                           </td>
@@ -8784,7 +8865,7 @@ export default function Addsupplierinvoice() {
                           </td>
                           <td>
                             {" "}
-                           <select name="dest_portCargo_vatTyp">
+                           <select name="dest_portCargo_vatTyp"onChange={handlechangecalc}>
                               <option value="">No Vat</option>
                               <option value="15">Standard Rate(15.00%)</option>
                               <option value="15">
@@ -8824,7 +8905,17 @@ export default function Addsupplierinvoice() {
                             {" "}
                             <input
                               type="text"
-                              placeholder="0.00"
+                              placeholder="0.00"onChange={handlechangecalc}
+                              name="dest_portCargo_disc%"
+                              className="supplier_form"
+                            />{" "}
+                          </td>
+                          <td>
+                            {" "}
+                            <input
+                              type="text"
+                              placeholder="0.00"onChange={handlechangecalc}
+                              name="dest_portCargo_disc"
                               className="supplier_form"
                             />{" "}
                           </td>
@@ -8833,6 +8924,7 @@ export default function Addsupplierinvoice() {
                             <input
                               type="text"
                               placeholder="0.00"
+                              name='dest_portCargo_exclusive'onChange={handlechangecalc}
                               className="supplier_form"
                             />{" "}
                           </td>
@@ -8840,15 +8932,8 @@ export default function Addsupplierinvoice() {
                             {" "}
                             <input
                               type="text"
-                              placeholder="0.00"
-                              className="supplier_form"
-                            />{" "}
-                          </td>
-                          <td>
-                            {" "}
-                            <input
-                              type="text"
-                              placeholder="0.00"
+                              placeholder="0.00"onChange={handlechangecalc}
+                              name='dest_portCargo_vat'
                               className="supplier_form"
                             />{" "}
                           </td>
@@ -9078,7 +9163,7 @@ export default function Addsupplierinvoice() {
                           </td>
                           <td>
                             {" "}
-                            <select name="dest_adv_loadHouse_vatTyp">
+                            <select name="dest_adv_loadHouse_vatTyp"onChange={handlechangecalc}>
                               <option value="">No Vat</option>
                               <option value="15">Standard Rate(15.00%)</option>
                               <option value="15">
@@ -9118,7 +9203,8 @@ export default function Addsupplierinvoice() {
                             {" "}
                             <input
                               type="text"
-                              placeholder="0.00"
+                              placeholder="0.00"onChange={handlechangecalc}
+                              name="dest_adv_loadHouse_disc%"
                               className="supplier_form"
                             />{" "}
                           </td>
@@ -9127,6 +9213,7 @@ export default function Addsupplierinvoice() {
                             <input
                               type="text"
                               placeholder="0.00"
+                              name="dest_adv_loadHouse_disc"onChange={handlechangecalc}
                               className="supplier_form"
                             />{" "}
                           </td>
@@ -9135,6 +9222,7 @@ export default function Addsupplierinvoice() {
                             <input
                               type="text"
                               placeholder="0.00"
+                              name='dest_adv_loadHouse_exclusive'onChange={handlechangecalc}
                               className="supplier_form"
                             />{" "}
                           </td>
@@ -9142,7 +9230,8 @@ export default function Addsupplierinvoice() {
                             {" "}
                             <input
                               type="text"
-                              placeholder="0.00"
+                              placeholder="0.00"onChange={handlechangecalc}
+                              name='dest_adv_loadHouse_vat'
                               className="supplier_form"
                             />{" "}
                           </td>
@@ -9150,7 +9239,7 @@ export default function Addsupplierinvoice() {
                             {" "}
                             <input
                               type="text"
-                              placeholder="0.00"
+                              placeholder="0.00"onChange={handlechangecalc}
                               className="supplier_form"
                             />{" "}
                           </td>
@@ -9371,7 +9460,7 @@ export default function Addsupplierinvoice() {
                             />
                           </td>
                           <td>
-                            <select name="dest_CFS_charg_vatTyp">
+                            <select name="dest_CFS_charg_vatTyp"onChange={handlechangecalc}>
                               <option value="">No Vat</option>
                               <option value="15">Standard Rate(15.00%)</option>
                               <option value="15">
@@ -9411,7 +9500,8 @@ export default function Addsupplierinvoice() {
                             {" "}
                             <input
                               type="text"
-                              placeholder="0.00"
+                              placeholder="0.00"onChange={handlechangecalc}
+                              name="dest_CFS_charg_disc%"
                               className="supplier_form"
                             />{" "}
                           </td>
@@ -9419,7 +9509,8 @@ export default function Addsupplierinvoice() {
                             {" "}
                             <input
                               type="text"
-                              placeholder="0.00"
+                              placeholder="0.00"onChange={handlechangecalc}
+                              name="dest_CFS_charg_disc"
                               className="supplier_form"
                             />{" "}
                           </td>
@@ -9427,7 +9518,8 @@ export default function Addsupplierinvoice() {
                             {" "}
                             <input
                               type="text"
-                              placeholder="0.00"
+                              placeholder="0.00"onChange={handlechangecalc}
+                              name='dest_CFS_charg_exclusive'
                               className="supplier_form"
                             />{" "}
                           </td>
@@ -9435,7 +9527,8 @@ export default function Addsupplierinvoice() {
                             {" "}
                             <input
                               type="text"
-                              placeholder="0.00"
+                              placeholder="0.00"onChange={handlechangecalc}
+                              name='dest_CFS_charg_vat'
                               className="supplier_form"
                             />{" "}
                           </td>
@@ -9661,7 +9754,7 @@ export default function Addsupplierinvoice() {
                           </td>
                           <td>
                             {" "}
-                            <select name="dest_delivry_charge_vatTyp">
+                            <select name="dest_delivry_charge_vatTyp"onChange={handlechangecalc}>
                               <option value="">No Vat</option>
                               <option value="15">Standard Rate(15.00%)</option>
                               <option value="15">
@@ -9701,7 +9794,8 @@ export default function Addsupplierinvoice() {
                             {" "}
                             <input
                               type="text"
-                              placeholder="0.00"
+                              placeholder="0.00"onChange={handlechangecalc}
+                              name="dest_delivry_charge_disc%"
                               className="supplier_form"
                             />{" "}
                           </td>
@@ -9709,7 +9803,8 @@ export default function Addsupplierinvoice() {
                             {" "}
                             <input
                               type="text"
-                              placeholder="0.00"
+                              placeholder="0.00"onChange={handlechangecalc}
+                              name="dest_delivry_charge_disc"
                               className="supplier_form"
                             />{" "}
                           </td>
@@ -9717,7 +9812,8 @@ export default function Addsupplierinvoice() {
                             {" "}
                             <input
                               type="text"
-                              placeholder="0.00"
+                              placeholder="0.00"onChange={handlechangecalc}
+                              name='dest_delivry_charge_exclusive'
                               className="supplier_form"
                             />{" "}
                           </td>
@@ -9725,7 +9821,8 @@ export default function Addsupplierinvoice() {
                             {" "}
                             <input
                               type="text"
-                              placeholder="0.00"
+                              placeholder="0.00"onChange={handlechangecalc}
+                              name='dest_delivry_charge_vat'
                               className="supplier_form"
                             />{" "}
                           </td>
@@ -9954,7 +10051,7 @@ export default function Addsupplierinvoice() {
                           </td>
                           <td>
                             {" "}
-                           <select name="dest_fuel_surchrg_vatTyp">
+                           <select name="dest_fuel_surchrg_vatTyp"onChange={handlechangecalc}>
                               <option value="">No Vat</option>
                               <option value="15">Standard Rate(15.00%)</option>
                               <option value="15">
@@ -9993,8 +10090,9 @@ export default function Addsupplierinvoice() {
                           <td>
                             {" "}
                             <input
-                              type="text"
+                              type="text"onChange={handlechangecalc}
                               placeholder="0.00"
+                              name="dest_fuel_surchrg_disc%"
                               className="supplier_form"
                             />{" "}
                           </td>
@@ -10002,7 +10100,8 @@ export default function Addsupplierinvoice() {
                             {" "}
                             <input
                               type="text"
-                              placeholder="0.00"
+                              placeholder="0.00"onChange={handlechangecalc}
+                              name="dest_fuel_surchrg_disc"
                               className="supplier_form"
                             />{" "}
                           </td>
@@ -10010,7 +10109,8 @@ export default function Addsupplierinvoice() {
                             {" "}
                             <input
                               type="text"
-                              placeholder="0.00"
+                              placeholder="0.00"onChange={handlechangecalc}
+                              name='dest_fuel_surchrg_exclusive'
                               className="supplier_form"
                             />{" "}
                           </td>
@@ -10018,7 +10118,8 @@ export default function Addsupplierinvoice() {
                             {" "}
                             <input
                               type="text"
-                              placeholder="0.00"
+                              placeholder="0.00"onChange={handlechangecalc}
+                              name='dest_fuel_surchrg_vat'
                               className="supplier_form"
                             />{" "}
                           </td>
@@ -10263,7 +10364,7 @@ export default function Addsupplierinvoice() {
                           </td>
                           <td>
                             {" "}
-                            <select name="admin_agencyFee_vatTyp">
+                            <select name="admin_agencyFee_vatTyp"onChange={handlechangecalc}>
                               <option value="">No Vat</option>
                               <option value="15">Standard Rate(15.00%)</option>
                               <option value="15">
@@ -10304,14 +10405,17 @@ export default function Addsupplierinvoice() {
                             <input
                               type="text"
                               placeholder="0.00"
-                              className="supplier_form"
+                              name='admin_agencyFee_disc%'
+                              className="supplier_form"onChange={handlechangecalc}
                             />{" "}
                           </td>
                           <td>
                             {" "}
                             <input
                               type="text"
-                              placeholder="0.00"
+                              name='admin_agencyFee_disc'
+                              placeholder="0.00"onChange={handlechangecalc}
+                              name='admin_agencyFee_exclusive'
                               className="supplier_form"
                             />{" "}
                           </td>
@@ -10319,7 +10423,8 @@ export default function Addsupplierinvoice() {
                             {" "}
                             <input
                               type="text"
-                              placeholder="0.00"
+                              placeholder="0.00"onChange={handlechangecalc}
+                              name='admin_disbur_fee_exclusive'
                               className="supplier_form"
                             />{" "}
                           </td>
@@ -10327,7 +10432,8 @@ export default function Addsupplierinvoice() {
                             {" "}
                             <input
                               type="text"
-                              placeholder="0.00"
+                              placeholder="0.00"onChange={handlechangecalc}
+                              name='admin_agencyFee_vat'
                               className="supplier_form"
                             />{" "}
                           </td>
@@ -10557,7 +10663,7 @@ export default function Addsupplierinvoice() {
                           </td>
                           <td>
                             {" "}
-                            <select name="admin_disbur_fee_vatTyp">
+                            <select name="admin_disbur_fee_vatTyp"onChange={handlechangecalc}>
                               <option value="">No Vat</option>
                               <option value="15">Standard Rate(15.00%)</option>
                               <option value="15">
@@ -10596,7 +10702,8 @@ export default function Addsupplierinvoice() {
                           <td>
                             {" "}
                             <input
-                              type="text"
+                              type="text"onChange={handlechangecalc}
+                              name='admin_disbur_fee_disc%'
                               placeholder="0.00"
                               className="supplier_form"
                             />{" "}
@@ -10604,7 +10711,8 @@ export default function Addsupplierinvoice() {
                           <td>
                             {" "}
                             <input
-                              type="text"
+                              type="text"onChange={handlechangecalc}
+                              name='admin_disbur_fee_disc'
                               placeholder="0.00"
                               className="supplier_form"
                             />{" "}
@@ -10613,7 +10721,8 @@ export default function Addsupplierinvoice() {
                             {" "}
                             <input
                               type="text"
-                              placeholder="0.00"
+                              placeholder="0.00"onChange={handlechangecalc}
+                              name='admin_disbur_fee_exclusive'
                               className="supplier_form"
                             />{" "}
                           </td>
@@ -10622,6 +10731,7 @@ export default function Addsupplierinvoice() {
                             <input
                               type="text"
                               placeholder="0.00"
+                              name='admin_disbur_fee_vat'onChange={handlechangecalc}
                               className="supplier_form"
                             />{" "}
                           </td>
@@ -10629,7 +10739,7 @@ export default function Addsupplierinvoice() {
                             {" "}
                             <input
                               type="text"
-                              placeholder="0.00"
+                              placeholder="0.00"onChange={handlechangecalc}
                               className="supplier_form"
                             />{" "}
                           </td>
@@ -10839,7 +10949,7 @@ export default function Addsupplierinvoice() {
                           </td>
                           <td>
                             {" "}
-                            <select name="admin_doc_adminFees_vatTyp">
+                            <select name="admin_doc_adminFees_vatTyp"onChange={handlechangecalc}>
                               <option value="">No Vat</option>
                               <option value="15">Standard Rate(15.00%)</option>
                               <option value="15">
@@ -10880,6 +10990,16 @@ export default function Addsupplierinvoice() {
                             <input
                               type="text"
                               placeholder="0.00"
+                              name="admin_doc_adminFees_disc%"onChange={handlechangecalc}
+                              className="supplier_form"
+                            />{" "}
+                          </td>
+                          <td>
+                            {" "}
+                            <input
+                              type="text"onChange={handlechangecalc}
+                              placeholder="0.00"
+                              name='admin_doc_adminFees_disc'
                               className="supplier_form"
                             />{" "}
                           </td>
@@ -10887,7 +11007,8 @@ export default function Addsupplierinvoice() {
                             {" "}
                             <input
                               type="text"
-                              placeholder="0.00"
+                              placeholder="0.00"onChange={handlechangecalc}
+                              name='admin_doc_adminFees_exclusive'
                               className="supplier_form"
                             />{" "}
                           </td>
@@ -10895,15 +11016,8 @@ export default function Addsupplierinvoice() {
                             {" "}
                             <input
                               type="text"
-                              placeholder="0.00"
-                              className="supplier_form"
-                            />{" "}
-                          </td>
-                          <td>
-                            {" "}
-                            <input
-                              type="text"
-                              placeholder="0.00"
+                              placeholder="0.00"onChange={handlechangecalc}
+                              name='admin_doc_adminFees_vat'
                               className="supplier_form"
                             />{" "}
                           </td>
@@ -11145,7 +11259,7 @@ export default function Addsupplierinvoice() {
                           </td>
                           <td>
                             {" "}
-                            <select name="cust_duty_vatTyp">
+                            <select name="cust_duty_vatTyp"onChange={handlechangecalc}>
                               <option value="">No Vat</option>
                               <option value="15">Standard Rate(15.00%)</option>
                               <option value="15">
@@ -11185,14 +11299,16 @@ export default function Addsupplierinvoice() {
                             {" "}
                             <input
                               type="text"
-                              placeholder="0.00"
+                              placeholder="0.00"onChange={handlechangecalc}
+                              name="cust_duty_disc%"
                               className="supplier_form"
                             />{" "}
                           </td>
                           <td>
                             {" "}
                             <input
-                              type="text"
+                              type="text"onChange={handlechangecalc}
+                              name="cust_duty_disc"
                               placeholder="0.00"
                               className="supplier_form"
                             />{" "}
@@ -11201,6 +11317,15 @@ export default function Addsupplierinvoice() {
                             {" "}
                             <input
                               type="text"
+                              name='cust_duty_exclusive'onChange={handlechangecalc}
+                              placeholder="0.00"
+                              className="supplier_form"
+                            />{" "}
+                          </td>
+                          <td>
+                            {" "}
+                            <input
+                              type="text"onChange={handlechangecalc}
                               placeholder="0.00"
                               className="supplier_form"
                             />{" "}
@@ -11209,15 +11334,7 @@ export default function Addsupplierinvoice() {
                             {" "}
                             <input
                               type="text"
-                              placeholder="0.00"
-                              className="supplier_form"
-                            />{" "}
-                          </td>
-                          <td>
-                            {" "}
-                            <input
-                              type="text"
-                              placeholder="0.00"
+                              placeholder="0.00"onChange={handlechangecalc}
                               className="supplier_form"
                             />{" "}
                           </td>
@@ -11439,7 +11556,7 @@ export default function Addsupplierinvoice() {
                           </td>
                           <td>
                             {" "}
-                            <select name="cust_vat_vatTyp">
+                            <select name="cust_vat_vatTyp"onChange={handlechangecalc}>
                               <option value="">No Vat</option>
                               <option value="15">Standard Rate(15.00%)</option>
                               <option value="15">
@@ -11479,15 +11596,17 @@ export default function Addsupplierinvoice() {
                             {" "}
                             <input
                               type="text"
-                              placeholder="0.00"
+                              placeholder="0.00"onChange={handlechangecalc}
+                              name="cust_vat_disc%"
                               className="supplier_form"
                             />{" "}
                           </td>
                           <td>
                             {" "}
                             <input
-                              type="text"
+                              type="text"onChange={handlechangecalc}
                               placeholder="0.00"
+                              name="cust_vat_disc"
                               className="supplier_form"
                             />{" "}
                           </td>
@@ -11495,14 +11614,15 @@ export default function Addsupplierinvoice() {
                             {" "}
                             <input
                               type="text"
-                              placeholder="0.00"
+                              name='cust_vat_exclusive'
+                              placeholder="0.00"onChange={handlechangecalc}
                               className="supplier_form"
                             />{" "}
                           </td>
                           <td>
                             {" "}
                             <input
-                              type="text"
+                              type="text"onChange={handlechangecalc}
                               placeholder="0.00"
                               className="supplier_form"
                             />{" "}
@@ -11721,7 +11841,7 @@ export default function Addsupplierinvoice() {
                           </td>
                           <td>
                             {" "}
-                            <select name="adv_duty_vatTyp">
+                            <select name="adv_duty_vatTyp"onChange={handlechangecalc}>
                               <option value="">No Vat</option>
                               <option value="15">Standard Rate(15.00%)</option>
                               <option value="15">
@@ -11761,7 +11881,17 @@ export default function Addsupplierinvoice() {
                             {" "}
                             <input
                               type="text"
+                              placeholder="0.00"onChange={handlechangecalc}
+                              name="adv_duty_disc%"
+                              className="supplier_form"
+                            />{" "}
+                          </td>
+                          <td>
+                            {" "}
+                            <input
+                              type="text"onChange={handlechangecalc}
                               placeholder="0.00"
+                              name="adv_duty_disc"
                               className="supplier_form"
                             />{" "}
                           </td>
@@ -11769,7 +11899,8 @@ export default function Addsupplierinvoice() {
                             {" "}
                             <input
                               type="text"
-                              placeholder="0.00"
+                              placeholder="0.00"onChange={handlechangecalc}
+                              name='adv_duty_exclusive'
                               className="supplier_form"
                             />{" "}
                           </td>
@@ -11777,15 +11908,7 @@ export default function Addsupplierinvoice() {
                             {" "}
                             <input
                               type="text"
-                              placeholder="0.00"
-                              className="supplier_form"
-                            />{" "}
-                          </td>
-                          <td>
-                            {" "}
-                            <input
-                              type="text"
-                              placeholder="0.00"
+                              placeholder="0.00"onChange={handlechangecalc}
                               className="supplier_form"
                             />{" "}
                           </td>
@@ -12013,7 +12136,7 @@ export default function Addsupplierinvoice() {
                           </td>
                           <td>
                             {" "}
-                            <select name="cust_penalty_vatTyp">
+                            <select name="cust_penalty_vatTyp"onChange={handlechangecalc}>
                               <option value="">No Vat</option>
                               <option value="15">Standard Rate(15.00%)</option>
                               <option value="15">
@@ -12053,7 +12176,8 @@ export default function Addsupplierinvoice() {
                             {" "}
                             <input
                               type="text"
-                              placeholder="0.00"
+                              placeholder="0.00"onChange={handlechangecalc}
+                              name="cust_penalty_disc%"
                               className="supplier_form"
                             />{" "}
                           </td>
@@ -12061,7 +12185,8 @@ export default function Addsupplierinvoice() {
                             {" "}
                             <input
                               type="text"
-                              placeholder="0.00"
+                              placeholder="0.00"onChange={handlechangecalc}
+                              name='cust_penalty_disc'
                               className="supplier_form"
                             />{" "}
                           </td>
@@ -12070,13 +12195,14 @@ export default function Addsupplierinvoice() {
                             <input
                               type="text"
                               placeholder="0.00"
+                              name='cust_penalty_exclusive'onChange={handlechangecalc}
                               className="supplier_form"
                             />{" "}
                           </td>
                           <td>
                             {" "}
                             <input
-                              type="text"
+                              type="text"onChange={handlechangecalc}
                               placeholder="0.00"
                               className="supplier_form"
                             />{" "}
@@ -12085,7 +12211,7 @@ export default function Addsupplierinvoice() {
                             {" "}
                             <input
                               type="text"
-                              placeholder="0.00"
+                              placeholder="0.00"onChange={handlechangecalc}
                               className="supplier_form"
                             />{" "}
                           </td>
@@ -12307,7 +12433,7 @@ export default function Addsupplierinvoice() {
                           </td>
                           <td>
                             {" "}
-                            <select name="custProv_pay_vatTyp">
+                            <select name="custProv_pay_vatTyp"onChange={handlechangecalc}>
                               <option value="">No Vat</option>
                               <option value="15">Standard Rate(15.00%)</option>
                               <option value="15">
@@ -12347,7 +12473,8 @@ export default function Addsupplierinvoice() {
                             {" "}
                             <input
                               type="text"
-                              placeholder="0.00"
+                              placeholder="0.00"onChange={handlechangecalc}
+                              name='custProv_pay_disc%'
                               className="supplier_form"
                             />{" "}
                           </td>
@@ -12355,7 +12482,8 @@ export default function Addsupplierinvoice() {
                             {" "}
                             <input
                               type="text"
-                              placeholder="0.00"
+                              placeholder="0.00"onChange={handlechangecalc}
+                              name="custProv_pay_disc"
                               className="supplier_form"
                             />{" "}
                           </td>
@@ -12363,14 +12491,15 @@ export default function Addsupplierinvoice() {
                             {" "}
                             <input
                               type="text"
-                              placeholder="0.00"
+                              placeholder="0.00"onChange={handlechangecalc}
+                              name='custProv_pay_vatIncl'
                               className="supplier_form"
                             />{" "}
                           </td>
                           <td>
                             {" "}
                             <input
-                              type="text"
+                              type="text"onChange={handlechangecalc}
                               placeholder="0.00"
                               className="supplier_form"
                             />{" "}
@@ -12589,7 +12718,7 @@ export default function Addsupplierinvoice() {
                           </td>
                           <td>
                             {" "}
-                            <select name="clearing_fee_vatTyp">
+                            <select name="clearing_fee_vatTyp"onChange={handlechangecalc}>
                               <option value="">No Vat</option>
                               <option value="15">Standard Rate(15.00%)</option>
                               <option value="15">
@@ -12629,7 +12758,26 @@ export default function Addsupplierinvoice() {
                             {" "}
                             <input
                               type="text"
-                              placeholder="0.00"
+                              placeholder="0.00"onChange={handlechangecalc}
+                              name="clearing_fee_disc%"
+                              className="supplier_form"
+                            />{" "}
+                          </td>
+                          <td>
+                            {" "}
+                            <input
+                              type="text"
+                              placeholder="0.00"onChange={handlechangecalc}
+                              name='clearing_fee_disc'
+                              className="supplier_form"
+                            />{" "}
+                          </td>
+                          <td>
+                            {" "}
+                            <input
+                              type="text"
+                              placeholder="0.00"onChange={handlechangecalc}
+                              name='clearing_fee_exclusive'
                               className="supplier_form"
                             />{" "}
                           </td>
@@ -12638,22 +12786,7 @@ export default function Addsupplierinvoice() {
                             <input
                               type="text"
                               placeholder="0.00"
-                              className="supplier_form"
-                            />{" "}
-                          </td>
-                          <td>
-                            {" "}
-                            <input
-                              type="text"
-                              placeholder="0.00"
-                              className="supplier_form"
-                            />{" "}
-                          </td>
-                          <td>
-                            {" "}
-                            <input
-                              type="text"
-                              placeholder="0.00"
+                              name='clearing_fee_vat'onChange={handlechangecalc}
                               className="supplier_form"
                             />{" "}
                           </td>
@@ -12871,7 +13004,7 @@ export default function Addsupplierinvoice() {
                           </td>
                           <td>
                             {" "}
-                            <select name="disbursement_vatTyp">
+                            <select name="disbursement_vatTyp"onChange={handlechangecalc}>
                               <option value="">No Vat</option>
                               <option value="15">Standard Rate(15.00%)</option>
                               <option value="15">
@@ -12911,6 +13044,16 @@ export default function Addsupplierinvoice() {
                             {" "}
                             <input
                               type="text"
+                              placeholder="0.00"onChange={handlechangecalc}
+                              name='disbursement_disc%'
+                              className="supplier_form"
+                            />{" "}
+                          </td>
+                          <td>
+                            {" "}
+                            <input
+                              type="text"
+                              name="disbursement_disc"onChange={handlechangecalc}
                               placeholder="0.00"
                               className="supplier_form"
                             />{" "}
@@ -12919,7 +13062,8 @@ export default function Addsupplierinvoice() {
                             {" "}
                             <input
                               type="text"
-                              placeholder="0.00"
+                              placeholder="0.00"onChange={handlechangecalc}
+                              name='disbursement_exclusive'
                               className="supplier_form"
                             />{" "}
                           </td>
@@ -12927,22 +13071,15 @@ export default function Addsupplierinvoice() {
                             {" "}
                             <input
                               type="text"
-                              placeholder="0.00"
+                              placeholder="0.00"onChange={handlechangecalc}
+                              name='disbursement_vat'
                               className="supplier_form"
                             />{" "}
                           </td>
                           <td>
                             {" "}
                             <input
-                              type="text"
-                              placeholder="0.00"
-                              className="supplier_form"
-                            />{" "}
-                          </td>
-                          <td>
-                            {" "}
-                            <input
-                              type="text"
+                              type="text"onChange={handlechangecalc}
                               placeholder="0.00"
                               className="supplier_form"
                             />{" "}
@@ -13153,7 +13290,7 @@ export default function Addsupplierinvoice() {
                           </td>
                           <td>
                             {" "}
-                            <select name="surcharge_vatTyp">
+                            <select name="surcharge_vatTyp"onChange={handlechangecalc}>
                               <option value="">No Vat</option>
                               <option value="15">Standard Rate(15.00%)</option>
                               <option value="15">
@@ -13194,6 +13331,7 @@ export default function Addsupplierinvoice() {
                             <input
                               type="text"
                               placeholder="0.00"
+                              name='surcharge_disc%'onChange={handlechangecalc}
                               className="supplier_form"
                             />{" "}
                           </td>
@@ -13202,6 +13340,7 @@ export default function Addsupplierinvoice() {
                             <input
                               type="text"
                               placeholder="0.00"
+                              name="surcharge_disc"onChange={handlechangecalc}
                               className="supplier_form"
                             />{" "}
                           </td>
@@ -13210,6 +13349,16 @@ export default function Addsupplierinvoice() {
                             <input
                               type="text"
                               placeholder="0.00"
+                              name='surcharge_exclusive'onChange={handlechangecalc}
+                              className="supplier_form"
+                            />{" "}
+                          </td>
+                          <td>
+                            {" "}
+                            <input
+                              type="text"onChange={handlechangecalc}
+                              placeholder="0.00"
+                              name="surcharge_vat"
                               className="supplier_form"
                             />{" "}
                           </td>
@@ -13217,15 +13366,7 @@ export default function Addsupplierinvoice() {
                             {" "}
                             <input
                               type="text"
-                              placeholder="0.00"
-                              className="supplier_form"
-                            />{" "}
-                          </td>
-                          <td>
-                            {" "}
-                            <input
-                              type="text"
-                              placeholder="0.00"
+                              placeholder="0.00"onChange={handlechangecalc}
                               className="supplier_form"
                             />{" "}
                           </td>

@@ -27,6 +27,7 @@ import { Autocomplete } from "@mui/material";
 import PictureAsPdfIcon from "@mui/icons-material/PictureAsPdf";
 import CloseIcon from "@mui/icons-material/Close";
 import Swal from "sweetalert2";
+
 const pageSize = 10;
 const style1 = {
   position: "absolute",
@@ -44,6 +45,7 @@ const style1 = {
     lg: "50%", // desktop
   },
 };
+
 export default function SupplierWarehouse() {
   const [currentPage, setCurrentPage] = useState(1);
   const [data, setData] = useState([]);

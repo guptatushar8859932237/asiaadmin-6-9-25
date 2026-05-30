@@ -11,6 +11,7 @@ import html2pdf from "html2pdf.js";
 import { RiFolderUserFill } from "react-icons/ri";
 import { MdArrowOutward } from "react-icons/md";
 import { useRef } from "react";
+
 export default function Addsupplierinvoice() {
   const [update, setUpdate] = useState([0]);
   const location = useLocation();
@@ -40,6 +41,7 @@ export default function Addsupplierinvoice() {
   console.log("[Add Invoice] copyInvoiceData:", copyInvoiceData);
   console.log("[Add Invoice] isCopyPreview:", isCopyPreview);
   console.log("[Add Invoice] getdata122:", getdata122);
+
   useEffect(() => {
     if (isCopyPreview) return;
     getFreightDataById();
@@ -74,12 +76,15 @@ export default function Addsupplierinvoice() {
       console.error("Error fetching freight data by id:", error);
     }
   };
+
   const andlemodaloen = () => {
     setOpenmodal(true);
   };
+
   const andndndn = () => {
     setOpenmodal1(true);
   };
+
   const handlechangecalc = (e) => {
     const { name, value } = e.target;
     setFreight((prevInputData) => ({
@@ -87,6 +92,7 @@ export default function Addsupplierinvoice() {
       [name]: value,
     }));
   };
+
   const freight_amount =
     freight?.origin_pick_up_entey * freight?.origin_pick_up_Unit;
   const num1 = parseFloat(freight_amount || 0);
@@ -98,6 +104,7 @@ export default function Addsupplierinvoice() {
     const { name, value } = e.target;
     setOrigin({ ...origin, [name]: value });
   };
+
   const oripick1 = parseFloat(freight.origin_pick_up_cost) || 0;
   // const oripick19 = parseFloat(freight.freight_charge_currencyQTY) || 0;
   // const oripick2 = parseFloat(freight.origin_pick_up_fees) || 0;
@@ -221,6 +228,7 @@ export default function Addsupplierinvoice() {
     const num = Number(val);
     return isNaN(num) ? 0 : num;
   };
+
   const totalChageswithOutExchange =
     safeNumber(oripick4) +
     safeNumber(orifuel4) +
@@ -1373,14 +1381,17 @@ export default function Addsupplierinvoice() {
     const day = String(today.getDate()).padStart(2, "0");
     return `${year}-${month}-${day}`;
   };
+
   useEffect(() => {
     getsupplier();
   }, 1000);
+
   useEffect(() => {
     if (isCopyPreview) return;
     getdataapi();
     getNewDataapi();
   }, [isCopyPreview]);
+
   const getsupplier = () => {
     axios
       .get(`${process.env.REACT_APP_BASE_URL}supplier-list`)
@@ -1392,6 +1403,7 @@ export default function Addsupplierinvoice() {
         console.log(error.response.data);
       });
   };
+
   const getdataapi = async () => {
     // console.log(getdata);
     const data123456 = {
@@ -1410,6 +1422,7 @@ export default function Addsupplierinvoice() {
         console.log(error.response.data);
       });
   };
+
   const getNewDataapi = async () => {
     // console.log(getdata);
     const data123456 = {
@@ -1432,19 +1445,24 @@ export default function Addsupplierinvoice() {
         console.log(error.response.data);
       });
   };
+
   const handleclicknav = () => {
     // navigate("/Admin/managefreight");
     window.history.back();
   };
+
   const closemodal = () => {
     setOpenmodal(false);
   };
+
   const closemodal1 = () => {
     setOpenmodal1(false);
   };
+
   useEffect(() => {
     getdatsupplier();
   }, []);
+
   const getdatsupplier = () => {
     axios
       .get(`${process.env.REACT_APP_BASE_URL}supplier-list`)
@@ -1477,6 +1495,7 @@ export default function Addsupplierinvoice() {
       setSelected([...selected, id]);
     }
   };
+
   const handleAddSupplier = async () => {
     if (selected.length === 0) {
       toast.error("Please select at least one supplier.");
@@ -2491,7 +2510,6 @@ export default function Addsupplierinvoice() {
 
                       <tbody>
                         {/* origin charges */}
-
                         <tr>
                           <td>Origin Charges</td>
                           <td>Pick-Up Fee</td>
@@ -2740,6 +2758,7 @@ export default function Addsupplierinvoice() {
                               type="text"
                               placeholder="0.00"
                               className="supplier_form"
+                              name="org_pickUp_disc%"
                             />{" "}
                           </td>
                           <td>
@@ -3022,6 +3041,7 @@ export default function Addsupplierinvoice() {
                               type="text"
                               placeholder="0.00"
                               className="supplier_form"
+                              name="origin_fuelSur_disc%"
                             />{" "}
                           </td>
                           <td>
@@ -3305,6 +3325,7 @@ export default function Addsupplierinvoice() {
                               type="text"
                               placeholder="0.00"
                               className="supplier_form"
+                              name="origin_cfs_disc%"
                             />{" "}
                           </td>
                           <td>
@@ -3591,6 +3612,7 @@ export default function Addsupplierinvoice() {
                               type="text"
                               placeholder="0.00"
                               className="supplier_form"
+                              name="org_docFee_disc%"
                             />{" "}
                           </td>
                           <td>
@@ -3878,6 +3900,7 @@ export default function Addsupplierinvoice() {
                               type="text"
                               placeholder="0.00"
                               className="supplier_form"
+                              name="org_forwFee_disc%"
                             />{" "}
                           </td>
                           <td>
@@ -4161,6 +4184,7 @@ export default function Addsupplierinvoice() {
                               type="text"
                               placeholder="0.00"
                               className="supplier_form"
+                              name="org_clearance_disc%"
                             />{" "}
                           </td>
                           <td>
@@ -4460,6 +4484,7 @@ export default function Addsupplierinvoice() {
                               type="text"
                               placeholder="0.00"
                               className="supplier_form"
+                              name="ocenfreight_charge_disc%"
                             />{" "}
                           </td>
                           <td>
@@ -4702,7 +4727,6 @@ export default function Addsupplierinvoice() {
                             />
                           </td>
                           <td>
-                            {" "}
                             <select name="insurance_vatTyp">
                               <option value="">No Vat</option>
                               <option value="15">Standard Rate(15.00%)</option>
@@ -4745,6 +4769,7 @@ export default function Addsupplierinvoice() {
                               type="text"
                               placeholder="0.00"
                               className="supplier_form"
+                              name="insurance_disc%"
                             />{" "}
                           </td>
                           <td>
@@ -13229,4 +13254,4 @@ export default function Addsupplierinvoice() {
       </div>
     </>
   );
-}
+};

@@ -76,11 +76,6 @@ const routes = [
       },
     ],
   },
-    {
-    path: "/Admin/manage-collection-delivery",
-    name: "Collection & Delivery",
-    icon: <LanguageOutlinedIcon/>
-  },
   {
     path: "",
     name: "Freight Management",
@@ -155,6 +150,11 @@ const routes = [
         path: "/Admin/Batches",
         name: "Batches",
         icon: <MilitaryTechOutlinedIcon />,
+      },
+      {
+        path: "/Admin/manage-collection-delivery",
+        name: "Collection & Delivery",
+        icon: <LanguageOutlinedIcon />
       },
     ],
   },
@@ -361,7 +361,7 @@ const SideBar = ({ children }) => {
           <div>
             <button
               className="search"
-              style={{ 
+              style={{
                 cursor: "pointer",
                 padding: isOpen ? "10px 20px" : "10px",
                 borderRadius: isOpen ? "8px" : "50%",
@@ -472,7 +472,7 @@ const SideBar = ({ children }) => {
       </motion.div>
       <motion.div
         animate={{
-           width: isOpen ? "85%" : "100%",
+          width: isOpen ? "85%" : "100%",
           transition: {
             duration: 0.5,
             type: "spring",

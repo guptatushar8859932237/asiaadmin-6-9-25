@@ -4,6 +4,7 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import axios from "axios";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { toast } from "react-toastify";
+
 export default function Clearenceorderdetailspage() {
   const infolocation = useLocation();
   const navigate = useNavigate();
@@ -575,6 +576,16 @@ export default function Clearenceorderdetailspage() {
                   </div>
                 </div>
               </div> */}
+
+              <div className="col-md-12 mb-2">
+                <div className="card desti_card">
+                  <div className="card-body">
+                    <h6 className="orgin_hd fw-bold">Comment</h6>
+                    <p className="or_para"> {info.freight_comment}</p>
+                  </div>
+                </div>
+              </div>
+              
               <div className="col-md-12">
                 <div className="card desti_card">
                   <div className="card-body">
@@ -604,16 +615,18 @@ export default function Clearenceorderdetailspage() {
 
                     {/* Quotation (separate because it's not part of groups) */}
                     <div className="mb-2">
-                      <label> :</label>
                       {info.attachment_Estimate && (
-                        <a
-                          href={`${process.env.REACT_APP_BASE_URLdocument}${info?.attachment_Estimate}`}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="view_docu ms-2"
-                        >
-                          View Document
-                        </a>
+                        <>
+                          <label> :</label>
+                          <a
+                            href={`${process.env.REACT_APP_BASE_URLdocument}${info?.attachment_Estimate}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="view_docu ms-2"
+                          >
+                            View Document
+                          </a>
+                        </>
                       )}
                     </div>
                   </div>

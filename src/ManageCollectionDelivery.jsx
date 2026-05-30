@@ -133,67 +133,81 @@ const ManageCollectionDelivery = () => {
                         </div>
                     ) : (
                         <div className="table-responsive">
-                            <table className="table table-striped">
-                                <thead>
-                                    <tr>
-                                        <th>Sr. No.</th>
-                                        <th>Freight Number</th>
-                                        <th>Freight</th>
-                                        <th>Type</th>
-                                        <th>Client Name</th>
-                                        <th>Collection</th>
-                                        <th>Status</th>
-                                        <th>Collection Supplier</th>
-                                        <th>Delivery</th>
-                                        <th>Status</th>
-                                        <th>Delivery Supplier</th>
-                                    </tr>
-                                </thead>
+                            <table className="table table-striped tableICon supplierMainTable">
                                 <tbody>
-                                    {
+                                    {collection && collection.length > 0 &&
                                         collection.map((item, index) => (
-                                            <tr>
-                                                <td>{(currentPage - 1) * limit + index + 1}</td>
-                                                <td>{item.freight_number}</td>
-                                                <td>{item.freight}</td>
-                                                <td>{item.type}</td>
-                                                <td>{item.client_name}</td>
-                                                <td>{item.ready_for_collection}</td>
-                                                <td>
-                                                    {item.ready_for_collection?.toLowerCase() === "yes" ? (
-                                                        <select
-                                                            value={item.ready_for_collection_status || "Pending"}
-                                                            onChange={(e) => handleStatusChange(item, "collection", e)}
-                                                        >
-                                                            <option value="Pending">Pending</option>
-                                                            <option value="Assigned">Assigned</option>
-                                                            <option value="Complete">Complete</option>
-                                                        </select>
-                                                    ) : (
-                                                        item.ready_for_collection_status || "-"
-                                                    )}
+                                            <tr key={index}>
+                                                <td className="list_bd">
+                                                    <div>
+                                                        {/* First row */}
+                                                        <div className="row align-items-center">
+                                                            <div className="col-md-3">
+                                                                <div>
+                                                                    <p className="client_nm" style={{ fontSize: "14px" }}>
+                                                                        {item.client_name}
+                                                                    </p>
+                                                                    <p>{item.freight_number}</p>
+                                                                    <p>
+                                                                        <span className="bold600">Type:</span> {item.type}
+                                                                    </p>
+                                                                </div>
+                                                            </div>
+                                                            <div className="col-md-3">
+                                                                <p className="mb-1"><span className="bold600">Collection:</span> {item.ready_for_collection}</p>
+                                                                <p className="mb-1"><span className="bold600">Supplier:</span> {item.collection_supplier_name || "-"}</p>
+                                                                <div className="d-flex align-items-center">
+                                                                    <span className="bold600 me-2">Status:</span>
+                                                                    {item.ready_for_collection?.toLowerCase() === "yes" ? (
+                                                                        <select
+                                                                            className="form-select-sm w-auto d-inline-block"
+                                                                            value={item.ready_for_collection_status || "Pending"}
+                                                                            onChange={(e) => handleStatusChange(item, "collection", e)}
+                                                                        >
+                                                                            <option value="Pending">Pending</option>
+                                                                            <option value="Assigned">Assigned</option>
+                                                                            <option value="Complete">Complete</option>
+                                                                        </select>
+                                                                    ) : (
+                                                                        item.ready_for_collection_status || "-"
+                                                                    )}
+                                                                </div>
+                                                            </div>
+                                                            <div className="col-md-3">
+                                                                <div className="d-flex align-items-center">
+                                                                    <p className="origin">{item.collection_from_name}</p>
+                                                                    <div className="arrow">
+                                                                        <i className="fi fi-rr-arrow-right mx-2 arr_icon"></i>
+                                                                    </div>
+                                                                    <p className="origin">{item.delivery_to_name}</p>{" "} ({item.freight})
+                                                                </div>
+                                                            </div>
+                                                            <div className="col-md-3">
+                                                                <p className="mb-1"><span className="bold600">Delivery:</span> {item.require_for_delivery}</p>
+                                                                <p className="mb-1"><span className="bold600">Supplier:</span> {item.delivery_supplier_name || "-"}</p>
+                                                                <div className="d-flex align-items-center">
+                                                                    <span className="bold600 me-2">Status:</span>
+                                                                    {item.require_for_delivery?.toLowerCase() === "yes" ? (
+                                                                        <select
+                                                                            className="form-select-sm w-auto d-inline-block"
+                                                                            value={item.require_for_delivery_status || "Pending"}
+                                                                            onChange={(e) => handleStatusChange(item, "delivery", e)}
+                                                                        >
+                                                                            <option value="Pending">Pending</option>
+                                                                            <option value="Assigned">Assigned</option>
+                                                                            <option value="Complete">Complete</option>
+                                                                        </select>
+                                                                    ) : (
+                                                                        item.require_for_delivery_status || "-"
+                                                                    )}
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
                                                 </td>
-                                                <td>{item.collection_supplier_name || "-"}</td>
-                                                <td>{item.require_for_delivery}</td>
-                                                <td>
-                                                    {item.require_for_delivery?.toLowerCase() === "yes" ? (
-                                                        <select
-                                                            value={item.require_for_delivery_status || "Pending"}
-                                                            onChange={(e) => handleStatusChange(item, "delivery", e)}
-                                                        >
-                                                            <option value="Pending">Pending</option>
-                                                            <option value="Assigned">Assigned</option>
-                                                            <option value="Complete">Complete</option>
-                                                        </select>
-                                                    ) : (
-                                                        item.require_for_delivery_status || "-"
-                                                    )}
-                                                </td>
-                                                <td>{item.delivery_supplier_name || "-"}</td>
                                             </tr>
                                         ))
                                     }
-
                                 </tbody>
                             </table>
                             <div className="d-flex justify-content-end align-items-end my-3">
@@ -257,7 +271,6 @@ const ManageCollectionDelivery = () => {
             )}
             <ToastContainer />
         </>
-
     )
 }
 

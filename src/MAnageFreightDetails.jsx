@@ -6,6 +6,7 @@ import axios from "axios";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { toast } from "react-toastify";
 import { useParams } from "react-router-dom";
+
 export default function MAnageFreightDetails() {
   const infolocation = useLocation();
   const navigate = useNavigate();
@@ -83,11 +84,10 @@ export default function MAnageFreightDetails() {
     }
   };
 
-
-
   useEffect(() => {
     getFreightDataById()
-  }, [])
+  }, []);
+
   return (
     <div className="wpWrapper">
       <div className="container-fluid">
@@ -113,7 +113,6 @@ export default function MAnageFreightDetails() {
                 <div className="card-body">
                   <div className="">
                     <h6 className="orgin_hd">Shipper Details</h6>
-
                   </div>
                   <div className="main_det">
                     <div className="view_box">
@@ -184,13 +183,11 @@ export default function MAnageFreightDetails() {
                 <div className="card-body">
                   <div className="">
                     <h6 className="orgin_hd">Consignee Details</h6>
-
                   </div>
                   <div className="main_det">
                     <div className="view_box">
                       <h6 className="ship_hd"> <i class="fi fi-rs-building build_icon"></i> Importer</h6>
                       <div className="d-flex align-items-start">
-
                         <div className="">
                           <p className="or_para">
                             {info?.shipment_ref === "consignee"
@@ -230,7 +227,6 @@ export default function MAnageFreightDetails() {
                     <div className="view_box">
                       <h6 className="ship_hd"> <i class="fi fi-rs-building build_icon"></i> Importer</h6>
                       <div className="d-flex align-items-start">
-
                         <div className="">
                           <p className="or_para">{info.importers_ref}</p>
                           <p className="client_para">Export Code:{info.code}</p>
@@ -261,13 +257,10 @@ export default function MAnageFreightDetails() {
             <div className="col-lg-4 col-md-6 col-sm-6">
               <div className="card desti_card">
                 <div className="card-body">
-
                   <div>
                     <h6 className="orgin_hd">Cargo Details</h6>
                   </div>
-
                   <div className="main_det">
-
                     {/* PRODUCT DESCRIPTION */}
                     <div className="view_box">
                       <p className="client_para">Product Description</p>
@@ -292,7 +285,6 @@ export default function MAnageFreightDetails() {
                         <p className="client_para">Packaging</p>
                         <p className="or_para">{info.package_type}</p>
                       </div>
-
                     </div>
 
                     {/* NO OF PACKAGES */}
@@ -307,8 +299,8 @@ export default function MAnageFreightDetails() {
                         <p className="client_para">Dimensions (cbm)</p>
                         <p className="or_para">{info.dimension}</p>
                       </div>
-
                     </div>
+
                     <div className="d-flex gap-2 justify-content-between view_box flex-wrap">
                       {/* WEIGHT */}
                       <div>
@@ -327,10 +319,7 @@ export default function MAnageFreightDetails() {
                       <p className="client_para">Commodity</p>
                       <p className="or_para">{info.commodity_name}</p>
                     </div>
-
-
                   </div>
-
                 </div>
               </div>
             </div>
@@ -434,7 +423,6 @@ export default function MAnageFreightDetails() {
                         <p className="client_para">Comment</p>
                         <p className="or_para">{info.comment}</p>
                       </div>
-
                     </div>
 
                   </div>

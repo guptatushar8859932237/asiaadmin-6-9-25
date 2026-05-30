@@ -8190,7 +8190,6 @@ export default function Addsupplierinvoice() {
                             />
                           </td>
                           <td>
-                            {" "}
                             <select name="dest_fuel_Surchar_vatTyp">
                               <option value="">No Vat</option>
                               <option value="15">Standard Rate(15.00%)</option>
@@ -9953,7 +9952,6 @@ export default function Addsupplierinvoice() {
                             />
                           </td>
                           <td>
-                            {" "}
                            <select name="dest_fuel_surchrg_vatTyp">
                               <option value="">No Vat</option>
                               <option value="15">Standard Rate(15.00%)</option>

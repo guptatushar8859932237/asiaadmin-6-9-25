@@ -2602,7 +2602,6 @@ export default function Addsupplierinvoice() {
                                 color: "black",
                                 fontWeight: 400,
                                 border: "0px",
-
                                 verticalAlign: "middle",
                               }}
                               type="text"
@@ -2630,7 +2629,6 @@ export default function Addsupplierinvoice() {
                                 color: "black",
                                 fontWeight: 400,
                                 border: "0px",
-
                                 verticalAlign: "middle",
                               }}
                               disabled
@@ -2849,7 +2847,6 @@ export default function Addsupplierinvoice() {
                                 color: "black",
                                 fontWeight: 400,
                                 border: "0px",
-
                                 verticalAlign: "middle",
                               }}
                               type="text"
@@ -2918,7 +2915,6 @@ export default function Addsupplierinvoice() {
                                 color: "black",
                                 fontWeight: 400,
                                 border: "0px",
-
                                 verticalAlign: "middle",
                               }}
                               type="text"
@@ -2971,7 +2967,6 @@ export default function Addsupplierinvoice() {
                                 marginBottom: 0,
                                 fontSize: 13,
                                 color: "black",
-
                                 border: "0px",
                                 verticalAlign: "middle",
                               }}
@@ -3353,7 +3348,8 @@ export default function Addsupplierinvoice() {
                             <input
                               type="text"
                               placeholder="0.00"
-                              name='origin_cfs_exclusive' onChange={handlechangecalc}
+                              name='origin_cfs_exclusive'
+                              onChange={handlechangecalc}
                               className="supplier_form"
                             />{" "}
                           </td>
@@ -3761,7 +3757,6 @@ export default function Addsupplierinvoice() {
                                 color: "black",
                                 fontWeight: 400,
                                 border: "0px",
-
                                 verticalAlign: "middle",
                               }}
                               type="text"
@@ -3916,7 +3911,8 @@ export default function Addsupplierinvoice() {
                             <input
                               type="text"
                               placeholder="0.00"
-                              className="supplier_form" onChange={handlechangecalc}
+                              className="supplier_form"
+                              onChange={handlechangecalc}
                               name="org_forwFee_disc%"
                             />{" "}
                           </td>
@@ -3926,7 +3922,8 @@ export default function Addsupplierinvoice() {
                               type="text"
                               placeholder="0.00"
                               name="org_forwFee_disc"
-                              className="supplier_form" onChange={handlechangecalc}
+                              className="supplier_form"
+                              onChange={handlechangecalc}
                             />{" "}
                           </td>
                           <td>
@@ -3934,7 +3931,8 @@ export default function Addsupplierinvoice() {
                             <input
                               type="text"
                               placeholder="0.00"
-                              name='org_forwFee_exclusive' onChange={handlechangecalc}
+                              name='org_forwFee_exclusive'
+                              onChange={handlechangecalc}
                               className="supplier_form"
                             />{" "}
                           </td>
@@ -3943,7 +3941,8 @@ export default function Addsupplierinvoice() {
                             <input
                               type="text"
                               placeholder="0.00"
-                              name='org_forwFee_vat' onChange={handlechangecalc}
+                              name='org_forwFee_vat' 
+                              onChange={handlechangecalc}
                               className="supplier_form"
                             />{" "}
                           </td>
@@ -8905,7 +8904,8 @@ export default function Addsupplierinvoice() {
                             {" "}
                             <input
                               type="text"
-                              placeholder="0.00" onChange={handlechangecalc}
+                              placeholder="0.00" 
+                              onChange={handlechangecalc}
                               name="dest_portCargo_disc%"
                               className="supplier_form"
                             />{" "}
@@ -8914,7 +8914,8 @@ export default function Addsupplierinvoice() {
                             {" "}
                             <input
                               type="text"
-                              placeholder="0.00" onChange={handlechangecalc}
+                              placeholder="0.00" 
+                              onChange={handlechangecalc}
                               name="dest_portCargo_disc"
                               className="supplier_form"
                             />{" "}
@@ -10414,8 +10415,8 @@ export default function Addsupplierinvoice() {
                             <input
                               type="text"
                               name='admin_agencyFee_disc'
-                              placeholder="0.00" onChange={handlechangecalc}
-                              name='admin_agencyFee_exclusive'
+                              placeholder="0.00" 
+                              onChange={handlechangecalc}
                               className="supplier_form"
                             />{" "}
                           </td>

@@ -1,6 +1,100 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { toast, ToastContainer } from "react-toastify";
+import Select from "react-select";
+
+const SearchableDropdown = ({ value, options, onChange, placeholder }) => {
+  const [isOpen, setIsOpen] = useState(false);
+  const [search, setSearch] = useState("");
+  const wrapperRef = React.useRef(null);
+
+  React.useEffect(() => {
+    function handleClickOutside(event) {
+      if (wrapperRef.current && !wrapperRef.current.contains(event.target)) {
+        setIsOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  React.useEffect(() => {
+    const currentOption = options.find((opt) => String(opt.id) === String(value));
+    if (currentOption) {
+      setSearch(currentOption.document_number);
+    } else {
+      setSearch(value === "Select" ? "" : value || "");
+    }
+  }, [value, options]);
+
+  const filteredOptions = options.filter((opt) =>
+    opt.document_number.toLowerCase().includes(search.toLowerCase())
+  );
+
+  return (
+    <div ref={wrapperRef} style={{ position: "relative", minWidth: "120px" }}>
+      <input
+        type="text"
+        className="form-control"
+        placeholder={placeholder}
+        style={{ height: "30px", padding: "0 6px", fontSize: "14px", width: "100%" }}
+        value={search}
+        onChange={(e) => {
+          setSearch(e.target.value);
+          setIsOpen(true);
+          if (e.target.value === "") {
+            onChange("");
+          }
+        }}
+        onFocus={() => setIsOpen(true)}
+      />
+      {isOpen && (
+        <ul
+          style={{
+            position: "absolute",
+            top: "100%",
+            left: 0,
+            width: "100%",
+            backgroundColor: "#fff",
+            border: "1px solid #ccc",
+            borderRadius: "4px",
+            maxHeight: "200px",
+            overflowY: "auto",
+            zIndex: 9999,
+            padding: 0,
+            margin: "2px 0 0 0",
+            listStyle: "none",
+            boxShadow: "0 4px 6px rgba(0,0,0,0.1)",
+          }}
+        >
+          {filteredOptions.length > 0 ? (
+            filteredOptions.map((opt, idx) => (
+              <li
+                key={idx}
+                style={{ padding: "6px 12px", cursor: "pointer", fontSize: "14px" }}
+                onMouseDown={(e) => e.preventDefault()}
+                onClick={() => {
+                  setSearch(opt.document_number);
+                  setIsOpen(false);
+                  onChange(opt.id);
+                }}
+                onMouseEnter={(e) => (e.target.style.backgroundColor = "#f8f9fa")}
+                onMouseLeave={(e) => (e.target.style.backgroundColor = "transparent")}
+              >
+                {opt.document_number}
+              </li>
+            ))
+          ) : (
+            <li style={{ padding: "6px 12px", color: "#999", fontSize: "14px" }}>
+              No results
+            </li>
+          )}
+        </ul>
+      )}
+    </div>
+  );
+};
+
 export default function BillingTable() {
   const [tableData, setTableData] = useState([]);
   const [dropdownData, setDropdownData] = useState({});
@@ -41,6 +135,7 @@ export default function BillingTable() {
       );
     }
   };
+
   const fetchDropdownData = async (orderIDs) => {
     try {
       setLoader(true);
@@ -62,33 +157,37 @@ export default function BillingTable() {
       setLoader(false);
     }
   };
-  const handleDropdownChange = (field, value, item) => {
+
+  const handleDropdownChange = (field, value, item, index) => {
+    const rowKey = item.invoice_id !== null ? item.invoice_id : `temp-${index}`;
     const updatedInvoice = {
-      ...selectedInvoices[item.invoice_id],
+      ...selectedInvoices[rowKey],
       [field]: value,
     };
     setSelectedInvoices((prev) => ({
       ...prev,
-      [item.invoice_id]: updatedInvoice,
+      [rowKey]: updatedInvoice,
     }));
-    handleInvoiceSelection(item, updatedInvoice);
+    handleInvoiceSelection(item, updatedInvoice, rowKey);
   };
-  const handleInvoiceSelection = (item, updatedInvoice) => {
+
+  const handleInvoiceSelection = (item, updatedInvoice, rowKey) => {
     const invoiceDetails = {
       invoice_id: item.invoice_id,
       date: item.created_at,
-      transaction: updatedInvoice.transaction || item.transaction,
+      transaction: updatedInvoice.transaction !== undefined ? updatedInvoice.transaction : item.transaction,
       order_id: item.order_ID,
       client_id: item.client_id,
-      sage_invoice_id: updatedInvoice.sage_invoice_id || item.sage_invoice_id,
+      sage_invoice_id: updatedInvoice.sage_invoice_id !== undefined ? updatedInvoice.sage_invoice_id : item.sage_invoice_id,
       invoice_amt: item.invoice_amt,
-      due_date: selectedDueDates[item.invoice_id],
+      due_date: updatedInvoice.due_date !== undefined ? updatedInvoice.due_date : selectedDueDates[rowKey],
       payment: item.payment,
       invoice_currency:
-        updatedInvoice.invoice_currency || item.invoice_currency,
+        updatedInvoice.invoice_currency !== undefined ? updatedInvoice.invoice_currency : item.invoice_currency,
     };
     sendInvoiceDetails(invoiceDetails);
   };
+
   const sendInvoiceDetails = async (invoiceDetails) => {
     try {
       setLoader(true);
@@ -110,32 +209,37 @@ export default function BillingTable() {
       toast.error(errorMessage);
     }
   };
+
   const handlePageChange = (page) => {
     console.log(page);
     setCurrentPage(page);
     getTableData(page);
   };
+
   const totalPage = pagenation.pageSize;
   const startIndex = (currentPage - 1) * pagenation.pageSize;
   const endIndex = startIndex + pagenation.pageSize;
   const currentData = tableData.slice(startIndex, endIndex);
-  const handleDueDateChange = (e, item) => {
+  const handleDueDateChange = (e, item, index) => {
+    const rowKey = item.invoice_id !== null ? item.invoice_id : `temp-${index}`;
     const newDate = e.target.value;
     setSelectedDueDates((prev) => ({
       ...prev,
-      [item.invoice_id]: newDate,
+      [rowKey]: newDate,
     }));
+
     const updatedInvoice = {
-      ...selectedInvoices[item.invoice_id],
+      ...selectedInvoices[rowKey],
       invoice_id: item.invoice_id,
       due_date: newDate,
     };
     setSelectedInvoices((prev) => ({
       ...prev,
-      [item.invoice_id]: updatedInvoice,
+      [rowKey]: updatedInvoice,
     }));
-    sendInvoiceDetails(updatedInvoice);
+    handleInvoiceSelection(item, updatedInvoice, rowKey);
   };
+
   const getAvailableOptions = (item) => {
     const selectedSageInvoiceIds = Object.values(selectedInvoices).map(
       (invoice) => invoice.sage_invoice_id
@@ -146,13 +250,14 @@ export default function BillingTable() {
       ) || []
     );
   };
+
   const handlechnage = (e) => {
     const { name, value } = e.target;
     setSearchdata({ ...searchdata, [name]: value });
   };
+
   const hadleclick = async () => {
     setLoader(true);
-
     try {
       const response = await axios.get(
         `${process.env.REACT_APP_BASE_URL}OrderInvoiceList?search=${searchdata.search}`
@@ -196,6 +301,7 @@ export default function BillingTable() {
       );
     }
   };
+  
   return (
     <>
       {loader ? (
@@ -376,9 +482,10 @@ export default function BillingTable() {
                   </tbody> */}
                   <tbody>
                     {tableData && tableData.length > 0 ? (
-                      tableData.map((item) => {
+                      tableData.map((item, index) => {
+                        const rowKey = item.invoice_id !== null ? item.invoice_id : `temp-${index}`;
                         return (
-                          <tr key={item.invoice_id}>
+                          <tr key={rowKey}>
                             <td>
                               {new Date(item.date).toLocaleDateString(
                                 "en-GB"
@@ -392,14 +499,16 @@ export default function BillingTable() {
                             <td>
                               <select
                                 value={
-                                  selectedInvoices[item.invoice_id]
-                                    ?.transaction || item.transaction
+                                  selectedInvoices[rowKey]?.transaction !== undefined
+                                    ? selectedInvoices[rowKey].transaction
+                                    : item.transaction
                                 }
                                 onChange={(e) =>
                                   handleDropdownChange(
                                     "transaction",
                                     e.target.value,
-                                    item
+                                    item,
+                                    index
                                   )
                                 }
                               >
@@ -432,33 +541,23 @@ export default function BillingTable() {
                             <td>{item.client_name || "N/A"}</td>
 
                             <td>
-                              <select
+                              <SearchableDropdown
+                                options={getAvailableOptions(item)}
                                 value={
-                                  selectedInvoices[item.invoice_id]
-                                    ?.sage_invoice_id ||
-                                  item.sage_invoice_id
+                                  selectedInvoices[rowKey]?.sage_invoice_id !== undefined
+                                    ? selectedInvoices[rowKey].sage_invoice_id
+                                    : item.sage_invoice_id
                                 }
-                                onChange={(e) =>
+                                placeholder="Select Invoice"
+                                onChange={(valueToSet) => {
                                   handleDropdownChange(
                                     "sage_invoice_id",
-                                    e.target.value,
-                                    item
-                                  )
-                                }
-                              >
-                                <option value="Select">Select</option>
-
-                                {getAvailableOptions(item).map(
-                                  (option, index) => (
-                                    <option
-                                      key={index}
-                                      value={option.id}
-                                    >
-                                      {option.document_number}
-                                    </option>
-                                  )
-                                )}
-                              </select>
+                                    valueToSet,
+                                    item,
+                                    index
+                                  );
+                                }}
+                              />
                             </td>
 
                             <td>{item.invoice_amt}</td>
@@ -470,7 +569,7 @@ export default function BillingTable() {
                                 <input
                                   type="date"
                                   value={
-                                    selectedDueDates[item.invoice_id] ||
+                                    selectedDueDates[rowKey] ||
                                     (item.due_date
                                       ? new Date(item.due_date)
                                         .toISOString()
@@ -478,7 +577,7 @@ export default function BillingTable() {
                                       : "")
                                   }
                                   onChange={(e) =>
-                                    handleDueDateChange(e, item)
+                                    handleDueDateChange(e, item, index)
                                   }
                                 />
                               )}
@@ -490,15 +589,16 @@ export default function BillingTable() {
                               ) : (
                                 <select
                                   value={
-                                    selectedInvoices[item.invoice_id]
-                                      ?.invoice_currency ||
-                                    item.invoice_currency
+                                    selectedInvoices[rowKey]?.invoice_currency !== undefined
+                                      ? selectedInvoices[rowKey].invoice_currency
+                                      : item.invoice_currency
                                   }
                                   onChange={(e) =>
                                     handleDropdownChange(
                                       "invoice_currency",
                                       e.target.value,
-                                      item
+                                      item,
+                                      index
                                     )
                                   }
                                 >

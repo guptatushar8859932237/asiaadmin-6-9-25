@@ -4641,10 +4641,10 @@ export default function Addsupplierinvoice() {
                           </td>
                           <td> {totalChangeRoeOrigin.toFixed(2)} </td>
                           <td></td>
-                          <td>343</td>
-                          <td>3433</td>
-                          <td>433</td>
-                          <td>533</td>
+                          <td></td>
+                          <td></td>
+                          <td></td>
+                          <td></td>
                         </tr>
                         {/* freight charges */}
                         <tr>
@@ -5253,10 +5253,10 @@ export default function Addsupplierinvoice() {
                             )}{" "}
                           </td>
                           <td></td>
-                          <td>343</td>
-                          <td>3433</td>
-                          <td>433</td>
-                          <td>533</td>
+                          <td></td>
+                          <td></td>
+                          <td></td>
+                          <td></td>
                         </tr>
 
                         {/* transit charges */}
@@ -7607,10 +7607,10 @@ export default function Addsupplierinvoice() {
                           </td>
                           <td> {transitRoe.toFixed(2)} </td>
                           <td></td>
-                          <td>343</td>
-                          <td>343</td>
-                          <td>363</td>
-                          <td>363</td>
+                          <td></td>
+                          <td></td>
+                          <td></td>
+                          <td></td>
                         </tr>
                         {/* Destination Charges */}
                         <tr>
@@ -10668,10 +10668,10 @@ export default function Addsupplierinvoice() {
                           </td>
                           <td> {totalChaDestinationTransitRoe.toFixed(2)} </td>
                           <td></td>
-                          <td>4334</td>
-                          <td>4334</td>
-                          <td>4334</td>
-                          <td>4334</td>
+                          <td></td>
+                          <td></td>
+                          <td></td>
+                          <td></td>
                         </tr>
                         <tr>
                           <td> Admin Charges</td>
@@ -11582,11 +11582,11 @@ export default function Addsupplierinvoice() {
                           <td colSpan={2}> {totaAdminransit.toFixed(2)} </td>
                           <td> {totalAdminnsitRoe.toFixed(2)} </td>
                           <td></td>
-                          <td>4334</td>
-                          <td>4334</td>
-                          <td>4334</td>
-                          <td>4334</td>
-                          <td>4334</td>
+                          <td></td>
+                          <td></td>
+                          <td></td>
+                          <td></td>
+                          <td></td>
                         </tr>
                         <tr>
                           <td> Description</td>

@@ -41,20 +41,24 @@ export default function Addsupplierinvoice() {
   console.log("[Add Invoice] copyInvoiceData:", copyInvoiceData);
   console.log("[Add Invoice] isCopyPreview:", isCopyPreview);
   console.log("[Add Invoice] getdata122:", getdata122);
+
   useEffect(() => {
     if (isCopyPreview) return;
     getFreightDataById();
   }, [isCopyPreview]);
+
   const usershipmentid = location?.state?.copyInvoiceData?.shipment_id;
   console.log("usershipmentid:", usershipmentid);
   const user = JSON.parse(localStorage.getItem("data123"));
   const localFreigtId = localStorage.getItem("freightid");
   console.log("Stored:", localStorage.getItem("freightid"));
+
   useEffect(() => {
     if (usershipmentid) {
       apidataget(usershipmentid);
     }
   }, [usershipmentid]);
+
   const getFreightDataById = async () => {
     const payload = {
       freight_id: localFreigtId,
@@ -95,11 +99,11 @@ export default function Addsupplierinvoice() {
   const num3 = num1 / (1 - num2 / 100);
   const finalval = isNaN(num3) ? 0 : num3.toFixed(2);
   const finalvalflo = parseFloat(finalval);
-        console.log(freight_amount)
-        console.log(num1)
-        console.log(num2)
-        console.log(num3)
-        console.log(finalval)
+  console.log(freight_amount)
+  console.log(num1)
+  console.log(num2)
+  console.log(num3)
+  console.log(finalval)
 
   const oripick1 = parseFloat(freight.origin_pick_up_cost) || 0;
   // const oripick19 = parseFloat(freight.freight_charge_currencyQTY) || 0;
@@ -147,14 +151,15 @@ export default function Addsupplierinvoice() {
   }
   const finalcfs1 = isNaN(finalValuecfs) ? "0.00" : finalValuecfs.toFixed(2);
   const finalvlaueocfs = finalcfs1 * parseInt(freight?.roe_origin_cfs_currency);
-  const oridoc1 = parseFloat(freight.origin_pick_up_documantation_cost) || 0;
+
+  const oridoc1 = parseFloat(freight.origin_pick_up_documantion_cost) || 0;
   // const oridoc2 = parseFloat(freight.origin_pick_up_documantation_fees) || 0;
   const oridoc2 = parseFloat(
     freight.origin_pick_up_documantation_unitType === "1"
       ? 1
       : freight.chargable_rate,
   );
-  const oridoc3 = parseFloat(freight.origin_pick_documantation_cost_gp) || 0;
+ const oridoc3 = parseFloat(freight.origin_pick_documantation_cost_gp) || 0;
   const oridoc4 = freight.origin_pick_up_documantation_unitType
     ? oridoc1 * oridoc2 * freight.origin_pick_up_documantation_unitTypeQTY
     : 0.0;
@@ -168,6 +173,7 @@ export default function Addsupplierinvoice() {
   console.log(freight.roe_origin_doc_currency);
   console.log(parseInt(freight?.roe_origin_doc_currency));
   const finalvlaueodoc = finaldoc1 * parseInt(freight?.roe_origin_doc_currency);
+
   const oriforewarding1 =
     parseFloat(freight.origin_pick_up_forewarding_cost) || 0;
   const oriforewarding2 = parseFloat(
@@ -177,7 +183,7 @@ export default function Addsupplierinvoice() {
   );
   // const oriforewarding2 =
   //   parseFloat(freight.origin_pick_up_forewarding_fees) || 0;
-  const oriforewarding3 = parseFloat(freight.origin_pickup_forewarding_gp) || 0;
+   const oriforewarding3 = parseFloat(freight.origin_pickup_forewarding_gp) || 0;
   const oriforewarding4 = freight.origin_pick_up_forewarding_unitType
     ? oriforewarding1 *
     oriforewarding2 *
@@ -1674,6 +1680,7 @@ export default function Addsupplierinvoice() {
       toast.error(error.response?.data?.message || "Something went wrong");
     }
   };
+  
   const supplier = () => {
     axios
       .post(`${process.env.REACT_APP_BASE_URL}get-suppler-selected`, {
@@ -3136,7 +3143,7 @@ export default function Addsupplierinvoice() {
                           <td>
                             {" "}
                             <input
-                              
+
                               value={formatMoney(invoiceBreakups.org_pickUp.inclusive)}
                               type="text"
                               placeholder="0.00"
@@ -3430,7 +3437,7 @@ export default function Addsupplierinvoice() {
                           <td>
                             {" "}
                             <input
-                              
+
                               value={formatMoney(invoiceBreakups.origin_fuelSur.inclusive)}
                               type="text"
                               placeholder="0.00"
@@ -3725,7 +3732,7 @@ export default function Addsupplierinvoice() {
                           <td>
                             {" "}
                             <input
-                              
+
                               value={formatMoney(invoiceBreakups.origin_cfs.inclusive)}
                               type="text"
                               placeholder="0.00"
@@ -4022,7 +4029,7 @@ export default function Addsupplierinvoice() {
                           <td>
                             {" "}
                             <input
-                              
+
                               value={formatMoney(invoiceBreakups.org_docFee.inclusive)}
                               type="text"
                               placeholder="0.00" onChange={handlechangecalc}
@@ -4320,7 +4327,7 @@ export default function Addsupplierinvoice() {
                           <td>
                             {" "}
                             <input
-                              
+
                               value={formatMoney(invoiceBreakups.org_forwFee.inclusive)}
                               type="text"
                               placeholder="0.00" onChange={handlechangecalc}
@@ -4614,7 +4621,7 @@ export default function Addsupplierinvoice() {
                           <td>
                             {" "}
                             <input
-                              
+
                               value={formatMoney(invoiceBreakups.org_clearance.inclusive)}
                               type="text"
                               placeholder="0.00"
@@ -4924,7 +4931,7 @@ export default function Addsupplierinvoice() {
                           <td>
                             {" "}
                             <input
-                              
+
                               value={formatMoney(invoiceBreakups.ocenfreight_charge.inclusive)}
                               type="text"
                               placeholder="0.00"
@@ -5219,7 +5226,7 @@ export default function Addsupplierinvoice() {
                           <td>
                             {" "}
                             <input
-                              
+
                               value={formatMoney(invoiceBreakups.insurance.inclusive)}
                               type="text"
                               placeholder="0.00"
@@ -5534,7 +5541,7 @@ export default function Addsupplierinvoice() {
                           <td>
                             {" "}
                             <input
-                              
+
                               value={formatMoney(invoiceBreakups.trans_clear_fees.inclusive)}
                               type="text"
                               placeholder="0.00"
@@ -5826,7 +5833,7 @@ export default function Addsupplierinvoice() {
                           <td>
                             {" "}
                             <input
-                              
+
                               value={formatMoney(invoiceBreakups.trans_THC_levy.inclusive)}
                               type="text"
                               placeholder="0.00"
@@ -6117,7 +6124,7 @@ export default function Addsupplierinvoice() {
                           <td>
                             {" "}
                             <input
-                              
+
                               value={formatMoney(invoiceBreakups.trans_unpack_charg.inclusive)}
                               type="text"
                               placeholder="0.00"
@@ -6409,7 +6416,7 @@ export default function Addsupplierinvoice() {
                           <td>
                             {" "}
                             <input
-                              
+
                               value={formatMoney(invoiceBreakups.trans_CFS_charg.inclusive)}
                               type="text"
                               placeholder="0.00"
@@ -6700,7 +6707,7 @@ export default function Addsupplierinvoice() {
                           <td>
                             {" "}
                             <input
-                              
+
                               value={formatMoney(invoiceBreakups.trans_admin_charg.inclusive)}
                               type="text"
                               placeholder="0.00"
@@ -6991,7 +6998,7 @@ export default function Addsupplierinvoice() {
                           <td>
                             {" "}
                             <input
-                              
+
                               value={formatMoney(invoiceBreakups.trans_portCargo.inclusive)}
                               type="text"
                               placeholder="0.00"
@@ -7282,7 +7289,7 @@ export default function Addsupplierinvoice() {
                           <td>
                             {" "}
                             <input
-                              
+
                               value={formatMoney(invoiceBreakups.trans_adv_loadHouse.inclusive)}
                               type="text"
                               placeholder="0.00" onChange={handlechangecalc}
@@ -7579,7 +7586,7 @@ export default function Addsupplierinvoice() {
                           <td>
                             {" "}
                             <input
-                              
+
                               value={formatMoney(invoiceBreakups.trans_doc_fee.inclusive)}
                               type="text"
                               placeholder="0.00" onChange={handlechangecalc}
@@ -7897,7 +7904,7 @@ export default function Addsupplierinvoice() {
                           <td>
                             {" "}
                             <input
-                              
+
                               value={formatMoney(invoiceBreakups.dest_clearing_fees.inclusive)}
                               type="text"
                               placeholder="0.00" onChange={handlechangecalc}
@@ -8496,7 +8503,7 @@ export default function Addsupplierinvoice() {
                           <td>
                             {" "}
                             <input
-                              
+
                               value={formatMoney(invoiceBreakups.dest_unpack_chrg.inclusive)}
                               type="text"
                               placeholder="0.00"
@@ -8811,7 +8818,7 @@ export default function Addsupplierinvoice() {
                           <td>
                             {" "}
                             <input
-                              
+
                               value={formatMoney(invoiceBreakups.dest_fuel_Surchar.inclusive)}
                               type="text"
                               placeholder="0.00"
@@ -9124,7 +9131,7 @@ export default function Addsupplierinvoice() {
                           <td>
                             {" "}
                             <input
-                              
+
                               value={formatMoney(invoiceBreakups.dest_admin_chrg.inclusive)}
                               type="text"
                               placeholder="0.00"
@@ -9426,7 +9433,7 @@ export default function Addsupplierinvoice() {
                           <td>
                             {" "}
                             <input
-                              
+
                               value={formatMoney(invoiceBreakups.dest_portCargo.inclusive)}
                               type="text"
                               placeholder="0.00"
@@ -9731,7 +9738,7 @@ export default function Addsupplierinvoice() {
                           <td>
                             {" "}
                             <input
-                              
+
                               value={formatMoney(invoiceBreakups.dest_adv_loadHouse.inclusive)}
                               type="text"
                               placeholder="0.00" onChange={handlechangecalc}
@@ -10035,7 +10042,7 @@ export default function Addsupplierinvoice() {
                           <td>
                             {" "}
                             <input
-                              
+
                               value={formatMoney(invoiceBreakups.dest_CFS_charg.inclusive)}
                               type="text"
                               placeholder="0.00"
@@ -10336,7 +10343,7 @@ export default function Addsupplierinvoice() {
                           <td>
                             {" "}
                             <input
-                              
+
                               value={formatMoney(invoiceBreakups.dest_delivry_charge.inclusive)}
                               type="text"
                               placeholder="0.00"
@@ -10640,7 +10647,7 @@ export default function Addsupplierinvoice() {
                           <td>
                             {" "}
                             <input
-                              
+
                               value={formatMoney(invoiceBreakups.dest_fuel_surchrg.inclusive)}
                               type="text"
                               placeholder="0.00"
@@ -10960,7 +10967,7 @@ export default function Addsupplierinvoice() {
                           <td>
                             {" "}
                             <input
-                              
+
                               value={formatMoney(invoiceBreakups.admin_agencyFee.inclusive)}
                               type="text"
                               placeholder="0.00"
@@ -11265,7 +11272,7 @@ export default function Addsupplierinvoice() {
                           <td>
                             {" "}
                             <input
-                              
+
                               value={formatMoney(invoiceBreakups.admin_disbur_fee.inclusive)}
                               type="text"
                               placeholder="0.00" onChange={handlechangecalc}
@@ -11558,7 +11565,7 @@ export default function Addsupplierinvoice() {
                           <td>
                             {" "}
                             <input
-                              
+
                               value={formatMoney(invoiceBreakups.admin_doc_adminFees.inclusive)}
                               type="text"
                               placeholder="0.00"
@@ -13271,7 +13278,7 @@ export default function Addsupplierinvoice() {
                           <td>
                             {" "}
                             <input
-                              
+
                               value={formatMoney(invoiceBreakups.clearing_fee.inclusive)}
                               type="text"
                               placeholder="0.00"
@@ -13558,7 +13565,7 @@ export default function Addsupplierinvoice() {
                           <td>
                             {" "}
                             <input
-                              
+
                               value={formatMoney(invoiceBreakups.disbursement.inclusive)}
                               type="text" onChange={handlechangecalc}
                               placeholder="0.00"
@@ -13845,7 +13852,7 @@ export default function Addsupplierinvoice() {
                           <td>
                             {" "}
                             <input
-                              
+
                               value={formatMoney(invoiceBreakups.surcharge.inclusive)}
                               type="text"
                               placeholder="0.00" onChange={handlechangecalc}

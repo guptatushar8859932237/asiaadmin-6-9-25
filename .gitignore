@@ -3,8 +3,13 @@
 # dependencies
 /node_modules
 /.pnp
-/build
 .pnp.js
+
+# production
+build.zip
+*.zip
+/build
+/dist
 
 # testing
 /coverage

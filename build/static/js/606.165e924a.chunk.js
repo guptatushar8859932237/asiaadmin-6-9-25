@@ -1,1 +1,0 @@
-"use strict";(self.webpackChunkasia_direct=self.webpackChunkasia_direct||[]).push([[606],{92225:(e,a,s)=>{s.r(a),s.d(a,{default:()=>c});var i=s(44414);const c=()=>(0,i.jsx)("div",{className:"title",children:" File Manager"})}}]);

@@ -1,1 +1,0 @@
-"use strict";(self.webpackChunkasia_direct=self.webpackChunkasia_direct||[]).push([[304],{26304:(a,s,d)=>{d.r(s),d.d(s,{default:()=>i});d(9950);var e=d(89046),r=d(44414);function i(){return(0,r.jsxs)("div",{children:["working on this page move to dashboard ",(0,r.jsx)(e.N_,{to:"/Admin/dashboard",children:"Dashboard"})]})}}}]);

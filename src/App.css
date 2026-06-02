@@ -4468,7 +4468,6 @@ li.page_list {
   padding: 7px 10px;
   font-weight: 500;
   font-size: 13px !important;
-
   width: 100%;
 }
 
@@ -5125,16 +5124,6 @@ td {
 
 .cost-table select {
   border: unset;
-}
-
-.cost-table input {
-  border: unset;
-  padding: 0px 2px;
-}
-
-.cost-table select {
-  border: unset;
-
 }
 
 .cost-table input {

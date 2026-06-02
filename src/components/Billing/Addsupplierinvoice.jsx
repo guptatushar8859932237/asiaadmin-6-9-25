@@ -2945,7 +2945,6 @@ export default function Addsupplierinvoice() {
                                 color: "black",
                                 fontWeight: 400,
                                 border: "0px",
-
                                 verticalAlign: "middle",
                               }}
                               type="text"
@@ -2973,7 +2972,6 @@ export default function Addsupplierinvoice() {
                                 color: "black",
                                 fontWeight: 400,
                                 border: "0px",
-
                                 verticalAlign: "middle",
                               }}
                               disabled
@@ -3199,7 +3197,6 @@ export default function Addsupplierinvoice() {
                                 color: "black",
                                 fontWeight: 400,
                                 border: "0px",
-
                                 verticalAlign: "middle",
                               }}
                               type="text"
@@ -3268,7 +3265,6 @@ export default function Addsupplierinvoice() {
                                 color: "black",
                                 fontWeight: 400,
                                 border: "0px",
-
                                 verticalAlign: "middle",
                               }}
                               type="text"
@@ -3321,7 +3317,6 @@ export default function Addsupplierinvoice() {
                                 marginBottom: 0,
                                 fontSize: 13,
                                 color: "black",
-
                                 border: "0px",
                                 verticalAlign: "middle",
                               }}
@@ -4132,7 +4127,6 @@ export default function Addsupplierinvoice() {
                                 color: "black",
                                 fontWeight: 400,
                                 border: "0px",
-
                                 verticalAlign: "middle",
                               }}
                               type="text"
@@ -4299,7 +4293,8 @@ export default function Addsupplierinvoice() {
                               placeholder="0.00"
                               value={formatMoney(invoiceBreakups.org_forwFee.disc)}
                               name="org_forwFee_disc"
-                              className="supplier_form" onChange={handlechangecalc}
+                              className="supplier_form"
+                              onChange={handlechangecalc}
                             />{" "}
                           </td>
                           <td>

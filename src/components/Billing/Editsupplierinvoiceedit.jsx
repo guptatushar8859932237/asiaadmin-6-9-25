@@ -32,13 +32,144 @@ export default function Editsupplierinvoiceedit() {
   const [open, setOpen] = useState(false);
   const navigate = useNavigate();
 
-   const item = location.state?.item.supplier_invoice_id;
-   console.log(item)
+  const invoiceItemPrefixes = [
+    "org_pickUp",
+    "origin_fuelSur",
+    "origin_cfs",
+    "org_docFee",
+    "org_forwFee",
+    "org_clearance",
+    "ocenfreight_charge",
+    "insurance",
+    "trans_clear_fees",
+    "trans_THC_levy",
+    "trans_unpack_charg",
+    "trans_CFS_charg",
+    "trans_admin_charg",
+    "trans_portCargo",
+    "trans_adv_loadHouse",
+    "trans_doc_fee",
+    "dest_clearing_fees",
+    "dest_THC_levy",
+    "dest_unpack_chrg",
+    "dest_fuel_Surchar",
+    "dest_admin_chrg",
+    "dest_portCargo",
+    "dest_adv_loadHouse",
+    "dest_CFS_charg",
+    "dest_delivry_charge",
+    "dest_fuel_surchrg",
+    "admin_agencyFee",
+    "admin_disbur_fee",
+    "admin_doc_adminFees",
+    "cust_duty",
+    "cust_vat",
+    "adv_duty",
+    "cust_penalty",
+    "custProv_pay",
+    "clearing_fee",
+    "disbursement",
+    "surcharge",
+  ];
+
+  const customChargePrefixes = [
+    "cust_duty",
+    "cust_vat",
+    "adv_duty",
+    "cust_penalty",
+    "custProv_pay",
+    "clearing_fee",
+    "disbursement",
+    "surcharge",
+  ];
+
+  const invoiceItemSources = [
+    "items",
+    "item",
+    "invoice_items",
+    "supplier_invoice_items",
+    "supplierInvoiceItems",
+    "supplier_invoice_item",
+  ];
+
+  const pickFirstValue = (...values) =>
+    values.find((value) => value !== undefined && value !== null);
+
+  const getInvoiceItems = (invoiceData) => {
+    for (const key of invoiceItemSources) {
+      if (Array.isArray(invoiceData?.[key])) return invoiceData[key];
+    }
+    return [];
+  };
+
+  const resolveInvoiceItemPrefix = (row, index) => {
+    const rowValues = [
+      row?.prefix,
+      row?.item_key,
+      row?.itemKey,
+      row?.field_name,
+      row?.fieldName,
+      row?.code,
+      row?.name,
+      row?.item,
+      row?.description,
+    ]
+      .filter(Boolean)
+      .map((value) => String(value).toLowerCase());
+
+    return (
+      invoiceItemPrefixes.find((prefix) =>
+        rowValues.some((value) => value.includes(prefix.toLowerCase())),
+      ) || invoiceItemPrefixes[index]
+    );
+  };
+
+  const normalizeSupplierInvoiceData = (apiData) => {
+    const invoiceData = Array.isArray(apiData) ? apiData[0] || {} : apiData || {};
+    const items = getInvoiceItems(invoiceData);
+    const normalized = { ...invoiceData };
+
+    normalized.items = items.map((row, index) => {
+      const prefix = resolveInvoiceItemPrefix(row, index);
+      const id = pickFirstValue(row?.id, row?.item_id, row?.supplier_invoice_item_id);
+      const discountPercent = pickFirstValue(
+        row?.[`${prefix}_disc%`],
+        row?.discount_percent,
+        row?.discount_percentage,
+        row?.disc_percent,
+        row?.disc_percentage,
+      );
+
+      if (prefix) {
+        if (id !== undefined) normalized[`${prefix}_item_id`] = id;
+        if (discountPercent !== undefined) normalized[`${prefix}_disc%`] = discountPercent;
+        if (row?.vat_percent !== undefined && normalized[`${prefix}_vatTyp`] === undefined) {
+          normalized[`${prefix}_vatTyp`] = row.vat_percent;
+        }
+        if (row?.vat_percentage !== undefined && normalized[`${prefix}_vatTyp`] === undefined) {
+          normalized[`${prefix}_vatTyp`] = row.vat_percentage;
+        }
+      }
+
+      return {
+        ...row,
+        id,
+        prefix,
+      };
+    });
+
+    return normalized;
+  };
+
+  const item = location.state?.item.supplier_invoice_id;
+  console.log(item)
   const fwtsupplierdata =async()=>{
     try {
         const response = await axios.get(`${process.env.REACT_APP_BASE_URL}getSupplierInvoiceById/${item}`);
-        setFreight(response.data.data);
-        console.log(response.data.data)
+        const invoiceData = normalizeSupplierInvoiceData(response.data.data);
+        setFreight(invoiceData);
+        setGetdata(invoiceData?.shipment || invoiceData);
+        console.log(invoiceData)
 
     } catch (error) {
         console.log(error)
@@ -218,6 +349,13 @@ export default function Editsupplierinvoiceedit() {
   };
 
   const formatMoney = (value) => safeNumber(value).toFixed(2);
+  const discountInputValue = (prefix) =>
+    pickFirstValue(
+      freight?.[`${prefix}_disc%`],
+      freight?.[`${prefix}_disc_percent`],
+      freight?.[`${prefix}_discount_percent`],
+      "",
+    );
 
   const calculateCustomChargeRow = (prefix) => {
     const unitType = freight[`${prefix}_unitTyp`];
@@ -240,6 +378,11 @@ export default function Editsupplierinvoiceedit() {
     disbursement: calculateCustomChargeRow("disbursement"),
     surcharge: calculateCustomChargeRow("surcharge"),
   };
+  const hasCustomChargeValue = (prefix) =>
+    [
+      freight?.[`${prefix}_qty`],
+      freight?.[`${prefix}_cost`],
+    ].some((value) => value !== undefined && value !== null && value !== "" && safeNumber(value) !== 0);
   const totalChageswithOutExchange =
     safeNumber(oripick4) +
     safeNumber(orifuel4) +
@@ -910,49 +1053,103 @@ export default function Editsupplierinvoiceedit() {
     totalChangeRoeOrigin;
 
   const invoiceBreakups = {
-    org_pickUp: calculateInvoiceBreakup(finalvlaueoriginPickup, freight["org_pickUp_disc%"], freight.org_pickUp_vatTyp),
-    origin_fuelSur: calculateInvoiceBreakup(finalvlaueoFuel, freight["origin_fuelSur_disc%"], freight.origin_fuelSur_vatTyp),
-    origin_cfs: calculateInvoiceBreakup(finalvlaueocfs, freight["origin_cfs_disc%"], freight.origin_cfs_vatTyp),
-    org_docFee: calculateInvoiceBreakup(finalvlaueodoc, freight["org_docFee_disc%"], freight.org_docFee_vatTyp),
-    org_forwFee: calculateInvoiceBreakup(finalvlaueoforewarding, freight["org_forwFee_disc%"], freight.org_forwFee_vatTyp),
-    org_clearance: calculateInvoiceBreakup(finalvlaueoCustomes, freight["org_clearance_disc%"], freight.org_clearance_vatTyp),
-    ocenfreight_charge: calculateInvoiceBreakup(finalvlaueofreight, freight["ocenfreight_charge_disc%"], freight.ocenfreight_charge_vatTyp),
-    insurance: calculateInvoiceBreakup(finalvlaueoInsurance, freight["insurance_disc%"], freight.insurance_vatTyp),
-    trans_clear_fees: calculateInvoiceBreakup(finalvlaueotransit, freight["trans_clear_fees_disc%"], freight.trans_clear_fees_vatTyp),
-    trans_THC_levy: calculateInvoiceBreakup(finalvlaueotfineal, freight["trans_THC_levy_disc%"], freight.trans_THC_levy_vatTyp),
-    trans_unpack_charg: calculateInvoiceBreakup(finalvlaueotfunpack, freight["trans_unpack_charg_disc%"], freight.trans_unpack_charg_vatTyp),
-    trans_CFS_charg: calculateInvoiceBreakup(finalvlaueot3dparty, freight["trans_CFS_charg_disc%"], freight.trans_CFS_charg_vatTyp),
-    trans_admin_charg: calculateInvoiceBreakup(finalvlaueotAdmin, freight["trans_admin_charg_disc%"], freight.trans_admin_charg_vatTyp),
-    trans_portCargo: calculateInvoiceBreakup(finalvlaueotPort, freight["trans_portCargo_disc%"], freight.trans_portCargo_vatTyp),
-    trans_adv_loadHouse: calculateInvoiceBreakup(finalvlaueotadv, freight["trans_adv_loadHouse_disc%"], freight.trans_adv_loadHouse_vatTyp),
-    trans_doc_fee: calculateInvoiceBreakup(finalvlaueotDocumantation, freight["trans_doc_fee_disc%"], freight.trans_doc_fee_vatTyp),
-    dest_clearing_fees: calculateInvoiceBreakup(final3rdestinationRoe, freight["dest_clearing_fees_disc%"], freight.dest_clearing_fees_vatTyp),
-    dest_THC_levy: calculateInvoiceBreakup(final3rTHCdestinationRoe, freight["dest_THC_levy_disc%"], freight.dest_THC_levy_vatTyp),
-    dest_unpack_chrg: calculateInvoiceBreakup(final3rUnpackdestinationRoe, freight["dest_unpack_chrg_disc%"], freight.dest_unpack_chrg_vatTyp),
-    dest_fuel_Surchar: calculateInvoiceBreakup(final3rfuelsurCahrgeestinationRoe, freight["dest_fuel_Surchar_disc%"], freight.dest_fuel_Surchar_vatTyp),
-    dest_admin_chrg: calculateInvoiceBreakup(adminsurcharge2, freight["dest_admin_chrg_disc%"], freight.dest_admin_chrg_vatTyp),
-    dest_portCargo: calculateInvoiceBreakup(admiportcargo2, freight["dest_portCargo_disc%"], freight.dest_portCargo_vatTyp),
-    dest_adv_loadHouse: calculateInvoiceBreakup(desdvancedLoadion, freight["dest_adv_loadHouse_disc%"], freight.dest_adv_loadHouse_vatTyp),
-    dest_CFS_charg: calculateInvoiceBreakup(desdva3rdpartyion, freight["dest_CFS_charg_disc%"], freight.dest_CFS_charg_vatTyp),
-    dest_delivry_charge: calculateInvoiceBreakup(desddeliverytyion, freight["dest_delivry_charge_disc%"], freight.dest_delivry_charge_vatTyp),
-    dest_fuel_surchrg: calculateInvoiceBreakup(defuelchangyion, freight["dest_fuel_surchrg_disc%"], freight.dest_fuel_surchrg_vatTyp),
-    admin_agencyFee: calculateInvoiceBreakup(defuelchdminAgencyngangyion, freight["admin_agencyFee_disc%"], freight.admin_agencyFee_vatTyp),
-    admin_disbur_fee: calculateInvoiceBreakup(dedisbursementon, freight["admin_disbur_fee_disc%"], freight.admin_disbur_fee_vatTyp),
-    admin_doc_adminFees: calculateInvoiceBreakup(dedisbudoon, freight["admin_doc_adminFees_disc%"], freight.admin_doc_adminFees_vatTyp),
-    cust_duty: calculateInvoiceBreakup(customChargeRows.cust_duty.finalAmt, freight["cust_duty_disc%"], freight.cust_duty_vatTyp),
-    cust_vat: calculateInvoiceBreakup(customChargeRows.cust_vat.finalAmt, freight["cust_vat_disc%"], freight.cust_vat_vatTyp),
-    adv_duty: calculateInvoiceBreakup(customChargeRows.adv_duty.finalAmt, freight["adv_duty_disc%"], freight.adv_duty_vatTyp),
-    cust_penalty: calculateInvoiceBreakup(customChargeRows.cust_penalty.finalAmt, freight["cust_penalty_disc%"], freight.cust_penalty_vatTyp),
-    custProv_pay: calculateInvoiceBreakup(customChargeRows.custProv_pay.finalAmt, freight["custProv_pay_disc%"], freight.custProv_pay_vatTyp),
-    clearing_fee: calculateInvoiceBreakup(customChargeRows.clearing_fee.finalAmt, freight["clearing_fee_disc%"], freight.clearing_fee_vatTyp),
-    disbursement: calculateInvoiceBreakup(customChargeRows.disbursement.finalAmt, freight["disbursement_disc%"], freight.disbursement_vatTyp),
-    surcharge: calculateInvoiceBreakup(customChargeRows.surcharge.finalAmt, freight["surcharge_disc%"], freight.surcharge_vatTyp),
+    org_pickUp: calculateInvoiceBreakup(finalvlaueoriginPickup, discountInputValue("org_pickUp"), freight.org_pickUp_vatTyp),
+    origin_fuelSur: calculateInvoiceBreakup(finalvlaueoFuel, discountInputValue("origin_fuelSur"), freight.origin_fuelSur_vatTyp),
+    origin_cfs: calculateInvoiceBreakup(finalvlaueocfs, discountInputValue("origin_cfs"), freight.origin_cfs_vatTyp),
+    org_docFee: calculateInvoiceBreakup(finalvlaueodoc, discountInputValue("org_docFee"), freight.org_docFee_vatTyp),
+    org_forwFee: calculateInvoiceBreakup(finalvlaueoforewarding, discountInputValue("org_forwFee"), freight.org_forwFee_vatTyp),
+    org_clearance: calculateInvoiceBreakup(finalvlaueoCustomes, discountInputValue("org_clearance"), freight.org_clearance_vatTyp),
+    ocenfreight_charge: calculateInvoiceBreakup(finalvlaueofreight, discountInputValue("ocenfreight_charge"), freight.ocenfreight_charge_vatTyp),
+    insurance: calculateInvoiceBreakup(finalvlaueoInsurance, discountInputValue("insurance"), freight.insurance_vatTyp),
+    trans_clear_fees: calculateInvoiceBreakup(finalvlaueotransit, discountInputValue("trans_clear_fees"), freight.trans_clear_fees_vatTyp),
+    trans_THC_levy: calculateInvoiceBreakup(finalvlaueotfineal, discountInputValue("trans_THC_levy"), freight.trans_THC_levy_vatTyp),
+    trans_unpack_charg: calculateInvoiceBreakup(finalvlaueotfunpack, discountInputValue("trans_unpack_charg"), freight.trans_unpack_charg_vatTyp),
+    trans_CFS_charg: calculateInvoiceBreakup(finalvlaueot3dparty, discountInputValue("trans_CFS_charg"), freight.trans_CFS_charg_vatTyp),
+    trans_admin_charg: calculateInvoiceBreakup(finalvlaueotAdmin, discountInputValue("trans_admin_charg"), freight.trans_admin_charg_vatTyp),
+    trans_portCargo: calculateInvoiceBreakup(finalvlaueotPort, discountInputValue("trans_portCargo"), freight.trans_portCargo_vatTyp),
+    trans_adv_loadHouse: calculateInvoiceBreakup(finalvlaueotadv, discountInputValue("trans_adv_loadHouse"), freight.trans_adv_loadHouse_vatTyp),
+    trans_doc_fee: calculateInvoiceBreakup(finalvlaueotDocumantation, discountInputValue("trans_doc_fee"), freight.trans_doc_fee_vatTyp),
+    dest_clearing_fees: calculateInvoiceBreakup(final3rdestinationRoe, discountInputValue("dest_clearing_fees"), freight.dest_clearing_fees_vatTyp),
+    dest_THC_levy: calculateInvoiceBreakup(final3rTHCdestinationRoe, discountInputValue("dest_THC_levy"), freight.dest_THC_levy_vatTyp),
+    dest_unpack_chrg: calculateInvoiceBreakup(final3rUnpackdestinationRoe, discountInputValue("dest_unpack_chrg"), freight.dest_unpack_chrg_vatTyp),
+    dest_fuel_Surchar: calculateInvoiceBreakup(final3rfuelsurCahrgeestinationRoe, discountInputValue("dest_fuel_Surchar"), freight.dest_fuel_Surchar_vatTyp),
+    dest_admin_chrg: calculateInvoiceBreakup(adminsurcharge2, discountInputValue("dest_admin_chrg"), freight.dest_admin_chrg_vatTyp),
+    dest_portCargo: calculateInvoiceBreakup(admiportcargo2, discountInputValue("dest_portCargo"), freight.dest_portCargo_vatTyp),
+    dest_adv_loadHouse: calculateInvoiceBreakup(desdvancedLoadion, discountInputValue("dest_adv_loadHouse"), freight.dest_adv_loadHouse_vatTyp),
+    dest_CFS_charg: calculateInvoiceBreakup(desdva3rdpartyion, discountInputValue("dest_CFS_charg"), freight.dest_CFS_charg_vatTyp),
+    dest_delivry_charge: calculateInvoiceBreakup(desddeliverytyion, discountInputValue("dest_delivry_charge"), freight.dest_delivry_charge_vatTyp),
+    dest_fuel_surchrg: calculateInvoiceBreakup(defuelchangyion, discountInputValue("dest_fuel_surchrg"), freight.dest_fuel_surchrg_vatTyp),
+    admin_agencyFee: calculateInvoiceBreakup(defuelchdminAgencyngangyion, discountInputValue("admin_agencyFee"), freight.admin_agencyFee_vatTyp),
+    admin_disbur_fee: calculateInvoiceBreakup(dedisbursementon, discountInputValue("admin_disbur_fee"), freight.admin_disbur_fee_vatTyp),
+    admin_doc_adminFees: calculateInvoiceBreakup(dedisbudoon, discountInputValue("admin_doc_adminFees"), freight.admin_doc_adminFees_vatTyp),
+    cust_duty: calculateInvoiceBreakup(customChargeRows.cust_duty.finalAmt, discountInputValue("cust_duty"), freight.cust_duty_vatTyp),
+    cust_vat: calculateInvoiceBreakup(customChargeRows.cust_vat.finalAmt, discountInputValue("cust_vat"), freight.cust_vat_vatTyp),
+    adv_duty: calculateInvoiceBreakup(customChargeRows.adv_duty.finalAmt, discountInputValue("adv_duty"), freight.adv_duty_vatTyp),
+    cust_penalty: calculateInvoiceBreakup(customChargeRows.cust_penalty.finalAmt, discountInputValue("cust_penalty"), freight.cust_penalty_vatTyp),
+    custProv_pay: calculateInvoiceBreakup(customChargeRows.custProv_pay.finalAmt, discountInputValue("custProv_pay"), freight.custProv_pay_vatTyp),
+    clearing_fee: calculateInvoiceBreakup(customChargeRows.clearing_fee.finalAmt, discountInputValue("clearing_fee"), freight.clearing_fee_vatTyp),
+    disbursement: calculateInvoiceBreakup(customChargeRows.disbursement.finalAmt, discountInputValue("disbursement"), freight.disbursement_vatTyp),
+    surcharge: calculateInvoiceBreakup(customChargeRows.surcharge.finalAmt, discountInputValue("surcharge"), freight.surcharge_vatTyp),
   };
+
+  const totalVatInclusive = invoiceItemPrefixes.reduce(
+    (total, prefix) => total + safeNumber(invoiceBreakups[prefix]?.inclusive),
+    0,
+  );
+
+  const customChargeTotals = customChargePrefixes.reduce(
+    (totals, prefix) => {
+      if (!hasCustomChargeValue(prefix)) return totals;
+
+      return {
+        totalCost: totals.totalCost + safeNumber(customChargeRows[prefix]?.totalCost),
+        finalAmount: totals.finalAmount + safeNumber(customChargeRows[prefix]?.finalAmt),
+        vatInclusive:
+          totals.vatInclusive + safeNumber(invoiceBreakups[prefix]?.inclusive),
+      };
+    },
+    { totalCost: 0, finalAmount: 0, vatInclusive: 0 },
+  );
+
+  const invoiceItemsPayload = invoiceItemPrefixes.map((prefix) => {
+    const existingItem = Array.isArray(freight?.items)
+      ? freight.items.find((row) => row?.prefix === prefix)
+      : undefined;
+    const rowBreakup = invoiceBreakups[prefix] || {};
+    const itemId = pickFirstValue(
+      freight?.[`${prefix}_item_id`],
+      existingItem?.id,
+      existingItem?.item_id,
+      existingItem?.supplier_invoice_item_id,
+    );
+
+    return {
+      ...(existingItem || {}),
+      id: itemId,
+      item_id: itemId,
+      supplier_invoice_item_id: itemId,
+      prefix,
+      discount_percent: discountInputValue(prefix),
+      [`${prefix}_disc%`]: discountInputValue(prefix),
+      discount_amount: rowBreakup.disc,
+      exclusive: rowBreakup.exclusive,
+      taxable_amount: rowBreakup.exclusive,
+      tax_amount: rowBreakup.vat,
+      vat: rowBreakup.vat,
+      vat_inclusive: rowBreakup.inclusive,
+      grand_total: rowBreakup.inclusive,
+    };
+  });
 
   const estimateCalculate = async () => {
     try {
       const payload = {
+       ...freight,
        supplier_invoice_id:item,
+       invoice_total: totalVatInclusive,
+       items: invoiceItemsPayload,
+       invoice_items: invoiceItemsPayload,
+       supplier_invoice_items: invoiceItemsPayload,
   supplier_id: freight?.supplier_id,
   shipment_id: Number(freight.shipment_id || ""),
         origin_pick_up_cost: freight.origin_pick_up_cost,
@@ -2426,7 +2623,7 @@ export default function Editsupplierinvoiceedit() {
                                                       marginTop: 5,
                                                     }}
                                                   >
-                                                    {getdata?.origin_country_name}
+                                                    {getdata?.origin_country}
                                                   </p>
                                                 </div>
                                                 <div
@@ -2454,7 +2651,7 @@ export default function Editsupplierinvoiceedit() {
                                                       marginTop: 5,
                                                     }}
                                                   >
-                                                    {getdata?.des_country_name}
+                                                    {getdata?.destination_country}
                                                   </p>
                                                 </div>
                                               </td>
@@ -2780,7 +2977,7 @@ export default function Editsupplierinvoiceedit() {
                                           type="text"
                                           placeholder="0.00" onChange={handlechangecalc}
                                           className="supplier_form"
-                                          value={freight["org_pickUp_disc%"] || ""}
+                                          value={discountInputValue("org_pickUp")}
                                           name="org_pickUp_disc%"
                                         />{" "}
                                       </td>
@@ -3073,7 +3270,7 @@ export default function Editsupplierinvoiceedit() {
                                           type="text"
                                           placeholder="0.00"
                                           className="supplier_form"
-                                          value={freight["origin_fuelSur_disc%"] || ""}
+                                          value={discountInputValue("origin_fuelSur")}
                                           name="origin_fuelSur_disc%"
                                           onChange={handlechangecalc}
                                         />{" "}
@@ -3371,7 +3568,7 @@ export default function Editsupplierinvoiceedit() {
                                           type="text"
                                           placeholder="0.00"
                                           className="supplier_form"
-                                          value={freight["origin_cfs_disc%"] || ""}
+                                          value={discountInputValue("origin_cfs")}
                                           name="origin_cfs_disc%"
                                           onChange={handlechangecalc}
                                         />{" "}
@@ -3669,7 +3866,7 @@ export default function Editsupplierinvoiceedit() {
                                           type="text" onChange={handlechangecalc}
                                           placeholder="0.00"
                                           className="supplier_form"
-                                          value={freight["org_docFee_disc%"] || ""}
+                                          value={discountInputValue("org_docFee")}
                                           name="org_docFee_disc%"
                                         />{" "}
                                       </td>
@@ -3967,7 +4164,7 @@ export default function Editsupplierinvoiceedit() {
                                           type="text"
                                           placeholder="0.00"
                                           className="supplier_form" onChange={handlechangecalc}
-                                          value={freight["org_forwFee_disc%"] || ""}
+                                          value={discountInputValue("org_forwFee")}
                                           name="org_forwFee_disc%"
                                         />{" "}
                                       </td>
@@ -4261,7 +4458,7 @@ export default function Editsupplierinvoiceedit() {
                                           type="text"
                                           placeholder="0.00"
                                           className="supplier_form" onChange={handlechangecalc}
-                                          value={freight["org_clearance_disc%"] || ""}
+                                          value={discountInputValue("org_clearance")}
                                           name="org_clearance_disc%"
                                         />{" "}
                                       </td>
@@ -4318,10 +4515,10 @@ export default function Editsupplierinvoiceedit() {
                                       </td>
                                       <td> {totalChangeRoeOrigin.toFixed(2)} </td>
                                       <td></td>
-                                      <td>343</td>
-                                      <td>3433</td>
-                                      <td>433</td>
-                                      <td>533</td>
+                                      <td></td>
+                                      <td></td>
+                                      <td></td>
+                                      <td></td>
                                     </tr>
                                     {/* freight charges */}
                                     <tr>
@@ -4571,7 +4768,7 @@ export default function Editsupplierinvoiceedit() {
                                           type="text"
                                           placeholder="0.00"
                                           className="supplier_form" onChange={handlechangecalc}
-                                          value={freight["ocenfreight_charge_disc%"] || ""}
+                                          value={discountInputValue("ocenfreight_charge")}
                                           name="ocenfreight_charge_disc%"
                                         />{" "}
                                       </td>
@@ -4866,7 +5063,7 @@ export default function Editsupplierinvoiceedit() {
                                           type="text" onChange={handlechangecalc}
                                           placeholder="0.00"
                                           className="supplier_form"
-                                          value={freight["insurance_disc%"] || ""}
+                                          value={discountInputValue("insurance")}
                                           name="insurance_disc%"
                                         />{" "}
                                       </td>
@@ -4930,10 +5127,10 @@ export default function Editsupplierinvoiceedit() {
                                         )}{" "}
                                       </td>
                                       <td></td>
-                                      <td>343</td>
-                                      <td>3433</td>
-                                      <td>433</td>
-                                      <td>533</td>
+                                      <td></td>
+                                      <td></td>
+                                      <td></td>
+                                      <td></td>
                                     </tr>
             
                                     {/* transit charges */}
@@ -5180,7 +5377,7 @@ export default function Editsupplierinvoiceedit() {
                                         <input
                                           type="text" onChange={handlechangecalc}
                                           placeholder="0.00"
-                                          value={freight["trans_clear_fees_disc%"] || ""}
+                                          value={discountInputValue("trans_clear_fees")}
                                           name="trans_clear_fees_disc%"
                                           className="supplier_form"
                                         />{" "}
@@ -5472,7 +5669,7 @@ export default function Editsupplierinvoiceedit() {
                                         <input
                                           type="text"
                                           placeholder="0.00" onChange={handlechangecalc}
-                                          value={freight["trans_THC_levy_disc%"] || ""}
+                                          value={discountInputValue("trans_THC_levy")}
                                           name="trans_THC_levy_disc%"
                                           className="supplier_form"
                                         />{" "}
@@ -5763,7 +5960,7 @@ export default function Editsupplierinvoiceedit() {
                                         <input
                                           type="text" onChange={handlechangecalc}
                                           placeholder="0.00"
-                                          value={freight["trans_unpack_charg_disc%"] || ""}
+                                          value={discountInputValue("trans_unpack_charg")}
                                           name="trans_unpack_charg_disc%"
                                           className="supplier_form"
                                         />{" "}
@@ -6055,7 +6252,7 @@ export default function Editsupplierinvoiceedit() {
                                         <input
                                           type="text"
                                           placeholder="0.00" onChange={handlechangecalc}
-                                          value={freight["trans_CFS_charg_disc%"] || ""}
+                                          value={discountInputValue("trans_CFS_charg")}
                                           name="trans_CFS_charg_disc%"
                                           className="supplier_form"
                                         />{" "}
@@ -6346,7 +6543,7 @@ export default function Editsupplierinvoiceedit() {
                                         <input
                                           type="text"
                                           placeholder="0.00" onChange={handlechangecalc}
-                                          value={freight["trans_admin_charg_disc%"] || ""}
+                                          value={discountInputValue("trans_admin_charg")}
                                           name="trans_admin_charg_disc%"
                                           className="supplier_form"
                                         />{" "}
@@ -6637,7 +6834,7 @@ export default function Editsupplierinvoiceedit() {
                                         <input
                                           type="text"
                                           placeholder="0.00" onChange={handlechangecalc}
-                                          value={freight["trans_portCargo_disc%"] || ""}
+                                          value={discountInputValue("trans_portCargo")}
                                           name="trans_portCargo_disc%"
                                           className="supplier_form"
                                         />{" "}
@@ -6928,7 +7125,7 @@ export default function Editsupplierinvoiceedit() {
                                         <input
                                           type="text"
                                           placeholder="0.00" onChange={handlechangecalc}
-                                          value={freight["trans_adv_loadHouse_disc%"] || ""}
+                                          value={discountInputValue("trans_adv_loadHouse")}
                                           name="trans_adv_loadHouse_disc%"
                                           className="supplier_form"
                                         />{" "}
@@ -7224,7 +7421,7 @@ export default function Editsupplierinvoiceedit() {
                                         {" "}
                                         <input
                                           type="text"
-                                          value={freight["trans_doc_fee_disc%"] || ""}
+                                          value={discountInputValue("trans_doc_fee")}
                                           name="trans_doc_fee_disc%"
                                           placeholder="0.00" onChange={handlechangecalc}
                                           className="supplier_form"
@@ -7284,10 +7481,10 @@ export default function Editsupplierinvoiceedit() {
                                       </td>
                                       <td> {transitRoe.toFixed(2)} </td>
                                       <td></td>
-                                      <td>343</td>
-                                      <td>343</td>
-                                      <td>363</td>
-                                      <td>363</td>
+                                      <td></td>
+                                      <td></td>
+                                      <td></td>
+                                      <td></td>
                                     </tr>
                                     {/* Destination Charges */}
                                     <tr>
@@ -7543,7 +7740,7 @@ export default function Editsupplierinvoiceedit() {
                                         <input
                                           type="text" onChange={handlechangecalc}
                                           placeholder="0.00"
-                                          value={freight["dest_clearing_fees_disc%"] || ""}
+                                          value={discountInputValue("dest_clearing_fees")}
                                           name="dest_clearing_fees_disc%"
                                           className="supplier_form"
                                         />{" "}
@@ -7842,7 +8039,7 @@ export default function Editsupplierinvoiceedit() {
                                           type="text"
                                           placeholder="0.00" onChange={handlechangecalc}
                                           className="supplier_form"
-                                          value={freight["dest_THC_levy_disc%"] || ""}
+                                          value={discountInputValue("dest_THC_levy")}
                                           name="dest_THC_levy_disc%"
                                         />{" "}
                                       </td>
@@ -8142,7 +8339,7 @@ export default function Editsupplierinvoiceedit() {
                                         <input
                                           type="text"
                                           placeholder="0.00" onChange={handlechangecalc}
-                                          value={freight["dest_unpack_chrg_disc%"] || ""}
+                                          value={discountInputValue("dest_unpack_chrg")}
                                           name="dest_unpack_chrg_disc%"
                                           className="supplier_form"
                                         />{" "}
@@ -8457,7 +8654,7 @@ export default function Editsupplierinvoiceedit() {
                                         <input
                                           type="text"
                                           placeholder="0.00" onChange={handlechangecalc}
-                                          value={freight["dest_fuel_Surchar_disc%"] || ""}
+                                          value={discountInputValue("dest_fuel_Surchar")}
                                           name="dest_fuel_Surchar_disc%"
                                           className="supplier_form"
                                         />{" "}
@@ -8770,7 +8967,7 @@ export default function Editsupplierinvoiceedit() {
                                         <input
                                           type="text"
                                           placeholder="0.00"
-                                          value={freight["dest_admin_chrg_disc%"] || ""}
+                                          value={discountInputValue("dest_admin_chrg")}
                                           name="dest_admin_chrg_disc%" onChange={handlechangecalc}
                                           className="supplier_form"
                                         />{" "}
@@ -9072,7 +9269,7 @@ export default function Editsupplierinvoiceedit() {
                                         <input
                                           type="text"
                                           placeholder="0.00" onChange={handlechangecalc}
-                                          value={freight["dest_portCargo_disc%"] || ""}
+                                          value={discountInputValue("dest_portCargo")}
                                           name="dest_portCargo_disc%"
                                           className="supplier_form"
                                         />{" "}
@@ -9377,7 +9574,7 @@ export default function Editsupplierinvoiceedit() {
                                         <input
                                           type="text"
                                           placeholder="0.00" onChange={handlechangecalc}
-                                          value={freight["dest_adv_loadHouse_disc%"] || ""}
+                                          value={discountInputValue("dest_adv_loadHouse")}
                                           name="dest_adv_loadHouse_disc%"
                                           className="supplier_form"
                                         />{" "}
@@ -9681,7 +9878,7 @@ export default function Editsupplierinvoiceedit() {
                                         <input
                                           type="text"
                                           placeholder="0.00" onChange={handlechangecalc}
-                                          value={freight["dest_CFS_charg_disc%"] || ""}
+                                          value={discountInputValue("dest_CFS_charg")}
                                           name="dest_CFS_charg_disc%"
                                           className="supplier_form"
                                         />{" "}
@@ -9982,7 +10179,7 @@ export default function Editsupplierinvoiceedit() {
                                         <input
                                           type="text"
                                           placeholder="0.00" onChange={handlechangecalc}
-                                          value={freight["dest_delivry_charge_disc%"] || ""}
+                                          value={discountInputValue("dest_delivry_charge")}
                                           name="dest_delivry_charge_disc%"
                                           className="supplier_form"
                                         />{" "}
@@ -10286,7 +10483,7 @@ export default function Editsupplierinvoiceedit() {
                                         <input
                                           type="text" onChange={handlechangecalc}
                                           placeholder="0.00"
-                                          value={freight["dest_fuel_surchrg_disc%"] || ""}
+                                          value={discountInputValue("dest_fuel_surchrg")}
                                           name="dest_fuel_surchrg_disc%"
                                           className="supplier_form"
                                         />{" "}
@@ -10345,10 +10542,10 @@ export default function Editsupplierinvoiceedit() {
                                       </td>
                                       <td> {totalChaDestinationTransitRoe.toFixed(2)} </td>
                                       <td></td>
-                                      <td>4334</td>
-                                      <td>4334</td>
-                                      <td>4334</td>
-                                      <td>4334</td>
+                                      <td></td>
+                                      <td></td>
+                                      <td></td>
+                                      <td></td>
                                     </tr>
                                     <tr>
                                       <td> Admin Charges</td>
@@ -10606,7 +10803,7 @@ export default function Editsupplierinvoiceedit() {
                                         <input
                                           type="text"
                                           placeholder="0.00"
-                                          value={freight["admin_agencyFee_disc%"] || ""}
+                                          value={discountInputValue("admin_agencyFee")}
                                           name='admin_agencyFee_disc%'
                                           className="supplier_form" onChange={handlechangecalc}
                                         />{" "}
@@ -10910,7 +11107,7 @@ export default function Editsupplierinvoiceedit() {
                                         {" "}
                                         <input
                                           type="text" onChange={handlechangecalc}
-                                          value={freight["admin_disbur_fee_disc%"] || ""}
+                                          value={discountInputValue("admin_disbur_fee")}
                                           name='admin_disbur_fee_disc%'
                                           placeholder="0.00"
                                           className="supplier_form"
@@ -11204,7 +11401,7 @@ export default function Editsupplierinvoiceedit() {
                                         <input
                                           type="text"
                                           placeholder="0.00"
-                                          value={freight["admin_doc_adminFees_disc%"] || ""}
+                                          value={discountInputValue("admin_doc_adminFees")}
                                           name="admin_doc_adminFees_disc%" onChange={handlechangecalc}
                                           className="supplier_form"
                                         />{" "}
@@ -11259,11 +11456,11 @@ export default function Editsupplierinvoiceedit() {
                                       <td colSpan={2}> {totaAdminransit.toFixed(2)} </td>
                                       <td> {totalAdminnsitRoe.toFixed(2)} </td>
                                       <td></td>
-                                      <td>4334</td>
-                                      <td>4334</td>
-                                      <td>4334</td>
-                                      <td>4334</td>
-                                      <td>4334</td>
+                                      <td></td>
+                                      <td></td>
+                                      <td></td>
+                                      <td></td>
+                                      <td></td>
                                     </tr>
                                     <tr>
                                       <td> Description</td>
@@ -11501,7 +11698,7 @@ export default function Editsupplierinvoiceedit() {
                                         <input
                                           type="text"
                                           placeholder="0.00" onChange={handlechangecalc}
-                                          value={freight["cust_duty_disc%"] || ""}
+                                          value={discountInputValue("cust_duty")}
                                           name="cust_duty_disc%"
                                           className="supplier_form"
                                         />{" "}
@@ -11785,7 +11982,7 @@ export default function Editsupplierinvoiceedit() {
                                         <input
                                           type="text"
                                           placeholder="0.00" onChange={handlechangecalc}
-                                          value={freight["cust_vat_disc%"] || ""}
+                                          value={discountInputValue("cust_vat")}
                                           name="cust_vat_disc%"
                                           className="supplier_form"
                                         />{" "}
@@ -12067,8 +12264,8 @@ export default function Editsupplierinvoiceedit() {
                                         <input
                                           type="text"
                                           placeholder="0.00" onChange={handlechangecalc}
-                                          value={freight["adv_duty_disc%"] || ""}
-                                         
+                                          value={discountInputValue("adv_duty")}
+                                          name="adv_duty_disc%"
                                           className="supplier_form"
                                         />{" "}
                                       </td>
@@ -12349,7 +12546,7 @@ export default function Editsupplierinvoiceedit() {
                                         <input
                                           type="text"
                                           placeholder="0.00" onChange={handlechangecalc}
-                                          value={freight["cust_penalty_disc%"] || ""}
+                                          value={discountInputValue("cust_penalty")}
                                           name="cust_penalty_disc%"
                                           className="supplier_form"
                                         />{" "}
@@ -12633,7 +12830,7 @@ export default function Editsupplierinvoiceedit() {
                                         <input
                                           type="text"
                                           placeholder="0.00" onChange={handlechangecalc}
-                                          value={freight["custProv_pay_disc%"] || ""}
+                                          value={discountInputValue("custProv_pay")}
                                           name="custProv_pay_disc%"
                                           className="supplier_form"
                                         />{" "}
@@ -12914,7 +13111,7 @@ export default function Editsupplierinvoiceedit() {
                                         <input
                                           type="text"
                                           placeholder="0.00" onChange={handlechangecalc}
-                                          value={freight["clearing_fee_disc%"] || ""}
+                                          value={discountInputValue("clearing_fee")}
                                           name="clearing_fee_disc%"
                                           className="supplier_form"
                                         />{" "}
@@ -13201,7 +13398,7 @@ export default function Editsupplierinvoiceedit() {
                                         <input
                                           type="text"
                                           placeholder="0.00" onChange={handlechangecalc}
-                                          value={freight["disbursement_disc%"] || ""}
+                                          value={discountInputValue("disbursement")}
                                           name="disbursement_disc%"
                                           className="supplier_form"
                                         />{" "}
@@ -13488,7 +13685,7 @@ export default function Editsupplierinvoiceedit() {
                                         <input
                                           type="text"
                                           placeholder="0.00"
-                                          value={freight["surcharge_disc%"] || ""}
+                                          value={discountInputValue("surcharge")}
                                           name="surcharge_disc%" onChange={handlechangecalc}
                                           className="supplier_form"
                                         />{" "}
@@ -13544,8 +13741,16 @@ export default function Editsupplierinvoiceedit() {
                                       <td colSpan={6}>
                                         <strong> Total - Charge</strong>
                                       </td>
-                                      <td colSpan={2}> {sumofall.toFixed(2)} </td>
-                                      <td> {sumofRoe.toFixed(2)} </td>
+                                      <td colSpan={2}>
+                                        {formatMoney(customChargeTotals.totalCost)}
+                                      </td>
+                                      <td>{formatMoney(customChargeTotals.finalAmount)}</td>
+                                      <td></td>
+                                      <td></td>
+                                      <td></td>
+                                      <td></td>
+                                      <td></td>
+                                      <td>{formatMoney(customChargeTotals.vatInclusive)}</td>
                                     </tr>
                                   </tbody>
                                 </table>
@@ -13564,3 +13769,4 @@ export default function Editsupplierinvoiceedit() {
     </>
   );
 }
+

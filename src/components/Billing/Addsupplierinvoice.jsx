@@ -1694,16 +1694,19 @@ export default function Addsupplierinvoice() {
         toast.error(error.response.data);
       });
   };
+
   useEffect(() => {
     if (isCopyPreview) return;
     supplier();
     supplierSelected();
   }, [isCopyPreview]);
+
   const handlepresss = (e) => {
     if (e.charCode < 42 || e.charCode > 57) {
       e.preventDefault();
     }
   };
+
   // ////////////////////////////////////////////////////supplier selected
   const supplierSelected = async () => {
     console.log(localFreigtId);
@@ -1723,7 +1726,9 @@ export default function Addsupplierinvoice() {
       console.log("Something went wrong:", error);
     }
   };
+
   const dateformate = new Date(getdata?.date).toLocaleDateString("en-GB");
+
   const getTodayDate = () => {
     const today = new Date();
     const year = today.getFullYear();
@@ -1824,6 +1829,7 @@ export default function Addsupplierinvoice() {
         test(error.response.data);
       });
   };
+
   const getdata1 = () => {
     axios
       .get(`${process.env.REACT_APP_BASE_URL}getWaybillDropdown`)
@@ -1835,9 +1841,11 @@ export default function Addsupplierinvoice() {
         test(error.response.data);
       });
   };
+
   useEffect(() => {
     getdata1();
   }, []);
+
   const handleSelect = (id) => {
     if (selected.includes(id)) {
       setSelected(selected.filter((item) => item !== id));
@@ -1861,15 +1869,18 @@ export default function Addsupplierinvoice() {
     }
     // console.log("something went wrong")
   };
+
   // const downloadPDF =  () => {
   //    setShowData(true);
   //      downloadPDF1();
   // };
+
   const downloadPDF = () => {
     setShowData(false); // PDF ke liye limited UI
     downloadPDF1();
     navigate("/Admin/Downloadestimate", { state: { data: freight } });
   };
+
   const downloadPDF1 = () => {
     console.log(showData);
     // setShowData(true)
@@ -1894,10 +1905,12 @@ export default function Addsupplierinvoice() {
     setShowData(false);
     console.log(showData);
   };
+
   const setSelected1111 = async (value) => {
     console.log(value);
     setSelected(value);
   };
+
   const apidataget = async (shipmentId) => {
     console.log(shipmentId, usershipmentid);
     const payload = {
@@ -1935,6 +1948,7 @@ export default function Addsupplierinvoice() {
       setOpenmodal1(false);
     }, 1000);
   };
+
   return (
     <>
       {openmodal1 && (
@@ -1966,6 +1980,7 @@ export default function Addsupplierinvoice() {
           </div>
         </div>
       )}
+      
       {openmodal && (
         <div className="custom-modal">
           <div className="custom-modal-content">

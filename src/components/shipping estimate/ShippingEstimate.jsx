@@ -136,7 +136,7 @@ export default function ShippingEstimate() {
       ? 1
       : freight.chargable_rate,
   );
- const oridoc3 = parseFloat(freight.origin_pick_documantation_cost_gp) || 0;
+  const oridoc3 = parseFloat(freight.origin_pick_documantation_cost_gp) || 0;
   const oridoc4 = freight.origin_pick_up_documantation_unitType
     ? oridoc1 * oridoc2 * freight.origin_pick_up_documantation_unitTypeQTY
     : 0.0;
@@ -160,7 +160,7 @@ export default function ShippingEstimate() {
   );
   // const oriforewarding2 =
   //   parseFloat(freight.origin_pick_up_forewarding_fees) || 0;
-   const oriforewarding3 = parseFloat(freight.origin_pickup_forewarding_gp) || 0;
+  const oriforewarding3 = parseFloat(freight.origin_pickup_forewarding_gp) || 0;
   const oriforewarding4 = freight.origin_pick_up_forewarding_unitType
     ? oriforewarding1 *
     oriforewarding2 *
@@ -973,6 +973,7 @@ export default function ShippingEstimate() {
         dimension: getdata.dimension,
         supplier_id: freight.supplier_id,
         weight: getdata.weight,
+        
         origin_pick_up_cost: freight.origin_pick_up_cost,
         origin_pick_up_fees: freight.origin_pick_up_fees,
         origin_pickup_fee_gpcalc: freight.origin_pickup_fee_gpcalc,
@@ -1705,6 +1706,7 @@ export default function ShippingEstimate() {
   useEffect(() => {
     getsupplier();
   }, 1000);
+
   useEffect(() => {
     getdataapi();
     getNewDataapi();
@@ -4516,10 +4518,10 @@ export default function ShippingEstimate() {
                           </td>
                           <td> {totalChangeRoeOrigin.toFixed(2)} </td>
                           <td></td>
-                          <td>343</td>
-                          <td>3433</td>
-                          <td>433</td>
-                          <td>533</td>
+                          <td></td>
+                          <td></td>
+                          <td></td>
+                          <td></td>
                         </tr>
                         {/* freight charges */}
                         <tr>
@@ -5128,10 +5130,10 @@ export default function ShippingEstimate() {
                             )}{" "}
                           </td>
                           <td></td>
-                          <td>343</td>
-                          <td>3433</td>
-                          <td>433</td>
-                          <td>533</td>
+                          <td></td>
+                          <td></td>
+                          <td></td>
+                          <td></td>
                         </tr>
 
                         {/* transit charges */}
@@ -7482,10 +7484,10 @@ export default function ShippingEstimate() {
                           </td>
                           <td> {transitRoe.toFixed(2)} </td>
                           <td></td>
-                          <td>343</td>
-                          <td>343</td>
-                          <td>363</td>
-                          <td>363</td>
+                          <td></td>
+                          <td></td>
+                          <td></td>
+                          <td></td>
                         </tr>
                         {/* Destination Charges */}
                         <tr>
@@ -10543,10 +10545,10 @@ export default function ShippingEstimate() {
                           </td>
                           <td> {totalChaDestinationTransitRoe.toFixed(2)} </td>
                           <td></td>
-                          <td>4334</td>
-                          <td>4334</td>
-                          <td>4334</td>
-                          <td>4334</td>
+                          <td></td>
+                          <td></td>
+                          <td></td>
+                          <td></td>
                         </tr>
                         <tr>
                           <td> Admin Charges</td>
@@ -11457,11 +11459,11 @@ export default function ShippingEstimate() {
                           <td colSpan={2}> {totaAdminransit.toFixed(2)} </td>
                           <td> {totalAdminnsitRoe.toFixed(2)} </td>
                           <td></td>
-                          <td>4334</td>
-                          <td>4334</td>
-                          <td>4334</td>
-                          <td>4334</td>
-                          <td>4334</td>
+                          <td></td>
+                          <td></td>
+                          <td></td>
+                          <td></td>
+                          <td></td>
                         </tr>
                         <tr>
                           <td> Description</td>

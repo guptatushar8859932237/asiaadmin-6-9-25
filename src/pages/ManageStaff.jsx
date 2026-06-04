@@ -60,25 +60,155 @@ export default function ManageStaff() {
   const startIndex = (currentPage - 1) * pagenationData.limit;
   const endIndex = startIndex + pagenationData.limit;
   const currentData = filterdata.slice(startIndex, endIndex);
-  const getdata = (pageSize) => {
-    setLoader(true);
-    const payload = {
-      page: pageSize,
-    };
-    axios
-      .post(`${process.env.REACT_APP_BASE_URL}new-staff-list`, payload)
-      .then((response) => {
-        setLoader(false);
-        setData(response.data.data);
-        setPagenationData(response.data);
-      })
-      .catch((error) => {
-        setLoader(false);
-        console.log(error.response);
-      });
-  };
+   const userid = JSON.parse(localStorage.getItem("data123"))?.id;
+  const usertype = JSON.parse(localStorage.getItem("data123"))?.user_type;
+  // const getdata = (pageSize) => {
+  //   setLoader(true);
+  //   const payload = {
+  //     page: pageSize,
+  //   };
+  //   axios
+  //     .post(`${process.env.REACT_APP_BASE_URL}new-staff-list`, payload)
+  //     .then((response) => {
+  //       setLoader(false);
+  //       setData(response.data.data);
+  //       setPagenationData(response.data);
+  //     })
+  //     .catch((error) => {
+  //       setLoader(false);
+  //       console.log(error.response);
+  //     });
+  // };
+// const getdata = async (pageSize) => {
+//   setLoader(true);
 
-  const getdata1 = (pageSize) => {
+//   try {
+//     // Permission Check API
+//     const permissionPayload = {
+//       route_url: "/new-staff-list",
+//       staff_id: userid, // dynamic id lagao
+//       user_type: usertype,
+//     };
+
+//     const permissionRes = await axios.post(
+//       "https://sisccltd.com/api/CheckPermission",
+//       permissionPayload
+//     );
+
+//     // Permission Success Check
+//     if (permissionRes.data?.success) {
+//       const payload = {
+//         page: pageSize,
+//       };
+
+//       const response = await axios.post(
+//         `${process.env.REACT_APP_BASE_URL}new-staff-list`,
+//         payload
+//       );
+
+//       setData(response.data.data);
+//       setPagenationData(response.data);
+//     } else {
+//       alert("You do not have permission to access this page.");
+//     }
+//   } catch (error) {
+//     console.log(error);
+//   } finally {
+//     setLoader(false);
+//   }
+// };
+// const getdata = async (pageSize) => {
+//   setLoader(true);
+
+//   try {
+//     const permissionPayload = {
+//       route_url: "/new-staff-list",
+//       staff_id: userid,
+//       user_type: usertype,
+//     };
+
+//     const permissionRes = await axios.post(
+//       "https://sisccltd.com/api/CheckPermission",
+//       permissionPayload
+//     );
+
+//     if (permissionRes.data?.success) {
+//       const response = await axios.post(
+//         `${process.env.REACT_APP_BASE_URL}new-staff-list`,
+//         {
+//           page: pageSize,
+//         }
+//       );
+
+//       setData(response.data.data);
+//       setPagenationData(response.data);
+//     } else {
+//       alert(
+//         permissionRes.data?.message ||
+//         permissionRes.data?.error ||
+//         "Permission Denied"
+//       );
+//     }
+//   } catch (error) {
+//     console.log("Full Error:", error);
+//     console.log("Response Data:", error?.response?.data);
+
+//     alert(
+//       error?.response?.data?.message ||
+//       error?.response?.data?.error ||
+//       JSON.stringify(error?.response?.data) ||
+//       error.message
+//     );
+//   } finally {
+//     setLoader(false);
+//   }
+// };
+
+const getdata = async (pageSize) => {
+  setLoader(true);
+
+  try {
+    const permissionPayload = {
+      route_url: "/new-staff-list",
+      staff_id: userid,
+      user_type: usertype,
+    };
+
+    const permissionRes = await axios.post(
+      "https://sisccltd.com/api/CheckPermission",
+      permissionPayload
+    );
+
+    if (permissionRes.data?.success) {
+      const response = await axios.post(
+        `${process.env.REACT_APP_BASE_URL}new-staff-list`,
+        { page: pageSize }
+      );
+
+      setData(response.data.data);
+      setPagenationData(response.data);
+    } else {
+      toast.error(
+        permissionRes.data?.message ||
+        permissionRes.data?.error ||
+        "Permission Denied"
+      );
+    }
+  } catch (error) {
+    console.log(error);
+
+    toast.error(
+      error?.response?.data?.message ||
+      error?.response?.data?.error ||
+      error?.message ||
+      "Something went wrong"
+    );
+  } finally {
+    setLoader(false);
+  }
+};
+
+const getdata1 = (pageSize) => {
     setLoader(true);
     const payload = {
       search: pageSize,
@@ -204,31 +334,86 @@ export default function ManageStaff() {
   };
   const isAllSelected =
     roleOptions.length > 0 && selectedRoles.length === roleOptions.length;
-  const handleapi = () => {
-    console.log(input);
-    console.log("a");
-    const apivali = {
-      staff_email: input.staff_email,
-      staff_name: input.staff_name,
-      roles: selectedRoles,
-      new_password: input.new_password,
-      country: input.country,
-      country_code: input.country_code,
-      phone_no: input.phone_no,
-      access_country: selectedCountries,
-    };
-    console.log(apivali);
-    axios
-      .post(`${process.env.REACT_APP_BASE_URL}add-staff`, apivali)
-      .then((response) => {
-        toast.success(response.data.message);
-        getdata();
-        setIsModalOpen(false);
-      })
-      .catch((error) => {
-        toast.error(error.response.data.message);
-      });
+  // const handleapi = () => {
+  //   console.log(input);
+  //   console.log("a");
+  //   const apivali = {
+  //     staff_email: input.staff_email,
+  //     staff_name: input.staff_name,
+  //     roles: selectedRoles,
+  //     new_password: input.new_password,
+  //     country: input.country,
+  //     country_code: input.country_code,
+  //     phone_no: input.phone_no,
+  //     access_country: selectedCountries,
+  //   };
+  //   console.log(apivali);
+  //   axios
+  //     .post(`${process.env.REACT_APP_BASE_URL}add-staff`, apivali)
+  //     .then((response) => {
+  //       toast.success(response.data.message);
+  //       getdata();
+  //       setIsModalOpen(false);
+  //     })
+  //     .catch((error) => {
+  //       toast.error(error.response.data.message);
+  //     });
+  // };
+  
+  const handleapi = async () => {
+  console.log(input);
+  console.log("a");
+
+  const apivali = {
+    staff_email: input.staff_email,
+    staff_name: input.staff_name,
+    roles: selectedRoles,
+    new_password: input.new_password,
+    country: input.country,
+    country_code: input.country_code,
+    phone_no: input.phone_no,
+    access_country: selectedCountries,
   };
+
+  console.log(apivali);
+
+  try {
+    const permissionRes = await axios.post(
+      "https://sisccltd.com/api/CheckPermission",
+      {
+        route_url: "/add-staff",
+        staff_id: userid,
+        user_type: usertype,
+      }
+    );
+
+    if (permissionRes.data?.success) {
+      axios
+        .post(`${process.env.REACT_APP_BASE_URL}add-staff`, apivali)
+        .then((response) => {
+          toast.success(response.data.message);
+          getdata();
+          setIsModalOpen(false);
+        })
+        .catch((error) => {
+          toast.error(error.response?.data?.message);
+        });
+    } else {
+      toast.error(
+        permissionRes.data?.message ||
+          permissionRes.data?.error ||
+          "Permission Denied"
+      );
+    }
+  } catch (error) {
+    toast.error(
+      error?.response?.data?.message ||
+        error?.message ||
+        "Something went wrong"
+    );
+  }
+};
+  
   const handleclick = () => {
     handlevalidate(input);
   };
@@ -237,36 +422,62 @@ export default function ManageStaff() {
     setCurrentPage(1);
     getdata1(e.target.value);
   };
-  const handledelete = async (id) => {
-    Swal.fire({
-      title: "Are you sure?",
-      text: "You won't be able to revert this!",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#3085d6",
-      cancelButtonColor: "#d33",
-      confirmButtonText: "Yes, delete it!",
-    }).then((result) => {
-      if (result.isConfirmed) {
-        axios
-          .post(`${process.env.REACT_APP_BASE_URL}delete-staff`, {
-            staff_id: id,
-          })
-          .then((response) => {
-            toast.success(response.data.message);
-            getdata();
-          })
-          .catch((error) => {
-            toast.error(error.response.data.message);
-          });
-        Swal.fire({
-          title: "Deleted!",
-          text: "Your file has been deleted.",
-          icon: "success",
-        });
+ const handledelete = async (id) => {
+  Swal.fire({
+    title: "Are you sure?",
+    text: "You won't be able to revert this!",
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonColor: "#3085d6",
+    cancelButtonColor: "#d33",
+    confirmButtonText: "Yes, delete it!",
+  }).then(async (result) => {
+    if (result.isConfirmed) {
+      try {
+        const permissionRes = await axios.post(
+          "https://sisccltd.com/api/CheckPermission",
+          {
+            route_url: "/delete-staff",
+            staff_id: userid,
+            user_type: usertype,
+          }
+        );
+
+        if (permissionRes.data?.success) {
+          axios
+            .post(`${process.env.REACT_APP_BASE_URL}delete-staff`, {
+              staff_id: id,
+            })
+            .then((response) => {
+              toast.success(response.data.message);
+              getdata();
+
+              Swal.fire({
+                title: "Deleted!",
+                text: "Your file has been deleted.",
+                icon: "success",
+              });
+            })
+            .catch((error) => {
+              toast.error(error.response?.data?.message);
+            });
+        } else {
+          toast.error(
+            permissionRes.data?.message ||
+              permissionRes.data?.error ||
+              "Permission Denied"
+          );
+        }
+      } catch (error) {
+        toast.error(
+          error?.response?.data?.message ||
+            error?.message ||
+            "Something went wrong"
+        );
       }
-    });
-  };
+    }
+  });
+};
   const openModal = () => {
     setIsModalOpen(true);
   };
@@ -317,34 +528,61 @@ export default function ManageStaff() {
   //   console.log(userlog);
   //   setIsModalOpen2(true);
   // };
-  const postData1234 = () => {
-    console.log(inputdata);
-    const apivali = {
-      staff_id: inputdata.staff_id,
-      email: inputdata.staff_email,
-      staff_name: inputdata.staff_name,
-      roles: selectedRoles,
-      country_code: inputdata.country_code,
-      access_country: selectedCountries,
-      password: inputdata.new_password,
-      country: inputdata.country,
-    };
-    if (!selectedRoles || !inputdata.new_password) {
-      toast.error("Update Roles and Password");
-    } else {
-      axios
-        .post(`${process.env.REACT_APP_BASE_URL}update-staff`, apivali)
-        .then((response) => {
-          toast.success(response.data.message);
-          closeModal2();
-          getdata();
-          setIsModalOpen(false);
-        })
-        .catch((error) => {
-          toast.error(error.response.data.message);
-        });
-    }
+ const postData1234 = async () => {
+  console.log(inputdata);
+
+  const apivali = {
+    staff_id: inputdata.staff_id,
+    email: inputdata.staff_email,
+    staff_name: inputdata.staff_name,
+    roles: selectedRoles,
+    country_code: inputdata.country_code,
+    access_country: selectedCountries,
+    password: inputdata.new_password,
+    country: inputdata.country,
   };
+
+  if (!selectedRoles || !inputdata.new_password) {
+    toast.error("Update Roles and Password");
+  } else {
+    try {
+      const permissionRes = await axios.post(
+        "https://sisccltd.com/api/CheckPermission",
+        {
+          route_url: "/update-staff",
+          staff_id: userid,
+          user_type: usertype,
+        }
+      );
+
+      if (permissionRes.data?.success) {
+        axios
+          .post(`${process.env.REACT_APP_BASE_URL}update-staff`, apivali)
+          .then((response) => {
+            toast.success(response.data.message);
+            closeModal2();
+            getdata();
+            setIsModalOpen(false);
+          })
+          .catch((error) => {
+            toast.error(error.response?.data?.message);
+          });
+      } else {
+        toast.error(
+          permissionRes.data?.message ||
+            permissionRes.data?.error ||
+            "Permission Denied"
+        );
+      }
+    } catch (error) {
+      toast.error(
+        error?.response?.data?.message ||
+          error?.message ||
+          "Something went wrong"
+      );
+    }
+  }
+};
   const closeModal2 = () => {
     setIsModalOpen2(false);
   };

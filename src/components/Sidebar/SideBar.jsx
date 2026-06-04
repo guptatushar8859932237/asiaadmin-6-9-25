@@ -14,6 +14,8 @@ import DescriptionOutlinedIcon from "@mui/icons-material/DescriptionOutlined";
 import SpeedOutlinedIcon from "@mui/icons-material/SpeedOutlined";
 import FlightOutlinedIcon from "@mui/icons-material/FlightOutlined";
 import SupervisorAccountOutlinedIcon from "@mui/icons-material/SupervisorAccountOutlined";
+import RequestQuoteIcon from '@mui/icons-material/RequestQuote';
+import ReceiptIcon from '@mui/icons-material/Receipt';
 import PlaylistAddCheckOutlinedIcon from "@mui/icons-material/PlaylistAddCheckOutlined";
 import ShoppingCartOutlinedIcon from "@mui/icons-material/ShoppingCartOutlined";
 import PrivacyTipOutlinedIcon from "@mui/icons-material/PrivacyTipOutlined";
@@ -109,8 +111,18 @@ const routes = [
     icon: <InsertDriveFileIcon />,
     subRoutes: [
       {
-        path: "/Admin/billing",
+        path: "/Admin/quotes",
+        name: "Quotes",
+        icon: <RequestQuoteIcon />,
+      },
+      {
+        path: "/Admin/invoices",
         name: "Invoices",
+        icon: <ReceiptIcon />,
+      },
+      {
+        path: "/Admin/billing",
+        name: "Invoice recon",
         icon: <SupervisorAccountOutlinedIcon />,
       },
       {

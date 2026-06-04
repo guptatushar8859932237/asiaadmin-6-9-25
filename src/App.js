@@ -104,6 +104,8 @@ import Editsupplierinvoice from "./components/Billing/Editsupplierinvoiceedit";
 import Editsupplierinvoiceedit from "./components/Billing/Editsupplierinvoiceedit";
 import Loader from "./Loader";
 import ManageCollectionDelivery from "./ManageCollectionDelivery";
+import Invoices from "./components/Billing/Invoices";
+import Quotes from "./components/Billing/Quotes";
 const Dashboard = lazy(() => import("./pages/Dashboard"));
 const Users = lazy(() => import("./pages/Users"));
 const Messages = lazy(() => import("./pages/Messages"));
@@ -161,6 +163,8 @@ export default function App() {
                 />
                 <Route index path="/Admin/waybill" element={<Waybill />} />
                 <Route index path="/Admin/billing" element={<Billing />} />
+                <Route index path="/Admin/invoices" element={<Invoices />} />
+                <Route path="/Admin/quotes" element={<Quotes />} />
                 <Route
                   index
                   path="/Admin/sageinvoice"

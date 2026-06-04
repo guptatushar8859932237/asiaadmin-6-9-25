@@ -477,16 +477,16 @@ export default function ManageSupplier() {
             <div className="d-flex justify-content-between my-3">
               <h4>Manage Supplier</h4>
 
-              <div className="d-flex">
+              <div className="d-flex gap-2">
                 <input
                   type="text"
                   placeholder="Search"
-                  className="px-2 py-1"
+                  className=" "
                   value={searchQuery}
                   onChange={handleSearch}
                 />
                 <button
-                  className="btn btn-primary ms-2"
+                  className="blueBtn"
                   onClick={openAddModal}
                 >
                   Add Supplier
@@ -510,7 +510,7 @@ export default function ManageSupplier() {
                       <th>Email</th>
                       <th>Phone</th>
                       {/* <th>Service Type</th> */}
-                       <th>Country</th>
+                      <th>Country</th>
                       <th>Action</th>
                     </tr>
                   </thead>
@@ -557,7 +557,7 @@ export default function ManageSupplier() {
                     }}
                     className="bg_page"
                   >
-                  <i class="fi fi-rr-angle-small-left page_icon"></i>
+                    <i class="fi fi-rr-angle-small-left page_icon"></i>
                   </button>
 
                   <span className="mx-2">
@@ -572,7 +572,7 @@ export default function ManageSupplier() {
                       getdata(currentPage + 1, searchQuery);
                     }}
                   >
-                  <i class="fi fi-rr-angle-small-right page_icon"></i>
+                    <i class="fi fi-rr-angle-small-right page_icon"></i>
                   </button>
                 </div>
               </div>

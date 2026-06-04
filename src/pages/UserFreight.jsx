@@ -135,7 +135,7 @@ export default function UserFreight() {
   useEffect(() => {
     updatecountry();
   }, []);
-  
+
   useEffect(() => {
     frightData();
   }, []);
@@ -894,9 +894,8 @@ export default function UserFreight() {
               <div className="d-flex justify-content-between align-items-center flex-wrap gap-2">
                 <h4 className="freight_hd">Freight By User</h4>
                 <div className="d-flex flex-wrap gap-2">
-                  <div className="me-2">
+                  <div>
                     <input
-                      className="py-1 rounded ps-1"
                       type="text"
                       value={searchQuery}
                       onChange={handleSearch}
@@ -904,7 +903,7 @@ export default function UserFreight() {
                     ></input>
                   </div>
                   <button
-                    className="dropdown-toggle me-2"
+                    className="dropdown-toggle"
                     onClick={handleclickopenmodal}
                   >
                     Filter

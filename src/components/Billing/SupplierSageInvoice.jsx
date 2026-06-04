@@ -88,12 +88,12 @@ export default function SupplierSageInvoice() {
 
   const handleCopyInvoice = async (item) => {
     console.log(item)
-      navigate("/Admin/addsupplierinvoice",{state:{copyInvoiceData:item}})
+    navigate("/Admin/addsupplierinvoice", { state: { copyInvoiceData: item } })
   };
   return (
     <div className="wpWrapper">
       <div className="container-fluid">
-        
+
         <button
           className="btn btn-secondary"
           onClick={naviagetpage}
@@ -101,7 +101,7 @@ export default function SupplierSageInvoice() {
           Add New Invoice
         </button>
         <div className="table-responsive tableResFixed mt-4">
-          <table className=" table-striped tableICon">
+          <table className="table table-striped tableICon">
             <thead>
               <tr>
                 <th>Waybill</th>
@@ -116,7 +116,7 @@ export default function SupplierSageInvoice() {
             </thead>
             <tbody>
               {data &&
-              data.length > 0 ? (
+                data.length > 0 ? (
                 data.map((item) => {
                   return (
                     <tr key={item.supplier_invoice_id}>
@@ -137,13 +137,12 @@ export default function SupplierSageInvoice() {
                       <td>{item.status}</td>
                       <td>
                         <div className="dropdown">
-                          <button
+                          <div
                             type="button"
-                            className="btn btn-light border"
                             data-bs-toggle="dropdown"
                           >
                             <BsThreeDotsVertical />
-                          </button>
+                          </div>
                           <ul className="dropdown-menu">
                             {/* <li>
                               <button type="button" className="dropdown-item">

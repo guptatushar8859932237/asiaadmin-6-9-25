@@ -142,6 +142,7 @@ th {
 
 .sidebar svg {
   fill: var(--white) !important;
+  width: 18px;
 }
 
 .blur-background {
@@ -254,8 +255,8 @@ th {
   display: flex;
   align-items: center;
   color: #ffffff;
-  padding: 12px 16px;
-  margin: 6px 12px;
+  padding: 12px 10px;
+  margin: 6px 0px;
   border-radius: 8px;
   transition: all 0.3s ease;
   text-decoration: none;
@@ -275,7 +276,7 @@ th {
 
 .link_text {
   white-space: nowrap;
-  font-size: 15px;
+  font-size: 14px;
   font-weight: 500;
   margin-left: 10px;
   flex: 1;
@@ -824,23 +825,19 @@ ul.navbar-nav i {
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 56px;
-  height: 56px;
-  border-radius: 12px;
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
   color: #fff;
   background: linear-gradient(135deg, #0b4170 0%, #1b2245 100%);
   box-shadow: 0 4px 10px rgba(11, 65, 112, 0.3);
-}
-
-.iconGrad i {
-  font-size: 24px;
 }
 
 .iconParent {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 10px 20px 20px 20px;
+  padding: 15px 20px 15px 20px;
   background: transparent;
 }
 
@@ -861,24 +858,21 @@ ul.navbar-nav i {
 }
 
 .hd_dash {
-  font-size: 14px;
-  font-weight: 600;
+  font-size: 13px;
+  font-weight: 500;
   color: #6c757d;
-  padding: 20px 20px 0 20px;
-  margin: 0;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
+
 }
 
 .para_dash {
-  font-size: 16px;
+  font-size: 18px;
   font-weight: 700;
   color: #1b2245;
   margin: 0;
 }
 
 .cardBottom {
-  padding: 12px 20px;
+  padding: 5px 20px;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -1000,8 +994,8 @@ h1.logo {
 
 .sidebar .icon {
   position: relative;
-  top: -3px;
-  width: 30px;
+
+
 }
 
 .header .dropdown svg {
@@ -3020,17 +3014,7 @@ table .esti_tbody tr th {
   padding: 10px 0px;
 }
 
-.privacy_btn {
-  background-color: #1b2245 !important;
-  color: #fff;
-  border: unset;
-  padding: 10px 20px;
-  border-radius: 5px;
-  font-size: 16px;
-  font-weight: 600;
-  margin-top: 17px;
-  line-height: normal !important;
-}
+
 
 /* .scroll_privacy {
   height: 720px;
@@ -3653,18 +3637,8 @@ a.dropdown-item.li_icon.NewDropdown {
 .form_agent::-ms-expand {
   display: none; 
 } */
-.para_dash {
-  font-size: 25px;
-  margin-bottom: 0px;
-  font-weight: 700;
-}
 
-.hd_dash {
-  padding: 30px 30px 0px;
-  margin-bottom: 0px;
-  font-size: 18px;
-  font-weight: 600;
-}
+
 
 .dash_wrap {
   padding: 30px !important;
@@ -5045,7 +5019,8 @@ button.bg_page {
 
 .manageFreight button,
 .blueBtn,
-button.btn.btn-secondary {
+button.btn.btn-secondary,
+.privacy_btn {
   background-color: #1b2245 !important;
   color: #fff;
   border: unset;

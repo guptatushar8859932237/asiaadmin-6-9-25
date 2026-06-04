@@ -61,7 +61,7 @@ const TermConditions = () => {
                   setDescription12(newData);
                 }}
               />
-              <div className="text-center">
+              <div className="text-center mt-3">
                 <button onClick={handleGetData} className='privacy_btn'>Update</button>
               </div>
             </div>

@@ -104,7 +104,6 @@ import Editsupplierinvoice from "./components/Billing/Editsupplierinvoiceedit";
 import Editsupplierinvoiceedit from "./components/Billing/Editsupplierinvoiceedit";
 import Loader from "./Loader";
 import ManageCollectionDelivery from "./ManageCollectionDelivery";
-
 const Dashboard = lazy(() => import("./pages/Dashboard"));
 const Users = lazy(() => import("./pages/Users"));
 const Messages = lazy(() => import("./pages/Messages"));

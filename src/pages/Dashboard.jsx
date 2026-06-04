@@ -32,15 +32,16 @@ export default function Dashboard() {
         <div className="container-fluid">
           <div className="row g-4">
             <div
-              className=" col-xl-3 col-lg-4 col-md-6 col-sm-6"
+              className="col-xl-3 col-lg-4 col-md-6 col-sm-6"
               onClick={() => {
                 navigaet("/Admin/manage-customer");
               }}
             >
               <div className="cardDash shadow-md">
-                <h6 className="hd_dash">Clients</h6>
+
                 <div className="iconParent">
                   <div className="cardContent">
+                    <h6 className="hd_dash">Clients</h6>
                     <p className="para_dash">
                       <CountUp end={countdata?.no_of_clients} />
                     </p>
@@ -62,9 +63,9 @@ export default function Dashboard() {
               }}
             >
               <div className="cardDash">
-                <h5 className="hd_dash">Freights</h5>
                 <div className="iconParent">
                   <div className="cardContent">
+                    <h5 className="hd_dash">Freights</h5>
                     <p className="para_dash">
                       <CountUp end={countdata?.no_of_freights} />
                     </p>
@@ -86,9 +87,9 @@ export default function Dashboard() {
               }}
             >
               <div className="cardDash">
-                <h5 className="hd_dash">Orders</h5>
                 <div className="iconParent">
                   <div className="cardContent">
+                    <h5 className="hd_dash">Orders</h5>
                     <p className="para_dash">
                       <CountUp end={countdata?.no_of_orders} />
                     </p>
@@ -110,9 +111,9 @@ export default function Dashboard() {
               }}
             >
               <div className="cardDash">
-                <h5 className="hd_dash">Clearances</h5>
                 <div className="iconParent">
                   <div className="cardContent">
+                    <h5 className="hd_dash">Clearances</h5>
                     <p className="para_dash">
                       <CountUp end={countdata?.no_of_clearance} />
                     </p>
@@ -134,9 +135,9 @@ export default function Dashboard() {
               }}
             >
               <div className="cardDash">
-                <h5 className="hd_dash">Clearance Orders</h5>
                 <div className="iconParent">
                   <div className="cardContent">
+                    <h5 className="hd_dash">Clearance Orders</h5>
                     <p className="para_dash">
                       <CountUp end={countdata?.no_Of_clearanceOrder} />
                     </p>
@@ -153,9 +154,9 @@ export default function Dashboard() {
             </div>
             <div className="col-xl-3 col-lg-4 col-md-6 col-sm-6" onClick={() => { navigaet('/Admin/KPIDashboard') }}>
               <div className="cardDash">
-                <h6 className="hd_dash">Leave</h6>
                 <div className="iconParent">
                   <div className="cardContent">
+                    <h6 className="hd_dash">Leave</h6>
                     <p className="para_dash"><CountUp end={countdata?.no_of_invoices} /></p>
                   </div>
                   <div className="iconGrad">

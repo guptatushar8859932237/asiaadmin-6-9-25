@@ -21,6 +21,7 @@ import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import NotInterestedIcon from "@mui/icons-material/NotInterested";
 import IntegrationInstructionsIcon from "@mui/icons-material/IntegrationInstructions";
 import CloseIcon from "@mui/icons-material/Close";
+import FileUploadIcon from "@mui/icons-material/FileUpload";
 import Radio from "@mui/material/Radio";
 import RadioGroup from "@mui/material/RadioGroup";
 import FormControlLabel from "@mui/material/FormControlLabel";
@@ -94,6 +95,7 @@ export default function Order() {
   });
   const [show1, setShow1] = useState(false);
   const [selectedDocs, setSelectedDocs] = useState([]);
+  const [selectedFreightIdForDocs, setSelectedFreightIdForDocs] = useState(null);
   const docOptions = [
     { id: "Customs Documents", label: "Customs docs" },
     { id: "Supporting Documents", label: "Supporting docs" },
@@ -103,7 +105,7 @@ export default function Order() {
     { id: "Waybills", label: "Freight Docs" },
     { id: "Waybills", label: "Shipping instruction" },
     { id: "AD_Quotations", label: "Attach Quote" },
-    { id: "Freight Invoices", label: "Freight Invoices" },
+    { id: "Supplier Invoices", label: "Supplier Invoices" },
     { id: "Invoice (AD)", label: "Invoice (AD)" },
     { id: "POP (AD)", label: "POP (AD)" },
     { id: "Delivery note", label: "Delivery note" }
@@ -123,15 +125,38 @@ export default function Order() {
     );
   };
   const handleSave = () => {
-    console.log("Uploaded Documents:", selectedDocs);
+    if (!selectedFreightIdForDocs) {
+      toast.error("Freight ID is missing");
+      return;
+    }
+    setLoader(true);
+    const formData = new FormData();
+    formData.append("freight_id", selectedFreightIdForDocs);
+
     selectedDocs.forEach((doc) => {
-      console.log("Doc Type:", doc);
       doc.files.forEach((file) => {
-        console.log("File:", file.name, "| Size:", file.size, "bytes");
+        formData.append(doc.name, file);
       });
     });
-    handleClose();
+
+    axios
+      .post(`${process.env.REACT_APP_BASE_URL}upload-freight-document`, formData)
+      .then((response) => {
+        if (response.data.success) {
+          toast.success(response.data.message || "Documents uploaded successfully");
+          handleClose();
+          setSelectedDocs([]);
+        } else {
+          toast.error(response.data.message || "Upload failed");
+        }
+        setLoader(false);
+      })
+      .catch((error) => {
+        toast.error(error.response?.data?.message || "Something went wrong!");
+        setLoader(false);
+      });
   };
+
   let today = new Date();
   let year = today.getFullYear();
   let month = String(today.getMonth() + 1).padStart(2, "0"); // Months are 0-based, so add 1
@@ -155,6 +180,7 @@ export default function Order() {
     getClient();
     updatecountry();
   }, []);
+  
   const updatecountry = () => {
     axios
       .get(`${process.env.REACT_APP_BASE_URL}GetCountries`)
@@ -1169,6 +1195,20 @@ export default function Order() {
                                                   <LocalShippingIcon /> Delivery
                                                   details
                                                 </li>
+                                                <li
+                                                  className="page_list"
+                                                  style={{
+                                                    cursor: "pointer",
+                                                    fontSize: "15px",
+                                                  }}
+                                                  onClick={() => {
+                                                    setSelectedFreightIdForDocs(item?.freight_id);
+                                                    handleShow();
+                                                  }}
+                                                >
+                                                  <FileUploadIcon /> Upload
+                                                  Document
+                                                </li>
                                               </ul>
                                             </a>
                                           </div>
@@ -1340,6 +1380,83 @@ export default function Order() {
             </div>
           </div>
         </div>
+      )}
+      {show1 && (
+        <Modal
+          open={show1}
+          onClose={handleClose}
+          slotProps={{
+            backdrop: {
+              sx: { backgroundColor: "rgba(0,0,0,0.2)" }, // lighter background
+            },
+          }}
+        >
+          <Box
+            sx={{
+              p: 3,
+              bgcolor: "background.paper",
+              borderRadius: 2,
+              width: 500,
+              mx: "auto",
+              mt: 10,
+            }}
+          >
+            <h2>Upload Documents</h2>
+            <FormControl fullWidth sx={{ mt: 2 }}>
+              <InputLabel id="doc-select-label">
+                Select Document Type
+              </InputLabel>
+              <Select
+                labelId="doc-select-label"
+                onChange={handleSelect}
+              >
+                {docOptions.map((option) => (
+                  <MenuItem
+                    key={option.id}
+                    value={option.id}
+                  >
+                    {option.label}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+            <div className="mt-3">
+              {selectedDocs.map((doc, index) => (
+                <div key={index} className="mb-3">
+                  <label className="fw-bold">
+                    {doc.name}
+                  </label>
+                  <input
+                    type="file"
+                    className="form-control"
+                    multiple
+                    accept="image/*,application/pdf"
+                    onChange={(e) =>
+                      handleFileChangefil(e, doc.name)
+                    }
+                  />
+                </div>
+              ))}
+            </div>
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "flex-end",
+                gap: 2,
+                mt: 3,
+              }}
+            >
+              <Button onClick={handleClose}>Cancel</Button>
+              <Button
+                variant="contained"
+                color="success"
+                onClick={handleSave}
+              >
+                Save Documents
+              </Button>
+            </Box>
+          </Box>
+        </Modal>
       )}
       <Modal
         open={isOpen}
@@ -1636,6 +1753,7 @@ export default function Order() {
                                   placeholder="Supplier Address"
                                 />
                               </div>
+                              
                               <div className="col-lg-6 mb-3">
                                 <label>Type</label>
 
@@ -1721,11 +1839,10 @@ export default function Order() {
                                 </div>
                               </div>
                             </div>
-
                           </div>
                         </div>
-
                       </div>
+
                       <div className="row mb-3 mt-5 g-2">
                         <div className="col-md-6">
                           <h4 className="freight_hd">Document Section</h4>
@@ -1734,89 +1851,14 @@ export default function Order() {
                         <div className="col-md-6 text-md-end text-sm-start">
                           <button
                             className="blueBtn"
-                            onClick={handleShow}
+                            onClick={(e) => {
+                              e.preventDefault();
+                              setSelectedFreightIdForDocs(inputdata?.freight_id);
+                              handleShow();
+                            }}
                           >
                             Upload Documents
                           </button>
-                          {show1 ? (
-                            <Modal
-                              open={show1}
-                              onClose={handleClose}
-                              slotProps={{
-                                backdrop: {
-                                  sx: { backgroundColor: "rgba(0,0,0,0.2)" }, // lighter background
-                                },
-                              }}
-                            >
-                              <Box
-                                sx={{
-                                  p: 3,
-                                  bgcolor: "background.paper",
-                                  borderRadius: 2,
-                                  width: 500,
-                                  mx: "auto",
-                                  mt: 10,
-                                }}
-                              >
-                                <h2>Upload Documents</h2>
-                                <FormControl fullWidth sx={{ mt: 2 }}>
-                                  <InputLabel id="doc-select-label">
-                                    Select Document Type
-                                  </InputLabel>
-                                  <Select
-                                    labelId="doc-select-label"
-                                    onChange={handleSelect}
-                                  >
-                                    {docOptions.map((option) => (
-                                      <MenuItem
-                                        key={option.id}
-                                        value={option.id}
-                                      >
-                                        {option.label}
-                                      </MenuItem>
-                                    ))}
-                                  </Select>
-                                </FormControl>
-                                <div className="mt-3">
-                                  {selectedDocs.map((doc, index) => (
-                                    <div key={index} className="mb-3">
-                                      <label className="fw-bold">
-                                        {doc.name}
-                                      </label>
-                                      <input
-                                        type="file"
-                                        className="form-control"
-                                        multiple
-                                        accept="image/*,application/pdf"
-                                        onChange={(e) =>
-                                          handleFileChangefil(e, doc.name)
-                                        }
-                                      />
-                                    </div>
-                                  ))}
-                                </div>
-                                <Box
-                                  sx={{
-                                    display: "flex",
-                                    justifyContent: "flex-end",
-                                    gap: 2,
-                                    mt: 3,
-                                  }}
-                                >
-                                  <Button onClick={handleClose}>Cancel</Button>
-                                  <Button
-                                    variant="contained"
-                                    color="success"
-                                    onClick={handleSave}
-                                  >
-                                    Save Documents
-                                  </Button>
-                                </Box>
-                              </Box>
-                            </Modal>
-                          ) : (
-                            ""
-                          )}
                         </div>
                       </div>
 
@@ -1993,9 +2035,9 @@ export default function Order() {
                         </div>
                       </div>
                     </div>
+
                     <div className="col-lg-4 spaceAssignEst">
                       <div className="mb-3">
-
                         <h4 class="text-white">Shipment details</h4>
                       </div>
                       <div>
@@ -2178,6 +2220,7 @@ export default function Order() {
                         </div>
                       </div>
                     </div>
+
                   </div>
                 </div>
               </div>

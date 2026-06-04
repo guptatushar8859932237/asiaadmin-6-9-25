@@ -25,6 +25,7 @@ import {
   Select,
 } from "@mui/material";
 const pageSize = 10;
+
 export default function UserFreight() {
   const naviagte = useNavigate();
   const [options, setOptions] = useState();
@@ -92,6 +93,7 @@ export default function UserFreight() {
     { id: "AD_Quotations", label: "Attach Quote" },
     { id: "Supplier Invoices", label: "Supplier Invoices" },
   ];
+
   const handleShow = () => setShow1(true);
   const handleClose = () => setShow1(false);
   const handleSelect = (e) => {
@@ -100,12 +102,14 @@ export default function UserFreight() {
       setSelectedDocs([...selectedDocs, { name: selected, files: [] }]);
     }
   };
+
   const handleFileChangefil = (e, docName) => {
     const files = Array.from(e.target.files);
     setSelectedDocs((prev) =>
       prev.map((doc) => (doc.name === docName ? { ...doc, files } : doc))
     );
   };
+
   const handleSave = () => {
     console.log("Uploaded Documents:", selectedDocs);
     selectedDocs.forEach((doc) => {
@@ -116,6 +120,7 @@ export default function UserFreight() {
     });
     handleClose();
   };
+
   const updatecountry = () => {
     axios
       .get(`${process.env.REACT_APP_BASE_URL}GetCountries`)
@@ -126,9 +131,11 @@ export default function UserFreight() {
         console.group(error.response.data.message);
       });
   };
+
   useEffect(() => {
     updatecountry();
   }, []);
+  
   useEffect(() => {
     frightData();
   }, []);
@@ -804,6 +811,7 @@ export default function UserFreight() {
 
   const hanldeclicknavi = async (freight_id) => {
     console.log(freight_id);
+    JSON.stringify(localStorage.setItem("freightid", freight_id));
     const alldata = data.filter((item) => item.freight_id === freight_id);
     console.log(alldata)
     navigate("/Admin/user-shipping-estimate", { state: { data: alldata } });

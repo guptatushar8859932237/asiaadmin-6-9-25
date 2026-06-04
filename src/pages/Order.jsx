@@ -103,7 +103,10 @@ export default function Order() {
     { id: "Waybills", label: "Freight Docs" },
     { id: "Waybills", label: "Shipping instruction" },
     { id: "AD_Quotations", label: "Attach Quote" },
-    { id: "Supplier Invoices", label: "Supplier Invoices" },
+    { id: "Freight Invoices", label: "Freight Invoices" },
+    { id: "Invoice (AD)", label: "Invoice (AD)" },
+    { id: "POP (AD)", label: "POP (AD)" },
+    { id: "Delivery note", label: "Delivery note" }
   ];
   const handleShow = () => setShow1(true);
   const handleClose = () => setShow1(false);

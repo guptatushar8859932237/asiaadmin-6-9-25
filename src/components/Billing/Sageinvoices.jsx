@@ -744,13 +744,16 @@ export default function Sageinvoices() {
                         className="border py-2 px-2 rounded w-100"
                       ></input>
                     </div>
-                    <Button
-                      variant="contained"
-                      onClick={postData123}
-                      className="mt-3 mb-2"
-                    >
-                      Apply
-                    </Button>
+                    <div className="text-center mt-3">
+                      <button
+                        variant="contained"
+                        onClick={postData123}
+                        className="blueBtn"
+                      >
+                        Apply
+                      </button>
+
+                    </div>
                   </div>
                 </Box>
               </Modal>

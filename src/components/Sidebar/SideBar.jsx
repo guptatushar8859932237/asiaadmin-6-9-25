@@ -319,160 +319,164 @@ const SideBar = ({ children }) => {
   };
   return (
     <div className="main-container sideBarpageMain">
-      <motion.div
-        animate={{
-          width: isOpen ? "300px" : "65px",
-          transition: {
-            duration: 0.5,
-            type: "spring",
-            damping: 10,
-          },
-        }}
-        className={`sidebar`}
-      >
-        <div className="top_section" style={{ justifyContent: isOpen ? "space-between" : "center", padding: isOpen ? "5px" : "15px 0" }}>
-          <AnimatePresence>
-            {isOpen && (
-              <motion.h1
-                variants={showAnimation}
-                initial="hidden"
-                animate="show"
-                exit="hidden"
-                className="logo"
-              >
-                <img
-                  src={whiteLogoNew}
-                  alt="this is image"
-                  style={{ width: "150px" }}
+      <div>
+        <motion.div
+          animate={{
+            width: isOpen ? "250px" : "65px",
+            transition: {
+              duration: 0.5,
+              type: "spring",
+              damping: 10,
+            },
+          }}
+          className={`sidebar`}
+        >
+          <div className="top_section" style={{ justifyContent: isOpen ? "space-between" : "center", padding: isOpen ? "5px" : "15px 0" }}>
+            <AnimatePresence>
+              {isOpen && (
+                <motion.h1
+                  variants={showAnimation}
+                  initial="hidden"
+                  animate="show"
+                  exit="hidden"
+                  className="logo"
+                >
+                  <img
+                    src={whiteLogoNew}
+                    alt="this is image"
+                    style={{ width: "150px" }}
+                  />
+                </motion.h1>
+              )}
+            </AnimatePresence>
+            {
+              isOpen ? (<div className="bars" style={{ borderRadius: "20px" }}>
+                <BiLeftArrowCircle
+                  onClick={toggle}
+                  style={{ fontSize: "2rem", cursor: "pointer" }}
                 />
-              </motion.h1>
-            )}
-          </AnimatePresence>
-          {
-            isOpen ? (<div className="bars" style={{ borderRadius: "20px" }}>
-              <BiLeftArrowCircle
-                onClick={toggle}
-                style={{ fontSize: "2rem", cursor: "pointer" }}
-              />
-            </div>) : (<BiRightArrowCircle size={30} onClick={toggle} style={{ cursor: "pointer" }} />)
-          }
-        </div>
-        <div className="text-center mt-5 mt-md-0">
-          <div>
-            <button
-              className="search"
-              style={{
-                cursor: "pointer",
-                padding: isOpen ? "10px 20px" : "10px",
-                borderRadius: isOpen ? "8px" : "50%",
-                width: isOpen ? "90%" : "45px",
-                height: isOpen ? "auto" : "45px",
-                margin: "10px auto",
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center"
-              }}
-              onClick={() => {
-                navigate("/Admin/Addfreight");
-              }}
-            >
-              <AnimatePresence>
-                <span>
-                  <ControlPointRoundedIcon />
-                </span>
-                {isOpen && (
-                  <p className="addF" style={{ cursor: "pointer" }}>
-                    Add Freight
-                  </p>
-                )}
-              </AnimatePresence>
-            </button>
-          </div>
-        </div>
-        <section className="routes">
-          {filteredRoutes.map((route, index) => {
-            if (route.subRoutes) {
-              return (
-                <div key={index}>
-                  <div
-                    className="link dropdown-header"
-                    style={{ cursor: "pointer" }}
-                    onClick={() => handleDropdownToggle(index)}>
-                    <div className="icon ">{route.icon}</div>
-                    <AnimatePresence>
-                      {isOpen && (
-                        <motion.div
-                          variants={showAnimation}
-                          initial="hidden"
-                          animate="show"
-                          exit="hidden"
-                          className="link_text d-flex justify-content-between align-items-center">
-                          <span>{route.name}</span>
-                          {openDropdown === index ? (
-                            <ExpandLessIcon />
-                          ) : (
-                            <ExpandMoreIcon />
-                          )}
-                        </motion.div>
-                      )}
-                    </AnimatePresence>
-                  </div>
-                  {openDropdown === index && (
-                    <motion.div
-                      initial={{ height: 0 }}
-                      animate={{ height: "auto" }}
-                      exit={{ height: 0 }}
-                      className="sub_routes">
-                      {route.subRoutes.map((subRoute, subIndex) => (
-                        <NavLink
-                          to={subRoute.path}
-                          key={subIndex}
-                          className={({ isActive }) =>
-                            isActive ? "link active" : "link"
-                          }
-                          style={{ cursor: "pointer" }}
-                        >
-                          <div className="icon ms-4">{subRoute.icon}</div>
-                          {isOpen && (
-                            <div className="link_text1 ">{subRoute.name}</div>
-                          )}
-                        </NavLink>
-                      ))}
-                    </motion.div>
-                  )}
-                </div>
-              );
+              </div>) : (<BiRightArrowCircle size={30} onClick={toggle} style={{ cursor: "pointer" }} />)
             }
-            return (
-              <NavLink
-                to={route.path}
-                key={index}
-                className={({ isActive }) =>
-                  isActive ? "link active" : "link"
-                }
+          </div>
+          <div className="text-center mt-5 mt-md-0">
+            <div>
+              <button
+                className="search"
+                style={{
+                  cursor: "pointer",
+                  padding: isOpen ? "10px 20px" : "10px",
+                  borderRadius: isOpen ? "8px" : "50%",
+                  width: isOpen ? "90%" : "45px",
+                  height: isOpen ? "auto" : "45px",
+                  margin: "10px auto",
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center"
+                }}
+                onClick={() => {
+                  navigate("/Admin/Addfreight");
+                }}
               >
-                <div className="icon">{route.icon}</div>
                 <AnimatePresence>
+                  <span>
+                    <ControlPointRoundedIcon />
+                  </span>
                   {isOpen && (
-                    <motion.div
-                      variants={showAnimation}
-                      initial="hidden"
-                      animate="show"
-                      exit="hidden"
-                      className="link_text"
-                    >
-                      {route.name}
-                    </motion.div>
+                    <p className="addF" style={{ cursor: "pointer" }}>
+                      Add Freight
+                    </p>
                   )}
                 </AnimatePresence>
-              </NavLink>
-            );
-          })}
-        </section>
-      </motion.div>
+              </button>
+            </div>
+          </div>
+          <section className="routes">
+            {filteredRoutes.map((route, index) => {
+              if (route.subRoutes) {
+                return (
+                  <div key={index}>
+                    <div
+                      className="link dropdown-header"
+                      style={{ cursor: "pointer" }}
+                      onClick={() => handleDropdownToggle(index)}>
+                      <div className="icon ">{route.icon}</div>
+                      <AnimatePresence>
+                        {isOpen && (
+                          <motion.div
+                            variants={showAnimation}
+                            initial="hidden"
+                            animate="show"
+                            exit="hidden"
+                            className="link_text d-flex justify-content-between align-items-center">
+                            <span>{route.name}</span>
+                            {openDropdown === index ? (
+                              <ExpandLessIcon />
+                            ) : (
+                              <ExpandMoreIcon />
+                            )}
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
+                    </div>
+                    {openDropdown === index && (
+                      <motion.div
+                        initial={{ height: 0 }}
+                        animate={{ height: "auto" }}
+                        exit={{ height: 0 }}
+                        className="sub_routes">
+                        {route.subRoutes.map((subRoute, subIndex) => (
+                          <NavLink
+                            to={subRoute.path}
+                            key={subIndex}
+                            className={({ isActive }) =>
+                              isActive ? "link active" : "link"
+                            }
+                            style={{ cursor: "pointer" }}
+                          >
+                            <div className="icon ms-4">{subRoute.icon}</div>
+                            {isOpen && (
+                              <div className="link_text1 ">{subRoute.name}</div>
+                            )}
+                          </NavLink>
+                        ))}
+                      </motion.div>
+                    )}
+                  </div>
+                );
+              }
+              return (
+                <NavLink
+                  to={route.path}
+                  key={index}
+                  className={({ isActive }) =>
+                    isActive ? "link active" : "link"
+                  }
+                >
+                  <div className="icon">{route.icon}</div>
+                  <AnimatePresence>
+                    {isOpen && (
+                      <motion.div
+                        variants={showAnimation}
+                        initial="hidden"
+                        animate="show"
+                        exit="hidden"
+                        className="link_text"
+                      >
+                        {route.name}
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </NavLink>
+              );
+            })}
+          </section>
+        </motion.div>
+
+      </div>
+
       <motion.div
         animate={{
-          width: isOpen ? "85%" : "100%",
+          width: isOpen ? "calc(100% - 250px)" : "100%",
           transition: {
             duration: 0.5,
             type: "spring",
@@ -483,6 +487,8 @@ const SideBar = ({ children }) => {
       >
         <main>{children}</main>
       </motion.div>
+
+
     </div>
   );
 };

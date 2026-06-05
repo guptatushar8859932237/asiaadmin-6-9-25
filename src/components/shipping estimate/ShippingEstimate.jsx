@@ -28,6 +28,7 @@ export default function ShippingEstimate() {
   const [selected, setSelected] = useState([]); // selected IDs
   const [open, setOpen] = useState(false);
   const navigate = useNavigate();
+
   const getdata122 = location?.state?.data[0];
   console.log(getdata122);
   useEffect(() => {
@@ -960,7 +961,7 @@ export default function ShippingEstimate() {
         dimension: getdata.dimension,
         supplier_id: freight.supplier_id,
         weight: getdata.weight,
-        
+
         origin_pick_up_cost: freight.origin_pick_up_cost,
         origin_pick_up_fees: freight.origin_pick_up_fees,
         origin_pickup_fee_gpcalc: freight.origin_pickup_fee_gpcalc,
@@ -13716,7 +13717,6 @@ export default function ShippingEstimate() {
                           <td>
                             {" "}
                             <input
-
                               value={formatMoney(invoiceBreakups.surcharge.inclusive)}
                               type="text"
                               placeholder="0.00" onChange={handlechangecalc}

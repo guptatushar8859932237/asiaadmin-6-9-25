@@ -6099,3 +6099,10 @@ td {
 .timelineCard.completedTrack {
   background: #1987541a;
 }
+
+input[placeholder="Search"],
+input[placeholder="search"] {
+  border: 1px solid var(--blue) !important;
+  padding: 5px 10px !important;
+  border-radius: 5px;
+}

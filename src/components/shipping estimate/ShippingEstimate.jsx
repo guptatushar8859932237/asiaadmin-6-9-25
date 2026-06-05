@@ -11,7 +11,6 @@ import html2pdf from "html2pdf.js";
 import { RiFolderUserFill } from "react-icons/ri";
 import { MdArrowOutward } from "react-icons/md";
 import { useRef } from "react";
-
 export default function ShippingEstimate() {
   const [update, setUpdate] = useState([0]);
   const location = useLocation();
@@ -34,11 +33,9 @@ export default function ShippingEstimate() {
   useEffect(() => {
     getFreightDataById();
   }, []);
-
   const user = JSON.parse(localStorage.getItem("data123"));
   const localFreigtId = localStorage.getItem("freightid");
   console.log("Stored:", localStorage.getItem("freightid"));
-
   const getFreightDataById = async () => {
     const payload = {
       freight_id: localFreigtId,
@@ -49,7 +46,6 @@ export default function ShippingEstimate() {
         `${process.env.REACT_APP_BASE_URL}freight-list-byId`,
         payload,
       );
-
       if (response?.data?.data?.length > 0) {
         setGetdata(response.data.data[0]);
       }
@@ -57,11 +53,9 @@ export default function ShippingEstimate() {
       console.error("Error fetching freight data by id:", error);
     }
   };
-
   const andlemodaloen = () => {
     setOpenmodal(true);
   };
-
   const handlechangecalc = (e) => {
     const { name, value } = e.target;
     setFreight((prevInputData) => ({
@@ -69,7 +63,6 @@ export default function ShippingEstimate() {
       [name]: value,
     }));
   };
-
   const freight_amount = freight?.origin_pick_up_entey * freight?.origin_pick_up_Unit;
   const num1 = parseFloat(freight_amount || 0);
   const num2 = parseFloat(freight.freight_gp || 0);
@@ -207,7 +200,6 @@ export default function ShippingEstimate() {
     const num = Number(val);
     return isNaN(num) ? 0 : num;
   };
-
   const calculateInvoiceBreakup = (amount, discountPercent, vatPercent) => {
     const baseAmount = safeNumber(amount);
     const discountAmount = (baseAmount * safeNumber(discountPercent)) / 100;
@@ -789,7 +781,6 @@ export default function ShippingEstimate() {
     : finalfuelchangertyloadstanion.toFixed(2);
   const defuelchangyion =
     VAdvfuelchangeon * parseInt(freight?.Destination_fuelcharge_currency_roe);
-
   const totalChaDestinationTransit =
     safeNumber(destinationdocumentation4) +
     safeNumber(destinationTHCdocumentation4) +
@@ -801,9 +792,7 @@ export default function ShippingEstimate() {
     safeNumber(destinati3rdpartyload4) +
     safeNumber(destindeliveryyDesc4) +
     safeNumber(destindfuelchangerDesc4);
-
   console.log(totalChageswithOutExchangeinsurance);
-
   const totalChaDestinationTransitRoe =
     safeNumber(finalvlaueotDocumantation) +
     safeNumber(final3rdestinationRoe) +
@@ -815,9 +804,7 @@ export default function ShippingEstimate() {
     safeNumber(desdvancedLoadion) +
     safeNumber(desdva3rdpartyion) +
     safeNumber(desddeliverytyion);
-
   // /////////////////////////////////admin calculation/////////////////////////////
-
   const deadminAgencyesc1 =
     parseFloat(freight.Destination_AdminAgrncy_currency_cost) || 0;
   const deadminAgencyesc2 =

@@ -533,7 +533,7 @@ export default function Order() {
     if (alldata.added_by === "1") {
       navigate("/Admin/shipping-estimate", { state: { data: [alldata] } });
     } else {
-      navigate("/Admin/shipping-estimate-client", {
+      navigate("/Admin/user-shipping-estimate", {
         state: { data: [alldata] },
       });
     }

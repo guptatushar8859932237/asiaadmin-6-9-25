@@ -1,6 +1,7 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { ToastContainer, toast } from "react-toastify";
+import { Modal, Box } from "@mui/material";
 const pageSize = 10;
 export default function Cashbook() {
   const [data, setData] = useState([]);
@@ -13,6 +14,9 @@ export default function Cashbook() {
   });
   const [totalPages, setTotalPages] = useState(1);
   const [loader, setLoader] = useState(true);
+  const [openAdModal, setOpenAdModal] = useState(false);
+  const [adDocumentUrl, setAdDocumentUrl] = useState("");
+  const [modalTitle, setModalTitle] = useState("POP Document");
   const userid = JSON.parse(localStorage.getItem("data123"))?.id;
   const usertype = JSON.parse(localStorage.getItem("data123"))?.user_type;
   useEffect(() => {
@@ -200,6 +204,7 @@ export default function Cashbook() {
                       <th>Customer</th>
                       <th>Shipment Ref</th>
                       <th>Allocated</th>
+                      <th>Invoice (POP)</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -255,6 +260,27 @@ export default function Cashbook() {
                             </select>
                           </td>
                           <td>{item.order_id ? "YES" : ""}</td>
+                          <td className="text-center">
+                            {item.freight_pop_docs && item.freight_pop_docs.filter((doc) => doc.document_name === "POP (AD)").length > 0 ? (
+                              item.freight_pop_docs
+                                .filter((doc) => doc.document_name === "POP (AD)")
+                                .map((doc) => (
+                                  <i
+                                    key={doc.id}
+                                    className="fi fi-rr-document mx-1"
+                                    style={{ cursor: "pointer", fontSize: "1.2rem", color: "#007bff" }}
+                                    title="View POP Document"
+                                    onClick={() => {
+                                      setModalTitle("Invoice (POP)");
+                                      setAdDocumentUrl(`${process.env.REACT_APP_BASE_URLdocument}${doc.document}`);
+                                      setOpenAdModal(true);
+                                    }}
+                                  ></i>
+                                ))
+                            ) : (
+                              "-"
+                            )}
+                          </td>
                         </tr>
                       ))
                     ) : (
@@ -285,6 +311,40 @@ export default function Cashbook() {
                 </div>
               </div>
             </div>
+            <Modal open={openAdModal} onClose={() => setOpenAdModal(false)}>
+              <Box
+                sx={{
+                  position: "absolute",
+                  top: "50%",
+                  left: "50%",
+                  transform: "translate(-50%, -50%)",
+                  width: "80%",
+                  height: "80vh",
+                  bgcolor: "background.paper",
+                  boxShadow: 24,
+                  p: 2,
+                  display: "flex",
+                  flexDirection: "column",
+                }}
+              >
+                <div className="d-flex justify-content-between mb-2">
+                  <h5>{modalTitle}</h5>
+                  <button
+                    onClick={() => setOpenAdModal(false)}
+                    className="btn btn-danger btn-sm"
+                  >
+                    Close
+                  </button>
+                </div>
+                <iframe
+                  src={adDocumentUrl}
+                  width="100%"
+                  height="100%"
+                  title="Document"
+                  style={{ border: "none", flexGrow: 1 }}
+                ></iframe>
+              </Box>
+            </Modal>
             <ToastContainer />
           </div>
         </div>

@@ -139,6 +139,7 @@ export default function UserFreight() {
   useEffect(() => {
     frightData();
   }, []);
+
   const frightData = async (page) => {
     try {
       setLoader(true);
@@ -174,6 +175,7 @@ export default function UserFreight() {
       setLoader(false);
     }
   };
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -188,6 +190,7 @@ export default function UserFreight() {
     };
     fetchData();
   }, []);
+
   const handledelete = async (id) => {
     const permission = await axios.post(
       `${process.env.REACT_APP_BASE_URL}CheckPermission`,
@@ -231,6 +234,7 @@ export default function UserFreight() {
       toast.error("Permission denied");
     }
   };
+
   /////////////////////////////////////////update freight///////////////////////////////////////////
   const handleupdate = (id) => {
     console.log(id);
@@ -273,10 +277,12 @@ export default function UserFreight() {
     console.log(getUSer.insurance);
   };
   console.log(inputdata.user_type);
+
   const handleupdateapi = (e) => {
     const { name, value } = e.target;
     setInputdata({ ...inputdata, [name]: value });
   };
+  
   const handleupdateapipost = async (id) => {
     const permission = await axios.post(
       `${process.env.REACT_APP_BASE_URL}CheckPermission`,
@@ -1248,7 +1254,7 @@ export default function UserFreight() {
                                                   </div>
                                                 </div>
                                               </a>
-                                              <a className="dropdown-item li_icon">
+                                              {/* <a className="dropdown-item li_icon">
                                                 <div className="action_btn">
                                                   <div
                                                     type="button"
@@ -1272,7 +1278,7 @@ export default function UserFreight() {
                                                     Calculate Estimate
                                                   </div>
                                                 </div>
-                                              </a>
+                                              </a> */}
                                             </div>
                                           </div>
                                         </div>
@@ -2161,11 +2167,9 @@ export default function UserFreight() {
                                                         multiple
                                                       />
                                                     </div>
-                                                   
                                                   </div> */}
                                             </div>
                                           </div>
-
                                         </div>
                                       </div>
                                       <div className="Toastify" />

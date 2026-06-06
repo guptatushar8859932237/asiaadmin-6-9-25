@@ -324,6 +324,8 @@ export default function Sageinvoices() {
   const [countruies, setCountruies] = useState({});
   const [pagenation, setPagenation] = useState({});
   const [openmodal, setOpenmodal] = useState(false);
+  const [openAdModal, setOpenAdModal] = useState(false);
+  const [adDocumentUrl, setAdDocumentUrl] = useState("");
   const totalPage = pagenation?.totalPages || 1;
   const userid = JSON.parse(localStorage.getItem("data123"))?.id;
   const usertype = JSON.parse(localStorage.getItem("data123"))?.user_type;
@@ -645,6 +647,7 @@ export default function Sageinvoices() {
                       <th>Total</th>
                       {/* {activeTab === "general" && <th>Country</th>} */}
                       <th>Upload</th>
+                      <th>Invoice (AD)</th>
                       <th>Action</th>
                     </tr>
                   </thead>
@@ -661,7 +664,6 @@ export default function Sageinvoices() {
                               {new Date(item.date).toLocaleDateString("EN-gb")}
                             </td>
                             <td>{item.total}</td>
-
                             <td>
                               <button
                                 className="tableBtn"
@@ -672,6 +674,23 @@ export default function Sageinvoices() {
                                 Upload
                               </button>
                             </td>
+                             <td className="text-center">
+                              {item.freight_invoice_docs?.find((doc) => doc.document_name === "Invoice (AD)") ? (
+                                <i
+                                  className="fi fi-rr-document"
+                                  style={{ cursor: "pointer", fontSize: "1.2rem", color: "#007bff" }}
+                                  title="View AD Document"
+                                  onClick={() => {
+                                    const doc = item.freight_invoice_docs.find((d) => d.document_name === "Invoice (AD)");
+                                    setAdDocumentUrl(`${process.env.REACT_APP_BASE_URLdocument}${doc.document}`);
+                                    setOpenAdModal(true);
+                                  }}
+                                ></i>
+                              ) : (
+                                "-"
+                              )}
+                             </td>
+
                             <td>
                               <AiFillDelete
                                 onClick={() => {
@@ -755,6 +774,40 @@ export default function Sageinvoices() {
 
                     </div>
                   </div>
+                </Box>
+              </Modal>
+              <Modal open={openAdModal} onClose={() => setOpenAdModal(false)}>
+                <Box
+                  sx={{
+                    position: "absolute",
+                    top: "50%",
+                    left: "50%",
+                    transform: "translate(-50%, -50%)",
+                    width: "80%",
+                    height: "80vh",
+                    bgcolor: "background.paper",
+                    boxShadow: 24,
+                    p: 2,
+                    display: "flex",
+                    flexDirection: "column",
+                  }}
+                >
+                  <div className="d-flex justify-content-between mb-2">
+                    <h5>AD Document</h5>
+                    <button
+                      onClick={() => setOpenAdModal(false)}
+                      className="btn btn-danger btn-sm"
+                    >
+                      Close
+                    </button>
+                  </div>
+                  <iframe
+                    src={adDocumentUrl}
+                    width="100%"
+                    height="100%"
+                    title="AD Document"
+                    style={{ border: "none", flexGrow: 1 }}
+                  ></iframe>
                 </Box>
               </Modal>
             </div>

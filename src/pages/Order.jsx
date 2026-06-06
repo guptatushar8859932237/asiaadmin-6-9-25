@@ -144,6 +144,7 @@ export default function Order() {
       .then((response) => {
         if (response.data.success) {
           toast.success(response.data.message || "Documents uploaded successfully");
+          getorder();
           handleClose();
           setSelectedDocs([]);
         } else {
@@ -180,7 +181,7 @@ export default function Order() {
     getClient();
     updatecountry();
   }, []);
-  
+
   const updatecountry = () => {
     axios
       .get(`${process.env.REACT_APP_BASE_URL}GetCountries`)
@@ -1089,6 +1090,20 @@ export default function Order() {
                                                     fontSize: "15px",
                                                   }}
                                                   onClick={() => {
+                                                    setSelectedFreightIdForDocs(item?.freight_id);
+                                                    handleShow();
+                                                  }}
+                                                >
+                                                  <FileUploadIcon /> Upload
+                                                  Document
+                                                </li>
+                                                <li
+                                                  className="page_list"
+                                                  style={{
+                                                    cursor: "pointer",
+                                                    fontSize: "15px",
+                                                  }}
+                                                  onClick={() => {
                                                     Shippinginstruction(
                                                       item?.id
                                                     );
@@ -1195,20 +1210,7 @@ export default function Order() {
                                                   <LocalShippingIcon /> Delivery
                                                   details
                                                 </li>
-                                                <li
-                                                  className="page_list"
-                                                  style={{
-                                                    cursor: "pointer",
-                                                    fontSize: "15px",
-                                                  }}
-                                                  onClick={() => {
-                                                    setSelectedFreightIdForDocs(item?.freight_id);
-                                                    handleShow();
-                                                  }}
-                                                >
-                                                  <FileUploadIcon /> Upload
-                                                  Document
-                                                </li>
+
                                               </ul>
                                             </a>
                                           </div>
@@ -1753,7 +1755,7 @@ export default function Order() {
                                   placeholder="Supplier Address"
                                 />
                               </div>
-                              
+
                               <div className="col-lg-6 mb-3">
                                 <label>Type</label>
 

@@ -598,7 +598,7 @@ export default function MAnageFreightDetails() {
                               </p>
 
                               <p className="client_para">
-                                ETD : {new Date(info?.ETA).toLocaleDateString(
+                                ETD : {new Date(info?.delivery_ETA).toLocaleDateString(
                                   "en-GB",
                                 )}
                               </p>

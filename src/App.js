@@ -102,10 +102,12 @@ import SupplierSageInvoice from "./components/Billing/SupplierSageInvoice";
 import Addsupplierinvoice from "./components/Billing/Addsupplierinvoice";
 import Editsupplierinvoice from "./components/Billing/Editsupplierinvoiceedit";
 import Editsupplierinvoiceedit from "./components/Billing/Editsupplierinvoiceedit";
+import Viewsupplierinvoice from "./components/Billing/Viewsupplierinvoice";
 import Loader from "./Loader";
 import ManageCollectionDelivery from "./ManageCollectionDelivery";
 import Invoices from "./components/Billing/Invoices";
 import Quotes from "./components/Billing/Quotes";
+import AddQuotesInvoice from "./components/Billing/AddQuotesInvoice";
 const Dashboard = lazy(() => import("./pages/Dashboard"));
 const Users = lazy(() => import("./pages/Users"));
 const Messages = lazy(() => import("./pages/Messages"));
@@ -133,7 +135,7 @@ const Uniovwersalpage = lazy(() => import("./components/Uniovwersalpage"));
 export default function App() {
   const [text, setText] = useState("");
   const [permission, setPermission] = useState("");
-  console.log("06-06-26");
+  console.log("10-06-26");
   return (
     <MyContext1.Provider value={{ text, setText }}>
       <MyContext2.Provider value={{ permission, setPermission }}>
@@ -165,6 +167,7 @@ export default function App() {
                 <Route index path="/Admin/billing" element={<Billing />} />
                 <Route index path="/Admin/invoices" element={<Invoices />} />
                 <Route path="/Admin/quotes" element={<Quotes />} />
+                <Route path="/Admin/addquotesinvoice" element={<AddQuotesInvoice />} />
                 <Route
                   index
                   path="/Admin/sageinvoice"
@@ -421,6 +424,10 @@ export default function App() {
                   index
                   path="/Admin/editsupplierinvoiceedit"
                   element={<Editsupplierinvoiceedit />}
+                />
+                <Route
+                  path="/Admin/view-supplier-invoice"
+                  element={<Viewsupplierinvoice />}
                 />
                 <Route
                   index

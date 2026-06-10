@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 import { BsThreeDotsVertical } from "react-icons/bs";
 import Swal from "sweetalert2";
 import { toast, ToastContainer } from "react-toastify";
+import Viewsupplierinvoice from "./Viewsupplierinvoice";
 
 export default function SupplierSageInvoice() {
   const [data, setData] = useState([]);
@@ -13,9 +14,12 @@ export default function SupplierSageInvoice() {
   const [totalPage, setTotalPage] = useState(1);
   const limit = 10;
   const navigate = useNavigate();
+  const [printItem, setPrintItem] = useState(null);
+
   useEffect(() => {
     getClients(currentPage);
   }, [currentPage]);
+
   const getClients = async (pageNo = 1) => {
     try {
       const response = await axios.get(
@@ -33,13 +37,16 @@ export default function SupplierSageInvoice() {
       );
     }
   };
+
   const handlePageChange = (page) => {
     console.log("Selected Page =>", page);
     setCurrentPage(page);
   };
+
   const naviagetpage = () => {
     navigate("/Admin/addsupplierinvoice");
   };
+
   const deletewarehouse = async (id) => {
     console.log(id);
     const result = await Swal.fire({
@@ -80,6 +87,7 @@ export default function SupplierSageInvoice() {
       }
     }
   };
+
   const AutoEditde = (item) => {
     navigate("/Admin/editsupplierinvoiceedit", {
       state: { item },
@@ -90,10 +98,10 @@ export default function SupplierSageInvoice() {
     console.log(item)
     navigate("/Admin/addsupplierinvoice", { state: { copyInvoiceData: item } })
   };
+
   return (
     <div className="wpWrapper">
       <div className="container-fluid">
-
         <button
           className="btn btn-secondary"
           onClick={naviagetpage}
@@ -104,12 +112,15 @@ export default function SupplierSageInvoice() {
           <table className="table table-striped tableICon">
             <thead>
               <tr>
-                <th>Waybill</th>
-                <th>Vessel</th>
+                <th>Reference</th>
                 <th>Supplier Name</th>
-                <th>Supplier Email</th>
-                <th>Supplier Phone</th>
+                <th>Waybill</th>
+                <th>Sup Invoice Number</th>
+                <th>Inv Date</th>
+                <th>Due Date</th>
+                <th>Currency</th>
                 <th>Total</th>
+                <th>Amount Due</th>
                 <th>Status</th>
                 <th>Action</th>
               </tr>
@@ -120,20 +131,25 @@ export default function SupplierSageInvoice() {
                 data.map((item) => {
                   return (
                     <tr key={item.supplier_invoice_id}>
-                      <td>{item.waybill}</td>
-                      <td>{item.vessel}</td>
+                      <td>{item.reference_no || "-"}</td>
                       <td>
                         {item.supplier_name}
                       </td>
+                      <td>{item.waybill}</td>
+                      <td>{item.supplier_invoice_no || "-"}</td>
                       <td>
-                        {item.supplier_email}
+                        {new Date(
+                          item?.supplier_invoice_date,
+                        ).toLocaleDateString("en-GB") || "-"}
                       </td>
-                      <td>
-                        {item.supplier_phone}
-                      </td>
+                      <td>{new Date(
+                          item?.due_date,
+                        ).toLocaleDateString("en-GB") || "-"}</td>
+                      <td>{item.final_base_currency || "-"}</td>
                       <td>
                         {item.invoice_total}
                       </td>
+                      <td>{item.invoice_total}</td>
                       <td>{item.status}</td>
                       <td>
                         <div className="dropdown">
@@ -144,16 +160,16 @@ export default function SupplierSageInvoice() {
                             <BsThreeDotsVertical />
                           </div>
                           <ul className="dropdown-menu">
-                            {/* <li>
-                              <button type="button" className="dropdown-item">
+                            <li>
+                              <button type="button" className="dropdown-item" onClick={() => navigate("/Admin/view-supplier-invoice", { state: { item } })}>
                                 View
                               </button>
-                            </li> */}
-                            {/* <li>
-                              <button type="button" className="dropdown-item">
+                            </li>
+                            <li>
+                              <button type="button" className="dropdown-item" onClick={() => setPrintItem(item)}>
                                 Print
                               </button>
-                            </li> */}
+                            </li>
                             <li>
                               <button
                                 type="button"
@@ -183,11 +199,11 @@ export default function SupplierSageInvoice() {
                                 Delete
                               </button>
                             </li>
-                            {/* <li>
+                            <li>
                               <button type="button" className="dropdown-item">
                                 Create Supplier Adjust
                               </button>
-                            </li> */}
+                            </li>
                           </ul>
                         </div>
                       </td>
@@ -261,6 +277,7 @@ export default function SupplierSageInvoice() {
           </div>
         </div>
       </div>
+      {printItem && <Viewsupplierinvoice hiddenPrintItem={printItem} onPrintComplete={() => setPrintItem(null)} />}
       <ToastContainer />
     </div>
   );

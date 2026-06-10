@@ -571,6 +571,7 @@ export default function Order() {
   useEffect(() => {
     getcountry();
   }, []);
+
   const getcountry = () => {
     axios
       .get(`${process.env.REACT_APP_BASE_URL}GetCountries`)
@@ -581,10 +582,12 @@ export default function Order() {
         console.log(error.response.data.data);
       });
   };
+
   const handlechange = (e) => {
     const { name, value } = e.target;
     setInputvalue({ ...inputvalue, [name]: value });
   };
+
   const postData1 = async (page) => {
     const permission = await axios.post(
       `${process.env.REACT_APP_BASE_URL}CheckPermission`,
@@ -617,6 +620,7 @@ export default function Order() {
       toast.error("Permission Denied: You don’t have access to this page");
     }
   };
+
   const handleclicknavibillofla = (item) => {
     console.log(item);
     axios
@@ -634,6 +638,7 @@ export default function Order() {
         console.log(error.response.data);
       });
   };
+
   const handlesearchapi = () => {
     const searchData = {
       search: searchQuery,
@@ -653,14 +658,17 @@ export default function Order() {
         console.log(error.response.data);
       });
   };
+
   // edit order code////////////////////////////////////////////////////////////
   const handleupdateapi = (e) => {
     const { name, value } = e.target;
     setInputdata({ ...inputdata, [name]: value });
   };
+
   const openModalopen = () => setIsOpen(true);
   // function to close modal
   const closeModalclose = () => setIsOpen(false);
+
   const handleupdate = (freight_id) => {
     const setUSer = data.filter((item) => item.freight_id === freight_id);
     const getUSer = setUSer[0];
@@ -709,6 +717,7 @@ export default function Order() {
       sales_representative: getUSer.sales_id,
     });
   };
+
   const handleupdateapipost = (freight_id) => {
     console.log(inputdata.client_ref);
     const formdata = new FormData();
@@ -789,6 +798,7 @@ export default function Order() {
         toast.error(error.response?.data || "An error occurred");
       });
   };
+
   const track123 = async (item) => {
     try {
       const body = {
@@ -810,9 +820,11 @@ export default function Order() {
   const [supplierOptions, setSupplierOptions] = useState([])
   const [warehouseType, setWarehouseType] = useState(""); // radio state
   const [selectedSupplier, setSelectedSupplier] = useState("");
+
   useEffect(() => {
     getSupplier()
   }, [])
+  
   const getSupplier = async () => {
     try {
       const response = await axios.get(`${process.env.REACT_APP_BASE_URL}getWarehouseSupplierList`);

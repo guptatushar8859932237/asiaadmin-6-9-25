@@ -159,7 +159,7 @@ export default function Addsupplierinvoice() {
       ? 1
       : freight.chargable_rate,
   );
- const oridoc3 = parseFloat(freight.origin_pick_documantation_cost_gp) || 0;
+  const oridoc3 = parseFloat(freight.origin_pick_documantation_cost_gp) || 0;
   const oridoc4 = freight.origin_pick_up_documantation_unitType
     ? oridoc1 * oridoc2 * freight.origin_pick_up_documantation_unitTypeQTY
     : 0.0;
@@ -183,7 +183,7 @@ export default function Addsupplierinvoice() {
   );
   // const oriforewarding2 =
   //   parseFloat(freight.origin_pick_up_forewarding_fees) || 0;
-   const oriforewarding3 = parseFloat(freight.origin_pickup_forewarding_gp) || 0;
+  const oriforewarding3 = parseFloat(freight.origin_pickup_forewarding_gp) || 0;
   const oriforewarding4 = freight.origin_pick_up_forewarding_unitType
     ? oriforewarding1 *
     oriforewarding2 *
@@ -990,6 +990,8 @@ export default function Addsupplierinvoice() {
       const payload = {
         supplier_id: selectedSupplier,
         shipment_id: selected,
+        supplier_invoice_no: freight.supplier_invoice_no,
+        due_date: freight.due_date,
         origin_pick_up_cost: freight.origin_pick_up_cost,
         origin_pick_up_fees: freight.origin_pick_up_fees,
         origin_pickup_fee_gpcalc: freight.origin_pickup_fee_gpcalc,
@@ -1680,7 +1682,7 @@ export default function Addsupplierinvoice() {
       toast.error(error.response?.data?.message || "Something went wrong");
     }
   };
-  
+
   const supplier = () => {
     axios
       .post(`${process.env.REACT_APP_BASE_URL}get-suppler-selected`, {
@@ -1980,7 +1982,7 @@ export default function Addsupplierinvoice() {
           </div>
         </div>
       )}
-      
+
       {openmodal && (
         <div className="custom-modal">
           <div className="custom-modal-content">
@@ -2020,6 +2022,7 @@ export default function Addsupplierinvoice() {
           </div>
         </div>
       )}
+
       <div className="wpWrapper ">
         <div className="container-fluid">
           <div className=" ">
@@ -2534,6 +2537,25 @@ export default function Addsupplierinvoice() {
                             <table>
                               <tbody>
                                 <tr>
+                                  <td style={{
+                                    width: 170,
+                                    display: "block",
+                                    padding: "0px 10px 0px 10px",
+                                    fontSize: 14,
+                                  }}><strong>
+                                      Invoice No.
+                                    </strong></td>
+                                  <td style={{ fontSize: 14 }}>
+                                    <input
+                                      type="text"
+                                      onKeyPress={handlepresss}
+                                      name="supplier_invoice_no"
+                                      value={freight.supplier_invoice_no}
+                                      onChange={handlechangecalc}
+                                    ></input>
+                                  </td>
+                                </tr>
+                                <tr>
                                   <td
                                     style={{
                                       width: 170,
@@ -2563,12 +2585,39 @@ export default function Addsupplierinvoice() {
                                   <td
                                     style={{
                                       fontSize: 14,
-                                      padding: "0px 10px 0px 10px",
                                     }}
                                   >
                                     {new Date(
                                       getdata?.created_at,
                                     ).toLocaleDateString("en-GB")}
+                                  </td>
+                                </tr>
+                                <tr>
+                                  <td style={{
+                                    padding: "0px 10px 0px 10px",
+                                    width: 170,
+                                    display: "block",
+                                    fontSize: 14,
+                                  }}>
+                                    <strong>Due Date</strong>
+                                  </td>
+                                  <td style={{
+                                    fontSize: 14,
+                                  }}>
+                                    <input
+                                      type="date"
+                                      name="due_date"
+                                      onKeyPress={handlepresss}
+                                      value={freight.due_date}
+                                      onChange={handlechangecalc}
+                                      style={{
+                                        padding: "4px 8px",
+                                        fontSize: "14px",
+                                        borderRadius: "4px",
+                                        border: "1px solid #ccc",
+                                        fontFamily: "inherit"
+                                      }}
+                                    />
                                   </td>
                                 </tr>
                               </tbody>

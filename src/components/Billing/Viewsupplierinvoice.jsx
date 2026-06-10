@@ -12,7 +12,7 @@ import { RiFolderUserFill } from "react-icons/ri";
 import { MdArrowOutward } from "react-icons/md";
 import { useRef } from "react";
 
-export default function Editsupplierinvoiceedit() {
+export default function Viewsupplierinvoice({ hiddenPrintItem, onPrintComplete }) {
   const [update, setUpdate] = useState([0]);
   const location = useLocation();
   const [freight, setFreight] = useState([0]);
@@ -31,6 +31,7 @@ export default function Editsupplierinvoiceedit() {
   const [openmodal1, setOpenmodal1] = useState(false);
   const [selected, setSelected] = useState([]); // selected IDs
   const [open, setOpen] = useState(false);
+  const [hasPrinted, setHasPrinted] = useState(false);
   const navigate = useNavigate();
 
   const invoiceItemPrefixes = [
@@ -162,7 +163,7 @@ export default function Editsupplierinvoiceedit() {
     return normalized;
   };
 
-  const item = location.state?.item.supplier_invoice_id;
+  const item = hiddenPrintItem?.supplier_invoice_id || location.state?.item?.supplier_invoice_id || location.state?.item || hiddenPrintItem;
   console.log(item)
   const fwtsupplierdata =async()=>{
     try {
@@ -1753,30 +1754,66 @@ export default function Editsupplierinvoiceedit() {
   const downloadPDF = () => {
     setShowData(false); // PDF ke liye limited UI
   };
-  const downloadPDF1 = () => {
+  const downloadPDF1 = async () => {
     console.log(showData);
     // setShowData(true)
     console.log(showData);
     const element = pdfRef.current;
-    const contentWidth = element.scrollWidth;
-    const contentHeight = element.scrollHeight;
+    
+    // Fix for html2canvas not capturing input values correctly
+    const inputs = element.querySelectorAll('input, textarea, select');
+    inputs.forEach(input => {
+      if (input.tagName === 'SELECT') {
+        const selectedOption = input.options[input.selectedIndex];
+        if (selectedOption) {
+          selectedOption.setAttribute('selected', 'selected');
+        }
+      } else {
+        input.setAttribute('value', input.value);
+      }
+    });
+
+    const contentWidth = element.scrollWidth || 1200;
+    const contentHeight = element.scrollHeight || 1200;
     const rect = element.getBoundingClientRect();
+    const pdfWidth = Math.max(rect.width, 1200);
+    const pdfHeight = Math.max(rect.height, contentHeight);
+
     const options = {
       margin: 0,
       filename: "page.pdf",
       image: { type: "jpeg", quality: 1 },
-      html2canvas: { scale: 1.5, useCORS: true },
+      html2canvas: { scale: 1.5, useCORS: true, windowWidth: contentWidth },
       jsPDF: {
         unit: "px",
-        format: [rect.width, rect.height],
+        format: [pdfWidth, pdfHeight],
         orientation: "portrait",
       },
       pagebreak: false,
     };
-    html2pdf().from(element).set(options).save();
+    try {
+      await html2pdf().from(element).set(options).save();
+    } catch (e) {
+      console.error("PDF generation failed", e);
+    }
     setShowData(false);
     console.log(showData);
   };
+
+  const isPrintingRef = useRef(false);
+
+  useEffect(() => {
+    if (getdata && Object.keys(getdata).length > 0 && (location.state?.autoPrint || hiddenPrintItem) && !isPrintingRef.current) {
+      isPrintingRef.current = true;
+      setTimeout(async () => {
+        await downloadPDF1();
+        if (onPrintComplete) {
+          onPrintComplete();
+        }
+      }, 1500);
+    }
+  }, [getdata, location.state, hiddenPrintItem]);
+
   const setSelected1111 = async (value) => {
     console.log(value);
     setSelected(value);
@@ -1894,7 +1931,8 @@ export default function Editsupplierinvoiceedit() {
           </div>
         </div>
       )}
-      <div className="wpWrapper ">
+      <div className="wpWrapper " style={hiddenPrintItem ? { position: "absolute", top: "-9999px", left: "-9999px", width: "max-content", minWidth: "1200px", zIndex: -1000 } : {}}>
+        <fieldset disabled>
         <div className="container-fluid">
           <div className=" ">
             <div className=" ">
@@ -2427,10 +2465,10 @@ export default function Editsupplierinvoiceedit() {
                                                 {getdata?.reference_no}
                                               </td>
                                             </tr>
-                                            <tr>
+                                            <tr className="mt-2">
                                               <td
                                                 style={{
-                                                  padding: "0px 10px 0px 10px",
+                                                  padding: "0px 10px",
                                                   width: 170,
                                                   display: "block",
                                                   paddingBottom: 0,
@@ -13808,16 +13846,12 @@ export default function Editsupplierinvoiceedit() {
                                   </tbody>
                                 </table>
                               </div>
-                              <div className="text-center mt-3">
-                                <button className="ship_btn" onClick={estimateCalculate}>
-                                  Get Quote
-                                </button>
-                              </div>
                             </div>
                           </section>
             </div>
           </div>
         </div>
+        </fieldset>
       </div>
     </>
   );

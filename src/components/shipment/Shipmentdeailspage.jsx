@@ -127,245 +127,214 @@ export default function Shipmentdeailspage() {
               <div className="container">
                 <div className="client_details">
                   <div className="d-flex justify-content-between">
-                    <div className="d-flex">
+                    <div className="d-flex gap-3">
                       <div>
                         <ArrowBackIcon
                           style={{ cursor: "pointer" }}
                           onClick={handleclick}
-                          className="mt-2 me-2"
+                          className=""
                         />
                       </div>
-                      <h2 className="me-3">Shipment Details</h2>
+                      <h4 className="det_hd mb-0 ">Shipment Details</h4>
                     </div>
-                    <div className="mb-2 ">
+                    <div>
                       <button
-                        className="btn btn-primary"
+                        className="blueBtn"
                         onClick={handleOpenStatusModal}
                       >
                         Update Status
                       </button>
                     </div>
                   </div>
-                  <div className="row">
-                    <div className="col-lg-4 col-sm-6">
-                      <div className="cardShip">
-                        <div className="parentShipDetail">
-                          <div>
-                            <strong>Freight</strong>
-                          </div>
-                          <div>
-                            <p>{datat1?.freight}</p>
-                          </div>
-                        </div>
-                        <div className="parentShipDetail">
-                          <div>
-                            <strong>Waybill</strong>
-                          </div>
-                          <div>
-                            <p>{datat1.waybill}</p>
-                          </div>
-                        </div>
-                        <div className="parentShipDetail">
-                          <div>
-                            <strong>Carrier</strong>
-                          </div>
-                          <div>
-                            <p>{datat1?.carrier}</p>
-                          </div>
-                        </div>
-                        <div className="parentShipDetail">
-                          <div>
-                            <strong>Vessel</strong>
-                          </div>
-                          <div>
-                            <p>{datat1?.vessel}</p>
-                          </div>
-                        </div>
-                        <div className="parentShipDetail">
-                          <div>
-                            <strong>Container No</strong>
-                          </div>
-                          <div>
-                            <p>{datat1?.container}</p>
-                          </div>
-                        </div>
-                        <div className="parentShipDetail">
-                          <div>
-                            <strong>House Bill</strong>
-                          </div>
-                          <div>
-                            <p>{datat1?.load}</p>
+                  <div className="row mt-4 viewDetails g-4">
+                    <div className="col-lg-4 col-md-6 col-sm-6">
+                      <div className="card desti_card">
+                        <div className="card-body">
+
+                          <h6 className="orgin_hd">Shipment Details</h6>
+
+                          <div className="main_det">
+
+                            <div className="view_box">
+                              <p className="client_para">Freight</p>
+                              <p className="or_para">{datat1?.freight}</p>
+                            </div>
+
+                            <div className="view_box">
+                              <p className="client_para">Waybill</p>
+                              <p className="or_para">{datat1?.waybill}</p>
+                            </div>
+
+                            <div className="view_box">
+                              <p className="client_para">Carrier</p>
+                              <p className="or_para">{datat1?.carrier}</p>
+                            </div>
+
+                            <div className="view_box">
+                              <p className="client_para">Vessel</p>
+                              <p className="or_para">{datat1?.vessel}</p>
+                            </div>
+
+                            <div className="view_box">
+                              <p className="client_para">Container No</p>
+                              <p className="or_para">{datat1?.container}</p>
+                            </div>
+
+                            <div className="view_box">
+                              <p className="client_para">Release Type</p>
+                              <p className="or_para">{datat1?.release_type}</p>
+                            </div>
+
+                            <div className="view_box">
+                              <p className="client_para">Status</p>
+                              <p className="or_para">{datat1?.status}</p>
+                            </div>
+
                           </div>
                         </div>
-                        <div className="parentShipDetail">
-                          <div>
-                            <strong>Release Type</strong>
-                          </div>
-                          <div>
-                            <p>{datat1.release_type}</p>
+                      </div>
+                    </div>
+                    <div className="col-lg-4 col-md-6 col-sm-6">
+                      <div className="card desti_card">
+                        <div className="card-body">
+
+                          <h6 className="orgin_hd">Route Details</h6>
+
+                          <div className="main_det">
+
+                            <div className="view_box">
+                              <p className="client_para">Origin Agent</p>
+                              <p className="or_para">{datat1?.origin_agent}</p>
+                            </div>
+
+                            <div className="view_box">
+                              <p className="client_para">Country of Origin</p>
+                              <p className="or_para">{datat?.origin_country_name}</p>
+                            </div>
+
+                            <div className="view_box">
+                              <p className="client_para">Port of Loading</p>
+                              <p className="or_para">{datat1?.port_of_loading}</p>
+                            </div>
+
+                            <div className="view_box">
+                              <p className="client_para">ETD</p>
+                              <p className="or_para">
+                                {datat1?.ATD && new Date(datat1?.ATD).toLocaleDateString("en-GB")}
+                              </p>
+                            </div>
+
+                            <div className="view_box">
+                              <p className="client_para">Destination Agent</p>
+                              <p className="or_para">{datat1?.destination_agent}</p>
+                            </div>
+
+                            <div className="view_box">
+                              <p className="client_para">Country of Destination</p>
+                              <p className="or_para">{datat?.des_country_name}</p>
+                            </div>
+
+                            <div className="view_box">
+                              <p className="client_para">Port of Discharge</p>
+                              <p className="or_para">{datat1?.port_of_discharge}</p>
+                            </div>
+
+                            <div className="view_box">
+                              <p className="client_para">ETA</p>
+                              <p className="or_para">
+                                {datat1?.ETD && new Date(datat1?.ETD).toLocaleDateString("en-GB")}
+                              </p>
+                            </div>
+
                           </div>
                         </div>
                       </div>
                     </div>
                     <div className="col-lg-4 col-sm-6">
-                      <div className="cardShip">
-                        <div className="parentShipDetail">
-                          <div>
-                            <strong>Origin Agent</strong>
-                          </div>
-                          <div>
-                            <p>{datat1?.origin_agent}</p>
-                          </div>
-                        </div>
-                        <div className="parentShipDetail">
-                          <div>
-                            <strong>Country of Origin</strong>
-                          </div>
-                          <div>
-                            <p>{datat.origin_country_name}</p>
-                          </div>
-                        </div>
-                        <div className="parentShipDetail">
-                          <div>
-                            <strong>Port of Loading</strong>
-                          </div>
-                          <div>
-                            <p>{datat1?.port_of_loading}</p>
-                          </div>
-                        </div>
-                        <div className="parentShipDetail">
-                          <div>
-                            <strong>ETD</strong>
-                          </div>
-                          <div>
-                            <p>
-                              {new Date(datat1?.ATD).toLocaleDateString(
-                                "en-GB",
-                              )}
-                            </p>
-                          </div>
-                        </div>
-                        <div className="parentShipDetail">
-                          <div>
-                            <strong>Destination Agent</strong>
-                          </div>
-                          <div>
-                            <p>{datat1?.destination_agent}</p>
-                          </div>
-                        </div>
-                        <div className="parentShipDetail">
-                          <div>
-                            <strong>Country of Destination</strong>
-                          </div>
-                          <div>
-                            <p>{datat.des_country_name}</p>
+                      <div className="card desti_card">
+                        <div className="card-body">
+                          <h6 className="orgin_hd">Documents</h6>
+                          <div className="main_det">
+                            <div className="parentShipDetail view_box">
+                              <div>
+                                <p className="client_para">Master Bill </p>
+                              </div>
+                              <div>
+                                <p className="or_para">
+                                  {datat1?.document ? (
+                                    <a
+                                      href={`${process.env.REACT_APP_BASE_URLdocument}${datat?.document}`}
+                                    >
+                                      View Documnet
+                                    </a>
+                                  ) : (
+                                    ""
+                                  )}
+                                </p>
+                              </div>
+                            </div>
+                            <div className="parentShipDetail view_box">
+                              <div>
+                                <p className="client_para"> House Bill </p>
+                              </div>
+                              <div>
+                                <p></p>
+                              </div>
+                            </div>
+                            <div className="parentShipDetail view_box">
+                              <div>
+                                <p className="client_para">Arrival Notification </p>
+                              </div>
+                              <div>
+                                <p></p>
+                              </div>
+                            </div>
+                            <div className="parentShipDetail view_box">
+                              <div>
+                                <p className="client_para"> Other</p>
+                              </div>
+                            </div>
+
                           </div>
                         </div>
-                        <div className="parentShipDetail">
-                          <div>
-                            <strong>Port of Discharge</strong>
-                          </div>
-                          <div>
-                            <p>{datat1?.port_of_discharge}</p>
-                          </div>
-                        </div>
-                        <div className="parentShipDetail">
-                          <div>
-                            <strong>ETA</strong>
-                          </div>
-                          <div>
-                            <p>
-                              {new Date(datat1?.ETD).toLocaleDateString(
-                                "en-GB",
-                              )}
-                            </p>
-                          </div>
-                        </div>
+
                       </div>
                     </div>
-                    <div className="col-lg-4 col-sm-6">
-                      <div className="cardShip">
-                        <div className="parentShipDetail">
-                          <div>
-                            <strong>Status</strong>
-                          </div>
-                          <div>
-                            <p>{datat1.status}</p>
-                          </div>
-                        </div>
-                        <div className="parentShipDetail">
-                          <div>
-                            <strong>Master Bill </strong>
-                          </div>
-                          <div>
-                            <p>
-                              {datat1?.document ? (
-                                <a
-                                  href={`${process.env.REACT_APP_BASE_URLdocument}${datat?.document}`}
-                                >
-                                  View Documnet
-                                </a>
-                              ) : (
-                                ""
-                              )}
-                            </p>
-                          </div>
-                        </div>
-                        <div className="parentShipDetail">
-                          <div>
-                            <strong> House Bill </strong>
-                          </div>
-                          <div>
-                            <p></p>
-                          </div>
-                        </div>
-                        <div className="parentShipDetail">
-                          <div>
-                            <strong>Arrival Notification </strong>
-                          </div>
-                          <div>
-                            <p></p>
-                          </div>
-                        </div>
-                        <div className="parentShipDetail">
-                          <div>
-                            <strong>Other</strong>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                    <div className="col-md-4">
+                    <div className="col-md-12">
                       <div className="card desti_card">
                         <div className="card-body mb-3">
                           {Object.keys(documents).map(
                             (groupName, groupIndex) => (
                               <div key={groupIndex} className="mb-2">
-                                <label>{groupName} :</label>
-                                {documents[groupName]?.map((item, index) => (
-                                  <div
-                                    key={item.id}
-                                    className="d-flex align-items-center"
-                                  >
-                                    <a
-                                      href={`${process.env.REACT_APP_BASE_URLdocument}${item?.document}`}
-                                      target="_blank"
-                                      rel="noopener noreferrer"
-                                      className="view_docu ms-2"
+                                <p className="or_para">{groupName} :</p>
+                                <div className="wayWillView">
+                                  {documents[groupName]?.map((item, index) => (
+                                    <div
+                                      key={item.id}
+                                      className="d-flex align-items-center mt-3"
                                     >
-                                      View Document
-                                    </a>
-                                    <DeleteIcon
-                                      onClick={() => deleteapi(item.id)}
-                                      className="text-danger ms-2"
-                                      style={{ cursor: "pointer" }}
-                                    />
-                                  </div>
-                                ))}
+                                      <a
+                                        href={`${process.env.REACT_APP_BASE_URLdocument}${item?.document}`}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="view_docu  mt-0"
+                                      >
+                                        View Document
+                                      </a>
+                                      <DeleteIcon
+                                        onClick={() => deleteapi(item.id)}
+                                        className="text-danger ms-2"
+                                        style={{ cursor: "pointer" }}
+                                      />
+                                    </div>
+                                  ))}
+
+                                </div>
                               </div>
                             ),
                           )}
-                          <div className="mb-2">
-                            <label>Attach Quotation :</label>
+                          <div className="mt-3">
+                            <label>Attach Quotation</label>
                             {datat.attachment_Estimate && (
                               <a
                                 href={`${process.env.REACT_APP_BASE_URLdocument}${datat?.attachment_Estimate}`}

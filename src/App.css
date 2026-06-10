@@ -6106,3 +6106,19 @@ input[placeholder="search"] {
   padding: 5px 10px !important;
   border-radius: 5px;
 }
+
+.wayWillView {
+  display: flex;
+  gap: 20px;
+  overflow-x: auto;
+
+}
+
+.wayWillView a {
+  white-space: nowrap;
+}
+
+.wayWillView svg {
+  height: 18px;
+  width: 18px;
+}

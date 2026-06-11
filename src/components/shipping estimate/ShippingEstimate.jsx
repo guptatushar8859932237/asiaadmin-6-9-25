@@ -37,6 +37,7 @@ export default function ShippingEstimate() {
   const user = JSON.parse(localStorage.getItem("data123"));
   const localFreigtId = localStorage.getItem("freightid");
   console.log("Stored:", localStorage.getItem("freightid"));
+
   const getFreightDataById = async () => {
     const payload = {
       freight_id: localFreigtId,
@@ -201,6 +202,7 @@ export default function ShippingEstimate() {
     const num = Number(val);
     return isNaN(num) ? 0 : num;
   };
+
   const calculateInvoiceBreakup = (amount, discountPercent, vatPercent) => {
     const baseAmount = safeNumber(amount);
     const discountAmount = (baseAmount * safeNumber(discountPercent)) / 100;
@@ -782,6 +784,7 @@ export default function ShippingEstimate() {
     : finalfuelchangertyloadstanion.toFixed(2);
   const defuelchangyion =
     VAdvfuelchangeon * parseInt(freight?.Destination_fuelcharge_currency_roe);
+
   const totalChaDestinationTransit =
     safeNumber(destinationdocumentation4) +
     safeNumber(destinationTHCdocumentation4) +
@@ -793,7 +796,9 @@ export default function ShippingEstimate() {
     safeNumber(destinati3rdpartyload4) +
     safeNumber(destindeliveryyDesc4) +
     safeNumber(destindfuelchangerDesc4);
+
   console.log(totalChageswithOutExchangeinsurance);
+
   const totalChaDestinationTransitRoe =
     safeNumber(finalvlaueotDocumantation) +
     safeNumber(final3rdestinationRoe) +
@@ -805,7 +810,9 @@ export default function ShippingEstimate() {
     safeNumber(desdvancedLoadion) +
     safeNumber(desdva3rdpartyion) +
     safeNumber(desddeliverytyion);
+
   // /////////////////////////////////admin calculation/////////////////////////////
+
   const deadminAgencyesc1 =
     parseFloat(freight.Destination_AdminAgrncy_currency_cost) || 0;
   const deadminAgencyesc2 =
@@ -944,6 +951,11 @@ export default function ShippingEstimate() {
     surcharge: calculateInvoiceBreakup(customChargeRows.surcharge.finalAmt, freight["surcharge_disc%"], freight.surcharge_vatTyp),
   };
 
+  const totalVatInclusive = Object.values(invoiceBreakups).reduce(
+    (sum, breakup) => sum + safeNumber(breakup?.inclusive),
+    0,
+  );
+
   const estimateCalculate = async () => {
     try {
       const payload = {
@@ -967,7 +979,6 @@ export default function ShippingEstimate() {
         origin_pickup_fee_gpcalc: freight.origin_pickup_fee_gpcalc,
         roe_origin_currencyorigin: freight.roe_origin_currencyorigin,
         finalvlaueoriginPickup: finalvlaueoriginPickup,
-        // org_pickUp_disc_percent: freight["org_pickUp_disc%"],
         org_pickUp_disc: invoiceBreakups.org_pickUp.disc,
         org_pickUp_exclusive: invoiceBreakups.org_pickUp.exclusive,
         org_pickUp_vat: invoiceBreakups.org_pickUp.vat,
@@ -1617,10 +1628,16 @@ export default function ShippingEstimate() {
           freight.Destination_AdminAgrncy_currency_unitType,
         Destination_doc_currency_unittypeQTY:
           freight.Destination_doc_currency_unittypeQTY,
-        ...(getdata.quote_estimate_id || quotationID) && {
+        ...((getdata.quote_estimate_id || quotationID) && {
           quote_estimate_id: getdata.quote_estimate_id || quotationID,
-        },
+        }),
+        final_base_currency: freight.final_base_currency,
       };
+      console.log("[Add Invoice] addEstimatSupplierInvoice payload:", payload);
+      console.log(
+        "[Add Invoice] payload keys count:",
+        Object.keys(payload).length,
+      );
       const response = await axios.post(
         `${process.env.REACT_APP_BASE_URL}addEstimateShippingQuote`,
         payload,
@@ -1633,7 +1650,17 @@ export default function ShippingEstimate() {
         console.log("some thing went wrong");
       }
     } catch (error) {
-      console.log(error.data);
+      console.log("Full Error =>", error);
+
+      console.log("Error Response =>", error.response);
+
+      console.log("Error Data =>", error.response?.data);
+
+      console.log("Error Message =>", error.message);
+
+      console.log("Status Code =>", error.response?.status);
+
+      toast.error(error.response?.data?.message || "Something went wrong");
     }
   };
 
@@ -2404,6 +2431,24 @@ export default function ShippingEstimate() {
                             <table>
                               <tbody>
                                 <tr>
+                                  <td style={{
+                                    width: 170,
+                                    display: "block",
+                                    padding: "0px 10px 0px 10px",
+                                    fontSize: 14,
+                                  }}><strong>
+                                      Invoice No.
+                                    </strong></td>
+                                  <td style={{ fontSize: 14 }}>
+                                    <input
+                                      type="text"
+                                      name="supplier_invoice_no"
+                                      value={freight.supplier_invoice_no || ""}
+                                      onChange={handlechangecalc}
+                                    ></input>
+                                  </td>
+                                </tr>
+                                <tr>
                                   <td
                                     style={{
                                       width: 170,
@@ -2710,8 +2755,8 @@ export default function ShippingEstimate() {
                           <th>Unit type</th>
                           <th>Unit</th>
                           <th>T/ Cost</th>
-                          {/* <th>GP</th>
-                          <th>Amt</th> */}
+                          {/* <th>GP</th> */}
+                          {/* <th>Amt</th> */}
                           <th>ROE</th>
                           <th>Final Amount</th>
                           <th>VAT Type </th>
@@ -2719,7 +2764,7 @@ export default function ShippingEstimate() {
                           <th>Discount </th>
                           <th>Exclusive </th>
                           <th>VAT </th>
-                          <th>VAT INCL </th>
+                          <th>VAT Incl </th>
                         </tr>
                       </thead>
 
@@ -2824,13 +2869,7 @@ export default function ShippingEstimate() {
                               className="supplier_form"
                               onChange={handlechangecalc}
                               // value={freight?.origin_pick_up_fees}
-                              value={
-                                freight.origin_pick_up_unitType
-                                  ? oripick2
-                                    ? oripick2
-                                    : 0
-                                  : 0
-                              }
+                              value={oripick2 || 0}
                               name="origin_pick_up_fees"
                               id="floatingInput"
                               placeholder="0.00"
@@ -3117,13 +3156,7 @@ export default function ShippingEstimate() {
                               disabled
                               onChange={handlechangecalc}
                               // value={freight?.origin_pick_up_fuel_fees}
-                              value={
-                                freight.origin_pick_up_fuel_unitType
-                                  ? orifuel2
-                                    ? orifuel2
-                                    : 0
-                                  : 0.0
-                              }
+                              value={orifuel2 || 0}
                               name="origin_pick_up_fuel_fees"
                               id="floatingInput"
                               placeholder="0.00"
@@ -3411,13 +3444,7 @@ export default function ShippingEstimate() {
                               className="supplier_form"
                               disabled
                               onChange={handlechangecalc}
-                              value={
-                                freight.origin_pick_up_cfs_unitType
-                                  ? oricfs2
-                                    ? oricfs2
-                                    : 0
-                                  : 0.0
-                              }
+                              value={oricfs2 || 0}
                               name="origin_pick_up_cfs_fees"
                               id="floatingInput"
                               placeholder="0.00"
@@ -3710,13 +3737,7 @@ export default function ShippingEstimate() {
                               disabled
                               className="supplier_form"
                               onChange={handlechangecalc}
-                              value={
-                                freight.origin_pick_up_documantation_unitType
-                                  ? oridoc2
-                                    ? oridoc2
-                                    : 0
-                                  : 0.0
-                              }
+                              value={oridoc2 || 0}
                               name="origin_pick_up_documantation_fees"
                               id="floatingInput"
                               placeholder="0.00"
@@ -4006,13 +4027,7 @@ export default function ShippingEstimate() {
                               className="supplier_form"
                               disabled
                               onChange={handlechangecalc}
-                              value={
-                                freight.origin_pick_up_forewarding_unitType
-                                  ? oriforewarding2
-                                    ? oriforewarding2
-                                    : 0
-                                  : 0
-                              }
+                              value={oriforewarding2 || 0}
                               name="origin_pick_up_forewarding_fees"
                               id="floatingInput"
                               placeholder="0.00"
@@ -4303,13 +4318,7 @@ export default function ShippingEstimate() {
                               className="supplier_form"
                               disabled
                               onChange={handlechangecalc}
-                              value={
-                                freight.origin_pick_up_custome_unitType
-                                  ? oricustome2
-                                    ? oricustome2
-                                    : 0.0
-                                  : 0.0
-                              }
+                              value={oricustome2 || 0}
                               name="origin_pick_up_custome_clearance"
                               id="floatingInput"
                               placeholder="0.00"
@@ -4614,13 +4623,7 @@ export default function ShippingEstimate() {
                               className="supplier_form"
                               disabled
                               onChange={handlechangecalc}
-                              value={
-                                freight.freight_charge_currency_unitType
-                                  ? orifreight2
-                                    ? orifreight2
-                                    : 0.0
-                                  : 0.0
-                              }
+                              value={orifreight2 || 0}
                               name="freight_charge_currency_fees"
                               id="floatingInput"
                               placeholder="0.00"
@@ -4909,13 +4912,7 @@ export default function ShippingEstimate() {
                               className="supplier_form"
                               disabled
                               onChange={handlechangecalc}
-                              value={
-                                freight.freight_currency_insurance_unittype
-                                  ? isNaN(Number(oriindsurance2))
-                                    ? "0.00"
-                                    : oriindsurance2
-                                  : 0.0
-                              }
+                              value={isNaN(Number(oriindsurance2)) ? "0.00" : oriindsurance2 || 0}
                               name="freight_currency_insurance_unit"
                               id="floatingInput"
                               placeholder="0.00"
@@ -13717,6 +13714,7 @@ export default function ShippingEstimate() {
                           <td>
                             {" "}
                             <input
+
                               value={formatMoney(invoiceBreakups.surcharge.inclusive)}
                               type="text"
                               placeholder="0.00" onChange={handlechangecalc}
@@ -13733,6 +13731,12 @@ export default function ShippingEstimate() {
                           </td>
                           <td colSpan={2}> {sumofall.toFixed(2)} </td>
                           <td> {sumofRoe.toFixed(2)} </td>
+                          <td></td>
+                          <td></td>
+                          <td></td>
+                          <td></td>
+                          <td></td>
+                          <td> {totalVatInclusive.toFixed(2)} </td>
                         </tr>
                       </tbody>
                     </table>

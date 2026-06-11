@@ -58,7 +58,7 @@ const Quotes = () => {
                             <tr>
                                 <th>Reference</th>
                                 <th>Customer Name</th>
-                                <th>Waybill</th>
+                                <th>Freight Number</th>
                                 <th>Customer Invoice Number</th>
                                 <th>Inv Date</th>
                                 <th>Currency</th>
@@ -74,13 +74,13 @@ const Quotes = () => {
                                     return (
                                         <tr key={item.quote_estimate_id}>
                                             <td>{item.reference_no || "-"}</td>
-                                            <td>{item.supplier_name || "-"}</td>
+                                            <td>{item.client_name || "-"}</td>
                                             <td>{item.freight_number || "-"}</td>
                                             <td>{item.customer_invoice_no || "-"}</td>
                                             <td>{new Date(item.quote_date).toLocaleDateString("en-GB") || "-"}</td>
                                             <td>{item.final_base_currency || "-"}</td>
-                                            <td>{item.quote_total || "-"}</td>
-                                            <td>{item.quote_total || "-"}</td>
+                                            <td>{item.quote_total || "0"}</td>
+                                            <td>{item.quote_total || "0"}</td>
                                             <td>-</td>
                                             <td>
                                                 <div type="button"

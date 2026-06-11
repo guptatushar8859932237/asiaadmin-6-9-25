@@ -106,7 +106,6 @@ export default function Addsupplierinvoice() {
   console.log(finalval)
 
   const oripick1 = parseFloat(freight.origin_pick_up_cost) || 0;
-  // const oripick19 = parseFloat(freight.freight_charge_currencyQTY) || 0;
   // const oripick2 = parseFloat(freight.origin_pick_up_fees) || 0;
   const oripick2 =
     freight.origin_pick_up_unitType == "1" ? 1 : freight.chargable_rate;
@@ -979,6 +978,11 @@ export default function Addsupplierinvoice() {
     surcharge: calculateInvoiceBreakup(customChargeRows.surcharge.finalAmt, freight["surcharge_disc%"], freight.surcharge_vatTyp),
   };
 
+  const totalVatInclusive = Object.values(invoiceBreakups).reduce(
+    (sum, breakup) => sum + safeNumber(breakup?.inclusive),
+    0,
+  );
+
   const estimateCalculate = async () => {
     console.log("[Add Invoice] Get Quote click — save API chalegi");
     console.log("[Add Invoice] isCopyPreview:", isCopyPreview);
@@ -992,12 +996,12 @@ export default function Addsupplierinvoice() {
         shipment_id: selected,
         supplier_invoice_no: freight.supplier_invoice_no,
         due_date: freight.due_date,
+
         origin_pick_up_cost: freight.origin_pick_up_cost,
         origin_pick_up_fees: freight.origin_pick_up_fees,
         origin_pickup_fee_gpcalc: freight.origin_pickup_fee_gpcalc,
         roe_origin_currencyorigin: freight.roe_origin_currencyorigin,
         finalvlaueoriginPickup: finalvlaueoriginPickup,
-        // org_pickUp_disc_percent: freight["org_pickUp_disc%"],
         org_pickUp_disc: invoiceBreakups.org_pickUp.disc,
         org_pickUp_exclusive: invoiceBreakups.org_pickUp.exclusive,
         org_pickUp_vat: invoiceBreakups.org_pickUp.vat,
@@ -1650,6 +1654,7 @@ export default function Addsupplierinvoice() {
         ...((getdata.quote_estimate_id || quotationID) && {
           quote_estimate_id: getdata.quote_estimate_id || quotationID,
         }),
+        final_base_currency: freight.final_base_currency,
       };
       console.log("[Add Invoice] addEstimatSupplierInvoice payload:", payload);
       console.log(
@@ -2361,7 +2366,7 @@ export default function Addsupplierinvoice() {
                                           type="text"
                                           onKeyPress={handlepresss}
                                           name="chargable_rate"
-                                          value={freight.chargable_rate}
+                                          value={freight.chargable_rate || ""}
                                           onChange={handlechangecalc}
                                         ></input>
                                       </p>
@@ -2519,7 +2524,7 @@ export default function Addsupplierinvoice() {
                                         }}
                                         onChange={handlechangecalc}
                                         name="final_base_currency"
-                                        value={freight?.final_base_currency}
+                                        value={freight?.final_base_currency || ""}
                                       >
                                         <option>Select</option>
                                         <option value="RAND">RAND</option>
@@ -2548,9 +2553,8 @@ export default function Addsupplierinvoice() {
                                   <td style={{ fontSize: 14 }}>
                                     <input
                                       type="text"
-                                      onKeyPress={handlepresss}
                                       name="supplier_invoice_no"
-                                      value={freight.supplier_invoice_no}
+                                      value={freight.supplier_invoice_no || ""}
                                       onChange={handlechangecalc}
                                     ></input>
                                   </td>
@@ -3023,13 +3027,7 @@ export default function Addsupplierinvoice() {
                               className="supplier_form"
                               onChange={handlechangecalc}
                               // value={freight?.origin_pick_up_fees}
-                              value={
-                                freight.origin_pick_up_unitType
-                                  ? oripick2
-                                    ? oripick2
-                                    : 0
-                                  : 0
-                              }
+                              value={oripick2 || 0}
                               name="origin_pick_up_fees"
                               id="floatingInput"
                               placeholder="0.00"
@@ -3316,13 +3314,7 @@ export default function Addsupplierinvoice() {
                               disabled
                               onChange={handlechangecalc}
                               // value={freight?.origin_pick_up_fuel_fees}
-                              value={
-                                freight.origin_pick_up_fuel_unitType
-                                  ? orifuel2
-                                    ? orifuel2
-                                    : 0
-                                  : 0.0
-                              }
+                              value={orifuel2 || 0}
                               name="origin_pick_up_fuel_fees"
                               id="floatingInput"
                               placeholder="0.00"
@@ -3610,13 +3602,7 @@ export default function Addsupplierinvoice() {
                               className="supplier_form"
                               disabled
                               onChange={handlechangecalc}
-                              value={
-                                freight.origin_pick_up_cfs_unitType
-                                  ? oricfs2
-                                    ? oricfs2
-                                    : 0
-                                  : 0.0
-                              }
+                              value={oricfs2 || 0}
                               name="origin_pick_up_cfs_fees"
                               id="floatingInput"
                               placeholder="0.00"
@@ -3909,13 +3895,7 @@ export default function Addsupplierinvoice() {
                               disabled
                               className="supplier_form"
                               onChange={handlechangecalc}
-                              value={
-                                freight.origin_pick_up_documantation_unitType
-                                  ? oridoc2
-                                    ? oridoc2
-                                    : 0
-                                  : 0.0
-                              }
+                              value={oridoc2 || 0}
                               name="origin_pick_up_documantation_fees"
                               id="floatingInput"
                               placeholder="0.00"
@@ -4205,13 +4185,7 @@ export default function Addsupplierinvoice() {
                               className="supplier_form"
                               disabled
                               onChange={handlechangecalc}
-                              value={
-                                freight.origin_pick_up_forewarding_unitType
-                                  ? oriforewarding2
-                                    ? oriforewarding2
-                                    : 0
-                                  : 0
-                              }
+                              value={oriforewarding2 || 0}
                               name="origin_pick_up_forewarding_fees"
                               id="floatingInput"
                               placeholder="0.00"
@@ -4502,13 +4476,7 @@ export default function Addsupplierinvoice() {
                               className="supplier_form"
                               disabled
                               onChange={handlechangecalc}
-                              value={
-                                freight.origin_pick_up_custome_unitType
-                                  ? oricustome2
-                                    ? oricustome2
-                                    : 0.0
-                                  : 0.0
-                              }
+                              value={oricustome2 || 0}
                               name="origin_pick_up_custome_clearance"
                               id="floatingInput"
                               placeholder="0.00"
@@ -4813,13 +4781,7 @@ export default function Addsupplierinvoice() {
                               className="supplier_form"
                               disabled
                               onChange={handlechangecalc}
-                              value={
-                                freight.freight_charge_currency_unitType
-                                  ? orifreight2
-                                    ? orifreight2
-                                    : 0.0
-                                  : 0.0
-                              }
+                              value={orifreight2 || 0}
                               name="freight_charge_currency_fees"
                               id="floatingInput"
                               placeholder="0.00"
@@ -5108,13 +5070,7 @@ export default function Addsupplierinvoice() {
                               className="supplier_form"
                               disabled
                               onChange={handlechangecalc}
-                              value={
-                                freight.freight_currency_insurance_unittype
-                                  ? isNaN(Number(oriindsurance2))
-                                    ? "0.00"
-                                    : oriindsurance2
-                                  : 0.0
-                              }
+                              value={isNaN(Number(oriindsurance2)) ? "0.00" : oriindsurance2 || 0}
                               name="freight_currency_insurance_unit"
                               id="floatingInput"
                               placeholder="0.00"
@@ -13933,6 +13889,12 @@ export default function Addsupplierinvoice() {
                           </td>
                           <td colSpan={2}> {sumofall.toFixed(2)} </td>
                           <td> {sumofRoe.toFixed(2)} </td>
+                          <td></td>
+                          <td></td>
+                          <td></td>
+                          <td></td>
+                          <td></td>
+                          <td> {totalVatInclusive.toFixed(2)} </td>
                         </tr>
                       </tbody>
                     </table>

@@ -78,26 +78,11 @@ export default function ShippingEstimate() {
   console.log(num3)
   console.log(finalval)
 
-  const isUnitTypeSelected = (unitType) =>
-    Boolean(unitType && unitType !== "Select");
-
-  const resolveChargeUnit = (unitType) => {
-    if (!isUnitTypeSelected(unitType)) return 0;
-    if (String(unitType) === "1") return 1;
-    const rate = parseFloat(freight.chargable_rate);
-    return Number.isNaN(rate) ? 0 : rate;
-  };
-
-  const displayChargeUnit = (unitType) => {
-    if (!isUnitTypeSelected(unitType)) return "";
-    if (String(unitType) === "1") return 1;
-    return freight.chargable_rate ?? "";
-  };
-
   const oripick1 = parseFloat(freight.origin_pick_up_cost) || 0;
   // const oripick19 = parseFloat(freight.freight_charge_currencyQTY) || 0;
   // const oripick2 = parseFloat(freight.origin_pick_up_fees) || 0;
-  const oripick2 = resolveChargeUnit(freight.origin_pick_up_unitType);
+  const oripick2 =
+    freight.origin_pick_up_unitType == "1" ? 1 : freight.chargable_rate;
   const oripick3 = parseFloat(freight.origin_pickup_fee_gpcalc) || 0;
   const oripick4 = freight.origin_pick_up_unitType
     ? oripick1 * oripick2 * freight.freight_charge_currencyQTY
@@ -112,7 +97,7 @@ export default function ShippingEstimate() {
   const orifuel1 = parseFloat(freight.origin_pick_up_fuel_cost) || 0;
   // const orifuel2 = parseFloat(freight.origin_pick_up_fuel_fees) || 0;
   const orifuel2 =
-    resolveChargeUnit(freight.origin_pick_up_fuel_unitType);
+    freight.origin_pick_up_fuel_unitType === "1" ? 1 : freight.chargable_rate;
   const orifuel3 = parseFloat(freight.origin_pick_fuelGP) || 0;
   const orifuel4 = freight.origin_pick_up_fuel_unitType
     ? orifuel1 * orifuel2 * freight.origin_pick_up_fuel_unitTypeQTY
@@ -126,7 +111,9 @@ export default function ShippingEstimate() {
     finalfuel1 * parseInt(freight?.roe_origin_fuel_currency);
   const oricfs1 = parseFloat(freight.origin_pick_up_cfs_cost) || 0;
   // const oricfs2 = parseFloat(freight.origin_pick_up_cfs_fees) || 0;
-  const oricfs2 = resolveChargeUnit(freight.origin_pick_up_cfs_unitType);
+  const oricfs2 = parseFloat(
+    freight.origin_pick_up_cfs_unitType === "1" ? 1 : freight.chargable_rate,
+  );
   const oricfs3 = parseFloat(freight.origin_pickup_vfs_gp) || 0;
   const oricfs4 = freight.origin_pick_up_cfs_unitType
     ? oricfs1 * oricfs2 * freight.origin_pick_up_cfs_unitTypeQTY
@@ -140,7 +127,11 @@ export default function ShippingEstimate() {
 
   const oridoc1 = parseFloat(freight.origin_pick_up_documantion_cost) || 0;
   // const oridoc2 = parseFloat(freight.origin_pick_up_documantation_fees) || 0;
-  const oridoc2 = resolveChargeUnit(freight.origin_pick_up_documantation_unitType);
+  const oridoc2 = parseFloat(
+    freight.origin_pick_up_documantation_unitType === "1"
+      ? 1
+      : freight.chargable_rate,
+  );
   const oridoc3 = parseFloat(freight.origin_pick_documantation_cost_gp) || 0;
   const oridoc4 = freight.origin_pick_up_documantation_unitType
     ? oridoc1 * oridoc2 * freight.origin_pick_up_documantation_unitTypeQTY
@@ -158,7 +149,11 @@ export default function ShippingEstimate() {
 
   const oriforewarding1 =
     parseFloat(freight.origin_pick_up_forewarding_cost) || 0;
-  const oriforewarding2 = resolveChargeUnit(freight.origin_pick_up_forewarding_unitType);
+  const oriforewarding2 = parseFloat(
+    freight.origin_pick_up_forewarding_unitType === "1"
+      ? 1
+      : freight.chargable_rate,
+  );
   // const oriforewarding2 =
   //   parseFloat(freight.origin_pick_up_forewarding_fees) || 0;
   const oriforewarding3 = parseFloat(freight.origin_pickup_forewarding_gp) || 0;
@@ -182,7 +177,11 @@ export default function ShippingEstimate() {
     finalforewarding1 * parseInt(freight?.roe_origin_forewarding);
   const oricustome1 = parseFloat(freight.origin_pick_up_custome_cost) || 0;
   // const oricustome2 = parseFloat(freight.origin_pick_up_custome_clearance) || 0;
-  const oricustome2 = resolveChargeUnit(freight.origin_pick_up_custome_unitType);
+  const oricustome2 = parseFloat(
+    freight.origin_pick_up_custome_unitType === "1"
+      ? 1
+      : freight.chargable_rate,
+  );
   const oricustome3 = parseFloat(freight.origin_pickup_custome_gp) || 0;
   const oricustome4 = freight.origin_pick_up_custome_unitType
     ? oricustome1 * oricustome2 * freight.origin_pick_up_custome_unitTypeQTY
@@ -224,23 +223,13 @@ export default function ShippingEstimate() {
 
   const calculateCustomChargeRow = (prefix) => {
     const unitType = freight[`${prefix}_unitTyp`];
-    const unit = resolveChargeUnit(unitType);
-    const unitDisplay = displayChargeUnit(unitType);
+    const unit = unitType === "1" ? 1 : safeNumber(freight.chargable_rate);
     const totalCost = unitType
       ? safeNumber(freight[`${prefix}_cost`]) * unit * safeNumber(freight[`${prefix}_qty`])
       : 0;
     const finalAmt = totalCost * safeNumber(freight[`${prefix}_roe`]);
 
-    return {
-      unit:
-        unitDisplay === ""
-          ? ""
-          : unitDisplay === 1
-            ? "1"
-            : formatMoney(unitDisplay),
-      totalCost,
-      finalAmt,
-    };
+    return { unit, totalCost, finalAmt };
   };
 
   const customChargeRows = {
@@ -272,7 +261,11 @@ export default function ShippingEstimate() {
   // ////////////////////////////freight calculation
   const orifreight1 = parseFloat(freight.freight_charge_currency_cost) || 0;
   // const orifreight2 = parseFloat(freight.freight_charge_currency_fees) || 0;
-  const orifreight2 = resolveChargeUnit(freight.freight_charge_currency_unitType);
+  const orifreight2 = parseFloat(
+    freight.freight_charge_currency_unitType === "1"
+      ? 1
+      : freight.chargable_rate,
+  );
   const orifreight3 = parseFloat(freight.freight_charge_currency_gp) || 0;
   const orifreight4 = freight.freight_charge_currency_unitType
     ? orifreight1 * orifreight2 * freight.freight_charge_currency_unitTypeQTY
@@ -290,7 +283,11 @@ export default function ShippingEstimate() {
     finalfreight1 * parseInt(freight?.roe_freight_currency);
   const oriinsurance1 =
     parseFloat(freight.freight_currency_insurance_cost) || 0;
-  const oriindsurance2 = resolveChargeUnit(freight.freight_currency_insurance_unittype);
+  const oriindsurance2 = parseFloat(
+    freight.freight_currency_insurance_unittype === "1"
+      ? 1
+      : freight.chargable_rate,
+  );
   // const oriindsurance2 =
   //   parseFloat(freight.freight_currency_insurance_unit) || 0;
   const oriinsurance3 = parseFloat(freight.freightorigin_insurance_gp) || 0;
@@ -327,7 +324,9 @@ export default function ShippingEstimate() {
 
   const oritransit1 = parseFloat(freight.Transit_currency_Cost) || 0;
   // const oritransit2 = parseFloat(freight.Transit_currency_unit) || 0;
-  const oritransit2 = resolveChargeUnit(freight.Transit_currency_unitTpe);
+  const oritransit2 = parseFloat(
+    freight.Transit_currency_unitTpe === "1" ? 1 : freight.chargable_rate,
+  );
   const oritransit3 = parseFloat(freight.Transit_currency_gp) || 0;
   const oritransit4 = freight.Transit_currency_unitTpe
     ? oritransit1 * oritransit2 * freight.Transit_currency_unitTpeQTY
@@ -345,7 +344,9 @@ export default function ShippingEstimate() {
 
   const oriThc1 = parseFloat(freight.transit_currency_THC_cost) || 0;
   // const oriThc2 = parseFloat(freight.transit_currency_THC_init) || 0;
-  const oriThc2 = resolveChargeUnit(freight.transit_currency_THC_initType);
+  const oriThc2 = parseFloat(
+    freight.transit_currency_THC_initType === "1" ? 1 : freight.chargable_rate,
+  );
   const oriThc3 = parseFloat(freight.transit_currency_THC_gp) || 0;
   const oriThc4 = freight.transit_currency_THC_initType
     ? oriThc1 * oriThc2 * freight.transit_currency_THC_initTypeQTY
@@ -358,7 +359,11 @@ export default function ShippingEstimate() {
   const finalvlaueotfineal = finalThc1 * parseInt(freight?.roe_Transit_Thc);
 
   const oriunpack1 = parseFloat(freight.Transit_currency_unpack_cost) || 0;
-  const oriunpack2 = resolveChargeUnit(freight.Transit_currency_unpack_unitType);
+  const oriunpack2 = parseFloat(
+    freight.Transit_currency_unpack_unitType === "1"
+      ? 1
+      : freight.chargable_rate,
+  );
   // const oriunpack2 = parseFloat(freight.Transit_currency_unpack_unit) || 0;
   const oriunpack3 = parseFloat(freight.Transit_currency_unpack_gp) || 0;
   const oriunpack4 = freight.Transit_currency_unpack_unitType
@@ -376,7 +381,9 @@ export default function ShippingEstimate() {
 
   const ori3rdparty1 = parseFloat(freight.transit_3rd_party_cost) || 0;
   // const ori3rdparty2 = parseFloat(freight.transit_3rd_party_unit) || 0;
-  const ori3rdparty2 = resolveChargeUnit(freight.transit_3rd_party_unittype);
+  const ori3rdparty2 = parseFloat(
+    freight.transit_3rd_party_unittype === "1" ? 1 : freight.chargable_rate,
+  );
   const ori3rdparty3 = parseFloat(freight.transit_3rd_party_gp) || 0;
   const ori3rdparty4 = freight.transit_3rd_party_unittype
     ? ori3rdparty1 * ori3rdparty2 * freight.transit_3rd_party_unittypeQTY
@@ -393,7 +400,9 @@ export default function ShippingEstimate() {
 
   const ori3rdAdmin1 = parseFloat(freight.transit_admin_change) || 0;
   // const ori3rdAdmin2 = parseFloat(freight.transit_admin_unit) || 0;
-  const ori3rdAdmin2 = resolveChargeUnit(freight.transit_admin_unittype);
+  const ori3rdAdmin2 = parseFloat(
+    freight.transit_admin_unittype === "1" ? 1 : freight.chargable_rate,
+  );
   const ori3rdAdmin3 = parseFloat(freight.transit_admin_gp) || 0;
   const ori3rdAdmin4 = freight.transit_admin_unittype
     ? ori3rdAdmin1 * ori3rdAdmin2 * freight.transit_admin_unittypeQTY
@@ -409,7 +418,9 @@ export default function ShippingEstimate() {
     final3rdAdmin1 * parseInt(freight?.roe_transit_admin);
 
   const ori3rdport1 = parseFloat(freight.transit_currency_port) || 0;
-  const ori3rdport2 = resolveChargeUnit(freight.transit_currency_port_unitType);
+  const ori3rdport2 = parseFloat(
+    freight.transit_currency_port_unitType === "1" ? 1 : freight.chargable_rate,
+  );
   const ori3rdport3 = parseFloat(freight.transit_currency_port_gp) || 0;
   const ori3rdport4 = freight.transit_currency_port_unitType
     ? ori3rdport1 * ori3rdport2 * freight.transit_currency_port_unitTypeQTY
@@ -425,7 +436,9 @@ export default function ShippingEstimate() {
 
   const oriadv1 = parseFloat(freight.Transit_advanced_load) || 0;
   // const oriadv2 = parseFloat(freight.Transit_advanced_unit) || 0;
-  const oriadv2 = resolveChargeUnit(freight.Transit_advanced_unitType);
+  const oriadv2 = parseFloat(
+    freight.Transit_advanced_unitType === "1" ? 1 : freight.chargable_rate,
+  );
   const oriadv3 = parseFloat(freight.Transit_advanced_gp) || 0;
   const oriadv4 = freight.Transit_advanced_unitType
     ? oriadv1 * oriadv2 * freight.Transit_advanced_unitTypeQTY
@@ -442,7 +455,11 @@ export default function ShippingEstimate() {
     parseFloat(freight.transit_change_Documentation) || 0;
   // const oridocumentation2 =
   //   parseFloat(freight.transit_change_Documentation_unit) || 0;
-  const oridocumentation2 = resolveChargeUnit(freight.transit_change_Documentation_unitType);
+  const oridocumentation2 = parseFloat(
+    freight.transit_change_Documentation_unitType === "1"
+      ? 1
+      : freight.chargable_rate,
+  );
   const oridocumentation3 =
     parseFloat(freight.transit_change_Documentation_gp) || 0;
   const oridocumentation4 = freight.transit_change_Documentation_unitType
@@ -488,7 +505,11 @@ export default function ShippingEstimate() {
     parseFloat(freight.Destination_freight_currency_cost) || 0;
   // const destinationdocumentation2 =
   //   parseFloat(freight.Destination_freight_currency_unit) || 0;
-  const destinationdocumentation2 = resolveChargeUnit(freight.Destination_freight_currency_unitType);
+  const destinationdocumentation2 = parseFloat(
+    freight.Destination_freight_currency_unitType === "1"
+      ? 1
+      : freight.chargable_rate,
+  );
   const destinationdocumentation3 =
     parseFloat(freight.Destination_freight_currency_gp) || 0;
   const destinationdocumentation4 =
@@ -512,7 +533,11 @@ export default function ShippingEstimate() {
     parseFloat(freight.Destination_THC_currency_cost) || 0;
   // const destinationTHCdocumentation2 =
   //   parseFloat(freight.Destination_THC_currency_unit) || 0;
-  const destinationTHCdocumentation2 = resolveChargeUnit(freight.Destination_THC_currency_unitType);
+  const destinationTHCdocumentation2 = parseFloat(
+    freight.Destination_THC_currency_unitType === "1"
+      ? 1
+      : freight.chargable_rate,
+  );
   const destinationTHCdocumentation3 =
     parseFloat(freight.Destination_THC_currency_gp) || 0;
   const destinationTHCdocumentation4 = freight.Destination_THC_currency_unitType
@@ -535,7 +560,11 @@ export default function ShippingEstimate() {
     parseFloat(freight.Destination_Unpack_currency_cost) || 0;
   // const destinationUnpackdocumentation2 =
   //   parseFloat(freight.Destination_Unpack_currency_unit) || 0;
-  const destinationUnpackdocumentation2 = resolveChargeUnit(freight.Destination_Unpack_currency_unitType);
+  const destinationUnpackdocumentation2 = parseFloat(
+    freight.Destination_Unpack_currency_unitType === "1"
+      ? 1
+      : freight.chargable_rate,
+  );
   const destinationUnpackdocumentation3 =
     parseFloat(freight.Destination_Unpack_currency_gp) || 0;
   const destinationUnpackdocumentation4 =
@@ -561,7 +590,11 @@ export default function ShippingEstimate() {
     parseFloat(freight.Destination_fuelsurcharge_currency_cost) || 0;
   // const destinationfuelsurchargedocumentation2 =
   // parseFloat(freight.Destination_fuelsurcharge_currency_unit) || 0;
-  const destinationfuelsurchargedocumentation2 = resolveChargeUnit(freight.Destination_fuelsurcharge_currency_typeUnit);
+  const destinationfuelsurchargedocumentation2 = parseFloat(
+    freight.Destination_fuelsurcharge_currency_typeUnit === "1"
+      ? 1
+      : freight.chargable_rate,
+  );
   const destinationfuelsurchargedocumentation3 =
     parseFloat(freight.Destination_fuelsurcharge_currency_gp) || 0;
   const destinationfuelsurchargedocumentation4 =
@@ -587,7 +620,11 @@ export default function ShippingEstimate() {
 
   const destinatiadminsurcharge1 =
     parseFloat(freight.Destination_adminsurcharge_currency_cost) || 0;
-  const destinatiadminsurcharge2 = resolveChargeUnit(freight.Destination_adminsurcharge_currency_unitType);
+  const destinatiadminsurcharge2 = parseFloat(
+    freight.Destination_adminsurcharge_currency_unitType === "1"
+      ? 1
+      : freight.chargable_rate,
+  );
   // const destinatiadminsurcharge2 =
   //   parseFloat(freight.Destination_adminsurcharge_currency_unit) || 0;
   const destinatiadminsurcharge3 =
@@ -612,7 +649,11 @@ export default function ShippingEstimate() {
 
   const destinatiportcargo1 =
     parseFloat(freight.Destination_portcargo_currency_cost) || 0;
-  const destinatiportcargo2 = resolveChargeUnit(freight.Destination_portcargo_currency_unitType);
+  const destinatiportcargo2 = parseFloat(
+    freight.Destination_portcargo_currency_unitType === "1"
+      ? 1
+      : freight.chargable_rate,
+  );
   // const destinatiportcargo2 =
   //   parseFloat(freight.Destination_portcargo_currency_unit) || 0;
   const destinatiportcargo3 =
@@ -637,7 +678,11 @@ export default function ShippingEstimate() {
     parseFloat(freight.Destination_AdvancedLoad_currency_cost) || 0;
   // const destinatiAdvancedLoad2 =
   //   parseFloat(freight.Destination_AdvancedLoad_currency_unit) || 0;
-  const destinatiAdvancedLoad2 = resolveChargeUnit(freight.Destination_AdvancedLoad_currency_unitType);
+  const destinatiAdvancedLoad2 = parseFloat(
+    freight.Destination_AdvancedLoad_currency_unitType === "1"
+      ? 1
+      : freight.chargable_rate,
+  );
   const destinatiAdvancedLoad3 =
     parseFloat(freight.Destination_AdvancedLoad_currency_gp) || 0;
   const destinatiAdvancedLoad4 =
@@ -659,7 +704,11 @@ export default function ShippingEstimate() {
     parseFloat(freight.Destination_3rdpartyDesc_currency_cost) || 0;
   const destinati3rdpartyDesc2 =
     // parseFloat(freight.Destination_3rdpartyDesc_currency_unit) || 0;
-    resolveChargeUnit(freight.Destination_3rdpartyDesc_currency_unitType);
+    parseFloat(
+      freight.Destination_3rdpartyDesc_currency_unitType === "1"
+        ? 1
+        : freight.chargable_rate,
+    );
   const destinati3rdpartyDesc3 =
     parseFloat(freight.Destination_3rdpartyDesc_currency_gp) || 0;
   const destinati3rdpartyload4 =
@@ -684,7 +733,11 @@ export default function ShippingEstimate() {
     parseFloat(freight.Destination_delivery_currency_cost) || 0;
   const destindeliveryyDesc2 =
     // parseFloat(freight.Destination_delivery_currency_unit) || 0;
-    resolveChargeUnit(freight.Destination_delivery_currency_unitType);
+    parseFloat(
+      freight.Destination_delivery_currency_unitType === "1"
+        ? 1
+        : freight.chargable_rate,
+    );
 
   const destindeliveryyDesc3 =
     parseFloat(freight.Destination_delivery_currency_gp) || 0;
@@ -709,7 +762,11 @@ export default function ShippingEstimate() {
     parseFloat(freight.Destination_fuelcharge_currency_cost) || 0;
   const destindfuelchangerDesc2 =
     // parseFloat(freight.Destination_fuelcharge_currency_unit) || 0;
-    resolveChargeUnit(freight.Destination_fuelcharge_currency_unitType);
+    parseFloat(
+      freight.Destination_fuelcharge_currency_unitType === "1"
+        ? 1
+        : freight.chargable_rate,
+    );
   const destindfuelchangerDesc3 =
     parseFloat(freight.Destination_fuelcharge_currency_gp) || 0;
   const destindfuelchangerDesc4 =
@@ -761,7 +818,11 @@ export default function ShippingEstimate() {
     parseFloat(freight.Destination_AdminAgrncy_currency_cost) || 0;
   const deadminAgencyesc2 =
     // parseFloat(freight.Destination_AdminAgrncy_currency_unit) || 0;
-    resolveChargeUnit(freight.Destination_AdminAgrncy_currency_unitType);
+    parseFloat(
+      freight.Destination_AdminAgrncy_currency_unitType === "1"
+        ? 1
+        : freight.chargable_rate,
+    );
   const deadminAgencyesc3 =
     parseFloat(freight.Destination_AdminAgrncy_currency_gp) || 0;
   const deadminAgencyesc4 = freight.Destination_AdminAgrncy_currency_unitType
@@ -784,7 +845,11 @@ export default function ShippingEstimate() {
     parseFloat(freight.Destination_disbursemant_currency_cost) || 0;
   const deaddisbursemantc2 =
     // parseFloat(freight.Destination_disbursemant_currency_unit) || 0;
-    resolveChargeUnit(freight.Destination_disbursemant_currenc_unitType1);
+    parseFloat(
+      freight.Destination_disbursemant_currenc_unitType1 === "1"
+        ? 1
+        : freight.chargable_rate,
+    );
   const deaddisbursemantc3 =
     parseFloat(freight.Destination_disbursemant_currency_gp) || 0;
   const deaddisbursemantc4 = freight.Destination_disbursemant_currenc_unitType1
@@ -804,7 +869,11 @@ export default function ShippingEstimate() {
     VAdisbursemon * parseInt(freight?.Destination_disbursemant_currency_roe);
 
   const deadoctc1 = parseFloat(freight.Destination_doc_currency_cost) || 0;
-  const deadoctc2 = resolveChargeUnit(freight.Destination_doc_currency_unittype);
+  const deadoctc2 = parseFloat(
+    freight.Destination_doc_currency_unittype === "1"
+      ? 1
+      : freight.chargable_rate,
+  );
   // const deadoctc2 = parseFloat(freight.Destination_doc_currency_unit) || 0;
   const deadoctc3 = parseFloat(freight.Destination_doc_currency_gp) || 0;
   const deadoctc4 = freight.Destination_doc_currency_unittype
@@ -2406,7 +2475,9 @@ export default function ShippingEstimate() {
                                   </td>
                                   <td
                                     style={{
+
                                       fontSize: 14,
+                                      padding: "0px 10px 0px 10px",
                                     }}
                                   >
                                     {new Date(getdata?.date).toLocaleDateString(
@@ -2797,7 +2868,7 @@ export default function ShippingEstimate() {
                               className="supplier_form"
                               onChange={handlechangecalc}
                               // value={freight?.origin_pick_up_fees}
-                              value={displayChargeUnit(freight.origin_pick_up_unitType)}
+                              value={oripick2 || 0}
                               name="origin_pick_up_fees"
                               id="floatingInput"
                               placeholder="0.00"
@@ -3083,7 +3154,7 @@ export default function ShippingEstimate() {
                               disabled
                               onChange={handlechangecalc}
                               // value={freight?.origin_pick_up_fuel_fees}
-                              value={displayChargeUnit(freight.origin_pick_up_fuel_unitType)}
+                              value={orifuel2 || 0}
                               name="origin_pick_up_fuel_fees"
                               id="floatingInput"
                               placeholder="0.00"
@@ -3370,7 +3441,7 @@ export default function ShippingEstimate() {
                               className="supplier_form"
                               disabled
                               onChange={handlechangecalc}
-                              value={displayChargeUnit(freight.origin_pick_up_cfs_unitType)}
+                              value={oricfs2 || 0}
                               name="origin_pick_up_cfs_fees"
                               id="floatingInput"
                               placeholder="0.00"
@@ -3662,7 +3733,7 @@ export default function ShippingEstimate() {
                               disabled
                               className="supplier_form"
                               onChange={handlechangecalc}
-                              value={displayChargeUnit(freight.origin_pick_up_documantation_unitType)}
+                              value={oridoc2 || 0}
                               name="origin_pick_up_documantation_fees"
                               id="floatingInput"
                               placeholder="0.00"
@@ -3951,7 +4022,7 @@ export default function ShippingEstimate() {
                               className="supplier_form"
                               disabled
                               onChange={handlechangecalc}
-                              value={displayChargeUnit(freight.origin_pick_up_forewarding_unitType)}
+                              value={oriforewarding2 || 0}
                               name="origin_pick_up_forewarding_fees"
                               id="floatingInput"
                               placeholder="0.00"
@@ -4241,7 +4312,7 @@ export default function ShippingEstimate() {
                               className="supplier_form"
                               disabled
                               onChange={handlechangecalc}
-                              value={displayChargeUnit(freight.origin_pick_up_custome_unitType)}
+                              value={oricustome2 || 0}
                               name="origin_pick_up_custome_clearance"
                               id="floatingInput"
                               placeholder="0.00"
@@ -4549,7 +4620,7 @@ export default function ShippingEstimate() {
                               className="supplier_form"
                               disabled
                               onChange={handlechangecalc}
-                              value={displayChargeUnit(freight.freight_charge_currency_unitType)}
+                              value={orifreight2 || 0}
                               name="freight_charge_currency_fees"
                               id="floatingInput"
                               placeholder="0.00"
@@ -4837,7 +4908,7 @@ export default function ShippingEstimate() {
                               className="supplier_form"
                               disabled
                               onChange={handlechangecalc}
-                              value={displayChargeUnit(freight.freight_currency_insurance_unittype)}
+                              value={isNaN(Number(oriindsurance2)) ? "0.00" : oriindsurance2 || 0}
                               name="freight_currency_insurance_unit"
                               id="floatingInput"
                               placeholder="0.00"
@@ -5150,7 +5221,13 @@ export default function ShippingEstimate() {
                               className="supplier_form"
                               disabled
                               onChange={handlechangecalc}
-                              value={displayChargeUnit(freight.Transit_currency_unitTpe)}
+                              value={
+                                freight.Transit_currency_unitTpe
+                                  ? oritransit2
+                                    ? oritransit2
+                                    : 0.0
+                                  : 0.0
+                              }
                               name="Transit_currency_unit"
                               id="floatingInput"
                               placeholder="0.00"
@@ -5434,7 +5511,13 @@ export default function ShippingEstimate() {
                               className="supplier_form"
                               disabled
                               onChange={handlechangecalc}
-                              value={displayChargeUnit(freight.transit_currency_THC_initType)}
+                              value={
+                                freight.transit_currency_THC_initType
+                                  ? oriThc2
+                                    ? oriThc2
+                                    : 0.0
+                                  : 0.0
+                              }
                               name="transit_currency_THC_init"
                               id="floatingInput"
                               placeholder="0.00"
@@ -5717,7 +5800,13 @@ export default function ShippingEstimate() {
                               className="supplier_form"
                               disabled
                               onChange={handlechangecalc}
-                              value={displayChargeUnit(freight.Transit_currency_unpack_unitType)}
+                              value={
+                                freight.Transit_currency_unpack_unitType
+                                  ? isNaN(oriunpack2)
+                                    ? 0.0
+                                    : oriunpack2
+                                  : 0.0
+                              }
                               name="Transit_currency_unpack_unit"
                               id="floatingInput"
                               placeholder="0.00"
@@ -6002,7 +6091,13 @@ export default function ShippingEstimate() {
                               className="supplier_form"
                               disabled
                               onChange={handlechangecalc}
-                              value={displayChargeUnit(freight.transit_3rd_party_unittype)}
+                              value={
+                                freight.transit_3rd_party_unittype
+                                  ? ori3rdparty2
+                                    ? ori3rdparty2
+                                    : 0.0
+                                  : 0.0
+                              }
                               name="transit_3rd_party_unit"
                               id="floatingInput"
                               placeholder="0.00"
@@ -6287,7 +6382,13 @@ export default function ShippingEstimate() {
                               disabled
                               className="supplier_form"
                               onChange={handlechangecalc}
-                              value={displayChargeUnit(freight?.transit_admin_unittype)}
+                              value={
+                                freight?.transit_admin_unittype
+                                  ? ori3rdAdmin2
+                                    ? ori3rdAdmin2
+                                    : 0.0
+                                  : 0.0
+                              }
                               name="transit_admin_unit"
                               id="floatingInput"
                               placeholder="0.00"
@@ -6571,7 +6672,13 @@ export default function ShippingEstimate() {
                               className="supplier_form"
                               disabled
                               onChange={handlechangecalc}
-                              value={displayChargeUnit(freight?.transit_currency_port_unitType)}
+                              value={
+                                freight?.transit_currency_port_unitType
+                                  ? ori3rdport2
+                                    ? ori3rdport2
+                                    : 0.0
+                                  : 0.0
+                              }
                               name="transit_currency_port_unit"
                               id="floatingInput"
                               placeholder="0.00"
@@ -6855,7 +6962,13 @@ export default function ShippingEstimate() {
                               disabled
                               className="supplier_form"
                               onChange={handlechangecalc}
-                              value={displayChargeUnit(freight?.Transit_advanced_unitType)}
+                              value={
+                                freight?.Transit_advanced_unitType
+                                  ? oriadv2
+                                    ? oriadv2
+                                    : 0.0
+                                  : 0.0
+                              }
                               name="Transit_advanced_unit"
                               id="floatingInput"
                               placeholder="0.00"
@@ -7142,7 +7255,13 @@ export default function ShippingEstimate() {
                               className="supplier_form"
                               disabled
                               onChange={handlechangecalc}
-                              value={displayChargeUnit(freight?.transit_change_Documentation_unitType)}
+                              value={
+                                freight?.transit_change_Documentation_unitType
+                                  ? oridocumentation2
+                                    ? oridocumentation2
+                                    : 0.0
+                                  : 0.0
+                              }
                               name="transit_change_Documentation_unit"
                               id="floatingInput"
                               placeholder="0.00"
@@ -7457,7 +7576,13 @@ export default function ShippingEstimate() {
                               className="supplier_form"
                               onChange={handlechangecalc}
                               disabled
-                              value={displayChargeUnit(freight.Destination_freight_currency_unitType)}
+                              value={
+                                freight?.Destination_freight_currency_unitType
+                                  ? destinationdocumentation2
+                                    ? destinationdocumentation2
+                                    : 0.0
+                                  : 0.0
+                              }
                               name="Destination_freight_currency_unit"
                               id="floatingInput"
                               placeholder="0.00"
@@ -7748,7 +7873,13 @@ export default function ShippingEstimate() {
                               disabled
                               className="supplier_form"
                               onChange={handlechangecalc}
-                              value={displayChargeUnit(freight.Destination_THC_currency_unitType)}
+                              value={
+                                freight?.Destination_THC_currency_unitType
+                                  ? destinationTHCdocumentation2
+                                    ? destinationTHCdocumentation2
+                                    : 0.0
+                                  : 0.0
+                              }
                               name="Destination_THC_currency_unit"
                               id="floatingInput"
                               placeholder="0.00"
@@ -8039,7 +8170,13 @@ export default function ShippingEstimate() {
                               //       : 0.0
                               //     : 0.0
                               // }
-                              value={displayChargeUnit(freight.Destination_Unpack_currency_unitType)}
+                              value={
+                                freight?.Destination_Unpack_currency_unitType
+                                  ? destinationUnpackdocumentation2
+                                    ? destinationUnpackdocumentation2
+                                    : 0.0
+                                  : 0.0
+                              }
                               name="Destination_Unpack_currency_unit"
                               id="floatingInput"
                               placeholder="0.00"
@@ -8346,7 +8483,13 @@ export default function ShippingEstimate() {
                               //     : 0.0
                               // }
 
-                              value={displayChargeUnit(freight.Destination_fuelsurcharge_currency_typeUnit)}
+                              value={
+                                freight?.Destination_fuelsurcharge_currency_typeUnit
+                                  ? destinationfuelsurchargedocumentation2
+                                    ? destinationfuelsurchargedocumentation2
+                                    : 0.0
+                                  : 0.0
+                              }
                               name="Destination_fuelsurcharge_currency_unit"
                               id="floatingInput"
                               placeholder="0.00"
@@ -8652,7 +8795,13 @@ export default function ShippingEstimate() {
                               //       : 0.0
                               //     : 0.0
                               // }
-                              value={displayChargeUnit(freight.Destination_adminsurcharge_currency_unitType)}
+                              value={
+                                freight?.Destination_adminsurcharge_currency_unitType
+                                  ? destinatiadminsurcharge2
+                                    ? destinatiadminsurcharge2
+                                    : 0.0
+                                  : 0.0
+                              }
                               name="Destination_adminsurcharge_currency_unit"
                               id="floatingInput"
                               placeholder="0.00"
@@ -8951,7 +9100,13 @@ export default function ShippingEstimate() {
                               className="supplier_form"
                               disabled
                               onChange={handlechangecalc}
-                              value={displayChargeUnit(freight.Destination_portcargo_currency_unitType)}
+                              value={
+                                freight?.Destination_portcargo_currency_unitType
+                                  ? destinatiportcargo2
+                                    ? destinatiportcargo2
+                                    : 0.0
+                                  : 0.0
+                              }
                               name="Destination_portcargo_currency_unit"
                               id="floatingInput"
                               placeholder="0.00"
@@ -9245,7 +9400,13 @@ export default function ShippingEstimate() {
                               disabled
                               className="supplier_form"
                               onChange={handlechangecalc}
-                              value={displayChargeUnit(freight.Destination_AdvancedLoad_currency_unitType)}
+                              value={
+                                freight.Destination_AdvancedLoad_currency_unitType
+                                  ? destinatiAdvancedLoad2
+                                    ? destinatiAdvancedLoad2
+                                    : 0.0
+                                  : 0.0
+                              }
                               name="Destination_AdvancedLoad_currency_unit"
                               id="floatingInput"
                               placeholder="0.00"
@@ -9543,7 +9704,13 @@ export default function ShippingEstimate() {
                               className="supplier_form"
                               disabled
                               onChange={handlechangecalc}
-                              value={displayChargeUnit(freight.Destination_3rdpartyDesc_currency_unitType)}
+                              value={
+                                freight.Destination_3rdpartyDesc_currency_unitType
+                                  ? destinati3rdpartyDesc2
+                                    ? destinati3rdpartyDesc2
+                                    : 0.0
+                                  : 0.0
+                              }
                               name="Destination_3rdpartyDesc_currency_unit"
                               id="floatingInput"
                               placeholder="0.00"
@@ -9840,7 +10007,13 @@ export default function ShippingEstimate() {
                               className="supplier_form"
                               disabled
                               onChange={handlechangecalc}
-                              value={displayChargeUnit(freight.Destination_delivery_currency_unitType)}
+                              value={
+                                freight.Destination_delivery_currency_unitType
+                                  ? destindeliveryyDesc2
+                                    ? destindeliveryyDesc2
+                                    : 0.0
+                                  : 0.0
+                              }
                               name="Destination_delivery_currency_unit"
                               id="floatingInput"
                               placeholder="0.00"
@@ -10135,7 +10308,13 @@ export default function ShippingEstimate() {
                               disabled
                               className="supplier_form"
                               onChange={handlechangecalc}
-                              value={displayChargeUnit(freight.Destination_fuelcharge_currency_unitType)}
+                              value={
+                                freight.Destination_fuelcharge_currency_unitType
+                                  ? destindfuelchangerDesc2
+                                    ? destindfuelchangerDesc2
+                                    : 0.0
+                                  : 0.0
+                              }
                               name="Destination_fuelcharge_currency_unit"
                               id="floatingInput"
                               placeholder="0.00"
@@ -10452,7 +10631,13 @@ export default function ShippingEstimate() {
                               className="supplier_form"
                               onChange={handlechangecalc}
                               disabled
-                              value={displayChargeUnit(freight.Destination_AdminAgrncy_currency_unitType)}
+                              value={
+                                freight.Destination_AdminAgrncy_currency_unitType
+                                  ? deadminAgencyesc2
+                                    ? deadminAgencyesc2
+                                    : 0.0
+                                  : 0.0
+                              }
                               name="Destination_AdminAgrncy_currency_unit"
                               id="floatingInput"
                               placeholder="0.00"
@@ -10748,7 +10933,13 @@ export default function ShippingEstimate() {
                               className="supplier_form"
                               onChange={handlechangecalc}
                               disabled
-                              value={displayChargeUnit(freight.Destination_disbursemant_currenc_unitType1)}
+                              value={
+                                freight.Destination_disbursemant_currenc_unitType1
+                                  ? deaddisbursemantc2
+                                    ? deaddisbursemantc2
+                                    : 0.0
+                                  : 0.0
+                              }
                               name="Destination_disbursemant_currency_unit"
                               id="floatingInput"
                               placeholder="0.00"
@@ -11042,7 +11233,13 @@ export default function ShippingEstimate() {
                               className="supplier_form"
                               onChange={handlechangecalc}
                               disabled
-                              value={displayChargeUnit(freight.Destination_doc_currency_unittype)}
+                              value={
+                                freight.Destination_doc_currency_unittype
+                                  ? deadoctc2
+                                    ? deadoctc2
+                                    : 0.0
+                                  : 0.0
+                              }
                               name="Destination_doc_currency_unit"
                               id="floatingInput"
                               placeholder="0.00"

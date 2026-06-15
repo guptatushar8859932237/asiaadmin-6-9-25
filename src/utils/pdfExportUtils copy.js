@@ -1,0 +1,403 @@
+import html2pdf from "html2pdf.js";
+import {
+  extractQuoteTableData,
+  injectPdfGlobalStyles,
+  renderPdfQuoteLayout,
+} from "./pdfQuoteLayout";
+
+export const PDF_PAGE_WIDTH = 1100;
+
+const getFormControlDisplayValue = (el) => {
+  if (el.tagName === "SELECT") {
+    const value = (el.value ?? "").trim();
+    if (!value || value === "Select") return "";
+
+    const matchedOption = Array.from(el.options).find(
+      (option) => option.value === value,
+    );
+    const optionText = (
+      matchedOption?.textContent ??
+      el.options[el.selectedIndex]?.textContent ??
+      ""
+    )
+      .replace(/\s+/g, " ")
+      .trim();
+
+    if (!optionText || optionText === "Select" || optionText === "No Vat") {
+      return value;
+    }
+
+    return optionText;
+  }
+
+  if (el.type === "checkbox" || el.type === "radio") {
+    return el.checked ? "Yes" : "";
+  }
+
+  return (el.value ?? "").trim();
+};
+
+export const isEmptyPdfCellText = (text) => {
+  const normalized = (text ?? "").replace(/\s+/g, " ").trim();
+  if (!normalized) return true;
+  if (normalized === "Select" || normalized === "No Vat") return true;
+  if (/^0+(\.0+)?$/.test(normalized)) return true;
+
+  const num = Number(normalized.replace(/,/g, ""));
+  if (!Number.isNaN(num) && num === 0) return true;
+
+  return false;
+};
+
+export const getCellPlainText = (cell) => {
+  if (!cell) return "";
+
+  const replacement = cell.querySelector("[data-pdf-text-replacement]");
+  if (replacement) {
+    const replacementText = replacement.textContent.replace(/\s+/g, " ").trim();
+    if (replacementText) return replacementText;
+  }
+
+  const select = cell.querySelector("select");
+  if (select) {
+    const value = (select.value ?? "").trim();
+    if (value && value !== "Select") {
+      const matchedOption = Array.from(select.options).find(
+        (option) => option.value === value,
+      );
+      const optionText = (matchedOption?.textContent ?? "")
+        .replace(/\s+/g, " ")
+        .trim();
+      if (optionText && optionText !== "Select" && optionText !== "No Vat") {
+        return optionText;
+      }
+      return value;
+    }
+  }
+
+  const input = cell.querySelector("input, textarea");
+  if (input) {
+    return (input.value ?? "").replace(/\s+/g, " ").trim();
+  }
+
+  return (cell.textContent ?? "").replace(/\s+/g, " ").trim();
+};
+
+export const replaceFormControlsWithText = (root) => {
+  if (!root) return () => {};
+
+  const replacements = [];
+
+  root.querySelectorAll("input, textarea, select").forEach((el) => {
+    const displayValue = getFormControlDisplayValue(el);
+    const span = document.createElement("span");
+    span.textContent = displayValue;
+    span.setAttribute("data-pdf-text-replacement", "true");
+    span.style.display = "inline-block";
+    span.style.fontSize = window.getComputedStyle(el).fontSize || "13px";
+    span.style.color = "#000";
+
+    const savedDisplay = el.style.display;
+    el.style.display = "none";
+    el.setAttribute("data-pdf-input-hidden", "true");
+
+    if (el.parentNode) {
+      el.parentNode.insertBefore(span, el.nextSibling);
+    }
+
+    replacements.push({ el, span, savedDisplay });
+  });
+
+  return () => {
+    replacements.forEach(({ el, span, savedDisplay }) => {
+      el.style.display = savedDisplay;
+      el.removeAttribute("data-pdf-input-hidden");
+      span.remove();
+    });
+  };
+};
+
+const isTotalRow = (row) => /Total\s*-/i.test(row.textContent ?? "");
+
+const rowHasNonZeroValue = (row, financialStartIndex = 1) => {
+  const cells = row.querySelectorAll("td");
+
+  for (let i = financialStartIndex; i < cells.length; i += 1) {
+    const text = getCellPlainText(cells[i]);
+    if (!isEmptyPdfCellText(text)) {
+      return true;
+    }
+  }
+
+  return false;
+};
+
+const totalRowHasNonZeroValue = (row) => {
+  const cells = row.querySelectorAll("td");
+
+  for (const cell of cells) {
+    const text = getCellPlainText(cell);
+    if (/Total\s*-/i.test(text)) continue;
+    if (!isEmptyPdfCellText(text)) {
+      return true;
+    }
+  }
+
+  return false;
+};
+
+export const hideZeroPdfRows = (table) => {
+  if (!table) return () => {};
+
+  const hiddenRows = [];
+
+  table.querySelectorAll("tbody tr").forEach((row) => {
+    if (row.classList.contains("estimate-section-row")) return;
+
+    const cells = row.querySelectorAll("td");
+    if (!cells.length) return;
+
+    const shouldHide = isTotalRow(row)
+      ? !totalRowHasNonZeroValue(row)
+      : !rowHasNonZeroValue(row, 1);
+
+    if (shouldHide) {
+      hiddenRows.push({ row, display: row.style.display });
+      row.style.display = "none";
+    }
+  });
+
+  return () => {
+    hiddenRows.forEach(({ row, display }) => {
+      row.style.display = display;
+    });
+  };
+};
+
+export const hideZeroPdfColumns = (table) => {
+  if (!table) return () => {};
+
+  const headerCells = [...table.querySelectorAll("thead tr th")];
+  if (!headerCells.length) return () => {};
+
+  const dataRows = [...table.querySelectorAll("tbody tr")].filter(
+    (row) =>
+      row.style.display !== "none" &&
+      !isTotalRow(row) &&
+      !row.classList.contains("estimate-section-row"),
+  );
+
+  if (!dataRows.length) return () => {};
+
+  const hiddenCells = [];
+
+  headerCells.forEach((headerCell, colIndex) => {
+    if (colIndex <= 0) return;
+
+    const allEmpty = dataRows.every((row) => {
+      const cells = row.querySelectorAll("td");
+      if (cells.length !== headerCells.length) return true;
+      return isEmptyPdfCellText(getCellPlainText(cells[colIndex]));
+    });
+
+    if (!allEmpty) return;
+
+    hiddenCells.push({ cell: headerCell, display: headerCell.style.display });
+    headerCell.style.display = "none";
+
+    dataRows.forEach((row) => {
+      const cells = row.querySelectorAll("td");
+      if (cells.length !== headerCells.length || !cells[colIndex]) return;
+      hiddenCells.push({ cell: cells[colIndex], display: cells[colIndex].style.display });
+      cells[colIndex].style.display = "none";
+    });
+  });
+
+  return () => {
+    hiddenCells.forEach(({ cell, display }) => {
+      cell.style.display = display;
+    });
+  };
+};
+
+export const hideEmptyPdfSections = (table) => {
+  if (!table) return () => {};
+
+  const rows = [...table.querySelectorAll("tbody tr")];
+  const hiddenRows = [];
+
+  rows.forEach((row, index) => {
+    if (!row.classList.contains("estimate-section-row")) return;
+
+    let hasVisibleData = false;
+
+    for (let i = index + 1; i < rows.length; i += 1) {
+      const nextRow = rows[i];
+
+      if (nextRow.classList.contains("estimate-section-row")) break;
+      if (nextRow.style.display === "none") continue;
+      if (isTotalRow(nextRow)) break;
+
+      hasVisibleData = true;
+      break;
+    }
+
+    if (!hasVisibleData) {
+      hiddenRows.push({ row, display: row.style.display });
+      row.style.display = "none";
+    }
+  });
+
+  return () => {
+    hiddenRows.forEach(({ row, display }) => {
+      row.style.display = display;
+    });
+  };
+};
+
+const hidePdfOnlyElements = (root) => {
+  root?.querySelectorAll(".ship_btn").forEach((el) => {
+    el.style.display = "none";
+  });
+
+  root?.querySelectorAll(".text-center.mt-3").forEach((el) => {
+    if (el.querySelector(".ship_btn")) {
+      el.style.display = "none";
+    }
+  });
+};
+
+export const preparePdfCloneForExport = (root, quoteData = null) => {
+  const page = root.querySelector(".pdf-page") ?? root;
+
+  const savedPageStyles = {
+    width: page.style.width,
+    minWidth: page.style.minWidth,
+    maxWidth: page.style.maxWidth,
+    outline: page.style.outline,
+  };
+
+  page.style.width = `${PDF_PAGE_WIDTH}px`;
+  page.style.minWidth = `${PDF_PAGE_WIDTH}px`;
+  page.style.maxWidth = `${PDF_PAGE_WIDTH}px`;
+  page.style.outline = "none";
+
+  injectPdfGlobalStyles(root);
+  const restoreFormControls = replaceFormControlsWithText(root);
+  hidePdfOnlyElements(root);
+  renderPdfQuoteLayout(root, quoteData);
+
+  return () => {
+    restoreFormControls();
+    page.style.width = savedPageStyles.width;
+    page.style.minWidth = savedPageStyles.minWidth;
+    page.style.maxWidth = savedPageStyles.maxWidth;
+    page.style.outline = savedPageStyles.outline;
+  };
+};
+
+export const mountPdfCaptureClone = (element) => {
+  if (!element) {
+    return { captureTarget: element, cleanup: () => {} };
+  }
+
+  const clone = element.cloneNode(true);
+  const host = document.createElement("div");
+  host.setAttribute("data-pdf-capture-host", "true");
+  host.style.cssText = `position:fixed;left:-9999px;top:0;z-index:-1;pointer-events:none;background:#fff;width:${PDF_PAGE_WIDTH}px;max-width:${PDF_PAGE_WIDTH}px;overflow:visible;`;
+  host.appendChild(clone);
+  document.body.appendChild(host);
+
+  return {
+    captureTarget: clone,
+    cleanup: () => {
+      host.remove();
+    },
+  };
+};
+
+export const waitForLayout = () =>
+  new Promise((resolve) => {
+    requestAnimationFrame(() => {
+      requestAnimationFrame(resolve);
+    });
+  });
+
+export const measurePdfDimensions = (element) => {
+  const page = element?.querySelector(".pdf-page") ?? element;
+  const quoteWrap = element?.querySelector(".pdf-quote-wrap");
+
+  const contentWidth = Math.max(
+    PDF_PAGE_WIDTH,
+    page?.scrollWidth ?? 0,
+    page?.offsetWidth ?? 0,
+    element?.scrollWidth ?? 0,
+    quoteWrap?.scrollWidth ?? 0,
+  );
+
+  const contentHeight = Math.max(
+    page?.scrollHeight ?? 0,
+    page?.offsetHeight ?? 0,
+    element?.scrollHeight ?? 0,
+    quoteWrap?.scrollHeight ?? 0,
+  );
+
+  const paddedHeight = contentHeight + 24;
+  const scale = Math.min(1.5, 14000 / Math.max(contentWidth, paddedHeight));
+
+  return {
+    contentWidth,
+    contentHeight: paddedHeight,
+    pdfWidth: contentWidth,
+    pdfHeight: paddedHeight,
+    scale: Math.max(scale, 0.75),
+  };
+};
+
+export const exportEstimatePdf = async (element, filename = "shipping-estimate.pdf") => {
+  if (!element) {
+    throw new Error("PDF content is not ready.");
+  }
+
+  await waitForLayout();
+
+  const quoteData = extractQuoteTableData(element);
+
+  const { captureTarget, cleanup } = mountPdfCaptureClone(element);
+  const restoreClone = preparePdfCloneForExport(captureTarget, quoteData);
+
+  try {
+    await waitForLayout();
+
+    const { contentWidth, contentHeight, pdfWidth, pdfHeight, scale } =
+      measurePdfDimensions(captureTarget);
+
+    const options = {
+      margin: [0, 0, 0, 0],
+      filename,
+      image: { type: "jpeg", quality: 0.98 },
+      html2canvas: {
+        scale,
+        useCORS: true,
+        scrollX: 0,
+        scrollY: 0,
+        backgroundColor: "#ffffff",
+        windowWidth: contentWidth,
+        windowHeight: contentHeight,
+        width: contentWidth,
+        height: contentHeight,
+      },
+      jsPDF: {
+        unit: "px",
+        format: [pdfWidth, pdfHeight],
+        orientation: "portrait",
+      },
+      pagebreak: { mode: ["css", "legacy"] },
+    };
+
+    await html2pdf().from(captureTarget).set(options).save();
+  } finally {
+    restoreClone();
+    cleanup();
+  }
+};

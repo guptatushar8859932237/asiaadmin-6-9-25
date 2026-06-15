@@ -2666,15 +2666,7 @@ export default function ShippingEstimate() {
                         <tr>
                           <th>Description</th>
                           <th>QTY</th>
-                          <th>
-                            <select name="" id="">
-                              <option value="">Currency</option>
-                              <option value="">USD</option>
-                              <option value="">RAND</option>
-                              <option value="">INR</option>
-                              <option value="">EURO</option>
-                            </select>
-                          </th>
+                          <th>Currency</th>
                           <th>Cost</th>
                           <th>Unit type</th>
                           <th>Unit</th>

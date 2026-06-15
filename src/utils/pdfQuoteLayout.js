@@ -4,36 +4,88 @@ const escapeHtml = (value) =>
     .replace(/</g, "&lt;")
     .replace(/>/g, "&gt;");
 
+const SELECT_VALUE_LABELS = {
+  1: "L/S",
+  2: "W/M",
+};
+
+export const getSelectDisplayText = (select) => {
+  if (!select || select.tagName !== "SELECT") return "";
+
+  const storedText = (select.getAttribute("data-pdf-selected-text") ?? "")
+    .replace(/\s+/g, " ")
+    .trim();
+  if (storedText && storedText !== "Select") {
+    return storedText;
+  }
+
+  const selectedOption =
+    select.selectedIndex >= 0 ? select.options[select.selectedIndex] : null;
+  const selectedText = (selectedOption?.textContent ?? "")
+    .replace(/\s+/g, " ")
+    .trim();
+
+  if (selectedText && selectedText !== "Select") {
+    return selectedText;
+  }
+
+  const value = String(select.value ?? "").trim();
+  if (!value || value === "Select") return "";
+
+  const matchedOption = [...select.options].find(
+    (option) => String(option.value ?? "").trim() === value,
+  );
+
+  if (matchedOption) {
+    const optionText = matchedOption.textContent.replace(/\s+/g, " ").trim();
+    if (optionText && optionText !== "Select") {
+      return optionText;
+    }
+  }
+
+  return SELECT_VALUE_LABELS[value] ?? value;
+};
+
 const isEmptyPdfCellText = (text) => {
   const normalized = (text ?? "").replace(/\s+/g, " ").trim();
   if (!normalized) return true;
-  if (normalized === "Select" || normalized === "No Vat") return true;
-  if (/^(L\/S|W\/M|RAND|USD|INR|EURO)$/i.test(normalized)) return false;
-  if (/vat|%|standard rate|zero rate|customs|manual/i.test(normalized)) return false;
+  if (normalized === "Select") return true;
+  if (/^(L\/S|W\/M|RAND|USD|INR|EURO|ZAR)$/i.test(normalized)) return false;
+  if (/vat|%|standard rate|zero rate|customs|manual|no vat/i.test(normalized)) {
+    return false;
+  }
   if (/^0+(\.0+)?$/.test(normalized)) return true;
   const num = Number(normalized.replace(/,/g, ""));
   if (!Number.isNaN(num) && num === 0) return true;
   return false;
 };
 
-const isCategoryColumn = (headers, index) => {
-  const label = (headers[index] ?? "").replace(/\s+/g, " ").trim().toLowerCase();
-  return label === "currency" || label === "unit type" || label === "vat type";
-};
-
-const getSelectDisplayValue = (select) => {
-  if (!select) return "";
-
-  const selectedOption = select.options[select.selectedIndex];
-  const optionText = (selectedOption?.textContent ?? "").replace(/\s+/g, " ").trim();
-  const value = (select.value ?? "").trim();
-
-  if (!value || value === "Select" || optionText === "Select" || optionText === "No Vat") {
-    return "";
+const formatDisplayNumber = (text) => {
+  const normalized = String(text ?? "").replace(/\s+/g, " ").trim();
+  if (!normalized || isEmptyPdfCellText(normalized)) return "";
+  const num = Number(normalized.replace(/,/g, ""));
+  if (!Number.isNaN(num) && /^\d/.test(normalized)) {
+    return num.toLocaleString("en-US", {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    });
   }
-
-  return optionText || value;
+  return normalized;
 };
+
+const formatCellDisplayValue = (text, headerLabel) => {
+  if (isEmptyPdfCellText(text)) return "";
+  const label = (headerLabel ?? "").replace(/\s+/g, " ").trim().toLowerCase();
+  if (label === "description") {
+    return String(text ?? "").replace(/\s+/g, " ").trim();
+  }
+  if (["currency", "unit type", "unit", "vat type"].includes(label)) {
+    return String(text ?? "").replace(/\s+/g, " ").trim();
+  }
+  return formatDisplayNumber(text);
+};
+
+const getSelectDisplayValue = (select) => getSelectDisplayText(select);
 
 const getCellPlainText = (cell) => {
   if (!cell) return "";
@@ -68,12 +120,44 @@ const isSectionTotalRow = (row) =>
 
 const normalizeHeaderLabel = (label) => {
   const text = (label ?? "").replace(/\s+/g, " ").trim();
-  if (!text || text === "Select") return "Currency";
+  if (!text || text === "Select" || /^currency$/i.test(text)) return "Currency";
+  if (/^unit type$/i.test(text)) return "Unit type";
+  if (/^vat type$/i.test(text)) return "VAT Type";
+  if (/^disc %$/i.test(text)) return "Disc %";
+  if (/^discount$/i.test(text)) return "Discount";
+  if (/^exclusive$/i.test(text)) return "Exclusive";
+  if (/^vat incl$/i.test(text)) return "VAT Incl";
+  if (/^t\/ cost$/i.test(text)) return "T/ Cost";
+  if (/^final amount$/i.test(text)) return "Final Amount";
   return text;
 };
 
-const rowHasValues = (values) =>
-  values.slice(1).some((value) => !isEmptyPdfCellText(value));
+const PRIMARY_AMOUNT_LABELS = new Set([
+  "cost",
+  "t/ cost",
+  "final amount",
+  "exclusive",
+  "vat incl",
+  "discount",
+  "vat",
+]);
+
+const CATEGORY_COLUMN_LABELS = new Set([
+  "currency",
+  "unit type",
+  "unit",
+  "vat type",
+]);
+
+const normalizeColumnLabel = (label) =>
+  (label ?? "").replace(/\s+/g, " ").trim().toLowerCase();
+
+const rowHasValues = (values, headers) =>
+  values.some((value, index) => {
+    const label = normalizeColumnLabel(headers[index]);
+    if (!PRIMARY_AMOUNT_LABELS.has(label)) return false;
+    return !isEmptyPdfCellText(value);
+  });
 
 const normalizeRowValues = (values, columnCount) => {
   const normalized = Array(columnCount).fill("");
@@ -101,7 +185,7 @@ const parseTotalRowByIndex = (row, columnCount) => {
       values[0] = text;
     } else if (col < columnCount) {
       const normalized = text.replace(/\s+/g, " ").trim();
-      if (normalized && normalized !== "Select" && normalized !== "No Vat") {
+      if (normalized && normalized !== "Select") {
         values[col] = text;
       }
     }
@@ -112,9 +196,10 @@ const parseTotalRowByIndex = (row, columnCount) => {
   return values;
 };
 
-const getColumnAlign = (headerIndex) => {
-  if (headerIndex === 0) return "left";
-  if ([2, 4, 9].includes(headerIndex)) return "center";
+const getColumnAlign = (headerLabel) => {
+  const label = (headerLabel ?? "").replace(/\s+/g, " ").trim().toLowerCase();
+  if (label === "description") return "left";
+  if (["currency", "unit type", "unit", "vat type"].includes(label)) return "center";
   return "right";
 };
 
@@ -130,6 +215,7 @@ const getVisibleColumns = (headers, sections, grandTotal) => {
     .filter((index) => {
       if (index === 0) return true;
 
+      const label = normalizeColumnLabel(headers[index]);
       const hasValueInRows = allDataRows.some(
         (row) => !isEmptyPdfCellText(row[index]),
       );
@@ -137,28 +223,29 @@ const getVisibleColumns = (headers, sections, grandTotal) => {
         (total) => !isEmptyPdfCellText(total?.[index]),
       );
 
-      if (isCategoryColumn(headers, index)) {
-        return (
-          hasValueInRows ||
-          hasValueInTotals ||
-          allDataRows.some((row) => Boolean((row[index] ?? "").trim()))
-        );
+      if (CATEGORY_COLUMN_LABELS.has(label)) {
+        return hasValueInRows || hasValueInTotals;
       }
 
       return hasValueInRows || hasValueInTotals;
     });
 };
 
-const buildColumnWidths = (visibleCount) => {
+const buildColumnWidths = (visibleCount, visibleColumns, headers) => {
   if (visibleCount <= 0) return [];
   if (visibleCount === 1) return [100];
 
-  const descriptionShare = 26;
-  const otherShare = (100 - descriptionShare) / (visibleCount - 1);
-  const widths = Array.from({ length: visibleCount }, (_, index) =>
-    index === 0 ? descriptionShare : otherShare,
-  );
+  const weightForColumn = (headerIndex) => {
+    const label = normalizeColumnLabel(headers[headerIndex]);
+    if (label === "description") return 4;
+    if (label === "vat type") return 2.2;
+    if (["currency", "unit type", "unit", "qty"].includes(label)) return 1;
+    return 1.3;
+  };
 
+  const weights = visibleColumns.map(weightForColumn);
+  const totalWeight = weights.reduce((sum, weight) => sum + weight, 0);
+  const widths = weights.map((weight) => (weight / totalWeight) * 100);
   const sum = widths.reduce((total, width) => total + width, 0);
   widths[widths.length - 1] += 100 - sum;
 
@@ -168,18 +255,21 @@ const buildColumnWidths = (visibleCount) => {
 const formatSectionTotalLabel = (section) =>
   (section.total?.[0] || `TOTAL ${section.title}`)
     .replace(/Total\s*-\s*/i, "TOTAL ")
+    .replace(/\s+/g, " ")
+    .trim()
     .toUpperCase();
 
 const formatGrandTotalLabel = (grandTotal) =>
   (grandTotal?.[0] || "TOTAL CHARGE")
     .replace(/Total\s*-\s*/i, "TOTAL ")
+    .replace(/\s+/g, " ")
+    .trim()
     .toUpperCase();
 
+
 const PDF_QUOTE_STYLE = `
-[data-pdf-capture-host] .wpWrapper thead,
-[data-pdf-capture-host] thead {
-  background: #fff !important;
-  color: #000 !important;
+[data-pdf-capture-host] .cost-table {
+  display: none !important;
 }
 [data-pdf-capture-host] .pdf-quote-wrap {
   width: 100%;
@@ -192,110 +282,202 @@ const PDF_QUOTE_STYLE = `
 }
 [data-pdf-capture-host] .pdf-quote-table {
   width: 100%;
-  max-width: 100%;
   border-collapse: collapse;
   table-layout: fixed;
-  font-family: Arial, Helvetica, sans-serif;
-  font-size: 11px;
-  color: #000;
-  border: 2px solid #000;
+  border: 1px solid #000;
+  background: #fff;
 }
 [data-pdf-capture-host] .pdf-quote-table th,
 [data-pdf-capture-host] .pdf-quote-table td {
-  border: 1px solid #000;
   padding: 6px 8px;
   vertical-align: middle;
+  box-sizing: border-box;
+  background: #fff !important;
+  background-color: #fff !important;
+  color: #000 !important;
   overflow: hidden;
   word-wrap: break-word;
-  background: #fff;
-  color: #000;
-  box-sizing: border-box;
 }
-[data-pdf-capture-host] .pdf-quote-table .pdf-head-row th {
-  font-weight: 400;
+[data-pdf-capture-host] .pdf-quote-table .pdf-col-head,
+[data-pdf-capture-host] .pdf-quote-table .pdf-head-row td {
+  background: #fff !important;
+  background-color: #fff !important;
+  color: #000 !important;
+  font-weight: 400 !important;
   font-size: 11px;
-  background: #1b2245;
-  color: #fff;
-  border: 1px solid #000;
+  text-transform: uppercase;
+  text-align: center;
+  padding: 6px 8px !important;
 }
-[data-pdf-capture-host] .pdf-quote-table .pdf-title-row td {
+[data-pdf-capture-host] .pdf-quote-table .pdf-body-cell {
+  border-top: 0 !important;
+  border-bottom: 0 !important;
+}
+[data-pdf-capture-host] .pdf-quote-table .pdf-span-title {
   text-align: center !important;
   text-transform: uppercase;
-  letter-spacing: 0.35px;
   font-size: 12px;
   font-weight: 700;
-  background: #f7f8fb;
-  color: #1b2245;
-  border-top: 2px solid #1b2245;
-  border-bottom: 2px solid #000;
   padding: 8px;
-}
-[data-pdf-capture-host] .pdf-quote-table .pdf-section-gap td {
-  height: 14px;
-  padding: 0;
-  border-left: 1px solid #000;
-  border-right: 1px solid #000;
-  border-top: none;
-  border-bottom: none;
-  background: #fff;
-  line-height: 0;
-  font-size: 0;
 }
 [data-pdf-capture-host] .pdf-quote-table .pdf-total-row td,
 [data-pdf-capture-host] .pdf-quote-table .pdf-grand-total-row td {
   font-weight: 700;
-  background: #eef0f6;
-  border-top: 2px solid #1b2245;
-  border-bottom: 2px solid #1b2245;
 }
-[data-pdf-capture-host] .pdf-quote-table .pdf-grand-label td {
-  font-weight: 700;
-  font-size: 11px;
-  text-transform: uppercase;
-  letter-spacing: 0.35px;
-  background: #f7f8fb;
-  color: #1b2245;
-  text-align: center !important;
-  border-top: 2px solid #1b2245;
-  border-bottom: 2px solid #000;
-  padding: 8px;
+[data-pdf-capture-host] .pdf-quote-table .pdf-total-row td:not(:first-child):not(:last-child),
+[data-pdf-capture-host] .pdf-quote-table .pdf-grand-total-row td:not(:first-child):not(:last-child) {
+  border-left: 0 !important;
+  border-right: 0 !important;
 }
 `;
+
+const GRID_BORDER = "1px solid #000";
+
+const getVerticalBorderStyle = (visibleIndex) => {
+  const parts = ["border-right:1px solid #000"];
+  if (visibleIndex === 0) parts.push("border-left:1px solid #000");
+  return parts.join(";");
+};
+
+const getTotalRowBorderStyle = (visibleIndex, visibleCount) => {
+  const parts = [
+    "border-top:1px solid #000",
+    "border-bottom:1px solid #000",
+    "border-left:0",
+    "border-right:0",
+  ];
+  if (visibleIndex === 0) parts[2] = "border-left:1px solid #000";
+  if (visibleIndex === visibleCount - 1) parts[3] = "border-right:1px solid #000";
+  return parts.join(";");
+};
 
 const buildColgroup = (columnWidths) =>
   `<colgroup>${columnWidths
     .map((width) => `<col style="width:${width}%;" />`)
     .join("")}</colgroup>`;
 
-const cellStyle = (headerIndex, visibleIndex, columnWidths, bold = false, type = "body") => {
-  const width = columnWidths[visibleIndex];
-  const isTotal = type === "total";
+const gridCellStyle = (
+  headerLabel,
+  visibleIndex,
+  visibleCount,
+  columnWidths,
+  cellType,
+  bold = false,
+) => {
+  const label = (headerLabel ?? "").replace(/\s+/g, " ").trim().toLowerCase();
+  let align = getColumnAlign(headerLabel);
+  if (cellType === "section-title") align = "center";
+
+  let borderStyle = "";
+  if (cellType === "section-title") {
+    borderStyle = `border:${GRID_BORDER}`;
+  } else if (cellType === "head") {
+    borderStyle = [
+      "border-top:0",
+      "border-bottom:1px solid #000",
+      getVerticalBorderStyle(visibleIndex),
+    ].join(";");
+  } else if (cellType === "body") {
+    borderStyle = [
+      "border-top:0",
+      "border-bottom:0",
+      getVerticalBorderStyle(visibleIndex),
+    ].join(";");
+  } else if (cellType === "total") {
+    borderStyle = getTotalRowBorderStyle(visibleIndex, visibleCount);
+  }
+
+  const textColor = "#000";
 
   return [
-    `width:${width}%`,
-    `text-align:${getColumnAlign(headerIndex)}`,
+    `width:${columnWidths[visibleIndex]}%`,
+    `text-align:${align}`,
+    borderStyle,
     "padding:6px 8px",
     "vertical-align:middle",
     "overflow:hidden",
     "box-sizing:border-box",
-    bold ? "font-weight:700" : "",
-    isTotal ? "background:#eef0f6" : "",
+    "background:#fff",
+    `color:${textColor}`,
+    "line-height:1.35",
+    bold || cellType === "section-title" || cellType === "total"
+      ? "font-weight:700"
+      : "font-weight:400",
+    cellType === "section-title" ? "text-transform:uppercase;font-size:12px" : "",
+    cellType === "head" ? "text-transform:uppercase;font-size:11px;font-weight:400" : "",
+    label === "description" && cellType === "body" ? "text-align:left" : "",
   ]
     .filter(Boolean)
     .join(";");
 };
 
-const renderCells = (values, visibleColumns, headers, type, columnWidths) => {
+const renderColumnCells = (
+  values,
+  visibleColumns,
+  headers,
+  type,
+  columnWidths,
+) => {
   const isHead = type === "head";
-  const tag = isHead ? "th" : "td";
+  const tag = "td";
   const bold = type === "total";
+  const cellType = isHead ? "head" : type === "total" ? "total" : "body";
 
   return visibleColumns
     .map((headerIndex, visibleIndex) => {
-      const text = isHead ? headers[headerIndex] : values[headerIndex] ?? "";
-      return `<${tag} style="${cellStyle(headerIndex, visibleIndex, columnWidths, bold, type)}">${escapeHtml(text)}</${tag}>`;
+      const headerLabel = headers[headerIndex] ?? "";
+      const rawText = isHead ? headerLabel : values[headerIndex] ?? "";
+      const text = isHead
+        ? headerLabel
+        : formatCellDisplayValue(rawText, headerLabel);
+      const hasContent = Boolean(text);
+      const cellClass =
+        cellType === "head"
+          ? "pdf-col-head"
+          : cellType === "total"
+            ? "pdf-total-cell"
+            : "pdf-body-cell";
+      const cellContent = hasContent ? escapeHtml(text) : "";
+
+      return `<${tag} class="${cellClass}" style="${gridCellStyle(headerLabel, visibleIndex, visibleColumns.length, columnWidths, cellType, bold)}">${cellContent}</${tag}>`;
     })
     .join("");
+};
+
+const renderSectionTitleRow = (title, colSpan) =>
+  `<tr class="pdf-section-title"><td class="pdf-span-title" colspan="${colSpan}" style="${gridCellStyle("", 0, 1, [100], "section-title", true)}">${escapeHtml(title.toUpperCase())}</td></tr>`;
+
+const buildSectionRows = ({
+  headers,
+  section,
+  visibleColumns,
+  columnWidths,
+}) => {
+  const colSpan = visibleColumns.length;
+  const dataRows = section.rows.filter((row) => rowHasValues(row, headers));
+  const showTotal = section.total && rowHasValues(section.total, headers);
+  if (!dataRows.length && !showTotal) return [];
+
+  const rows = [
+    renderSectionTitleRow(section.title, colSpan),
+    `<tr class="pdf-head-row">${renderColumnCells([], visibleColumns, headers, "head", columnWidths)}</tr>`,
+  ];
+
+  dataRows.forEach((row) => {
+    rows.push(
+      `<tr class="pdf-data-row">${renderColumnCells(row, visibleColumns, headers, "body", columnWidths)}</tr>`,
+    );
+  });
+
+  if (showTotal) {
+    const totalValues = [...section.total];
+    totalValues[0] = formatSectionTotalLabel(section);
+    rows.push(
+      `<tr class="pdf-total-row">${renderColumnCells(totalValues, visibleColumns, headers, "total", columnWidths)}</tr>`,
+    );
+  }
+
+  return rows;
 };
 
 const buildUnifiedQuoteTableHtml = ({
@@ -305,63 +487,37 @@ const buildUnifiedQuoteTableHtml = ({
   visibleColumns,
   columnWidths,
 }) => {
-  const colSpan = visibleColumns.length;
-  const bodyRows = [];
-  let renderedSectionCount = 0;
+  const allRows = [];
 
   sections.forEach((section) => {
-    const dataRows = section.rows.filter(rowHasValues);
-    const showTotal =
-      section.total && (rowHasValues(section.total) || dataRows.length > 0);
-
-    if (!dataRows.length && !showTotal) return;
-
-    if (renderedSectionCount > 0) {
-      bodyRows.push(
-        `<tr class="pdf-section-gap"><td colspan="${colSpan}">&nbsp;</td></tr>`,
-      );
-    }
-
-    bodyRows.push(
-      `<tr class="pdf-title-row"><td colspan="${colSpan}" style="text-align:center;text-transform:uppercase;font-weight:700;padding:8px;border-top:2px solid #1b2245;border-bottom:2px solid #000;background:#f7f8fb;color:#1b2245;">${escapeHtml(section.title.toUpperCase())}</td></tr>`,
+    allRows.push(
+      ...buildSectionRows({
+        headers,
+        section,
+        visibleColumns,
+        columnWidths,
+      }),
     );
-
-    dataRows.forEach((row) => {
-      bodyRows.push(
-        `<tr>${renderCells(row, visibleColumns, headers, "body", columnWidths)}</tr>`,
-      );
-    });
-
-    if (showTotal) {
-      const totalValues = [...section.total];
-      totalValues[0] = formatSectionTotalLabel(section);
-      bodyRows.push(
-        `<tr class="pdf-total-row">${renderCells(totalValues, visibleColumns, headers, "total", columnWidths)}</tr>`,
-      );
-    }
-
-    renderedSectionCount += 1;
   });
 
-  if (grandTotal && rowHasValues(grandTotal)) {
+  if (grandTotal && rowHasValues(grandTotal, headers)) {
+    const colSpan = visibleColumns.length;
     const totalValues = [...grandTotal];
     totalValues[0] = formatGrandTotalLabel(grandTotal);
 
-    bodyRows.push(
-      `<tr class="pdf-section-gap"><td colspan="${colSpan}">&nbsp;</td></tr>`,
-      `<tr class="pdf-grand-label"><td colspan="${colSpan}" style="text-align:center;text-transform:uppercase;font-weight:700;padding:8px;border-top:2px solid #1b2245;border-bottom:2px solid #000;background:#f7f8fb;color:#1b2245;">QUOTE TOTAL ESTIMATION</td></tr>`,
-      `<tr class="pdf-grand-total-row">${renderCells(totalValues, visibleColumns, headers, "total", columnWidths)}</tr>`,
+    allRows.push(renderSectionTitleRow("QUOTE TOTAL ESTIMATION", colSpan));
+    allRows.push(
+      `<tr class="pdf-grand-total-row">${renderColumnCells(totalValues, visibleColumns, headers, "total", columnWidths)}</tr>`,
     );
   }
 
+  if (!allRows.length) return "";
+
   return `
-    <table class="pdf-quote-table" width="100%" border="1" cellpadding="0" cellspacing="0">
+    <table class="pdf-quote-table" width="100%" border="0" cellpadding="0" cellspacing="0">
       ${buildColgroup(columnWidths)}
-      <thead>
-        <tr class="pdf-head-row">${renderCells([], visibleColumns, headers, "head", columnWidths)}</tr>
-      </thead>
       <tbody>
-        ${bodyRows.join("")}
+        ${allRows.join("")}
       </tbody>
     </table>`;
 };
@@ -370,12 +526,12 @@ const buildQuoteHtml = ({ headers, sections, grandTotal }) => {
   const sectionsWithValues = sections
     .map((section) => ({
       ...section,
-      rows: section.rows.filter(rowHasValues),
+      rows: section.rows.filter((row) => rowHasValues(row, headers)),
     }))
     .filter(
       (section) =>
         section.rows.length > 0 ||
-        (section.total && rowHasValues(section.total)),
+        (section.total && rowHasValues(section.total, headers)),
     );
 
   if (!sectionsWithValues.length) {
@@ -387,7 +543,11 @@ const buildQuoteHtml = ({ headers, sections, grandTotal }) => {
     sectionsWithValues,
     grandTotal,
   );
-  const columnWidths = buildColumnWidths(visibleColumns.length);
+  const columnWidths = buildColumnWidths(
+    visibleColumns.length,
+    visibleColumns,
+    headers,
+  );
 
   return `
     <style>${PDF_QUOTE_STYLE}</style>
@@ -435,7 +595,7 @@ const parseQuoteTable = (table) => {
     if (!current) return;
 
     const values = parseDataRow(row, headers.length);
-    if (rowHasValues(values)) {
+    if (rowHasValues(values, headers)) {
       current.rows.push(values);
     }
   });
@@ -449,37 +609,73 @@ const parseQuoteTable = (table) => {
   };
 };
 
-export const renderPdfQuoteLayout = (root) => {
-  const table = root?.querySelector(".cost-table");
-  const tableWrap = table?.closest(".table-responsive");
+export const extractQuoteDataFromRoot = (root) => {
+  const table = root?.querySelector("table.cost-table, .cost-table");
+  if (!table) return null;
+  return parseQuoteTable(table);
+};
 
-  if (!table || !tableWrap) return;
+export const renderPdfQuoteLayout = (root, quoteData = null) => {
+  const tableWrap = root?.querySelector(".table-responsive");
+  const data = quoteData ?? extractQuoteDataFromRoot(root);
 
-  const quoteData = parseQuoteTable(table);
-  tableWrap.innerHTML = buildQuoteHtml(quoteData);
+  if (!tableWrap || !data) return false;
+
+  tableWrap.innerHTML = buildQuoteHtml(data);
   tableWrap.style.overflow = "visible";
   tableWrap.style.width = "100%";
   tableWrap.style.maxWidth = "100%";
   tableWrap.style.margin = "0";
   tableWrap.style.padding = "0";
+
+  root?.querySelectorAll("table.cost-table, .cost-table").forEach((el) => {
+    el.style.display = "none";
+  });
+
+  return true;
 };
 
 export const injectPdfGlobalStyles = (root) => {
   const host = root.closest("[data-pdf-capture-host]") ?? root.parentElement;
-  if (!host || host.querySelector("[data-pdf-global-style]")) return;
+  if (!host) return;
 
-  const style = document.createElement("style");
-  style.setAttribute("data-pdf-global-style", "true");
-  style.textContent = `
-    [data-pdf-capture-host] .wpWrapper thead,
-    [data-pdf-capture-host] thead {
-      background: #fff !important;
-      color: #000 !important;
-    }
-    [data-pdf-capture-host] .wpWrapper th,
-    [data-pdf-capture-host] .wpWrapper td {
-      color: #000 !important;
-    }
-  `;
-  host.prepend(style);
+  if (!host.querySelector("[data-pdf-global-style]")) {
+    const style = document.createElement("style");
+    style.setAttribute("data-pdf-global-style", "true");
+    style.textContent = `
+      ${PDF_QUOTE_STYLE}
+      [data-pdf-capture-host] th {
+        background-color: #fff !important;
+        background: #fff !important;
+        color: #000 !important;
+        padding: 6px 8px !important;
+      }
+      [data-pdf-capture-host] .wpWrapper thead,
+      [data-pdf-capture-host] thead {
+        background: #fff !important;
+        color: #000 !important;
+      }
+      [data-pdf-capture-host] .wpWrapper thead th,
+      [data-pdf-capture-host] thead th {
+        background-color: #fff !important;
+        background: #fff !important;
+        color: #000 !important;
+      }
+      [data-pdf-capture-host] .cost-table,
+      [data-pdf-capture-host] table.cost-table {
+        display: none !important;
+        visibility: hidden !important;
+        height: 0 !important;
+        overflow: hidden !important;
+      }
+      [data-pdf-capture-host] .pdf-page {
+        outline: none !important;
+      }
+      [data-pdf-capture-host] .table-responsive {
+        border: none !important;
+        overflow: visible !important;
+      }
+    `;
+    host.prepend(style);
+  }
 };

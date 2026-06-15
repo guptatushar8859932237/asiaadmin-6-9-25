@@ -1,7 +1,6 @@
 import html2pdf from "html2pdf.js";
 import {
-  extractQuoteDataFromRoot,
-  getSelectDisplayText,
+  extractQuoteTableData,
   injectPdfGlobalStyles,
   renderPdfQuoteLayout,
 } from "./pdfQuoteLayout";
@@ -10,7 +9,25 @@ export const PDF_PAGE_WIDTH = 1100;
 
 const getFormControlDisplayValue = (el) => {
   if (el.tagName === "SELECT") {
-    return getSelectDisplayText(el);
+    const value = (el.value ?? "").trim();
+    if (!value || value === "Select") return "";
+
+    const matchedOption = Array.from(el.options).find(
+      (option) => option.value === value,
+    );
+    const optionText = (
+      matchedOption?.textContent ??
+      el.options[el.selectedIndex]?.textContent ??
+      ""
+    )
+      .replace(/\s+/g, " ")
+      .trim();
+
+    if (!optionText || optionText === "Select" || optionText === "No Vat") {
+      return value;
+    }
+
+    return optionText;
   }
 
   if (el.type === "checkbox" || el.type === "radio") {
@@ -23,11 +40,7 @@ const getFormControlDisplayValue = (el) => {
 export const isEmptyPdfCellText = (text) => {
   const normalized = (text ?? "").replace(/\s+/g, " ").trim();
   if (!normalized) return true;
-  if (normalized === "Select") return true;
-  if (/^(L\/S|W\/M|RAND|USD|INR|EURO)$/i.test(normalized)) return false;
-  if (/vat|%|standard rate|zero rate|customs|manual|no vat/i.test(normalized)) {
-    return false;
-  }
+  if (normalized === "Select" || normalized === "No Vat") return true;
   if (/^0+(\.0+)?$/.test(normalized)) return true;
 
   const num = Number(normalized.replace(/,/g, ""));
@@ -40,25 +53,34 @@ export const getCellPlainText = (cell) => {
   if (!cell) return "";
 
   const replacement = cell.querySelector("[data-pdf-text-replacement]");
-  const replacementText = replacement?.textContent?.replace(/\s+/g, " ").trim();
-  if (replacementText) return replacementText;
+  if (replacement) {
+    const replacementText = replacement.textContent.replace(/\s+/g, " ").trim();
+    if (replacementText) return replacementText;
+  }
 
-  const selectValue = getSelectDisplayText(cell.querySelector("select"));
-  if (selectValue) return selectValue;
+  const select = cell.querySelector("select");
+  if (select) {
+    const value = (select.value ?? "").trim();
+    if (value && value !== "Select") {
+      const matchedOption = Array.from(select.options).find(
+        (option) => option.value === value,
+      );
+      const optionText = (matchedOption?.textContent ?? "")
+        .replace(/\s+/g, " ")
+        .trim();
+      if (optionText && optionText !== "Select" && optionText !== "No Vat") {
+        return optionText;
+      }
+      return value;
+    }
+  }
 
   const input = cell.querySelector("input, textarea");
   if (input) {
     return (input.value ?? "").replace(/\s+/g, " ").trim();
   }
 
-  cell
-    .querySelectorAll("[data-pdf-input-hidden], input, select, textarea, option")
-    .forEach((el) => {
-      el.remove();
-    });
-
-  const rawText = cell.innerText ?? cell.textContent;
-  return rawText.replace(/\s+/g, " ").trim();
+  return (cell.textContent ?? "").replace(/\s+/g, " ").trim();
 };
 
 export const replaceFormControlsWithText = (root) => {
@@ -233,48 +255,6 @@ export const hideEmptyPdfSections = (table) => {
   };
 };
 
-const syncSingleFormControl = (sourceField, targetField) => {
-  if (!sourceField || !targetField) return;
-
-  if (sourceField.tagName === "SELECT") {
-    targetField.value = sourceField.value;
-    targetField.selectedIndex = sourceField.selectedIndex;
-
-    [...targetField.options].forEach((option, index) => {
-      option.selected = index === sourceField.selectedIndex;
-    });
-
-    const selectedText = (sourceField.options[sourceField.selectedIndex]?.textContent ?? "")
-      .replace(/\s+/g, " ")
-      .trim();
-    if (selectedText && selectedText !== "Select") {
-      targetField.setAttribute("data-pdf-selected-text", selectedText);
-    } else {
-      targetField.removeAttribute("data-pdf-selected-text");
-    }
-    return;
-  }
-
-  if (sourceField.type === "checkbox" || sourceField.type === "radio") {
-    targetField.checked = sourceField.checked;
-    return;
-  }
-
-  targetField.value = sourceField.value;
-  targetField.setAttribute("value", sourceField.value);
-};
-
-export const syncFormControlValues = (sourceRoot, targetRoot) => {
-  if (!sourceRoot || !targetRoot) return;
-
-  const sourceFields = [...sourceRoot.querySelectorAll("input, select, textarea")];
-  const targetFields = [...targetRoot.querySelectorAll("input, select, textarea")];
-
-  sourceFields.forEach((sourceField, index) => {
-    syncSingleFormControl(sourceField, targetFields[index]);
-  });
-};
-
 const hidePdfOnlyElements = (root) => {
   root?.querySelectorAll(".ship_btn").forEach((el) => {
     el.style.display = "none";
@@ -283,51 +263,6 @@ const hidePdfOnlyElements = (root) => {
   root?.querySelectorAll(".text-center.mt-3").forEach((el) => {
     if (el.querySelector(".ship_btn")) {
       el.style.display = "none";
-    }
-  });
-
-  root?.querySelectorAll("table").forEach((table) => {
-    const text = table.textContent.replace(/\s+/g, " ").trim();
-    if (text === "Rate of Exchange") {
-      table.style.display = "none";
-    }
-  });
-
-  root?.querySelectorAll(".table-responsive").forEach((wrap) => {
-    let prev = wrap.previousElementSibling;
-    while (prev) {
-      if (/quote information/i.test(prev.textContent ?? "")) {
-        prev.style.display = "none";
-        break;
-      }
-      prev = prev.previousElementSibling;
-    }
-  });
-};
-
-const ensureQuoteInfoSelectsVisible = (root) => {
-  root?.querySelectorAll("select[name='final_base_currency']").forEach((select) => {
-    const displayValue = getSelectDisplayText(select);
-    if (!displayValue) {
-      select.closest("table")?.remove();
-      return;
-    }
-
-    const container = select.parentElement;
-    const replacement = container?.querySelector("[data-pdf-text-replacement]");
-    const label = container?.querySelector("strong");
-
-    if (replacement) {
-      replacement.textContent = displayValue;
-      replacement.style.display = "inline-block";
-      replacement.style.fontWeight = "700";
-      replacement.style.color = "#000";
-      replacement.style.minWidth = "60px";
-      replacement.style.textAlign = "right";
-    }
-
-    if (label) {
-      label.textContent = `Final Base Currency: ${displayValue}`;
     }
   });
 };
@@ -349,7 +284,6 @@ export const preparePdfCloneForExport = (root, quoteData = null) => {
 
   injectPdfGlobalStyles(root);
   const restoreFormControls = replaceFormControlsWithText(root);
-  ensureQuoteInfoSelectsVisible(root);
   hidePdfOnlyElements(root);
   renderPdfQuoteLayout(root, quoteData);
 
@@ -368,7 +302,6 @@ export const mountPdfCaptureClone = (element) => {
   }
 
   const clone = element.cloneNode(true);
-  syncFormControlValues(element, clone);
   const host = document.createElement("div");
   host.setAttribute("data-pdf-capture-host", "true");
   host.style.cssText = `position:fixed;left:-9999px;top:0;z-index:-1;pointer-events:none;background:#fff;width:${PDF_PAGE_WIDTH}px;max-width:${PDF_PAGE_WIDTH}px;overflow:visible;`;
@@ -428,7 +361,8 @@ export const exportEstimatePdf = async (element, filename = "shipping-estimate.p
 
   await waitForLayout();
 
-  const quoteData = extractQuoteDataFromRoot(element);
+  const quoteData = extractQuoteTableData(element);
+
   const { captureTarget, cleanup } = mountPdfCaptureClone(element);
   const restoreClone = preparePdfCloneForExport(captureTarget, quoteData);
 

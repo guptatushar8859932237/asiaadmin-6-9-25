@@ -1917,7 +1917,7 @@ export default function ShippingEstimate() {
                           <td style={{ width: "50%", color: "#000", paddingBottom: "10px" }}>
                             <p
                               style={{
-                                fontSize: 20,
+                                fontSize: 18,
                                 fontWeight: 600,
                                 marginBottom: "unset",
                                 borderBottom: "1px solid #cb191e",
@@ -1929,7 +1929,7 @@ export default function ShippingEstimate() {
                             </p>
                             <p
                               style={{
-                                fontSize: 14,
+                                fontSize: 12,
                                 fontWeight: 500,
                                 marginBottom: "unset",
                                 lineHeight: "1.5",
@@ -1940,12 +1940,16 @@ export default function ShippingEstimate() {
                               Glen Marais 1619 South Africa Web
                               www.asiaDirect.africa{" "}
                             </p>
-                            <p>
+                            <p style={{
+                              fontSize: 12,
+                              fontWeight: 500,
+                              marginBottom: "unset",
+                              lineHeight: "1.5",
+                            }}>
                               <span>VAT Number: 4740280377</span>
                               <br />
                               TEL: +27 10 448 0733
                             </p>
-
                           </td>
                         </tr>
                       </tbody>
@@ -1954,9 +1958,8 @@ export default function ShippingEstimate() {
                     <table
                       style={{
                         border: "2px solid #1b2245",
-                        padding: "10px 20px",
+                        padding: "8px 15px",
                         width: "100%",
-
                       }}
                     >
                       <tbody>
@@ -1964,7 +1967,7 @@ export default function ShippingEstimate() {
                           <td
                             style={{
                               textAlign: "center",
-                              fontSize: 14,
+                              fontSize: 12,
                               fontWeight: 600,
                               width: "100%",
                             }}
@@ -1995,7 +1998,7 @@ export default function ShippingEstimate() {
                                 <tr>
                                   <td
                                     style={{
-                                      fontSize: 14,
+                                      fontSize: 12,
                                       padding: "5px"
                                     }}
                                   >
@@ -2013,9 +2016,8 @@ export default function ShippingEstimate() {
                                 background: "#1b2245",
                                 width: "100%",
                                 color: "white",
-                                fontSize: 14,
+                                fontSize: 12,
                                 textAlign: "center",
-                                padding: 2,
                               }}
                             >
                               <tbody>
@@ -2030,7 +2032,7 @@ export default function ShippingEstimate() {
                               <tbody>
                                 <tr>
                                   { }
-                                  <td style={{ padding: "10px" }}>
+                                  <td style={{ padding: "5px" }}>
                                     <div
                                       style={{
                                         display: "flex",
@@ -2040,8 +2042,8 @@ export default function ShippingEstimate() {
                                     >
                                       <p
                                         style={{
-                                          fontSize: 14,
-                                          marginBottom: "unset",
+                                          fontSize: 12,
+                                          marginBottom: "0px",
 
                                         }}
                                       >
@@ -2049,8 +2051,8 @@ export default function ShippingEstimate() {
                                       </p>
                                       <p
                                         style={{
-                                          fontSize: 14,
-                                          marginBottom: "unset",
+                                          fontSize: 12,
+                                          marginBottom: "0px",
                                         }}
                                       >
                                         {getdata?.no_of_packages}
@@ -2064,18 +2066,18 @@ export default function ShippingEstimate() {
                                     >
                                       <p
                                         style={{
-                                          fontSize: 14,
-                                          marginBottom: "unset",
-                                          marginTop: 5,
+                                          fontSize: 12,
+                                          marginBottom: "0px",
+                                          marginTop: 2,
                                         }}
                                       >
                                         <strong>Package Type</strong>
                                       </p>
                                       <p
                                         style={{
-                                          fontSize: 14,
-                                          marginBottom: "unset",
-                                          marginTop: 5,
+                                          fontSize: 12,
+                                          marginBottom: "0px",
+                                          marginTop: 2,
                                         }}
                                       >
                                         {getdata?.package_type}
@@ -2089,18 +2091,18 @@ export default function ShippingEstimate() {
                                     >
                                       <p
                                         style={{
-                                          fontSize: 14,
-                                          marginBottom: "unset",
-                                          marginTop: 5,
+                                          fontSize: 12,
+                                          marginBottom: "0px",
+                                          marginTop: 2,
                                         }}
                                       >
                                         <strong>Weight</strong>
                                       </p>
                                       <p
                                         style={{
-                                          fontSize: 14,
-                                          marginBottom: "unset",
-                                          marginTop: 5,
+                                          fontSize: 12,
+                                          marginBottom: "0px",
+                                          marginTop: 2,
                                         }}
                                       >
                                         {getdata?.weight}
@@ -2114,18 +2116,18 @@ export default function ShippingEstimate() {
                                     >
                                       <p
                                         style={{
-                                          fontSize: 14,
-                                          marginBottom: "unset",
-                                          marginTop: 5,
+                                          fontSize: 12,
+                                          marginBottom: "0px",
+                                          marginTop: 2,
                                         }}
                                       >
                                         <strong>M3</strong>
                                       </p>
                                       <p
                                         style={{
-                                          fontSize: 14,
-                                          marginBottom: "unset",
-                                          marginTop: 5,
+                                          fontSize: 12,
+                                          marginBottom: "0px",
+                                          marginTop: 2,
                                         }}
                                       ></p>
                                     </div>
@@ -2137,18 +2139,18 @@ export default function ShippingEstimate() {
                                     >
                                       <p
                                         style={{
-                                          fontSize: 14,
-                                          marginBottom: "unset",
-                                          marginTop: 5,
+                                          fontSize: 12,
+                                          marginBottom: "0px",
+                                          marginTop: 2,
                                         }}
                                       >
                                         <strong>Volumetric (kgs)</strong>
                                       </p>
                                       <p
                                         style={{
-                                          fontSize: 14,
-                                          marginBottom: "unset",
-                                          marginTop: 5,
+                                          fontSize: 12,
+                                          marginBottom: "0px",
+                                          marginTop: 2,
                                         }}
                                       >
                                         {getdata?.volumetric_weight}
@@ -2162,18 +2164,18 @@ export default function ShippingEstimate() {
                                     >
                                       <p
                                         style={{
-                                          fontSize: 14,
-                                          marginBottom: "unset",
-                                          marginTop: 5,
+                                          fontSize: 12,
+                                          marginBottom: "0px",
+                                          marginTop: 2,
                                         }}
                                       >
                                         <strong>Chargeable</strong>
                                       </p>
                                       <p
                                         style={{
-                                          fontSize: 14,
-                                          marginBottom: "unset",
-                                          marginTop: 5,
+                                          fontSize: 12,
+                                          marginBottom: "0px",
+                                          marginTop: 2,
                                         }}
                                       >
                                         <input
@@ -2193,18 +2195,18 @@ export default function ShippingEstimate() {
                                     >
                                       <p
                                         style={{
-                                          fontSize: 14,
-                                          marginBottom: "unset",
-                                          marginTop: 5,
+                                          fontSize: 12,
+                                          marginBottom: "0px",
+                                          marginTop: 2,
                                         }}
                                       >
                                         <strong>Commodity</strong>
                                       </p>
                                       <p
                                         style={{
-                                          fontSize: 14,
-                                          marginBottom: "unset",
-                                          marginTop: 5,
+                                          fontSize: 12,
+                                          marginBottom: "0px",
+                                          marginTop: 2,
                                         }}
                                       >
                                         {getdata?.commodity}
@@ -2218,18 +2220,18 @@ export default function ShippingEstimate() {
                                     >
                                       <p
                                         style={{
-                                          fontSize: 14,
-                                          marginBottom: "unset",
-                                          marginTop: 5,
+                                          fontSize: 12,
+                                          marginBottom: "0px",
+                                          marginTop: 2,
                                         }}
                                       >
                                         <strong>Hazardous</strong>
                                       </p>
                                       <p
                                         style={{
-                                          fontSize: 14,
-                                          marginBottom: "unset",
-                                          marginTop: 5,
+                                          fontSize: 12,
+                                          marginBottom: "0px",
+                                          marginTop: 2,
                                         }}
                                       >
                                         {getdata?.hazardous}
@@ -2243,18 +2245,18 @@ export default function ShippingEstimate() {
                                     >
                                       <p
                                         style={{
-                                          fontSize: 14,
-                                          marginBottom: "unset",
-                                          marginTop: 5,
+                                          fontSize: 12,
+                                          marginBottom: "0px",
+                                          marginTop: 2,
                                         }}
                                       >
                                         <strong>Incoterm</strong>
                                       </p>
                                       <p
                                         style={{
-                                          fontSize: 14,
-                                          marginBottom: "unset",
-                                          marginTop: 5,
+                                          fontSize: 12,
+                                          marginBottom: "0px",
+                                          marginTop: 2,
                                         }}
                                       >
                                         {getdata?.incoterm}
@@ -2268,18 +2270,18 @@ export default function ShippingEstimate() {
                                     >
                                       <p
                                         style={{
-                                          fontSize: 14,
-                                          marginBottom: "unset",
-                                          marginTop: 5,
+                                          fontSize: 12,
+                                          marginBottom: "0px",
+                                          marginTop: 2,
                                         }}
                                       >
                                         <strong> Freight</strong>
                                       </p>
                                       <p
                                         style={{
-                                          fontSize: 14,
-                                          marginBottom: "unset",
-                                          marginTop: 5,
+                                          fontSize: 12,
+                                          marginBottom: "0px",
+                                          marginTop: 2,
                                         }}
                                       >
                                         {getdata?.freight}
@@ -2294,7 +2296,7 @@ export default function ShippingEstimate() {
                                 background: "#1b2245",
                                 width: "100%",
                                 color: "white",
-                                fontSize: 14,
+                                fontSize: 12,
                                 textAlign: "center",
                                 margin: "0px",
                                 padding: 2,
@@ -2321,8 +2323,8 @@ export default function ShippingEstimate() {
                                     >
                                       <p
                                         style={{
-                                          fontSize: 14,
-                                          marginBottom: "unset",
+                                          fontSize: 12,
+                                          marginBottom: "0px",
 
                                         }}
                                       >
@@ -2332,7 +2334,7 @@ export default function ShippingEstimate() {
                                         className="select_supplier border"
                                         style={{
                                           margin: 0,
-                                          fontSize: 13,
+                                          fontSize: 12,
                                           fontWeight: 700,
                                           paddingLeft: 5,
                                           width: "40%",
@@ -2361,12 +2363,12 @@ export default function ShippingEstimate() {
                                   <td style={{
                                     width: 170,
                                     display: "block",
-                                    padding: "0px 10px 0px 10px",
-                                    fontSize: 14,
+                                    padding: "5px",
+                                    fontSize: 12,
                                   }}><strong>
                                       Invoice No.
                                     </strong></td>
-                                  <td style={{ fontSize: 14 }}>
+                                  <td style={{ fontSize: 12, padding: "5px", }}>
                                     <input
                                       type="text"
                                       name="supplier_invoice_no"
@@ -2380,14 +2382,14 @@ export default function ShippingEstimate() {
                                     style={{
                                       width: 170,
                                       display: "block",
-                                      padding: "0px 10px 0px 10px",
-                                      fontSize: 14,
+                                      padding: "0px 5px 0px 5px",
+                                      fontSize: 12,
                                     }}
                                   >
                                     <strong>Reference</strong>
                                   </td>
                                   <td
-                                    style={{ fontSize: 14 }}
+                                    style={{ fontSize: 12 }}
                                   >
                                     {getdata?.client_ref_name}
                                   </td>
@@ -2395,18 +2397,18 @@ export default function ShippingEstimate() {
                                 <tr>
                                   <td
                                     style={{
-                                      padding: "0px 10px 0px 10px",
+                                      padding: "0px 5px 0px 5px",
                                       width: 170,
                                       display: "block",
                                       paddingBottom: 0,
-                                      fontSize: 14,
+                                      fontSize: 12,
                                     }}
                                   >
                                     <strong>Quote Date</strong>
                                   </td>
                                   <td
                                     style={{
-                                      fontSize: 14,
+                                      fontSize: 12,
                                     }}
                                   >
                                     {new Date(getdata?.date).toLocaleDateString(
@@ -2421,7 +2423,7 @@ export default function ShippingEstimate() {
                                 background: "#1b2245",
                                 width: "100%",
                                 color: "white",
-                                fontSize: 14,
+                                fontSize: 12,
                                 textAlign: "center",
                                 margin: "5px 0px",
                                 padding: 2,
@@ -2438,7 +2440,7 @@ export default function ShippingEstimate() {
                             <table style={{ width: "100%" }}>
                               <tbody>
                                 <tr>
-                                  <td style={{ padding: "0px 10px" }}>
+                                  <td style={{ padding: "5px" }}>
                                     <div
                                       style={{
                                         display: "flex",
@@ -2447,18 +2449,18 @@ export default function ShippingEstimate() {
                                     >
                                       <p
                                         style={{
-                                          fontSize: 14,
-                                          marginBottom: "unset",
-                                          marginTop: 5,
+                                          fontSize: 12,
+                                          marginBottom: "0px",
+                                          marginTop: 2,
                                         }}
                                       >
                                         <strong> Country of Origin</strong>
                                       </p>
                                       <p
                                         style={{
-                                          fontSize: 14,
-                                          marginBottom: "unset",
-                                          marginTop: 5,
+                                          fontSize: 12,
+                                          marginBottom: "0px",
+                                          marginTop: 2,
                                         }}
                                       >
                                         {getdata?.collection_from_name}
@@ -2472,18 +2474,18 @@ export default function ShippingEstimate() {
                                     >
                                       <p
                                         style={{
-                                          fontSize: 14,
-                                          marginBottom: "unset",
-                                          marginTop: 5,
+                                          fontSize: 12,
+                                          marginBottom: "0px",
+                                          marginTop: 2,
                                         }}
                                       >
                                         <strong> Place of Receipt</strong>
                                       </p>
                                       <p
                                         style={{
-                                          fontSize: 14,
-                                          marginBottom: "unset",
-                                          marginTop: 5,
+                                          fontSize: 12,
+                                          marginBottom: "0px",
+                                          marginTop: 2,
                                         }}
                                       >
                                         {getdata?.port_of_loading}
@@ -2497,18 +2499,18 @@ export default function ShippingEstimate() {
                                     >
                                       <p
                                         style={{
-                                          fontSize: 14,
-                                          marginBottom: "unset",
-                                          marginTop: 5,
+                                          fontSize: 12,
+                                          marginBottom: "0px",
+                                          marginTop: 2,
                                         }}
                                       >
                                         <strong>Port of Loading</strong>
                                       </p>
                                       <p
                                         style={{
-                                          fontSize: 14,
-                                          marginBottom: "unset",
-                                          marginTop: 5,
+                                          fontSize: 12,
+                                          marginBottom: "0px",
+                                          marginTop: 2,
                                         }}
                                       >
                                         {getdata?.port_of_loading}
@@ -2522,9 +2524,9 @@ export default function ShippingEstimate() {
                                     >
                                       <p
                                         style={{
-                                          fontSize: 14,
-                                          marginBottom: "unset",
-                                          marginTop: 5,
+                                          fontSize: 12,
+                                          marginBottom: "0px",
+                                          marginTop: 2,
                                         }}
                                       >
                                         <strong>Port of Discharge</strong>
@@ -2532,9 +2534,9 @@ export default function ShippingEstimate() {
                                       <p
                                         className="text-dark"
                                         style={{
-                                          fontSize: 14,
-                                          marginBottom: "unset",
-                                          marginTop: 5,
+                                          fontSize: 12,
+                                          marginBottom: "0px",
+                                          marginTop: 2,
                                         }}
                                       >
                                         {getdata?.post_of_discharge}
@@ -2548,18 +2550,18 @@ export default function ShippingEstimate() {
                                     >
                                       <p
                                         style={{
-                                          fontSize: 14,
-                                          marginBottom: "unset",
-                                          marginTop: 5,
+                                          fontSize: 12,
+                                          marginBottom: "0px",
+                                          marginTop: 2,
                                         }}
                                       >
                                         <strong> Place of Delivery</strong>
                                       </p>
                                       <p
                                         style={{
-                                          fontSize: 14,
-                                          marginBottom: "unset",
-                                          marginTop: 5,
+                                          fontSize: 12,
+                                          marginBottom: "0px",
+                                          marginTop: 2,
                                         }}
                                       >
                                         {getdata?.delivery_to_name}
@@ -2573,9 +2575,9 @@ export default function ShippingEstimate() {
                                     >
                                       <p
                                         style={{
-                                          fontSize: 14,
-                                          marginBottom: "unset",
-                                          marginTop: 5,
+                                          fontSize: 12,
+                                          marginBottom: "0px",
+                                          marginTop: 2,
                                         }}
                                       >
                                         <strong>
@@ -2585,9 +2587,9 @@ export default function ShippingEstimate() {
                                       </p>
                                       <p
                                         style={{
-                                          fontSize: 14,
-                                          marginBottom: "unset",
-                                          marginTop: 5,
+                                          fontSize: 12,
+                                          marginBottom: "0px",
+                                          marginTop: 2,
                                         }}
                                       >
                                         {getdata?.quote_received}
@@ -2601,18 +2603,18 @@ export default function ShippingEstimate() {
                                     >
                                       <p
                                         style={{
-                                          fontSize: 14,
-                                          marginBottom: "unset",
-                                          marginTop: 5,
+                                          fontSize: 12,
+                                          marginBottom: "0px",
+                                          marginTop: 2,
                                         }}
                                       >
                                         <strong> Date</strong>
                                       </p>
                                       <p
                                         style={{
-                                          fontSize: 14,
-                                          marginBottom: "unset",
-                                          marginTop: 5,
+                                          fontSize: 12,
+                                          marginBottom: "0px",
+                                          marginTop: 2,
                                         }}
                                       >
                                         {new Date(
@@ -2647,7 +2649,7 @@ export default function ShippingEstimate() {
                             <p
                               style={{
                                 margin: 0,
-                                fontSize: 13,
+                                fontSize: 12,
                                 fontWeight: 700,
                                 textTransform: "uppercase",
                                 paddingLeft: 5,

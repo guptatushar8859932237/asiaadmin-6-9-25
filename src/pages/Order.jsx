@@ -824,7 +824,7 @@ export default function Order() {
   useEffect(() => {
     getSupplier()
   }, [])
-  
+
   const getSupplier = async () => {
     try {
       const response = await axios.get(`${process.env.REACT_APP_BASE_URL}getWarehouseSupplierList`);
@@ -2314,18 +2314,18 @@ export default function Order() {
             bgcolor: "background.paper",
             boxShadow: 24,
             width: {
-              xs: "95%",   // mobile
-              sm: "80%",   // tablet
-              md: "60%",   // small laptop
-              lg: "40%",   // desktop
+              xs: "95%",
+              sm: "80%",
+              md: "60%",
+              lg: "40%",
             },
 
           }}
         >
           <div className="modal-header">
-            <h2>
-              <h2 id="modal-modal-title">Filter</h2>
-            </h2>
+
+            <h2 id="modal-modal-title">Filter</h2>
+
             <button className="btn btn-close" onClick={closeModal1}>
               <CloseIcon />{" "}
             </button>

@@ -201,7 +201,7 @@ export default function WarehouseOrder() {
           if (error.response && error.response.status === 400) {
             toast.error(
               error.response.data.message ||
-                "Data not found or permission denied.",
+              "Data not found or permission denied.",
             );
           } else {
             toast.error("Something went wrong while fetching orders.");
@@ -688,7 +688,7 @@ export default function WarehouseOrder() {
       if (error.response) {
         toast.error(
           error.response.data?.message ||
-            `Request failed with status ${error.response.status}`,
+          `Request failed with status ${error.response.status}`,
         );
       } else if (error.request) {
         toast.error("Server not responding. Please try again later.");
@@ -983,42 +983,48 @@ export default function WarehouseOrder() {
                             top: "50%",
                             left: "50%",
                             transform: "translate(-50%, -50%)",
-                            height: 300,
-                            width: 450,
                             bgcolor: "background.paper",
                             boxShadow: 24,
-                            p: 4,
+                            width: {
+                              xs: "95%",
+                              sm: "80%",
+                              md: "60%",
+                              lg: "40%",
+                            },
                           }}
                         >
-                          <h4 id="modal-modal-title text-dark">
-                            Assign Supplier
-                          </h4>
-                          <select
-                            className="form-control"
-                            onChange={handleChangeSupplier}
-                          >
-                            <option>select</option>
-
-                            {handlsupplier &&
-                              handlsupplier.length > 0 &&
-                              handlsupplier.map((item, index) => {
-                                return (
-                                  <>
-                                    <option key={index} value={item.id}>
-                                      {item.name}
-                                    </option>
-                                  </>
-                                );
-                              })}
-                          </select>
-                          <div className="d-flex  mt-3">
-                            <Button
-                              variant="contained"
-                              className="submit_btn"
-                              onClick={AssignSupplier}
+                          <div className="modal-header">
+                            <h2 className="modal-title" id="modal-modal-title text-dark">
+                              Assign Supplier
+                            </h2>
+                          </div>
+                          <div className="newModalGap  noFormaControl">
+                            <select
+                              className="form-select"
+                              onChange={handleChangeSupplier}
                             >
-                              Submit
-                            </Button>
+                              <option>select</option>
+
+                              {handlsupplier &&
+                                handlsupplier.length > 0 &&
+                                handlsupplier.map((item, index) => {
+                                  return (
+                                    <>
+                                      <option key={index} value={item.id}>
+                                        {item.name}
+                                      </option>
+                                    </>
+                                  );
+                                })}
+                            </select>
+                            <div className="d-flex justify-content-center  mt-3">
+                              <button
+                                variant="contained"
+                                className="blueBtn"
+                                onClick={AssignSupplier}>
+                                Submit
+                              </button>
+                            </div>
                           </div>
                         </Box>
                       </Modal>
@@ -1070,6 +1076,12 @@ export default function WarehouseOrder() {
                             top: "50%",
                             left: "50%",
                             transform: "translate(-50%, -50%)",
+                            width: {
+                              xs: "95%",
+                              sm: "80%",
+                              md: "60%",
+                              lg: "40%",
+                            },
                           }}
                         >
                           <div className="modal-header">
@@ -1204,9 +1216,12 @@ export default function WarehouseOrder() {
                                 </select>
                               </div>
                             </div>
-                            <Button variant="contained" onClick={postData}>
-                              Apply
-                            </Button>
+                            <div className="d-flex justify-content-center">
+                              <button className="blueBtn" variant="contained" onClick={postData}>
+                                Apply
+                              </button>
+
+                            </div>
                           </div>
                         </Box>
                       </Modal>
@@ -1286,12 +1301,12 @@ export default function WarehouseOrder() {
                                     }}
                                     value={
                                       selectedData?.date_received &&
-                                      !isNaN(
-                                        new Date(selectedData.date_received),
-                                      )
+                                        !isNaN(
+                                          new Date(selectedData.date_received),
+                                        )
                                         ? new Date(selectedData.date_received)
-                                            .toISOString()
-                                            .split("T")[0]
+                                          .toISOString()
+                                          .split("T")[0]
                                         : ""
                                     }
                                     onChange={handleInputChange}
@@ -1327,12 +1342,12 @@ export default function WarehouseOrder() {
                                     className="form-control"
                                     value={
                                       selectedData?.dispatched_date &&
-                                      !isNaN(
-                                        new Date(selectedData.dispatched_date),
-                                      )
+                                        !isNaN(
+                                          new Date(selectedData.dispatched_date),
+                                        )
                                         ? new Date(selectedData.dispatched_date)
-                                            .toISOString()
-                                            .split("T")[0]
+                                          .toISOString()
+                                          .split("T")[0]
                                         : ""
                                     }
                                     name="dispatched_date"
@@ -1951,25 +1966,25 @@ export default function WarehouseOrder() {
                             width: "80%",
                             bgcolor: "background.paper",
                             boxShadow: 24,
-                            p: 4,
-                            borderRadius: 2,
-                            maxHeight: "90vh",
-                            overflowY: "auto",
+
+                            width: {
+                              xs: "95%",
+                              sm: "80%",
+                              md: "60%",
+                              lg: "40%",
+                            },
                           }}
                         >
-                          <Box
-                            display="flex"
-                            justifyContent="space-between"
-                            alignItems="center"
-                            mb={2}
+                          <div
+                            className="modal-header"
                           >
-                            <Typography variant="h6">
+                            <h2 className="modal-title">
                               Warehouse Detail
-                            </Typography>
-                            <IconButton onClick={handleCloseModal3}>
+                            </h2>
+                            <button onClick={handleCloseModal3}>
                               <CloseIcon />
-                            </IconButton>
-                          </Box>
+                            </button>
+                          </div>
                           <div className="newModalGap  noFormaControl">
                             <div className="row mb-3">
                               <div className="col-md-6">
@@ -2184,17 +2199,20 @@ export default function WarehouseOrder() {
                               </div>
                             </div>
                             <div className="row mb-3 mt-4">
-                              <div className="col-9 mt-3">
+                              <div className="col-sm-6">
                                 <h4 className="freight_hd">Document Section</h4>
                                 <span class="line"></span>
                               </div>
-                              <div className="col-3">
-                                <Button
-                                  className="btn  btn-primary"
-                                  onClick={handleShow}
-                                >
-                                  Upload Documents
-                                </Button>
+                              <div className="col-sm-6">
+                                <div className="text-end">
+                                  <button
+                                    className="redBtn"
+                                    onClick={handleShow}
+                                  >
+                                    Upload Documents
+                                  </button>
+
+                                </div>
 
                                 {show1 ? (
                                   <Modal
@@ -2210,82 +2228,93 @@ export default function WarehouseOrder() {
                                   >
                                     <Box
                                       sx={{
-                                        p: 3,
                                         bgcolor: "background.paper",
                                         borderRadius: 2,
-                                        width: 500,
                                         mx: "auto",
                                         mt: 10,
+                                        width: {
+                                          xs: "95%",
+                                          sm: "80%",
+                                          md: "60%",
+                                          lg: "40%",
+                                        },
                                       }}
                                     >
-                                      <h2>Upload Documents</h2>
-
-                                      {/* Dropdown */}
-                                      <FormControl fullWidth sx={{ mt: 2 }}>
-                                        <InputLabel id="doc-select-label">
-                                          Select Document Type
-                                        </InputLabel>
-                                        <Select
-                                          labelId="doc-select-label"
-                                          // value={selected}
-                                          onChange={handleSelect}
-                                        >
-                                          {docOptions.map((option) => (
-                                            <MenuItem
-                                              key={option.id}
-                                              value={option.id}
-                                            >
-                                              {option.label}
-                                            </MenuItem>
-                                          ))}
-                                        </Select>
-                                      </FormControl>
-
-                                      {/* Dynamic file inputs */}
-                                      <div className="mt-3">
-                                        {selectedDocs.map((doc, index) => (
-                                          <div key={index} className="mb-3">
-                                            <label className="fw-bold">
-                                              {doc.name}
-                                            </label>
-                                            <input
-                                              type="file"
-                                              className="form-control"
-                                              multiple
-                                              accept="image/*,application/pdf"
-                                              onChange={(e) =>
-                                                handleFileChangefil(e, doc.name)
-                                              }
-                                            />
-                                          </div>
-                                        ))}
+                                      <div className="modal-header">
+                                        <h5>Upload Documents</h5>
                                       </div>
+                                      <div className="newModalGap  noFormaControl">
 
-                                      {/* Footer buttons */}
-                                      <Box
-                                        sx={{
-                                          display: "flex",
-                                          justifyContent: "flex-end",
-                                          gap: 2,
-                                          mt: 3,
-                                        }}
-                                      >
-                                        <Button onClick={handleClose}>
-                                          Cancel
-                                        </Button>
-                                        <Button
-                                          variant="contained"
-                                          color="success"
-                                          onClick={handleSave}
+
+                                        {/* Dropdown */}
+                                        <FormControl fullWidth sx={{ mt: 2 }}>
+                                          <InputLabel id="doc-select-label">
+                                            Select Document Type
+                                          </InputLabel>
+                                          <Select
+                                            labelId="doc-select-label"
+                                            // value={selected}
+                                            onChange={handleSelect}
+                                          >
+                                            {docOptions.map((option) => (
+                                              <MenuItem
+                                                key={option.id}
+                                                value={option.id}
+                                              >
+                                                {option.label}
+                                              </MenuItem>
+                                            ))}
+                                          </Select>
+                                        </FormControl>
+
+                                        {/* Dynamic file inputs */}
+                                        <div className="mt-3">
+                                          {selectedDocs.map((doc, index) => (
+                                            <div key={index} className="mb-3">
+                                              <label className="fw-bold">
+                                                {doc.name}
+                                              </label>
+                                              <input
+                                                type="file"
+                                                className="form-control"
+                                                multiple
+                                                accept="image/*,application/pdf"
+                                                onChange={(e) =>
+                                                  handleFileChangefil(e, doc.name)
+                                                }
+                                              />
+                                            </div>
+                                          ))}
+                                        </div>
+
+                                        {/* Footer buttons */}
+                                        <Box
+                                          sx={{
+                                            display: "flex",
+                                            justifyContent: "flex-end",
+                                            gap: 2,
+                                            mt: 3,
+                                          }}
                                         >
-                                          Save Documents
-                                        </Button>
-                                      </Box>
+                                          <button className="redBtn" onClick={handleClose}>
+                                            Cancel
+                                          </button>
+                                          <button
+                                            variant="contained"
+                                            color="success"
+                                            onClick={handleSave}
+                                            className="blueBtn"
+                                          >
+                                            Save Documents
+                                          </button>
+                                        </Box>
+                                      </div>
                                     </Box>
                                   </Modal>
                                 ) : (
                                   ""
                                 )}
+
                               </div>
                             </div>
                             {/* <div className="row mb-3">
@@ -2311,19 +2340,18 @@ export default function WarehouseOrder() {
                           />
                         </div>
                             </div> */}
-                            <div className="row mb-3"></div>
-
-                            <div class="modal-footer"></div>
+                            <div mt={3} className="d-flex justify-content-center">
+                              <button
+                                className="blueBtn"
+                                variant="contained"
+                                onClick={handpechangepro}
+                              >
+                                Add Product
+                              </button>
+                            </div>
                           </div>
 
-                          <Box mt={3} display="flex" justifyContent="flex-end">
-                            <Button
-                              variant="contained"
-                              onClick={handpechangepro}
-                            >
-                              Add Product
-                            </Button>
-                          </Box>
+
                         </Box>
                       </Modal>
                     </div>
@@ -2333,7 +2361,7 @@ export default function WarehouseOrder() {
             </div>
           )}
         </div>
-      </div>
+      </div >
     </>
   );
 }

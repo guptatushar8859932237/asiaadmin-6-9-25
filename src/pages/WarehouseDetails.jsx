@@ -218,19 +218,19 @@ export default function WarehouseDetails() {
   };
 
   const totalWeight = apidata.reduce(
-  (sum, item) => sum + Number(item.weight || 0),
-  0
-);
+    (sum, item) => sum + Number(item.weight || 0),
+    0
+  );
 
-const totalPackages = apidata.reduce(
-  (sum, item) => sum + Number(item.packages || 0),
-  0
-);
+  const totalPackages = apidata.reduce(
+    (sum, item) => sum + Number(item.packages || 0),
+    0
+  );
 
-const totalDimension = apidata.reduce(
-  (sum, item) => sum + Number(item.dimension || 0),
-  0
-);
+  const totalDimension = apidata.reduce(
+    (sum, item) => sum + Number(item.dimension || 0),
+    0
+  );
   return (
     <div className="wpWrapper">
       <div className="container-fluid">
@@ -253,71 +253,43 @@ const totalDimension = apidata.reduce(
               </div>
             </div>
           </div>
-          <div className="details_box">
+          <div className="details_box viewDetails">
             <div className="row">
               <div className="col-md-4 pe-4">
                 <div className=" card desti_card">
                   <div className="card-body">
                     <div>
                       <h6 className="orgin_hd">Warehouse Details</h6>
-                      <span className="line"></span>
+
                     </div>
                     <div className="main_det">
-                      <div className="table-responsive">
-                        <table className="det_show">
-                          <tbody>
-                            <tr>
-                              <td className="fright_num">
-                                <p className="client_para1">Freight number:</p>
-                              </td>
-                              <td>
-                                <p className="client_para1">
-                                  {info.freight_number}
-                                </p>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>
-                                <p className="client_para1">Date:</p>
-                              </td>
-                              <td>
-                                <p className="client_para1">
-                                  {new Date(info.created_at).toLocaleDateString(
-                                    "en-GB",
-                                  )}
-                                </p>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>
-                                <p className="client_para1">Client:</p>
-                              </td>
-                              <td>
-                                <p className="client_para1">
-                                  {info.client_name}
-                                </p>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>
-                                <p className="client_para1">Client Ref:</p>
-                              </td>
-                              <td>
-                                <p className="client_para1">
-                                  {info.customer_ref}
-                                </p>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>
-                                <p className="client_para1">Groupage:</p>
-                              </td>
-                              <td>
-                                <p className="client_para1">{info?.batch_number}</p>
-                              </td>
-                            </tr>
-                          </tbody>
-                        </table>
+                      <div className="view_box">
+
+                        <h6 className="ship_hd">
+                          <i className="fi fi-rs-receipt build_icon"></i> Freight Details
+                        </h6>
+
+                        <div className="d-flex align-items-start">
+                          <div>
+                            <p className="client_para">Freight Number:</p>
+                            <p className="or_para">{info.freight_number}</p>
+
+                            <p className="client_para">Date:</p>
+                            <p className="or_para">
+                              {new Date(info.created_at).toLocaleDateString("en-GB")}
+                            </p>
+
+                            <p className="client_para">Client:</p>
+                            <p className="or_para">{info.client_name}</p>
+
+                            <p className="client_para">Client Ref:</p>
+                            <p className="or_para">{info.customer_ref}</p>
+
+                            <p className="client_para">Groupage:</p>
+                            <p className="or_para">{info?.batch_number}</p>
+                          </div>
+                        </div>
+
                       </div>
                     </div>
                   </div>
@@ -328,91 +300,39 @@ const totalDimension = apidata.reduce(
                   <div className="card-body">
                     <div className="">
                       <h6 className="orgin_hd">Costs Estimates</h6>
-                      <span className="line"></span>
+
                     </div>
                     <div className="main_det">
-                      <div className="table-responsive">
-                        <table className="det_show">
-                          <thead>
-                            <tr>
-                              <td className="ship_hd1"></td>
-                              <td className="ship_hd2">Warehouse</td>
-                              <td className="ship_hd3 pe-2">Other</td>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            <tr>
-                              <td>
-                                <p className="client_para1">Collection</p>
-                              </td>
-                              <td>
-                                <p className="client_para1"></p>
-                              </td>
-                              <td>
-                                <p className="client_para1">
-                                  {info.order_warehouse_cost}
-                                </p>
-                              </td>
-                            </tr>
-                            <tr>
-                              {/* <td>
-                                <p className="client_para1">Warehouse</p>
-                              </td> */}
-                              <td>
-                                <p className="client_para1"></p>
-                              </td>
-                              {/* <td>
-                                <p className="client_para1">
-                                  {info.warehouse_cost}
-                                </p> */}
-                              {/* </td> */}
-                            </tr>
-                            <tr>
-                              <td>
-                                <p className="client_para1 ">cost to collect</p>
-                              </td>
-                              <td>
-                                <p className="client_para1 "></p>
-                              </td>
-                              <td>
-                                <p className="client_para1 ">
-                                  {info.order_costs_to_collect}
-                                </p>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>
-                                <p className="client_para1 ">
-                                 Handling Costs
-                                </p>
-                              </td>
-                              <td>
-                                <p className="client_para1 "></p>
-                              </td>
-                              <td>
-                                <p className="client_para1 ">
-                                  {info.handling_cost}
-                                </p>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>
-                                <p className="client_para1 ">
-                                  Origin Incidental cost
-                                </p>
-                              </td>
-                              <td>
-                                <p className="client_para1 mb-3"></p>
-                              </td>
-                              <td>
-                                <p className="client_para1 mb-3">
-                                  {info.origin_Incidental_costs}
-                                </p>
-                              </td>
-                            </tr>
-                          </tbody>
-                        </table>
+
+                      <div className="view_box">
+
+                        <h6 className="ship_hd">
+                          <i className="fi fi-rs-dollar build_icon"></i> Cost Breakdown
+                        </h6>
+
+                        <div className="d-flex align-items-start">
+                          <div>
+
+                            <p className="client_para">Collection</p>
+                            <p className="or_para">{info.order_warehouse_cost}</p>
+
+                            <p className="client_para">Warehouse</p>
+                            <p className="or_para">{info.warehouse_cost}</p>
+
+                            <p className="client_para">Cost to Collect</p>
+                            <p className="or_para">{info.order_costs_to_collect}</p>
+
+                            <p className="client_para">Handling Costs</p>
+                            <p className="or_para">{info.handling_cost}</p>
+
+                            <p className="client_para">Origin Incidental Cost</p>
+                            <p className="or_para">{info.origin_Incidental_costs}</p>
+
+                          </div>
+                        </div>
+
                       </div>
+
                     </div>
                   </div>
                 </div>
@@ -422,54 +342,36 @@ const totalDimension = apidata.reduce(
                   <div className="card-body">
                     <div>
                       <h6 className="orgin_hd">Packages Details</h6>
-                      <span className="line"></span>
+
                     </div>
                     <div className="main_det">
-                      <div className="table-responsive">
-                        <table className="det_show">
-                          <tbody>
-                            <tr>
-                              <td className="fright_num">
-                                <p className="client_para1">Weight:</p>
-                              </td>
-                              <td>
-                                <p className="client_para1">
- {totalWeight   }
-                                </p>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>
-                                <p className="client_para1">Dimensions:</p>
-                              </td>
-                              <td>
-                                <p className="client_para1">
-                                  {totalDimension}
-                                </p>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>
-                                <p className="client_para1">Packages:</p>
-                              </td>
-                              <td>
-                                <p className="client_para1">
-                                  {totalPackages}
-                                </p>
-                              </td>
-                            </tr>
-                            {/* <tr>
-                              <td>
-                                <p className="client_para1">Orders:</p>
-                              </td>
-                              <td>
-                                <p className="client_para1">
-                                  
-                                </p>
-                              </td>
-                            </tr> */}
-                          </tbody>
-                        </table>
+                      <div className="view_box">
+
+                        <h6 className="ship_hd">
+                          <i className="fi fi-rs-box build_icon"></i> Package Summary
+                        </h6>
+
+                        <div className="d-flex align-items-start">
+                          <div>
+
+                            <p className="client_para">Weight:</p>
+                            <p className="or_para">{totalWeight}</p>
+
+                            <p className="client_para">Dimensions:</p>
+                            <p className="or_para">{totalDimension}</p>
+
+                            <p className="client_para">Packages:</p>
+                            <p className="or_para">{totalPackages}</p>
+
+                            {/* Optional field */}
+                            {/* 
+        <p className="client_para">Orders:</p>
+        <p className="or_para"></p>
+        */}
+
+                          </div>
+                        </div>
+
                       </div>
                     </div>
                   </div>
@@ -483,48 +385,55 @@ const totalDimension = apidata.reduce(
                 {Object.keys(documents).map((groupName, groupIndex) => (
                   <div key={groupIndex} className="mb-2">
                     <label>{groupName} :</label>
-                    {documents[groupName]?.map((item, index) => (
-              <div className="image-box">
-  <img
-    src={`${process.env.REACT_APP_BASE_URLdocument}${item?.document}`}
-    alt="doc"
-    className="preview-img"
-    onClick={() =>
-      window.open(
-        `${process.env.REACT_APP_BASE_URLdocument}${item?.document}`,
-        "_blank"
-      )
-    }
-  />
+                    <div className="wayWillView">
+                      {documents[groupName]?.map((item, index) => (
+                        <div>
+                          <div className="image-box">
+                            <img
+                              src={`${process.env.REACT_APP_BASE_URLdocument}${item?.document}`}
+                              alt="doc"
+                              className="preview-img"
+                              onClick={() =>
+                                window.open(
+                                  `${process.env.REACT_APP_BASE_URLdocument}${item?.document}`,
+                                  "_blank"
+                                )
+                              }
+                            />
 
-  <DeleteIcon
-    onClick={() => deleteapi(item.id)}
-    className="delete-icon"
-  />
-</div>
-                    ))}
+                            <DeleteIcon
+                              onClick={() => deleteapi(item.id)}
+                              className="delete-icon"
+                            />
+                          </div>
+                        </div>
+                      ))}
+
+                    </div>
                   </div>
                 ))}
                 {/* Quotation (separate because it's not part of groups) */}
-              <div className="mb-2">
-  <label>Attach Quotation :</label>
+                <div className="mb-2">
+                  <label>Attach Quotation :</label>
 
-  {info.attachment_Estimate && (
-    <div className="image-box ms-2">
-      <img
-        src={`${process.env.REACT_APP_BASE_URLdocument}${info?.attachment_Estimate}`}
-        alt="quotation"
-        className="preview-img"
-        onClick={() =>
-          window.open(
-            `${process.env.REACT_APP_BASE_URLdocument}${info?.attachment_Estimate}`,
-            "_blank"
-          )
-        }
-      />
-    </div>
-  )}
-</div>
+                  {info.attachment_Estimate && (
+                    <div>
+                      <div className="image-box ms-2">
+                        <img
+                          src={`${process.env.REACT_APP_BASE_URLdocument}${info?.attachment_Estimate}`}
+                          alt="quotation"
+                          className="preview-img"
+                          onClick={() =>
+                            window.open(
+                              `${process.env.REACT_APP_BASE_URLdocument}${info?.attachment_Estimate}`,
+                              "_blank"
+                            )
+                          }
+                        />
+                      </div>
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
           </div>
@@ -563,10 +472,11 @@ const totalDimension = apidata.reduce(
                           <td>{item.dimension}</td>
                           <td>{item.weight}</td>
                           <td>
-                             {item?.id ? (
+                            {item?.id ? (
                               <VisibilityIcon
                                 onClick={() => handleEditClickview(item.id)}
                                 style={{ color: "#1d2044", cursor: "pointer" }}
+                                className="me-1"
                               />
                             ) : (
                               ""
@@ -575,6 +485,8 @@ const totalDimension = apidata.reduce(
                               <FaEdit
                                 onClick={() => handleEditClick(item.id)}
                                 style={{ color: "#1d2044", cursor: "pointer" }}
+                                className="me-1"
+
                               />
                             ) : (
                               ""
@@ -582,12 +494,12 @@ const totalDimension = apidata.reduce(
                             {item?.id ? (
                               <DeleteIcon
                                 onClick={() => handleEditClick12(item.id)}
-                                style={{ color: "#1d2044", cursor: "pointer" }}
+                                style={{ fill: "#be191d", cursor: "pointer" }}
                               />
                             ) : (
                               ""
                             )}
-                           
+
                           </td>
                         </tr>
                       </>
@@ -604,26 +516,25 @@ const totalDimension = apidata.reduce(
               top: "50%",
               left: "50%",
               transform: "translate(-50%, -50%)",
-              width: "80%",
+
               bgcolor: "background.paper",
               boxShadow: 24,
-              p: 4,
-              borderRadius: 2,
-              maxHeight: "90vh",
-              overflowY: "auto",
+              width: {
+                xs: "95%",
+                sm: "80%",
+                md: "60%",
+                lg: "40%",
+              },
             }}
           >
-            <Box
-              display="flex"
-              justifyContent="space-between"
-              alignItems="center"
-              mb={2}
+            <div
+              className="modal-header"
             >
-              <Typography variant="h6">Warehouse Detail</Typography>
-              <IconButton onClick={handleCloseModal3}>
+              <h2 className="modal-title">Warehouse Detail</h2>
+              <button onClick={handleCloseModal3}>
                 <CloseIcon />
-              </IconButton>
-            </Box>
+              </button>
+            </div>
             <div className="newModalGap  noFormaControl">
               <div className="row mb-3">
                 <div className="col-md-6">
@@ -671,8 +582,8 @@ const totalDimension = apidata.reduce(
                     value={
                       selectedData.date_received
                         ? new Date(selectedData.date_received)
-                            .toISOString()
-                            .split("T")[0]
+                          .toISOString()
+                          .split("T")[0]
                         : ""
                     }
                     onChange={handlechangepro}
@@ -834,14 +745,14 @@ const totalDimension = apidata.reduce(
                   />
                 </div>
               </div>
-              <div className="row mb-3"></div>
-              <div class="modal-footer"></div>
+
+
+              <div className="d-flex justify-content-center">
+                <button className="blueBtn" variant="contained" onClick={handpechangepro}>
+                  Edit Product
+                </button>
+              </div>
             </div>
-            <Box mt={3} display="flex" justifyContent="flex-end">
-              <Button variant="contained" onClick={handpechangepro}>
-                Edit Product
-              </Button>
-            </Box>
           </Box>
         </Modal>
         <Modal open={isModalviewsection3} onClose={handleCloseadadModal3}>
@@ -851,26 +762,22 @@ const totalDimension = apidata.reduce(
               top: "50%",
               left: "50%",
               transform: "translate(-50%, -50%)",
-              width: "80%",
               bgcolor: "background.paper",
               boxShadow: 24,
-              p: 4,
-              borderRadius: 2,
-              maxHeight: "90vh",
-              overflowY: "auto",
+              width: {
+                xs: "95%",
+                sm: "80%",
+                md: "60%",
+                lg: "40%",
+              },
             }}
           >
-            <Box
-              display="flex"
-              justifyContent="space-between"
-              alignItems="center"
-              mb={2}
-            >
-              <Typography variant="h6">Warehouse Detail</Typography>
-              <IconButton onClick={handleCloseModal3}>
+            <div className="modal-header">
+              <h2 className="modal-title">Warehouse Detail</h2>
+              <button className="btn btn-close" onClick={handleCloseadadModal3}>
                 <CloseIcon />
-              </IconButton>
-            </Box>
+              </button>
+            </div>
             <div className="newModalGap  noFormaControl">
               <div className="row mb-3">
                 <div className="col-md-6">
@@ -922,8 +829,8 @@ const totalDimension = apidata.reduce(
                     value={
                       selectedData.date_received
                         ? new Date(selectedData.date_received)
-                            .toISOString()
-                            .split("T")[0]
+                          .toISOString()
+                          .split("T")[0]
                         : ""
                     }
                     onChange={handlechangepro}
@@ -1025,7 +932,7 @@ const totalDimension = apidata.reduce(
                     placeholder="0.00"
                     value={selectedData.warehouse_order_id || ""}
                     onChange={handlechangepro}
-disabled
+                    disabled
                     onKeyPress={handlekey}
                   />
                 </div>
@@ -1100,7 +1007,7 @@ disabled
               <div className="row mb-3"></div>
               <div class="modal-footer"></div>
             </div>
-           
+
           </Box>
         </Modal>
       </div>

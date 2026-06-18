@@ -136,7 +136,7 @@ const Uniovwersalpage = lazy(() => import("./components/Uniovwersalpage"));
 export default function App() {
   const [text, setText] = useState("");
   const [permission, setPermission] = useState("");
-  console.log("18-06-26", "17:33");
+  console.log("18-06-26", "18:20");
   return (
     <MyContext1.Provider value={{ text, setText }}>
       <MyContext2.Provider value={{ permission, setPermission }}>

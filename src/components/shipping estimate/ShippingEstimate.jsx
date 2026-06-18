@@ -1606,7 +1606,7 @@ export default function ShippingEstimate() {
                                     <td
                                       style={{ fontSize: 14 }}
                                     >
-                                      {getdata?.client_ref_name}
+                                      {freight?.reference_no}
                                     </td>
                                   </tr>
                                   <tr>

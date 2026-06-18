@@ -31,6 +31,14 @@ const emptySupplierForm = {
   country_based: "",
   service_type: "",
 };
+
+const Field = ({ label, children, col = "col-12 col-md-6" }) => (
+  <div className={`supplier-field ${col}`}>
+    <label className="supplier-field-label">{label}</label>
+    {children}
+  </div>
+);
+
 export default function ManageSupplier() {
   const [currentPage, setCurrentPage] = useState(1);
   const [data, setData] = useState([]);
@@ -288,13 +296,6 @@ export default function ManageSupplier() {
 
   const getServiceLabel = (value) =>
     SERVICE_TYPES.find((s) => s.value === value)?.label || value || "-";
-
-  const Field = ({ label, children, col = "col-12 col-md-6" }) => (
-    <div className={`supplier-field ${col}`}>
-      <label className="supplier-field-label">{label}</label>
-      {children}
-    </div>
-  );
 
   const renderSupplierFields = (values, onChange, isEdit = false) => (
     <div className="supplier-form-fields">

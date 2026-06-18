@@ -1320,11 +1320,11 @@ export default function Downlaodestimate() {
   };
   useEffect(() => {
     getsupplier();
-  }, 1000);
+  }, []);
   useEffect(() => {
     getdataapi();
     getNewDataapi();
-  }, 1000);
+  }, []);
 
   const getsupplier = () => {
     axios
@@ -1432,14 +1432,16 @@ export default function Downlaodestimate() {
     const contentWidth = element.scrollWidth;
     const contentHeight = element.scrollHeight;
     const rect = element.getBoundingClientRect();
+    const pdfWidth = Math.max(rect.width, contentWidth);
+    const pdfHeight = Math.max(rect.height, contentHeight);
     const options = {
       margin: 0,
       filename: "page.pdf",
       image: { type: "jpeg", quality: 1 },
-      html2canvas: { scale: 1.5, useCORS: true },
+      html2canvas: { scale: 1.5, useCORS: true, windowWidth: contentWidth },
       jsPDF: {
         unit: "px",
-        format: [rect.width, rect.height],
+        format: [pdfWidth, pdfHeight],
         orientation: "portrait",
       },
       pagebreak: false,

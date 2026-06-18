@@ -489,6 +489,35 @@ export default function Managefreight() {
       toast.error(error.response?.data?.message || "Permission denied");
     }
   };
+
+    const hanldeclicknavi2 = async (freight_id) => {
+    console.log(freight_id);
+    JSON.stringify(localStorage.setItem("freightid", freight_id));
+    try {
+      // Filter the relevant data
+      const alldata = data.filter((item) => item.freight_id === freight_id);
+      console.log("Filtered Data:", alldata);
+      const datapost = {
+        staff_id: userid,
+        route_url: "/Admin/shipping-estimate-old",
+        user_type: usertype,
+      };
+      const permission = await axios.post(
+        `${process.env.REACT_APP_BASE_URL}CheckPermission`,
+        datapost,
+      );
+      console.log("Permission Response:", permission.data);
+      if (permission.data.success === true) {
+        console.log(alldata);
+        navigate("/Admin/shipping-estimate-old", { state: { data: alldata } });
+      } else {
+        toast.error("You don't have permission to access this page");
+      }
+    } catch (error) {
+      console.error("Permission Error:", error.response?.data || error.message);
+      toast.error(error.response?.data?.message || "Permission denied");
+    }
+  };
   const hanldeclicknavi11 = async (freight_id) => {
     console.log(freight_id);
     JSON.stringify(localStorage.setItem("freightid", freight_id));
@@ -1210,6 +1239,33 @@ export default function Managefreight() {
                                                   />{" "}
                                                   Declined
                                                 </a>
+                                                 <a
+                                                  className="dropdown-item li_icon"
+                                                  onClick={() => {
+                                                    hanldeclicknavi2(
+                                                      item.freight_id,
+                                                    );
+                                                  }}
+                                                >
+                                                  <div
+                                                    style={{
+                                                      cursor: "pointer",
+                                                    }}
+                                                  >
+                                                    <p className="mb-0">
+                                                      <i
+                                                        class="fi fi-ss-document-signed"
+                                                        style={{
+                                                          marginRight: "10px",
+                                                          width: "20px",
+                                                          color:
+                                                            "rgb(27 34 69)",
+                                                        }}
+                                                      ></i>
+                                                      Estimate Quote
+                                                    </p>
+                                                  </div>
+                                                </a>
                                                 <a
                                                   className="dropdown-item li_icon"
                                                   onClick={() => {
@@ -1233,7 +1289,7 @@ export default function Managefreight() {
                                                             "rgb(27 34 69)",
                                                         }}
                                                       ></i>
-                                                      Estimate Quote
+                                                      Estimate Quote New
                                                     </p>
                                                   </div>
                                                 </a>

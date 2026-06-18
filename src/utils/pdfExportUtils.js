@@ -6,7 +6,7 @@ import {
   renderPdfQuoteLayout,
 } from "./pdfQuoteLayout";
 
-export const PDF_PAGE_WIDTH = 1100;
+export const PDF_PAGE_WIDTH = 1600;
 
 const getFormControlDisplayValue = (el) => {
   if (el.tagName === "SELECT") {

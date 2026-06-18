@@ -114,7 +114,13 @@ export default function MAnageFreightDetails() {
       });
   };
   const GetFreightImages = () => {
-    const data = { freight_id: info.freight_id, uploaded_by: "1" };
+    const data = { uploaded_by: "1" };
+    if (info?.freight_id) {
+      data.freight_id = info.freight_id;
+    }
+    if (info?.order_id) {
+      data.order_id = info.order_id;
+    }
 
     axios
       .post(`${process.env.REACT_APP_BASE_URL}GetFreightImages`, data)

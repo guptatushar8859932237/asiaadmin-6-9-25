@@ -39,13 +39,11 @@ const root = ReactDOM.createRoot(
 );
 
 root.render(
-  <React.StrictMode>
-    <GoogleOAuthProvider clientId={CLIENT_ID}>
-      <ClientIdContext.Provider value={CLIENT_ID}>
-        <App />
-      </ClientIdContext.Provider>
-    </GoogleOAuthProvider>
-  </React.StrictMode>
+  <GoogleOAuthProvider clientId={CLIENT_ID}>
+    <ClientIdContext.Provider value={CLIENT_ID}>
+      <App />
+    </ClientIdContext.Provider>
+  </GoogleOAuthProvider>
 );
 
 reportWebVitals();

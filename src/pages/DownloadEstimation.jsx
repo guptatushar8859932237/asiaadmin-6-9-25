@@ -1,7 +1,7 @@
 // export default function DownloadEstimation() {
 //   return (
 //     <div>
-      
+
 //     </div>
 //   )
 // }
@@ -145,7 +145,7 @@ export default function DownloadEstimation() {
       toast.error(error.response?.data?.message || "Server error occurred");
     }
   };
-   const oripick1 = parseFloat(freight.origin_pick_up_cost) || 0;
+  const oripick1 = parseFloat(freight.origin_pick_up_cost) || 0;
   // const oripick19 = parseFloat(freight.freight_charge_currencyQTY) || 0;
   // const oripick2 = parseFloat(freight.origin_pick_up_fees) || 0;
   const oripick2 =
@@ -226,8 +226,8 @@ export default function DownloadEstimation() {
   const oriforewarding3 = parseFloat(freight.origin_pickup_forewarding_gp) || 0;
   const oriforewarding4 = freight.origin_pick_up_forewarding_unitType
     ? oriforewarding1 *
-      oriforewarding2 *
-      freight.origin_pick_up_forewarding_unitTypeQTY
+    oriforewarding2 *
+    freight.origin_pick_up_forewarding_unitTypeQTY
     : 0.0;
   let finalValueforewarding = 0;
   if (oriforewarding4 > 0) {
@@ -318,8 +318,8 @@ export default function DownloadEstimation() {
   const oriinsurance3 = parseFloat(freight.freightorigin_insurance_gp) || 0;
   const oriinsurance4 = freight.freight_currency_insurance_unittype
     ? oriinsurance1 *
-      oriindsurance2 *
-      freight.freight_currency_insurance_unittypeQTY
+    oriindsurance2 *
+    freight.freight_currency_insurance_unittypeQTY
     : 0.0;
   let finalValueinsurance = 0;
   if (oriinsurance4 > 0) {
@@ -489,8 +489,8 @@ export default function DownloadEstimation() {
     parseFloat(freight.transit_change_Documentation_gp) || 0;
   const oridocumentation4 = freight.transit_change_Documentation_unitType
     ? oridocumentation1 *
-      oridocumentation2 *
-      freight.transit_change_Documentation_unitTypeQTY
+    oridocumentation2 *
+    freight.transit_change_Documentation_unitTypeQTY
     : 0.0;
   let finalValuedocumantation = 0;
   if (oridocumentation4 > 0) {
@@ -540,8 +540,8 @@ export default function DownloadEstimation() {
   const destinationdocumentation4 =
     freight.Destination_freight_currency_unitType
       ? destinationdocumentation1 *
-        destinationdocumentation2 *
-        freight.Destination_freight_currency_unitTypeQTY
+      destinationdocumentation2 *
+      freight.Destination_freight_currency_unitTypeQTY
       : 0.0;
   let finalValuedestanion = 0;
   if (destinationdocumentation4 > 0) {
@@ -567,8 +567,8 @@ export default function DownloadEstimation() {
     parseFloat(freight.Destination_THC_currency_gp) || 0;
   const destinationTHCdocumentation4 = freight.Destination_THC_currency_unitType
     ? destinationTHCdocumentation1 *
-      destinationTHCdocumentation2 *
-      freight.Destination_THC_currency_unitTypeQTY
+    destinationTHCdocumentation2 *
+    freight.Destination_THC_currency_unitTypeQTY
     : 0.0;
   let finalValueTHCdestanion = 0;
   if (destinationTHCdocumentation4 > 0) {
@@ -595,8 +595,8 @@ export default function DownloadEstimation() {
   const destinationUnpackdocumentation4 =
     freight.Destination_Unpack_currency_unitType
       ? destinationUnpackdocumentation1 *
-        destinationUnpackdocumentation2 *
-        freight.Destination_Unpack_currency_unitTypeQTY
+      destinationUnpackdocumentation2 *
+      freight.Destination_Unpack_currency_unitTypeQTY
       : 0.0;
   let finalValueUnpackdestanion = 0;
   if (destinationUnpackdocumentation4 > 0) {
@@ -625,8 +625,8 @@ export default function DownloadEstimation() {
   const destinationfuelsurchargedocumentation4 =
     freight.Destination_fuelsurcharge_currency_typeUnit
       ? destinationfuelsurchargedocumentation1 *
-        destinationfuelsurchargedocumentation2 *
-        freight.Destination_fuelsurcharge_currency_typeUnitQTY
+      destinationfuelsurchargedocumentation2 *
+      freight.Destination_fuelsurcharge_currency_typeUnitQTY
       : 0.0;
   let finalValueFulesurchargedestanion = 0;
   if (destinationfuelsurchargedocumentation4 > 0) {
@@ -657,8 +657,8 @@ export default function DownloadEstimation() {
   const destinatiadminsurcharge4 =
     freight.Destination_adminsurcharge_currency_unitType
       ? destinatiadminsurcharge1 *
-        destinatiadminsurcharge2 *
-        freight.Destination_adminsurcharge_currency_unitTypeQTY
+      destinatiadminsurcharge2 *
+      freight.Destination_adminsurcharge_currency_unitTypeQTY
       : 0.0;
   let finalValueadminsurchargedestanion = 0;
   if (destinatiadminsurcharge4 > 0) {
@@ -685,8 +685,8 @@ export default function DownloadEstimation() {
     parseFloat(freight.Destination_portcargo_currency_gp) || 0;
   const destinatiportcargo4 = freight.Destination_portcargo_currency_unitType
     ? destinatiportcargo1 *
-      destinatiportcargo2 *
-      freight.Destination_portcargo_currency_unitTypeQTY
+    destinatiportcargo2 *
+    freight.Destination_portcargo_currency_unitTypeQTY
     : 0.0;
   let finalValueportcargostanion = 0;
   if (destinatiportcargo4 > 0) {
@@ -739,8 +739,8 @@ export default function DownloadEstimation() {
   const destinati3rdpartyload4 =
     freight.Destination_3rdpartyDesc_currency_unitType
       ? destinati3rdpartyDesc1 *
-        destinati3rdpartyDesc2 *
-        freight.Destination_3rdpartyDesc_currency_unitTypeQTY
+      destinati3rdpartyDesc2 *
+      freight.Destination_3rdpartyDesc_currency_unitTypeQTY
       : 0.0;
   let finalValue3rdpartyloadstanion = 0;
   if (destinati3rdpartyload4 > 0) {
@@ -768,8 +768,8 @@ export default function DownloadEstimation() {
     parseFloat(freight.Destination_delivery_currency_gp) || 0;
   const destindeliveryyDesc4 = freight.Destination_delivery_currency_unitType
     ? destindeliveryyDesc1 *
-      destindeliveryyDesc2 *
-      freight.Destination_delivery_currency_unitTypeQTY
+    destindeliveryyDesc2 *
+    freight.Destination_delivery_currency_unitTypeQTY
     : 0.0;
   let finaldeliveryrtyloadstanion = 0;
   if (destindeliveryyDesc4 > 0) {
@@ -797,8 +797,8 @@ export default function DownloadEstimation() {
   const destindfuelchangerDesc4 =
     freight.Destination_fuelcharge_currency_unitType
       ? destindfuelchangerDesc1 *
-        destindfuelchangerDesc2 *
-        freight.Destination_fuelcharge_currency_unitTypeQTY
+      destindfuelchangerDesc2 *
+      freight.Destination_fuelcharge_currency_unitTypeQTY
       : 0.0;
   let finalfuelchangertyloadstanion = 0;
   if (destindfuelchangerDesc4 > 0) {
@@ -852,8 +852,8 @@ export default function DownloadEstimation() {
     parseFloat(freight.Destination_AdminAgrncy_currency_gp) || 0;
   const deadminAgencyesc4 = freight.Destination_AdminAgrncy_currency_unitType
     ? deadminAgencyesc1 *
-      deadminAgencyesc2 *
-      freight.Destination_AdminAgrncy_currency_unitQTY
+    deadminAgencyesc2 *
+    freight.Destination_AdminAgrncy_currency_unitQTY
     : 0.0;
   let finaldminAgencyestanion = 0;
   if (deadminAgencyesc4 > 0) {
@@ -879,8 +879,8 @@ export default function DownloadEstimation() {
     parseFloat(freight.Destination_disbursemant_currency_gp) || 0;
   const deaddisbursemantc4 = freight.Destination_AdminAgrncy_currency_unitType
     ? deaddisbursemantc1 *
-      deaddisbursemantc2 *
-      freight.Destination_disbursemant_currency_unitTypeQTY
+    deaddisbursemantc2 *
+    freight.Destination_disbursemant_currency_unitTypeQTY
     : 0.0;
   let finaladdisbursematanion = 0;
   if (deaddisbursemantc4 > 0) {
@@ -938,418 +938,418 @@ export default function DownloadEstimation() {
     totalChangeRoeOrigin;
 
   const estimateCalculate = async () => {
-     const payload = {
-        // freight_id: getdata.freight_id,
-        // client_id: getdata.client_ref,
-        // client_name: getdata.client_name,
-        // serial_number: freight.serial_number,
-        // date: update.date,
-        // client_ref: getdata.client_ref,
-        // product_desc: getdata.product_desc,
-        // type: getdata.type,
-        // freight: getdata.freight,
+    const payload = {
+      // freight_id: getdata.freight_id,
+      // client_id: getdata.client_ref,
+      // client_name: getdata.client_name,
+      // serial_number: freight.serial_number,
+      // date: update.date,
+      // client_ref: getdata.client_ref,
+      // product_desc: getdata.product_desc,
+      // type: getdata.type,
+      // freight: getdata.freight,
 
-        // incoterm: getdata.incoterm,
-        // dimension: getdata.dimension,
-        // supplier_id: freight.supplier_id,
+      // incoterm: getdata.incoterm,
+      // dimension: getdata.dimension,
+      // supplier_id: freight.supplier_id,
 
-         freight_id: getdata.freight_id,
-        client_id: getdata.client_ref,
-        client_name: getdata.client_name,
-        serial_number: freight.serial_number,
-        date: update.date,
-        client_ref: getdata.client_ref,
-        product_desc: getdata.product_desc,
-        type: getdata.type,
-        freight: getdata.freight,
-        ...(getdata.quote_estimate_id && {
-          quote_estimate_id: getdata.quote_estimate_id,
-        }),
-        incoterm: getdata.incoterm,
-        dimension: getdata.dimension,
-        supplier_id: freight.supplier_id,
-        weight: getdata.weight,
-        origin_pick_up_cost: freight.origin_pick_up_cost,
-        origin_pick_up_fees: freight.origin_pick_up_fees,
-        origin_pickup_fee_gpcalc: freight.origin_pickup_fee_gpcalc,
-        roe_origin_currencyorigin: freight.roe_origin_currencyorigin,
-        finalvlaueoriginPickup: finalvlaueoriginPickup,
-        oripick4: oripick4,
-        finalori1: finalori1,
-        origin_pick_up_fuel_cost: freight.origin_pick_up_fuel_cost,
-        origin_pick_up_fuel_fees: freight.origin_pick_up_fuel_fees,
-        origin_pick_fuelGP: freight.origin_pick_fuelGP,
-        chargable_rate: freight.chargable_rate,
-        orifuel4: orifuel4,
-        finalfuel1: finalfuel1,
-        roe_origin_fuel_currency: freight.roe_origin_fuel_currency,
-        finalvlaueoFuel: finalvlaueoFuel,
-        origin_pick_up_cfs_cost: freight.origin_pick_up_cfs_cost,
-        origin_pick_up_cfs_fees: freight.origin_pick_up_cfs_fees,
-        origin_pickup_vfs_gp: freight.origin_pickup_vfs_gp,
-        oricfs4: oricfs4,
-        finalcfs1: finalcfs1,
-        roe_origin_cfs_currency: freight.roe_origin_cfs_currency,
-        roe_freight_currency: freight.roe_freight_currency,
-        finalvlaueocfs: finalvlaueocfs,
-        origin_pick_up_documantion_cost:
-          freight.origin_pick_up_documantion_cost,
-        origin_pick_up_documantation_fees:
-          freight.origin_pick_up_documantation_fees,
-        origin_pick_documantation_cost_gp:
-          freight.origin_pick_documantation_cost_gp,
-        oridoc4: oridoc4,
-        finaldoc1: finaldoc1,
-        roe_origin_doc_currency: freight.roe_origin_doc_currency,
-        finalvlaueodoc: finalvlaueodoc,
-        origin_pick_up_forewarding_cost:
-          freight.origin_pick_up_forewarding_cost,
-        origin_pick_up_forewarding_fees:
-          freight.origin_pick_up_forewarding_fees,
-        origin_pickup_forewarding_gp: freight.origin_pickup_forewarding_gp,
-        oriforewarding4: oriforewarding4,
-        roe_origin_forewarding: freight.roe_origin_forewarding,
-        finalforewarding1: finalforewarding1,
-        finalvlaueoforewarding: finalvlaueoforewarding,
-        origin_pick_up_custome_cost: freight.origin_pick_up_custome_cost,
-        origin_pick_up_custome_clearance:
-          freight.origin_pick_up_custome_clearance,
-        origin_pickup_custome_gp: freight.origin_pickup_custome_gp,
-        oricustome4: oricustome4,
-        roe_origin_customes: freight.roe_origin_customes,
-        finalcustomes1: finalcustomes1,
-        finalvlaueoCustomes: finalvlaueoCustomes,
-        totalChageswithOutExchange: totalChageswithOutExchange,
-        totalChangeRoeOrigin: totalChangeRoeOrigin,
-        freight_charge_currency_cost: freight.freight_charge_currency_cost,
-        freight_charge_currency_fees: freight.freight_charge_currency_fees,
-        freight_charge_currency_gp: freight.freight_charge_currency_gp,
-        orifreight4: orifreight4,
-        finalfreight1: finalfreight1,
-        finalvlaueofreight: finalvlaueofreight,
-        freight_currency_insurance_cost:
-          freight.freight_currency_insurance_cost,
-        freight_currency_insurance_unit:
-          freight.freight_currency_insurance_unit,
-        freightorigin_insurance_gp: freight.freightorigin_insurance_gp,
-        oriinsurance4: oriinsurance4,
-        roe_insurance_currency: freight.roe_insurance_currency,
-        finalinsurance1: finalinsurance1,
-        finalvlaueoInsurance: finalvlaueoInsurance,
-        totalChageswithOutExchangeinsurance:
-          totalChageswithOutExchangeinsurance,
-        totalChangeRoeOriginaftercalcuinsurance:
-          totalChangeRoeOriginaftercalcuinsurance,
-        Transit_currency_Cost: freight.Transit_currency_Cost,
-        Transit_currency_unit: freight.Transit_currency_unit,
-        Transit_currency_gp: freight.Transit_currency_gp,
-        Transit_currency_roe: freight.Transit_currency_roe,
-        finaltransit1: finaltransit1,
-        finalvlaueotransit: finalvlaueotransit,
-        oritransit4: oritransit4,
-        transit_currency_THC_cost: freight.transit_currency_THC_cost,
-        transit_currency_THC_init: freight.transit_currency_THC_init,
-        transit_currency_THC_gp: freight.transit_currency_THC_gp,
-        roe_Transit_Thc: freight.roe_Transit_Thc,
-        finalThc1: finalThc1,
-        finalvlaueotfineal: finalvlaueotfineal,
-        oriThc4: oriThc4,
-        Transit_currency_unpack_cost: freight.Transit_currency_unpack_cost,
-        Transit_currency_unpack_unit: freight.Transit_currency_unpack_unit,
-        Transit_currency_unpack_gp: freight.Transit_currency_unpack_gp,
-        Transit_unpack_roe: freight.Transit_unpack_roe,
-        finalunpack1: finalunpack1,
-        finalvlaueotfunpack: finalvlaueotfunpack,
-        oriunpack4: oriunpack4,
-        transit_3rd_party_cost: freight.transit_3rd_party_cost,
-        transit_3rd_party_unit: freight.transit_3rd_party_unit,
-        transit_3rd_party_gp: freight.transit_3rd_party_gp,
-        ori3rdparty4: ori3rdparty4,
-        final3rdparty1: final3rdparty1,
-        finalvlaueot3dparty: finalvlaueot3dparty,
-        transit_currency_3rd: freight.transit_currency_3rd,
-        transit_admin_change: freight.transit_admin_change,
-        transit_admin_unit: freight.transit_admin_unit,
-        transit_admin_gp: freight.transit_admin_gp,
-        ori3rdAdmin4: ori3rdAdmin4,
-        final3rdAdmin1: final3rdAdmin1,
-        finalvlaueotAdmin: finalvlaueotAdmin,
-        roe_transit_admin: freight.roe_transit_admin,
-        transit_currency_port: freight.transit_currency_port,
-        transit_currency_port_unit: freight.transit_currency_port_unit,
-        transit_currency_port_gp: freight.transit_currency_port_gp,
-        ori3rdport4: ori3rdport4,
-        final3rdport1: final3rdport1,
-        finalvlaueotPort: finalvlaueotPort,
-        roe_trans_port: freight.roe_trans_port,
-        Transit_advanced_load: freight.Transit_advanced_load,
-        Transit_advanced_unit: freight.Transit_advanced_unit,
-        Transit_advanced_gp: freight.Transit_advanced_gp,
-        Transit_advanced_gp_roe: freight.Transit_advanced_gp_roe,
-        oriadv4: oriadv4,
-        final3rdadv1: final3rdadv1,
-        finalvlaueotadv: finalvlaueotadv,
-        transit_change_Documentation: freight.transit_change_Documentation,
-        transit_change_Documentation_unit:
-          freight.transit_change_Documentation_unit,
-        transit_change_Documentation_gp:
-          freight.transit_change_Documentation_gp,
-        roe_transit_change_Documentation:
-          freight.roe_transit_change_Documentation,
-        oridocumentation4: oridocumentation4,
-        final3rdocumantation1: final3rdocumantation1,
-        finalvlaueotDocumantation: finalvlaueotDocumantation,
-        totalChageswithOuTransit: totalChageswithOuTransit,
-        transitRoe: transitRoe,
-        Destination_freight_currency_cost:
-          freight.Destination_freight_currency_cost,
-        Destination_freight_currency_unit:
-          freight.Destination_freight_currency_unit,
-        Destination_freight_currency_gp:
-          freight.Destination_freight_currency_gp,
-        destinationdocumentation4: destinationdocumentation4,
-        final3rdestination1: final3rdestination1,
-        final3rdestinationRoe: final3rdestinationRoe,
-        Destination_freight_currency_Roe:
-          freight.Destination_freight_currency_Roe,
+      freight_id: getdata.freight_id,
+      client_id: getdata.client_ref,
+      client_name: getdata.client_name,
+      serial_number: freight.serial_number,
+      date: update.date,
+      client_ref: getdata.client_ref,
+      product_desc: getdata.product_desc,
+      type: getdata.type,
+      freight: getdata.freight,
+      ...(getdata.quote_estimate_id && {
+        quote_estimate_id: getdata.quote_estimate_id,
+      }),
+      incoterm: getdata.incoterm,
+      dimension: getdata.dimension,
+      supplier_id: freight.supplier_id,
+      weight: getdata.weight,
+      origin_pick_up_cost: freight.origin_pick_up_cost,
+      origin_pick_up_fees: freight.origin_pick_up_fees,
+      origin_pickup_fee_gpcalc: freight.origin_pickup_fee_gpcalc,
+      roe_origin_currencyorigin: freight.roe_origin_currencyorigin,
+      finalvlaueoriginPickup: finalvlaueoriginPickup,
+      oripick4: oripick4,
+      finalori1: finalori1,
+      origin_pick_up_fuel_cost: freight.origin_pick_up_fuel_cost,
+      origin_pick_up_fuel_fees: freight.origin_pick_up_fuel_fees,
+      origin_pick_fuelGP: freight.origin_pick_fuelGP,
+      chargable_rate: freight.chargable_rate,
+      orifuel4: orifuel4,
+      finalfuel1: finalfuel1,
+      roe_origin_fuel_currency: freight.roe_origin_fuel_currency,
+      finalvlaueoFuel: finalvlaueoFuel,
+      origin_pick_up_cfs_cost: freight.origin_pick_up_cfs_cost,
+      origin_pick_up_cfs_fees: freight.origin_pick_up_cfs_fees,
+      origin_pickup_vfs_gp: freight.origin_pickup_vfs_gp,
+      oricfs4: oricfs4,
+      finalcfs1: finalcfs1,
+      roe_origin_cfs_currency: freight.roe_origin_cfs_currency,
+      roe_freight_currency: freight.roe_freight_currency,
+      finalvlaueocfs: finalvlaueocfs,
+      origin_pick_up_documantion_cost:
+        freight.origin_pick_up_documantion_cost,
+      origin_pick_up_documantation_fees:
+        freight.origin_pick_up_documantation_fees,
+      origin_pick_documantation_cost_gp:
+        freight.origin_pick_documantation_cost_gp,
+      oridoc4: oridoc4,
+      finaldoc1: finaldoc1,
+      roe_origin_doc_currency: freight.roe_origin_doc_currency,
+      finalvlaueodoc: finalvlaueodoc,
+      origin_pick_up_forewarding_cost:
+        freight.origin_pick_up_forewarding_cost,
+      origin_pick_up_forewarding_fees:
+        freight.origin_pick_up_forewarding_fees,
+      origin_pickup_forewarding_gp: freight.origin_pickup_forewarding_gp,
+      oriforewarding4: oriforewarding4,
+      roe_origin_forewarding: freight.roe_origin_forewarding,
+      finalforewarding1: finalforewarding1,
+      finalvlaueoforewarding: finalvlaueoforewarding,
+      origin_pick_up_custome_cost: freight.origin_pick_up_custome_cost,
+      origin_pick_up_custome_clearance:
+        freight.origin_pick_up_custome_clearance,
+      origin_pickup_custome_gp: freight.origin_pickup_custome_gp,
+      oricustome4: oricustome4,
+      roe_origin_customes: freight.roe_origin_customes,
+      finalcustomes1: finalcustomes1,
+      finalvlaueoCustomes: finalvlaueoCustomes,
+      totalChageswithOutExchange: totalChageswithOutExchange,
+      totalChangeRoeOrigin: totalChangeRoeOrigin,
+      freight_charge_currency_cost: freight.freight_charge_currency_cost,
+      freight_charge_currency_fees: freight.freight_charge_currency_fees,
+      freight_charge_currency_gp: freight.freight_charge_currency_gp,
+      orifreight4: orifreight4,
+      finalfreight1: finalfreight1,
+      finalvlaueofreight: finalvlaueofreight,
+      freight_currency_insurance_cost:
+        freight.freight_currency_insurance_cost,
+      freight_currency_insurance_unit:
+        freight.freight_currency_insurance_unit,
+      freightorigin_insurance_gp: freight.freightorigin_insurance_gp,
+      oriinsurance4: oriinsurance4,
+      roe_insurance_currency: freight.roe_insurance_currency,
+      finalinsurance1: finalinsurance1,
+      finalvlaueoInsurance: finalvlaueoInsurance,
+      totalChageswithOutExchangeinsurance:
+        totalChageswithOutExchangeinsurance,
+      totalChangeRoeOriginaftercalcuinsurance:
+        totalChangeRoeOriginaftercalcuinsurance,
+      Transit_currency_Cost: freight.Transit_currency_Cost,
+      Transit_currency_unit: freight.Transit_currency_unit,
+      Transit_currency_gp: freight.Transit_currency_gp,
+      Transit_currency_roe: freight.Transit_currency_roe,
+      finaltransit1: finaltransit1,
+      finalvlaueotransit: finalvlaueotransit,
+      oritransit4: oritransit4,
+      transit_currency_THC_cost: freight.transit_currency_THC_cost,
+      transit_currency_THC_init: freight.transit_currency_THC_init,
+      transit_currency_THC_gp: freight.transit_currency_THC_gp,
+      roe_Transit_Thc: freight.roe_Transit_Thc,
+      finalThc1: finalThc1,
+      finalvlaueotfineal: finalvlaueotfineal,
+      oriThc4: oriThc4,
+      Transit_currency_unpack_cost: freight.Transit_currency_unpack_cost,
+      Transit_currency_unpack_unit: freight.Transit_currency_unpack_unit,
+      Transit_currency_unpack_gp: freight.Transit_currency_unpack_gp,
+      Transit_unpack_roe: freight.Transit_unpack_roe,
+      finalunpack1: finalunpack1,
+      finalvlaueotfunpack: finalvlaueotfunpack,
+      oriunpack4: oriunpack4,
+      transit_3rd_party_cost: freight.transit_3rd_party_cost,
+      transit_3rd_party_unit: freight.transit_3rd_party_unit,
+      transit_3rd_party_gp: freight.transit_3rd_party_gp,
+      ori3rdparty4: ori3rdparty4,
+      final3rdparty1: final3rdparty1,
+      finalvlaueot3dparty: finalvlaueot3dparty,
+      transit_currency_3rd: freight.transit_currency_3rd,
+      transit_admin_change: freight.transit_admin_change,
+      transit_admin_unit: freight.transit_admin_unit,
+      transit_admin_gp: freight.transit_admin_gp,
+      ori3rdAdmin4: ori3rdAdmin4,
+      final3rdAdmin1: final3rdAdmin1,
+      finalvlaueotAdmin: finalvlaueotAdmin,
+      roe_transit_admin: freight.roe_transit_admin,
+      transit_currency_port: freight.transit_currency_port,
+      transit_currency_port_unit: freight.transit_currency_port_unit,
+      transit_currency_port_gp: freight.transit_currency_port_gp,
+      ori3rdport4: ori3rdport4,
+      final3rdport1: final3rdport1,
+      finalvlaueotPort: finalvlaueotPort,
+      roe_trans_port: freight.roe_trans_port,
+      Transit_advanced_load: freight.Transit_advanced_load,
+      Transit_advanced_unit: freight.Transit_advanced_unit,
+      Transit_advanced_gp: freight.Transit_advanced_gp,
+      Transit_advanced_gp_roe: freight.Transit_advanced_gp_roe,
+      oriadv4: oriadv4,
+      final3rdadv1: final3rdadv1,
+      finalvlaueotadv: finalvlaueotadv,
+      transit_change_Documentation: freight.transit_change_Documentation,
+      transit_change_Documentation_unit:
+        freight.transit_change_Documentation_unit,
+      transit_change_Documentation_gp:
+        freight.transit_change_Documentation_gp,
+      roe_transit_change_Documentation:
+        freight.roe_transit_change_Documentation,
+      oridocumentation4: oridocumentation4,
+      final3rdocumantation1: final3rdocumantation1,
+      finalvlaueotDocumantation: finalvlaueotDocumantation,
+      totalChageswithOuTransit: totalChageswithOuTransit,
+      transitRoe: transitRoe,
+      Destination_freight_currency_cost:
+        freight.Destination_freight_currency_cost,
+      Destination_freight_currency_unit:
+        freight.Destination_freight_currency_unit,
+      Destination_freight_currency_gp:
+        freight.Destination_freight_currency_gp,
+      destinationdocumentation4: destinationdocumentation4,
+      final3rdestination1: final3rdestination1,
+      final3rdestinationRoe: final3rdestinationRoe,
+      Destination_freight_currency_Roe:
+        freight.Destination_freight_currency_Roe,
 
-        Destination_THC_currency_cost: freight.Destination_THC_currency_cost,
-        Destination_THC_currency_unit: freight.Destination_THC_currency_unit,
-        Destination_THC_currency_gp: freight.Destination_THC_currency_gp,
-        destinationTHCdocumentation4: destinationTHCdocumentation4,
-        final3rTHCdestination1: final3rTHCdestination1,
-        final3rTHCdestinationRoe: final3rTHCdestinationRoe,
-        Destination_THC_currency_Roe: freight.Destination_THC_currency_Roe,
-        Destination_Unpack_currency_cost:
-          freight.Destination_Unpack_currency_cost,
-        Destination_Unpack_currency_unit:
-          freight.Destination_Unpack_currency_unit,
-        Destination_Unpack_currency_gp: freight.Destination_Unpack_currency_gp,
-        destinationUnpackdocumentation4: destinationUnpackdocumentation4,
-        final3runpackdestination1: final3runpackdestination1,
-        final3rUnpackdestinationRoe: final3rUnpackdestinationRoe,
-        Destination_Unpack_currency_roe:
-          freight.Destination_Unpack_currency_roe,
-        Destination_fuelsurcharge_currency_cost:
-          freight.Destination_fuelsurcharge_currency_cost,
-        Destination_fuelsurcharge_currency_unit:
-          freight.Destination_fuelsurcharge_currency_unit,
-        Destination_fuelsurcharge_currency_gp:
-          freight.Destination_fuelsurcharge_currency_gp,
-        destinationfuelsurchargedocumentation4:
-          destinationfuelsurchargedocumentation4,
-        final3rfuelsurchargedestination1: final3rfuelsurchargedestination1,
-        final3rfuelsurCahrgeestinationRoe: final3rfuelsurCahrgeestinationRoe,
-        Destination_fuelsurcharge_currency_roe:
-          freight.Destination_fuelsurcharge_currency_roe,
-        Destination_adminsurcharge_currency_cost:
-          freight.Destination_adminsurcharge_currency_cost,
-        Destination_adminsurcharge_currency_unit:
-          freight.Destination_adminsurcharge_currency_unit,
-        Destination_adminsurcharge_currency_gp:
-          freight.Destination_adminsurcharge_currency_gp,
-        destinatiadminsurcharge4: destinatiadminsurcharge4,
-        Valueadminsurchargedestanion: Valueadminsurchargedestanion,
-        adminsurcharge2: adminsurcharge2,
-        Destination_adminsurcharge_currency_roe:
-          freight.Destination_adminsurcharge_currency_roe,
-        Destination_portcargo_currency_cost:
-          freight.Destination_portcargo_currency_cost,
-        Destination_portcargo_currency_unit:
-          freight.Destination_portcargo_currency_unit,
-        Destination_portcargo_currency_gp:
-          freight.Destination_portcargo_currency_gp,
-        destinatiportcargo4: destinatiportcargo4,
-        Vaportcargoion: Vaportcargoion,
-        admiportcargo2: admiportcargo2,
-        Destination_portcargo_currency_roe:
-          freight.Destination_portcargo_currency_roe,
-        Destination_AdvancedLoad_currency_cost:
-          freight.Destination_AdvancedLoad_currency_cost,
-        Destination_AdvancedLoad_currency_unit:
-          freight.Destination_AdvancedLoad_currency_unit,
-        Destination_AdvancedLoad_currency_gp:
-          freight.Destination_AdvancedLoad_currency_gp,
-        destinatiAdvancedLoad4: destinatiAdvancedLoad4,
-        VAdvancedLoadion: VAdvancedLoadion,
-        desdvancedLoadion: desdvancedLoadion,
-        Destination_AdvancedLoad_currency_roe:
-          freight.Destination_AdvancedLoad_currency_roe,
-        Destination_3rdpartyDesc_currency_cost:
-          freight.Destination_3rdpartyDesc_currency_cost,
-        Destination_3rdpartyDesc_currency_unit:
-          freight.Destination_3rdpartyDesc_currency_unit,
-        Destination_3rdpartyDesc_currency_gp:
-          freight.Destination_3rdpartyDesc_currency_gp,
-        destinati3rdpartyload4: destinati3rdpartyload4,
-        VAdvanced3rdpartyLoadion: VAdvanced3rdpartyLoadion,
-        desdva3rdpartyion: desdva3rdpartyion,
-        Destination_3rdpartyDesc_currency_roe:
-          freight.Destination_3rdpartyDesc_currency_roe,
-        Destination_delivery_currency_cost:
-          freight.Destination_delivery_currency_cost,
-        Destination_delivery_currency_unit:
-          freight.Destination_delivery_currency_unit,
-        Destination_delivery_currency_gp:
-          freight.Destination_delivery_currency_gp,
-        destindeliveryyDesc4: destindeliveryyDesc4,
-        VAdvandeliverytyLoadion: VAdvandeliverytyLoadion,
-        desddeliverytyion: desddeliverytyion,
-        Destination_delivery_currency_roe:
-          freight.Destination_delivery_currency_roe,
-        Destination_fuelcharge_currency_cost:
-          freight.Destination_fuelcharge_currency_cost,
-        Destination_fuelcharge_currency_unit:
-          freight.Destination_fuelcharge_currency_unit,
-        Destination_fuelcharge_currency_gp:
-          freight.Destination_fuelcharge_currency_gp,
-        destindfuelchangerDesc4: destindfuelchangerDesc4,
-        VAdvfuelchangeon: VAdvfuelchangeon,
-        defuelchangyion: defuelchangyion,
-        Destination_fuelcharge_currency_roe:
-          freight.Destination_fuelcharge_currency_roe,
-        totalChaDestinationTransit: totalChaDestinationTransit,
-        totalChaDestinationTransitRoe: totalChaDestinationTransitRoe,
-        Destination_AdminAgrncy_currency_cost:
-          freight.Destination_AdminAgrncy_currency_cost,
-        Destination_AdminAgrncy_currency_unit:
-          freight.Destination_AdminAgrncy_currency_unit,
-        Destination_AdminAgrncy_currency_gp:
-          freight.Destination_AdminAgrncy_currency_gp,
-        deadminAgencyesc4: deadminAgencyesc4,
-        // finaldminAgencyestanion: finaldminAgencyestanion,
-        VAadminAgencyngeon: VAadminAgencyngeon,
-        defuelchdminAgencyngangyion: defuelchdminAgencyngangyion,
-        Destination_AdminAgrncy_currency_roe:
-          freight.Destination_AdminAgrncy_currency_roe,
-        Destination_disbursemant_currency_cost:
-          freight.Destination_disbursemant_currency_cost,
-        Destination_disbursemant_currency_unit:
-          freight.Destination_disbursemant_currency_unit,
-        Destination_disbursemant_currency_gp:
-          freight.Destination_disbursemant_currency_gp,
-        deaddisbursemantc4: deaddisbursemantc4,
-        VAdisbursemon: VAdisbursemon,
-        dedisbursementon: dedisbursementon,
-        Destination_disbursemant_currency_roe:
-          freight.Destination_disbursemant_currency_roe,
-        Destination_doc_currency_cost: freight.Destination_doc_currency_cost,
-        Destination_doc_currency_unit: freight.Destination_doc_currency_unit,
-        Destination_doc_currency_gp: freight.Destination_doc_currency_gp,
-        deadoctc4: deadoctc4,
-        VAdocon: VAdocon,
-        dedisbudoon: dedisbudoon,
-        Destination_doc_currency_roe: freight.Destination_doc_currency_roe,
-        deadoctc4: deadoctc4,
-        totaAdminransit: totaAdminransit,
-        totalAdminnsitRoe: totalAdminnsitRoe,
-        sumofall: sumofall,
-        sumofRoe: sumofRoe,
-        freight_charge_currencyQTY: freight.freight_charge_currencyQTY,
-        origin_pick_up_fuel_unitTypeQTY:
-          freight.origin_pick_up_fuel_unitTypeQTY,
-        origin_pick_up_cfs_unitTypeQTY: freight.origin_pick_up_cfs_unitTypeQTY,
-        origin_pick_up_forewarding_unitTypeQTY:
-          freight.origin_pick_up_forewarding_unitTypeQTY,
-        origin_pick_up_documantation_unitTypeQTY:
-          freight.origin_pick_up_documantation_unitTypeQTY,
-        origin_pick_up_custome_unitTypeQTY:
-          freight.origin_pick_up_custome_unitTypeQTY,
-        freight_charge_currency_unitTypeQTY:
-          freight.freight_charge_currency_unitTypeQTY,
-        freight_currency_insurance_unittypeQTY:
-          freight.freight_currency_insurance_unittypeQTY,
-        Transit_currency_unitTpeQTY: freight.Transit_currency_unitTpeQTY,
-        transit_currency_THC_initTypeQTY:
-          freight.transit_currency_THC_initTypeQTY,
-        transit_currency_THC_initTypeeQTY:
-          freight.transit_currency_THC_initTypeeQTY,
-        transit_3rd_party_unittypeQTY: freight.transit_3rd_party_unittypeQTY,
-        transit_admin_unittypeQTY: freight.transit_admin_unittypeQTY,
-        transit_currency_port_unitTypeQTY:
-          freight.transit_currency_port_unitTypeQTY,
-        Transit_advanced_unitTypeQTY: freight.Transit_advanced_unitTypeQTY,
-        transit_change_Documentation_unitTypeQTY:
-          freight.transit_change_Documentation_unitTypeQTY,
-        Destination_freight_currency_unitTypeQTY:
-          freight.Destination_freight_currency_unitTypeQTY,
-        Destination_THC_currency_unitTypeQTY:
-          freight.Destination_THC_currency_unitTypeQTY,
-        Destination_Unpack_currency_unitTypeQTY:
-          freight.Destination_Unpack_currency_unitTypeQTY,
-        Destination_fuelsurcharge_currency_typeUnitQTY:
-          freight.Destination_fuelsurcharge_currency_typeUnitQTY,
-        Destination_adminsurcharge_currency_unitTypeQTY:
-          freight.Destination_adminsurcharge_currency_unitTypeQTY,
-        Destination_portcargo_currency_unitTypeQTY:
-          freight.Destination_portcargo_currency_unitTypeQTY,
-        Destination_AdvancedLoad_currency_unitTypeQTY:
-          freight.Destination_AdvancedLoad_currency_unitTypeQTY,
-        Destination_3rdpartyDesc_currency_unitTypeQTY:
-          freight.Destination_3rdpartyDesc_currency_unitTypeQTY,
-        Destination_delivery_currency_unitTypeQTY:
-          freight.Destination_delivery_currency_unitTypeQTY,
-        Destination_fuelcharge_currency_unitTypeQTY:
-          freight.Destination_fuelcharge_currency_unitTypeQTY,
-        Destination_AdminAgrncy_currency_unitQTY:
-          freight.Destination_AdminAgrncy_currency_unitQTY,
-        Destination_disbursemant_currency_unitTypeQTY:
-          freight.Destination_disbursemant_currency_unitTypeQTY,
-        origin_pick_up_unitType: freight.origin_pick_up_unitType,
-        origin_pick_up_fuel_unitType: freight.origin_pick_up_fuel_unitType,
-        origin_pick_up_cfs_unitType: freight.origin_pick_up_cfs_unitType,
-        origin_pick_up_forewarding_unitType:
-          freight.origin_pick_up_forewarding_unitType,
-        origin_pick_up_documantation_unitType:
-          freight.origin_pick_up_documantation_unitType,
-        origin_pick_up_custome_unitType:
-          freight.origin_pick_up_custome_unitType,
-        freight_charge_currency_unitType:
-          freight.freight_charge_currency_unitType,
-        freight_currency_insurance_unittype:
-          freight.freight_currency_insurance_unittype,
-        Transit_currency_unitTpe: freight.Transit_currency_unitTpe,
-        transit_currency_THC_initType: freight.transit_currency_THC_initType,
-        Transit_currency_unpack_unitType:
-          freight.Transit_currency_unpack_unitType,
-        transit_3rd_party_unittype: freight.transit_3rd_party_unittype,
-        transit_admin_unittype: freight.transit_admin_unittype,
-        transit_currency_port_unitType: freight.transit_currency_port_unitType,
-        Transit_advanced_unitType: freight.Transit_advanced_unitType,
-        transit_change_Documentation_unitType:
-          freight.transit_change_Documentation_unitType,
-        Destination_freight_currency_unitType:
-          freight.Destination_freight_currency_unitType,
-        Destination_THC_currency_unitType:
-          freight.Destination_THC_currency_unitType,
-        Destination_Unpack_currency_unitType:
-          freight.Destination_Unpack_currency_unitType,
-        Destination_fuelsurcharge_currency_typeUnit:
-          freight.Destination_fuelsurcharge_currency_typeUnit,
-        Destination_adminsurcharge_currency_unitType:
-          freight.Destination_adminsurcharge_currency_unitType,
-        Destination_portcargo_currency_unitType:
-          freight.Destination_portcargo_currency_unitType,
-        Destination_AdvancedLoad_currency_unitType:
-          freight.Destination_AdvancedLoad_currency_unitType,
-        Destination_3rdpartyDesc_currency_unitType:
-          freight.Destination_3rdpartyDesc_currency_unitType,
-        Destination_delivery_currency_unitType:
-          freight.Destination_delivery_currency_unitType,
-        Destination_fuelcharge_currency_unitType:
-          freight.Destination_fuelcharge_currency_unitType,
-        Destination_AdminAgrncy_currency_unitType:
-          freight.Destination_AdminAgrncy_currency_unitType,
-        Destination_doc_currency_unittype:
-          freight.Destination_doc_currency_unittype,
-        Destination_AdminAgrncy_currency_unitType:
-          freight.Destination_AdminAgrncy_currency_unitType,
-        Destination_doc_currency_unittypeQTY:
-          freight.Destination_doc_currency_unittypeQTY,
-        ...(getdata.quote_estimate_id && {
-          quote_estimate_id: getdata.quote_estimate_id,
-        }),
-      };
+      Destination_THC_currency_cost: freight.Destination_THC_currency_cost,
+      Destination_THC_currency_unit: freight.Destination_THC_currency_unit,
+      Destination_THC_currency_gp: freight.Destination_THC_currency_gp,
+      destinationTHCdocumentation4: destinationTHCdocumentation4,
+      final3rTHCdestination1: final3rTHCdestination1,
+      final3rTHCdestinationRoe: final3rTHCdestinationRoe,
+      Destination_THC_currency_Roe: freight.Destination_THC_currency_Roe,
+      Destination_Unpack_currency_cost:
+        freight.Destination_Unpack_currency_cost,
+      Destination_Unpack_currency_unit:
+        freight.Destination_Unpack_currency_unit,
+      Destination_Unpack_currency_gp: freight.Destination_Unpack_currency_gp,
+      destinationUnpackdocumentation4: destinationUnpackdocumentation4,
+      final3runpackdestination1: final3runpackdestination1,
+      final3rUnpackdestinationRoe: final3rUnpackdestinationRoe,
+      Destination_Unpack_currency_roe:
+        freight.Destination_Unpack_currency_roe,
+      Destination_fuelsurcharge_currency_cost:
+        freight.Destination_fuelsurcharge_currency_cost,
+      Destination_fuelsurcharge_currency_unit:
+        freight.Destination_fuelsurcharge_currency_unit,
+      Destination_fuelsurcharge_currency_gp:
+        freight.Destination_fuelsurcharge_currency_gp,
+      destinationfuelsurchargedocumentation4:
+        destinationfuelsurchargedocumentation4,
+      final3rfuelsurchargedestination1: final3rfuelsurchargedestination1,
+      final3rfuelsurCahrgeestinationRoe: final3rfuelsurCahrgeestinationRoe,
+      Destination_fuelsurcharge_currency_roe:
+        freight.Destination_fuelsurcharge_currency_roe,
+      Destination_adminsurcharge_currency_cost:
+        freight.Destination_adminsurcharge_currency_cost,
+      Destination_adminsurcharge_currency_unit:
+        freight.Destination_adminsurcharge_currency_unit,
+      Destination_adminsurcharge_currency_gp:
+        freight.Destination_adminsurcharge_currency_gp,
+      destinatiadminsurcharge4: destinatiadminsurcharge4,
+      Valueadminsurchargedestanion: Valueadminsurchargedestanion,
+      adminsurcharge2: adminsurcharge2,
+      Destination_adminsurcharge_currency_roe:
+        freight.Destination_adminsurcharge_currency_roe,
+      Destination_portcargo_currency_cost:
+        freight.Destination_portcargo_currency_cost,
+      Destination_portcargo_currency_unit:
+        freight.Destination_portcargo_currency_unit,
+      Destination_portcargo_currency_gp:
+        freight.Destination_portcargo_currency_gp,
+      destinatiportcargo4: destinatiportcargo4,
+      Vaportcargoion: Vaportcargoion,
+      admiportcargo2: admiportcargo2,
+      Destination_portcargo_currency_roe:
+        freight.Destination_portcargo_currency_roe,
+      Destination_AdvancedLoad_currency_cost:
+        freight.Destination_AdvancedLoad_currency_cost,
+      Destination_AdvancedLoad_currency_unit:
+        freight.Destination_AdvancedLoad_currency_unit,
+      Destination_AdvancedLoad_currency_gp:
+        freight.Destination_AdvancedLoad_currency_gp,
+      destinatiAdvancedLoad4: destinatiAdvancedLoad4,
+      VAdvancedLoadion: VAdvancedLoadion,
+      desdvancedLoadion: desdvancedLoadion,
+      Destination_AdvancedLoad_currency_roe:
+        freight.Destination_AdvancedLoad_currency_roe,
+      Destination_3rdpartyDesc_currency_cost:
+        freight.Destination_3rdpartyDesc_currency_cost,
+      Destination_3rdpartyDesc_currency_unit:
+        freight.Destination_3rdpartyDesc_currency_unit,
+      Destination_3rdpartyDesc_currency_gp:
+        freight.Destination_3rdpartyDesc_currency_gp,
+      destinati3rdpartyload4: destinati3rdpartyload4,
+      VAdvanced3rdpartyLoadion: VAdvanced3rdpartyLoadion,
+      desdva3rdpartyion: desdva3rdpartyion,
+      Destination_3rdpartyDesc_currency_roe:
+        freight.Destination_3rdpartyDesc_currency_roe,
+      Destination_delivery_currency_cost:
+        freight.Destination_delivery_currency_cost,
+      Destination_delivery_currency_unit:
+        freight.Destination_delivery_currency_unit,
+      Destination_delivery_currency_gp:
+        freight.Destination_delivery_currency_gp,
+      destindeliveryyDesc4: destindeliveryyDesc4,
+      VAdvandeliverytyLoadion: VAdvandeliverytyLoadion,
+      desddeliverytyion: desddeliverytyion,
+      Destination_delivery_currency_roe:
+        freight.Destination_delivery_currency_roe,
+      Destination_fuelcharge_currency_cost:
+        freight.Destination_fuelcharge_currency_cost,
+      Destination_fuelcharge_currency_unit:
+        freight.Destination_fuelcharge_currency_unit,
+      Destination_fuelcharge_currency_gp:
+        freight.Destination_fuelcharge_currency_gp,
+      destindfuelchangerDesc4: destindfuelchangerDesc4,
+      VAdvfuelchangeon: VAdvfuelchangeon,
+      defuelchangyion: defuelchangyion,
+      Destination_fuelcharge_currency_roe:
+        freight.Destination_fuelcharge_currency_roe,
+      totalChaDestinationTransit: totalChaDestinationTransit,
+      totalChaDestinationTransitRoe: totalChaDestinationTransitRoe,
+      Destination_AdminAgrncy_currency_cost:
+        freight.Destination_AdminAgrncy_currency_cost,
+      Destination_AdminAgrncy_currency_unit:
+        freight.Destination_AdminAgrncy_currency_unit,
+      Destination_AdminAgrncy_currency_gp:
+        freight.Destination_AdminAgrncy_currency_gp,
+      deadminAgencyesc4: deadminAgencyesc4,
+      // finaldminAgencyestanion: finaldminAgencyestanion,
+      VAadminAgencyngeon: VAadminAgencyngeon,
+      defuelchdminAgencyngangyion: defuelchdminAgencyngangyion,
+      Destination_AdminAgrncy_currency_roe:
+        freight.Destination_AdminAgrncy_currency_roe,
+      Destination_disbursemant_currency_cost:
+        freight.Destination_disbursemant_currency_cost,
+      Destination_disbursemant_currency_unit:
+        freight.Destination_disbursemant_currency_unit,
+      Destination_disbursemant_currency_gp:
+        freight.Destination_disbursemant_currency_gp,
+      deaddisbursemantc4: deaddisbursemantc4,
+      VAdisbursemon: VAdisbursemon,
+      dedisbursementon: dedisbursementon,
+      Destination_disbursemant_currency_roe:
+        freight.Destination_disbursemant_currency_roe,
+      Destination_doc_currency_cost: freight.Destination_doc_currency_cost,
+      Destination_doc_currency_unit: freight.Destination_doc_currency_unit,
+      Destination_doc_currency_gp: freight.Destination_doc_currency_gp,
+      deadoctc4: deadoctc4,
+      VAdocon: VAdocon,
+      dedisbudoon: dedisbudoon,
+      Destination_doc_currency_roe: freight.Destination_doc_currency_roe,
+      deadoctc4: deadoctc4,
+      totaAdminransit: totaAdminransit,
+      totalAdminnsitRoe: totalAdminnsitRoe,
+      sumofall: sumofall,
+      sumofRoe: sumofRoe,
+      freight_charge_currencyQTY: freight.freight_charge_currencyQTY,
+      origin_pick_up_fuel_unitTypeQTY:
+        freight.origin_pick_up_fuel_unitTypeQTY,
+      origin_pick_up_cfs_unitTypeQTY: freight.origin_pick_up_cfs_unitTypeQTY,
+      origin_pick_up_forewarding_unitTypeQTY:
+        freight.origin_pick_up_forewarding_unitTypeQTY,
+      origin_pick_up_documantation_unitTypeQTY:
+        freight.origin_pick_up_documantation_unitTypeQTY,
+      origin_pick_up_custome_unitTypeQTY:
+        freight.origin_pick_up_custome_unitTypeQTY,
+      freight_charge_currency_unitTypeQTY:
+        freight.freight_charge_currency_unitTypeQTY,
+      freight_currency_insurance_unittypeQTY:
+        freight.freight_currency_insurance_unittypeQTY,
+      Transit_currency_unitTpeQTY: freight.Transit_currency_unitTpeQTY,
+      transit_currency_THC_initTypeQTY:
+        freight.transit_currency_THC_initTypeQTY,
+      transit_currency_THC_initTypeeQTY:
+        freight.transit_currency_THC_initTypeeQTY,
+      transit_3rd_party_unittypeQTY: freight.transit_3rd_party_unittypeQTY,
+      transit_admin_unittypeQTY: freight.transit_admin_unittypeQTY,
+      transit_currency_port_unitTypeQTY:
+        freight.transit_currency_port_unitTypeQTY,
+      Transit_advanced_unitTypeQTY: freight.Transit_advanced_unitTypeQTY,
+      transit_change_Documentation_unitTypeQTY:
+        freight.transit_change_Documentation_unitTypeQTY,
+      Destination_freight_currency_unitTypeQTY:
+        freight.Destination_freight_currency_unitTypeQTY,
+      Destination_THC_currency_unitTypeQTY:
+        freight.Destination_THC_currency_unitTypeQTY,
+      Destination_Unpack_currency_unitTypeQTY:
+        freight.Destination_Unpack_currency_unitTypeQTY,
+      Destination_fuelsurcharge_currency_typeUnitQTY:
+        freight.Destination_fuelsurcharge_currency_typeUnitQTY,
+      Destination_adminsurcharge_currency_unitTypeQTY:
+        freight.Destination_adminsurcharge_currency_unitTypeQTY,
+      Destination_portcargo_currency_unitTypeQTY:
+        freight.Destination_portcargo_currency_unitTypeQTY,
+      Destination_AdvancedLoad_currency_unitTypeQTY:
+        freight.Destination_AdvancedLoad_currency_unitTypeQTY,
+      Destination_3rdpartyDesc_currency_unitTypeQTY:
+        freight.Destination_3rdpartyDesc_currency_unitTypeQTY,
+      Destination_delivery_currency_unitTypeQTY:
+        freight.Destination_delivery_currency_unitTypeQTY,
+      Destination_fuelcharge_currency_unitTypeQTY:
+        freight.Destination_fuelcharge_currency_unitTypeQTY,
+      Destination_AdminAgrncy_currency_unitQTY:
+        freight.Destination_AdminAgrncy_currency_unitQTY,
+      Destination_disbursemant_currency_unitTypeQTY:
+        freight.Destination_disbursemant_currency_unitTypeQTY,
+      origin_pick_up_unitType: freight.origin_pick_up_unitType,
+      origin_pick_up_fuel_unitType: freight.origin_pick_up_fuel_unitType,
+      origin_pick_up_cfs_unitType: freight.origin_pick_up_cfs_unitType,
+      origin_pick_up_forewarding_unitType:
+        freight.origin_pick_up_forewarding_unitType,
+      origin_pick_up_documantation_unitType:
+        freight.origin_pick_up_documantation_unitType,
+      origin_pick_up_custome_unitType:
+        freight.origin_pick_up_custome_unitType,
+      freight_charge_currency_unitType:
+        freight.freight_charge_currency_unitType,
+      freight_currency_insurance_unittype:
+        freight.freight_currency_insurance_unittype,
+      Transit_currency_unitTpe: freight.Transit_currency_unitTpe,
+      transit_currency_THC_initType: freight.transit_currency_THC_initType,
+      Transit_currency_unpack_unitType:
+        freight.Transit_currency_unpack_unitType,
+      transit_3rd_party_unittype: freight.transit_3rd_party_unittype,
+      transit_admin_unittype: freight.transit_admin_unittype,
+      transit_currency_port_unitType: freight.transit_currency_port_unitType,
+      Transit_advanced_unitType: freight.Transit_advanced_unitType,
+      transit_change_Documentation_unitType:
+        freight.transit_change_Documentation_unitType,
+      Destination_freight_currency_unitType:
+        freight.Destination_freight_currency_unitType,
+      Destination_THC_currency_unitType:
+        freight.Destination_THC_currency_unitType,
+      Destination_Unpack_currency_unitType:
+        freight.Destination_Unpack_currency_unitType,
+      Destination_fuelsurcharge_currency_typeUnit:
+        freight.Destination_fuelsurcharge_currency_typeUnit,
+      Destination_adminsurcharge_currency_unitType:
+        freight.Destination_adminsurcharge_currency_unitType,
+      Destination_portcargo_currency_unitType:
+        freight.Destination_portcargo_currency_unitType,
+      Destination_AdvancedLoad_currency_unitType:
+        freight.Destination_AdvancedLoad_currency_unitType,
+      Destination_3rdpartyDesc_currency_unitType:
+        freight.Destination_3rdpartyDesc_currency_unitType,
+      Destination_delivery_currency_unitType:
+        freight.Destination_delivery_currency_unitType,
+      Destination_fuelcharge_currency_unitType:
+        freight.Destination_fuelcharge_currency_unitType,
+      Destination_AdminAgrncy_currency_unitType:
+        freight.Destination_AdminAgrncy_currency_unitType,
+      Destination_doc_currency_unittype:
+        freight.Destination_doc_currency_unittype,
+      Destination_AdminAgrncy_currency_unitType:
+        freight.Destination_AdminAgrncy_currency_unitType,
+      Destination_doc_currency_unittypeQTY:
+        freight.Destination_doc_currency_unittypeQTY,
+      ...(getdata.quote_estimate_id && {
+        quote_estimate_id: getdata.quote_estimate_id,
+      }),
+    };
     try {
       // const payload = {
       //   freight_id: getdata.freight_id,
@@ -1812,14 +1812,16 @@ export default function DownloadEstimation() {
     const contentWidth = element.scrollWidth;
     const contentHeight = element.scrollHeight;
     const rect = element.getBoundingClientRect();
+    const pdfWidth = Math.max(rect.width, contentWidth);
+    const pdfHeight = Math.max(rect.height, contentHeight);
     const options = {
       margin: 0,
       filename: "page.pdf",
       image: { type: "jpeg", quality: 1 },
-      html2canvas: { scale: 1.5, useCORS: true },
+      html2canvas: { scale: 1.5, useCORS: true, windowWidth: contentWidth },
       jsPDF: {
         unit: "px",
-        format: [rect.width, rect.height],
+        format: [pdfWidth, pdfHeight],
         orientation: "portrait",
       },
       pagebreak: false,
@@ -2089,7 +2091,7 @@ export default function DownloadEstimation() {
                             <table style={{ width: "100%" }}>
                               <tbody>
                                 <tr>
-                                  {}
+                                  { }
                                   <td style={{ padding: "0px 10px" }}>
                                     <div
                                       style={{
@@ -2236,12 +2238,12 @@ export default function DownloadEstimation() {
                                           marginTop: 10,
                                         }}
                                       ><input
-                                          type="text"
-                                          onKeyPress={handlepresss}
-                                          name="chargable_rate"
-                                          value={freight.chargable_rate}
-                                          onChange={handlechangecalc}
-                                        ></input></p>
+                                        type="text"
+                                        onKeyPress={handlepresss}
+                                        name="chargable_rate"
+                                        value={freight.chargable_rate}
+                                        onChange={handlechangecalc}
+                                      ></input></p>
                                     </div>
                                     <div
                                       style={{
@@ -2746,7 +2748,7 @@ export default function DownloadEstimation() {
                       </tr>
                     </tbody>
                   </table>
-                    <table class="cost-table">
+                  <table class="cost-table">
                     <thead>
                       <tr>
                         <th>Items</th>
@@ -2774,7 +2776,7 @@ export default function DownloadEstimation() {
 
                     <tbody>
                       {/* origin charges */}
-                      
+
                       <tr>
                         <td>Origin Charges</td>
                         <td>Pick-Up Fee</td>

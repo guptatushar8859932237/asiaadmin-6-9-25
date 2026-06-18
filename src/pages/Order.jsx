@@ -28,6 +28,7 @@ import FormControlLabel from "@mui/material/FormControlLabel";
 import FormControl from "@mui/material/FormControl";
 import FormLabel from "@mui/material/FormLabel";
 const pageSize = 10;
+
 export default function Order() {
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");
@@ -96,6 +97,7 @@ export default function Order() {
   const [show1, setShow1] = useState(false);
   const [selectedDocs, setSelectedDocs] = useState([]);
   const [selectedFreightIdForDocs, setSelectedFreightIdForDocs] = useState(null);
+  const [selectedOrderIdForDocs, setSelectedOrderIdForDocs] = useState(null);
   const docOptions = [
     { id: "Customs Documents", label: "Customs docs" },
     { id: "Supporting Documents", label: "Supporting docs" },
@@ -111,7 +113,12 @@ export default function Order() {
     { id: "Delivery note", label: "Delivery note" }
   ];
   const handleShow = () => setShow1(true);
-  const handleClose = () => setShow1(false);
+  const handleClose = () => {
+    setShow1(false);
+    setSelectedDocs([]);
+    setSelectedFreightIdForDocs(null);
+    setSelectedOrderIdForDocs(null);
+  };
   const handleSelect = (e) => {
     const selected = e.target.value;
     if (selected && !selectedDocs.find((doc) => doc.name === selected)) {
@@ -125,13 +132,18 @@ export default function Order() {
     );
   };
   const handleSave = () => {
-    if (!selectedFreightIdForDocs) {
-      toast.error("Freight ID is missing");
+    if (!selectedFreightIdForDocs && !selectedOrderIdForDocs) {
+      toast.error("Freight ID or Order ID is missing");
       return;
     }
     setLoader(true);
     const formData = new FormData();
-    formData.append("freight_id", selectedFreightIdForDocs);
+    if (selectedFreightIdForDocs) {
+      formData.append("freight_id", selectedFreightIdForDocs);
+    }
+    if (selectedOrderIdForDocs) {
+      formData.append("order_id", selectedOrderIdForDocs);
+    }
 
     selectedDocs.forEach((doc) => {
       doc.files.forEach((file) => {
@@ -147,6 +159,8 @@ export default function Order() {
           getorder();
           handleClose();
           setSelectedDocs([]);
+          setSelectedFreightIdForDocs(null);
+          setSelectedOrderIdForDocs(null);
         } else {
           toast.error(response.data.message || "Upload failed");
         }
@@ -1103,6 +1117,7 @@ export default function Order() {
                                                   }}
                                                   onClick={() => {
                                                     setSelectedFreightIdForDocs(item?.freight_id);
+                                                    setSelectedOrderIdForDocs(item?.order_id);
                                                     handleShow();
                                                   }}
                                                 >
@@ -1868,6 +1883,7 @@ export default function Order() {
                             onClick={(e) => {
                               e.preventDefault();
                               setSelectedFreightIdForDocs(inputdata?.freight_id);
+                              setSelectedOrderIdForDocs(inputdata?.order_id);
                               handleShow();
                             }}
                           >

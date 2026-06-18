@@ -23,6 +23,7 @@ import CalculationPages from "./pages/CalculationPages";
 import Shippingestimmateclearnece from "./pages/Shippingestimmateclearnece";
 import Warehosue from "./components/Warehouse/Warehosue";
 import ShippingaddfreightEstimate from "./components/shipping estimate/ShippingEstimate";
+import ShippingEstimate2 from "./components/shipping estimate/ShippingEstimate2";
 import ShippingCalcclient from "./components/shipping estimate/ShippingCalcclient";
 import Batches from "./pages/Batches";
 import BatchesOrder from "./pages/BatchesOrder";
@@ -135,7 +136,7 @@ const Uniovwersalpage = lazy(() => import("./components/Uniovwersalpage"));
 export default function App() {
   const [text, setText] = useState("");
   const [permission, setPermission] = useState("");
-  console.log("12-06-26", "17:48");
+  console.log("18-06-26", "17:33");
   return (
     <MyContext1.Provider value={{ text, setText }}>
       <MyContext2.Provider value={{ permission, setPermission }}>
@@ -399,6 +400,7 @@ export default function App() {
                   path="/Admin/managefreight"
                   element={<Managefreight />}
                 />
+
                 <Route
                   index
                   path="/Admin/manage-collection-delivery"
@@ -454,6 +456,11 @@ export default function App() {
                   index
                   path="/Admin/shipping-estimate"
                   element={<ShippingaddfreightEstimate />}
+                />
+                <Route
+                  index
+                  path="/Admin/shipping-estimate-old"
+                  element={<ShippingEstimate2 />}
                 />
                 <Route
                   index

@@ -11,7 +11,7 @@ import { RiFolderUserFill } from "react-icons/ri";
 import { MdArrowOutward } from "react-icons/md";
 import { useRef } from "react";
 import { exportEstimatePdf } from "../../utils/pdfExportUtils";
-export default function ShippingEstimate() {
+export default function ShippingEstimate2() {
   const [update, setUpdate] = useState([0]);
   const location = useLocation();
   const [freight, setFreight] = useState([0]);

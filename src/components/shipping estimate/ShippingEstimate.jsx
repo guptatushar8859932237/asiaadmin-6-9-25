@@ -990,7 +990,7 @@ export default function ShippingEstimate() {
                 </button>
               </div>
               <div className="custom-modal-body">
-                <div style={{ margin: "20px" }}>
+                <div style={{ margin: "18px" }}>
                   {/* Selected Box */}
                   <div
                     onClick={() => setOpen(!open)}
@@ -1109,7 +1109,7 @@ export default function ShippingEstimate() {
                             <td style={{ width: "50%", color: "#000", paddingBottom: "10px" }}>
                               <p
                                 style={{
-                                  fontSize: 20,
+                                  fontSize: 16,
                                   fontWeight: 600,
                                   marginBottom: "unset",
                                   borderBottom: "1px solid #cb191e",
@@ -1121,7 +1121,7 @@ export default function ShippingEstimate() {
                               </p>
                               <p
                                 style={{
-                                  fontSize: 14,
+                                  fontSize: 13,
                                   fontWeight: 500,
                                   marginBottom: "unset",
                                   lineHeight: "1.5",
@@ -1145,7 +1145,7 @@ export default function ShippingEstimate() {
 
                       <table
                         style={{
-                          border: "2px solid #1b2245",
+                          border: "1px solid #1b2245",
                           padding: "10px 20px",
                           width: "100%",
 
@@ -1156,7 +1156,7 @@ export default function ShippingEstimate() {
                             <td
                               style={{
                                 textAlign: "center",
-                                fontSize: 14,
+                                fontSize: 13,
                                 fontWeight: 600,
                                 width: "100%",
                               }}
@@ -1168,7 +1168,7 @@ export default function ShippingEstimate() {
                       </table>
                       <table
                         style={{
-                          border: "2px solid #1b2245",
+                          border: "1px solid #1b2245",
                           borderTop: "unset",
                           width: "100%",
                         }}
@@ -1178,7 +1178,7 @@ export default function ShippingEstimate() {
                             <td
                               style={{
                                 width: "50%",
-                                borderRight: "2px solid #1a2142",
+                                borderRight: "1px solid #1a2142",
                                 height: "100%",
                               }}
                             >
@@ -1187,8 +1187,8 @@ export default function ShippingEstimate() {
                                   <tr>
                                     <td
                                       style={{
-                                        fontSize: 14,
-                                        padding: "5px"
+                                        fontSize: 13,
+                                        padding: "5px 10px"
                                       }}
                                     >
                                       <strong>
@@ -1205,14 +1205,14 @@ export default function ShippingEstimate() {
                                   background: "#1b2245",
                                   width: "100%",
                                   color: "white",
-                                  fontSize: 14,
+                                  fontSize: 13,
                                   textAlign: "center",
                                   padding: 2,
                                 }}
                               >
                                 <tbody>
                                   <tr>
-                                    <td style={{ fontSize: 14 }}>
+                                    <td style={{ fontSize: 13 }}>
                                       Shipment Details ISO Commodity
                                     </td>
                                   </tr>
@@ -1232,7 +1232,7 @@ export default function ShippingEstimate() {
                                       >
                                         <p
                                           style={{
-                                            fontSize: 14,
+                                            fontSize: 13,
                                             marginBottom: "unset",
 
                                           }}
@@ -1241,7 +1241,7 @@ export default function ShippingEstimate() {
                                         </p>
                                         <p
                                           style={{
-                                            fontSize: 14,
+                                            fontSize: 13,
                                             marginBottom: "unset",
                                           }}
                                         >
@@ -1256,7 +1256,7 @@ export default function ShippingEstimate() {
                                       >
                                         <p
                                           style={{
-                                            fontSize: 14,
+                                            fontSize: 13,
                                             marginBottom: "unset",
                                             marginTop: 5,
                                           }}
@@ -1265,7 +1265,7 @@ export default function ShippingEstimate() {
                                         </p>
                                         <p
                                           style={{
-                                            fontSize: 14,
+                                            fontSize: 13,
                                             marginBottom: "unset",
                                             marginTop: 5,
                                           }}
@@ -1281,7 +1281,7 @@ export default function ShippingEstimate() {
                                       >
                                         <p
                                           style={{
-                                            fontSize: 14,
+                                            fontSize: 13,
                                             marginBottom: "unset",
                                             marginTop: 5,
                                           }}
@@ -1290,7 +1290,7 @@ export default function ShippingEstimate() {
                                         </p>
                                         <p
                                           style={{
-                                            fontSize: 14,
+                                            fontSize: 13,
                                             marginBottom: "unset",
                                             marginTop: 5,
                                           }}
@@ -1306,7 +1306,7 @@ export default function ShippingEstimate() {
                                       >
                                         <p
                                           style={{
-                                            fontSize: 14,
+                                            fontSize: 13,
                                             marginBottom: "unset",
                                             marginTop: 5,
                                           }}
@@ -1315,7 +1315,7 @@ export default function ShippingEstimate() {
                                         </p>
                                         <p
                                           style={{
-                                            fontSize: 14,
+                                            fontSize: 13,
                                             marginBottom: "unset",
                                             marginTop: 5,
                                           }}
@@ -1329,7 +1329,7 @@ export default function ShippingEstimate() {
                                       >
                                         <p
                                           style={{
-                                            fontSize: 14,
+                                            fontSize: 13,
                                             marginBottom: "unset",
                                             marginTop: 5,
                                           }}
@@ -1338,7 +1338,7 @@ export default function ShippingEstimate() {
                                         </p>
                                         <p
                                           style={{
-                                            fontSize: 14,
+                                            fontSize: 13,
                                             marginBottom: "unset",
                                             marginTop: 5,
                                           }}
@@ -1354,7 +1354,7 @@ export default function ShippingEstimate() {
                                       >
                                         <p
                                           style={{
-                                            fontSize: 14,
+                                            fontSize: 13,
                                             marginBottom: "unset",
                                             marginTop: 5,
                                           }}
@@ -1363,7 +1363,7 @@ export default function ShippingEstimate() {
                                         </p>
                                         <p
                                           style={{
-                                            fontSize: 14,
+                                            fontSize: 13,
                                             marginBottom: "unset",
                                             marginTop: 5,
                                           }}
@@ -1385,7 +1385,7 @@ export default function ShippingEstimate() {
                                       >
                                         <p
                                           style={{
-                                            fontSize: 14,
+                                            fontSize: 13,
                                             marginBottom: "unset",
                                             marginTop: 5,
                                           }}
@@ -1394,7 +1394,7 @@ export default function ShippingEstimate() {
                                         </p>
                                         <p
                                           style={{
-                                            fontSize: 14,
+                                            fontSize: 13,
                                             marginBottom: "unset",
                                             marginTop: 5,
                                           }}
@@ -1410,7 +1410,7 @@ export default function ShippingEstimate() {
                                       >
                                         <p
                                           style={{
-                                            fontSize: 14,
+                                            fontSize: 13,
                                             marginBottom: "unset",
                                             marginTop: 5,
                                           }}
@@ -1419,7 +1419,7 @@ export default function ShippingEstimate() {
                                         </p>
                                         <p
                                           style={{
-                                            fontSize: 14,
+                                            fontSize: 13,
                                             marginBottom: "unset",
                                             marginTop: 5,
                                           }}
@@ -1435,7 +1435,7 @@ export default function ShippingEstimate() {
                                       >
                                         <p
                                           style={{
-                                            fontSize: 14,
+                                            fontSize: 13,
                                             marginBottom: "unset",
                                             marginTop: 5,
                                           }}
@@ -1444,7 +1444,7 @@ export default function ShippingEstimate() {
                                         </p>
                                         <p
                                           style={{
-                                            fontSize: 14,
+                                            fontSize: 13,
                                             marginBottom: "unset",
                                             marginTop: 5,
                                           }}
@@ -1460,7 +1460,7 @@ export default function ShippingEstimate() {
                                       >
                                         <p
                                           style={{
-                                            fontSize: 14,
+                                            fontSize: 13,
                                             marginBottom: "unset",
                                             marginTop: 5,
                                           }}
@@ -1469,7 +1469,7 @@ export default function ShippingEstimate() {
                                         </p>
                                         <p
                                           style={{
-                                            fontSize: 14,
+                                            fontSize: 13,
                                             marginBottom: "unset",
                                             marginTop: 5,
                                           }}
@@ -1486,7 +1486,7 @@ export default function ShippingEstimate() {
                                   background: "#1b2245",
                                   width: "100%",
                                   color: "white",
-                                  fontSize: 14,
+                                  fontSize: 13,
                                   textAlign: "center",
                                   margin: "0px",
                                   padding: 2,
@@ -1494,7 +1494,7 @@ export default function ShippingEstimate() {
                               >
                                 <tbody>
                                   <tr>
-                                    <td style={{ fontSize: 14 }}>
+                                    <td style={{ fontSize: 13 }}>
                                       Rate of Exchange
                                     </td>
                                   </tr>
@@ -1513,7 +1513,7 @@ export default function ShippingEstimate() {
                                       >
                                         <p
                                           style={{
-                                            fontSize: 14,
+                                            fontSize: 13,
                                             marginBottom: "unset",
 
                                           }}
@@ -1528,7 +1528,7 @@ export default function ShippingEstimate() {
                                             fontWeight: 700,
                                             paddingLeft: 5,
                                             width: "40%",
-                                            border: "2px",
+                                            border: "1px",
                                           }}
                                           onChange={handlechangecalc}
                                           name="final_base_currency"
@@ -1554,12 +1554,12 @@ export default function ShippingEstimate() {
                                       width: 170,
                                       display: "block",
                                       padding: "0px 10px 0px 10px",
-                                      fontSize: 14,
-                                     
+                                      fontSize: 13,
+
                                     }}><strong>
                                         Invoice For
                                       </strong></td>
-                                    <td style={{ fontSize: 14, marginBottom: 4, }}>
+                                    <td style={{ fontSize: 13, marginBottom: 4, }}>
                                       <select
                                         name="invoice_for_country"
                                         value={freight.invoice_for_country || ""}
@@ -1577,12 +1577,12 @@ export default function ShippingEstimate() {
                                     <td style={{
                                       width: 170,
                                       display: "block",
-                                      padding: "0px 10px 0px 10px",
-                                      fontSize: 14,
+                                      padding: "5px 10px 0px 10px",
+                                      fontSize: 13,
                                     }}><strong>
                                         Invoice No.
                                       </strong></td>
-                                    <td style={{ fontSize: 14 }}>
+                                    <td style={{ fontSize: 13, paddingTop: "5px" }}>
                                       <input
                                         type="text"
                                         name="customer_invoice_no"
@@ -1597,13 +1597,13 @@ export default function ShippingEstimate() {
                                         width: 170,
                                         display: "block",
                                         padding: "0px 10px 0px 10px",
-                                        fontSize: 14,
+                                        fontSize: 13,
                                       }}
                                     >
                                       <strong>Reference</strong>
                                     </td>
                                     <td
-                                      style={{ fontSize: 14 }}
+                                      style={{ fontSize: 13 }}
                                     >
                                       {freight?.reference_no}
                                     </td>
@@ -1615,14 +1615,14 @@ export default function ShippingEstimate() {
                                         width: 170,
                                         display: "block",
                                         paddingBottom: 0,
-                                        fontSize: 14,
+                                        fontSize: 13,
                                       }}
                                     >
                                       <strong>Quote Date</strong>
                                     </td>
                                     <td
                                       style={{
-                                        fontSize: 14,
+                                        fontSize: 13,
                                       }}
                                     >
                                       {new Date(getdata?.date).toLocaleDateString(
@@ -1637,14 +1637,14 @@ export default function ShippingEstimate() {
                                         width: 170,
                                         display: "block",
                                         paddingBottom: 0,
-                                        fontSize: 14,
+                                        fontSize: 13,
                                       }}
                                     >
                                       <strong>Quote Type</strong>
                                     </td>
                                     <td
                                       style={{
-                                        fontSize: 14,
+                                        fontSize: 13,
                                       }}
                                     >
                                       CLIENT
@@ -1657,7 +1657,7 @@ export default function ShippingEstimate() {
                                   background: "#1b2245",
                                   width: "100%",
                                   color: "white",
-                                  fontSize: 14,
+                                  fontSize: 13,
                                   textAlign: "center",
                                   margin: "5px 0px",
                                   padding: 2,
@@ -1665,7 +1665,7 @@ export default function ShippingEstimate() {
                               >
                                 <tbody>
                                   <tr>
-                                    <td style={{ fontSize: 14 }}>
+                                    <td style={{ fontSize: 13 }}>
                                       Shipment Details
                                     </td>
                                   </tr>
@@ -1683,7 +1683,7 @@ export default function ShippingEstimate() {
                                       >
                                         <p
                                           style={{
-                                            fontSize: 14,
+                                            fontSize: 13,
                                             marginBottom: "unset",
                                             marginTop: 5,
                                           }}
@@ -1692,7 +1692,7 @@ export default function ShippingEstimate() {
                                         </p>
                                         <p
                                           style={{
-                                            fontSize: 14,
+                                            fontSize: 13,
                                             marginBottom: "unset",
                                             marginTop: 5,
                                           }}
@@ -1708,7 +1708,7 @@ export default function ShippingEstimate() {
                                       >
                                         <p
                                           style={{
-                                            fontSize: 14,
+                                            fontSize: 13,
                                             marginBottom: "unset",
                                             marginTop: 5,
                                           }}
@@ -1717,7 +1717,7 @@ export default function ShippingEstimate() {
                                         </p>
                                         <p
                                           style={{
-                                            fontSize: 14,
+                                            fontSize: 13,
                                             marginBottom: "unset",
                                             marginTop: 5,
                                           }}
@@ -1733,7 +1733,7 @@ export default function ShippingEstimate() {
                                       >
                                         <p
                                           style={{
-                                            fontSize: 14,
+                                            fontSize: 13,
                                             marginBottom: "unset",
                                             marginTop: 5,
                                           }}
@@ -1742,7 +1742,7 @@ export default function ShippingEstimate() {
                                         </p>
                                         <p
                                           style={{
-                                            fontSize: 14,
+                                            fontSize: 13,
                                             marginBottom: "unset",
                                             marginTop: 5,
                                           }}
@@ -1758,7 +1758,7 @@ export default function ShippingEstimate() {
                                       >
                                         <p
                                           style={{
-                                            fontSize: 14,
+                                            fontSize: 13,
                                             marginBottom: "unset",
                                             marginTop: 5,
                                           }}
@@ -1768,7 +1768,7 @@ export default function ShippingEstimate() {
                                         <p
                                           className="text-dark"
                                           style={{
-                                            fontSize: 14,
+                                            fontSize: 13,
                                             marginBottom: "unset",
                                             marginTop: 5,
                                           }}
@@ -1784,7 +1784,7 @@ export default function ShippingEstimate() {
                                       >
                                         <p
                                           style={{
-                                            fontSize: 14,
+                                            fontSize: 13,
                                             marginBottom: "unset",
                                             marginTop: 5,
                                           }}
@@ -1793,7 +1793,7 @@ export default function ShippingEstimate() {
                                         </p>
                                         <p
                                           style={{
-                                            fontSize: 14,
+                                            fontSize: 13,
                                             marginBottom: "unset",
                                             marginTop: 5,
                                           }}
@@ -1809,7 +1809,7 @@ export default function ShippingEstimate() {
                                       >
                                         <p
                                           style={{
-                                            fontSize: 14,
+                                            fontSize: 13,
                                             marginBottom: "unset",
                                             marginTop: 5,
                                           }}
@@ -1821,7 +1821,7 @@ export default function ShippingEstimate() {
                                         </p>
                                         <p
                                           style={{
-                                            fontSize: 14,
+                                            fontSize: 13,
                                             marginBottom: "unset",
                                             marginTop: 5,
                                           }}
@@ -1837,7 +1837,7 @@ export default function ShippingEstimate() {
                                       >
                                         <p
                                           style={{
-                                            fontSize: 14,
+                                            fontSize: 13,
                                             marginBottom: "unset",
                                             marginTop: 5,
                                           }}
@@ -1846,7 +1846,7 @@ export default function ShippingEstimate() {
                                         </p>
                                         <p
                                           style={{
-                                            fontSize: 14,
+                                            fontSize: 13,
                                             marginBottom: "unset",
                                             marginTop: 5,
                                           }}

@@ -494,7 +494,7 @@ export default function ShippingEstimate() {
         supplier_id: parseInt(freight.supplier_id) || null,
         customer_invoice_no: freight.customer_invoice_no || "",
         invoice_for_country: freight.invoice_for_country || "",
-        quote_type: "CLIENT",
+        quote_type: "ADMIN",
         date: getdata.date ? new Date(getdata.date).toISOString().split('T')[0] : getTodayDate(),
         final_base_currency: freight.final_base_currency || "Select",
         sumof_totalcost: parseFloat(sumofall) || 0,
@@ -588,7 +588,7 @@ export default function ShippingEstimate() {
 
   useEffect(() => {
     getdataapi();
-    getNewDataapi();
+    // getNewDataapi();
   }, []);
 
   const getsupplier = () => {
@@ -626,32 +626,32 @@ export default function ShippingEstimate() {
   };
 
   // asiadirect pr fieight list mai add edit
-  const getNewDataapi = async () => {
-    // console.log(getdata);
-    const data123456 = {
-      quote_estimate_id: getdata122?.quote_estimate_id
-        ? getdata122?.quote_estimate_id
-        : getdata122?.quote_estimate_id,
-      freight_id: parseInt(localFreigtId),
-    };
-    // console.log(data123456);
-    await axios
-      .post(
-        `${process.env.REACT_APP_BASE_URL}GetQuoteShipEstimateById`,
-        data123456,
-      )
-      .then((response) => {
-        console.log(response.data.data);
-        if (isEstimateLoaded.current) return;
-        isFreightLoadedFromApi.current = true;
-        const rawData = response.data.data;
-        const normalizedFreight = Array.isArray(rawData) ? (rawData[0] || {}) : (rawData || {});
-        setFreight(normalizedFreight);
-      })
-      .catch((error) => {
-        console.log(error.response.data);
-      });
-  };
+  // const getNewDataapi = async () => {
+  //   // console.log(getdata);
+  //   const data123456 = {
+  //     quote_estimate_id: getdata122?.quote_estimate_id
+  //       ? getdata122?.quote_estimate_id
+  //       : getdata122?.quote_estimate_id,
+  //     freight_id: parseInt(localFreigtId),
+  //   };
+  //   // console.log(data123456);
+  //   await axios
+  //     .post(
+  //       `${process.env.REACT_APP_BASE_URL}GetQuoteShipEstimateById`,
+  //       data123456,
+  //     )
+  //     .then((response) => {
+  //       console.log(response.data.data);
+  //       if (isEstimateLoaded.current) return;
+  //       isFreightLoadedFromApi.current = true;
+  //       const rawData = response.data.data;
+  //       const normalizedFreight = Array.isArray(rawData) ? (rawData[0] || {}) : (rawData || {});
+  //       setFreight(normalizedFreight);
+  //     })
+  //     .catch((error) => {
+  //       console.log(error.response.data);
+  //     });
+  // };
 
   const handleclicknav = () => {
     // navigate("/Admin/managefreight");
@@ -1631,7 +1631,7 @@ export default function ShippingEstimate() {
                                       )}
                                     </td>
                                   </tr>
-                                  <tr>
+                                  {/* <tr>
                                     <td
                                       style={{
                                         padding: "0px 10px 0px 10px",
@@ -1650,7 +1650,7 @@ export default function ShippingEstimate() {
                                     >
                                       CLIENT
                                     </td>
-                                  </tr>
+                                  </tr> */}
                                 </tbody>
                               </table>
                               <table

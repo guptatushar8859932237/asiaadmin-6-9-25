@@ -820,7 +820,7 @@ export default function UserFreight() {
     JSON.stringify(localStorage.setItem("freightid", freight_id));
     const alldata = data.filter((item) => item.freight_id === freight_id);
     console.log(alldata)
-    navigate("/Admin/shipping-estimate", { state: { data: alldata } });
+    navigate("/Admin/shipping-estimate", { state: { data: alldata, fromPage: "/Admin/freight" } });
   };
 
     const hanldeclicknavi2 = async (freight_id) => {

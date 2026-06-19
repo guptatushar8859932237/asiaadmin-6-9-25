@@ -480,7 +480,7 @@ export default function Managefreight() {
       console.log("Permission Response:", permission.data);
       if (permission.data.success === true) {
         console.log(alldata);
-        navigate("/Admin/shipping-estimate", { state: { data: alldata } });
+        navigate("/Admin/shipping-estimate", { state: { data: alldata, fromPage: "/Admin/managefreight" } });
       } else {
         toast.error("You don't have permission to access this page");
       }

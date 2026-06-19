@@ -509,7 +509,8 @@ export default function ShippingEstimate() {
         payload
       );
       if (response.data.success === true) {
-        navigate("/Admin/managefreight");
+        const fromPage = location?.state?.fromPage || "/Admin/managefreight";
+        navigate(fromPage);
         if (response.data.ID) {
           setQuotationID(response.data.ID);
         }

@@ -26,6 +26,8 @@ export default function UserEstimateQuote2() {
     const [selected, setSelected] = useState([]); // selected IDs
     const [open, setOpen] = useState(false);
     const navigate = useNavigate();
+
+    // get testing data 
     console.log("User Quote Data", location.state.data[0]);
 
     const getdata122 = location?.state?.data[0];

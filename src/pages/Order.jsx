@@ -575,7 +575,7 @@ export default function Order() {
   const track12311 = (alldata) => {
     console.log([alldata]);
     if (alldata.added_by === "1") {
-      navigate("/Admin/shipping-estimate", { state: { data: [alldata] } });
+      navigate("/Admin/shipping-estimate", { state: { data: [alldata], fromPage: "/Admin/order" } });
     } else {
       navigate("/Admin/user-shipping-estimate", {
         state: { data: [alldata] },

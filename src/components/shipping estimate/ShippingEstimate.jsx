@@ -27,7 +27,7 @@ export default function ShippingEstimate() {
   const [client, setClient] = useState([]);
   const [suppluierquot, setSuppluierquot] = useState([]);
   const [supplierdata, setSupplierdata] = useState([]);
-  const [getdata, setGetdata] = useState([]);
+  const [getdata, setGetdata] = useState(location?.state?.data[0] || []);
   const [dat, setDat] = useState([]);
   const [openmodal, setOpenmodal] = useState(false);
   const [selected, setSelected] = useState([]); // selected IDs
@@ -109,13 +109,12 @@ export default function ShippingEstimate() {
 
   const getFreightQuoteEstimate = async () => {
     const payload = {};
-    if (getdata122?.quote_estimate_id) {
-      payload.freight_quote_estimate_id = parseInt(getdata122.quote_estimate_id);
+    if (getdata122?.freight_quote_estimate_id) {
+      payload.freight_quote_estimate_id = parseInt(getdata122.freight_quote_estimate_id);
     }
     const fId = getdata122?.freight_id || localFreigtId;
     if (fId) {
       payload.freight_id = parseInt(fId);
-
     }
 
     try {
@@ -489,7 +488,7 @@ export default function ShippingEstimate() {
 
       const payload = {
         freight_id: parseInt(getdata.freight_id || localFreigtId),
-        client_id: parseInt(getdata.client_ref),
+        client_id: parseInt(getdata.client_ref || getdata.client_id),
         client_name: getdata.client_name,
         supplier_id: parseInt(freight.supplier_id) || null,
         customer_invoice_no: freight.customer_invoice_no || "",

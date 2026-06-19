@@ -282,7 +282,7 @@ export default function UserFreight() {
     const { name, value } = e.target;
     setInputdata({ ...inputdata, [name]: value });
   };
-  
+
   const handleupdateapipost = async (id) => {
     const permission = await axios.post(
       `${process.env.REACT_APP_BASE_URL}CheckPermission`,
@@ -820,6 +820,14 @@ export default function UserFreight() {
     JSON.stringify(localStorage.setItem("freightid", freight_id));
     const alldata = data.filter((item) => item.freight_id === freight_id);
     console.log(alldata)
+    navigate("/Admin/shipping-estimate", { state: { data: alldata } });
+  };
+
+    const hanldeclicknavi2 = async (freight_id) => {
+    console.log(freight_id);
+    JSON.stringify(localStorage.setItem("freightid", freight_id));
+    const alldata = data.filter((item) => item.freight_id === freight_id);
+    console.log(alldata)
     navigate("/Admin/user-shipping-estimate", { state: { data: alldata } });
   };
 
@@ -1071,7 +1079,7 @@ export default function UserFreight() {
                                               <a
                                                 className="dropdown-item li_icon"
                                                 onClick={() => {
-                                                  hanldeclicknavi(item.freight_id);
+                                                  hanldeclicknavi2(item.freight_id);
                                                 }}
                                               >
                                                 <SupportAgentSharpIcon
@@ -1083,6 +1091,22 @@ export default function UserFreight() {
                                                   }}
                                                 />
                                                 Estimate Quote
+                                              </a>
+                                              <a
+                                                className="dropdown-item li_icon"
+                                                onClick={() => {
+                                                  hanldeclicknavi(item.freight_id);
+                                                }}
+                                              >
+                                                <SupportAgentSharpIcon
+                                                  style={{
+                                                    color: "rgb(27 34 69)",
+                                                    cursor: "pointer",
+                                                    marginRight: "10px",
+                                                    width: "20px",
+                                                  }}
+                                                />
+                                                Estimate Quote New
                                               </a>
                                               <a
                                                 className="dropdown-item li_icon"

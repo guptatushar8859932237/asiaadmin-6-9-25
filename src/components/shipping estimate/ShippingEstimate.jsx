@@ -11,6 +11,43 @@ import { RiFolderUserFill } from "react-icons/ri";
 import { MdArrowOutward } from "react-icons/md";
 import { useRef } from "react";
 import { exportEstimatePdf } from "../../utils/pdfExportUtils";
+const getVatPercent = (vatTyp) => {
+  if (!vatTyp) return 0;
+  if (!isNaN(vatTyp) && !isNaN(parseFloat(vatTyp))) {
+    return parseFloat(vatTyp);
+  }
+  const match = String(vatTyp).match(/(\d+(?:\.\d+)?)\s*%/);
+  if (match) {
+    return parseFloat(match[1]);
+  }
+  return 0;
+};
+
+const getVatLabel = (val) => {
+  if (!val) return "";
+  if (String(val) === "15") return "Standard Rate(15.00%)";
+  if (String(val) === "100") return "Customs VAT(100.00%)";
+  if (String(val) === "0") return "Zero Rate";
+  return val;
+};
+
+const VAT_OPTIONS = [
+  { value: "", label: "No Vat" },
+  { value: "Standard Rate(15.00%)", label: "Standard Rate(15.00%)" },
+  { value: "Standard Rate (Capital Goods) (15.00%)", label: "Standard Rate (Capital Goods) (15.00%)" },
+  { value: "Zero Rate", label: "Zero Rate" },
+  { value: "Zero Rate Exports(0.00%)", label: "Zero Rate Exports(0.00%)" },
+  { value: "Exempt and Non-Suppliers(0.00%)", label: "Exempt and Non-Suppliers(0.00%)" },
+  { value: "Export of Second Hands Goods(15.00%)", label: "Export of Second Hands Goods(15.00%)" },
+  { value: "Change in Use(15.00%)", label: "Change in Use(15.00%)" },
+  { value: "Customs VAT(100.00%)", label: "Customs VAT(100.00%)" },
+  { value: "Goods and Services Imported(100.00%)", label: "Goods and Services Imported(100.00%)" },
+  { value: "Capital Goods and Imported(100.00%)", label: "Capital Goods and Imported(100.00%)" },
+  { value: "VAT Adjustment (100.00%)", label: "VAT Adjustment (100.00%)" },
+  { value: "Domestic Reverse Charge (15.00%)", label: "Domestic Reverse Charge (15.00%)" },
+  { value: "Manual VAT", label: "Manual VAT" },
+  { value: "Manual VAT (Capital Goods)", label: "Manual VAT (Capital Goods)" }
+];
 
 export default function ShippingEstimate() {
   const [update, setUpdate] = useState([0]);
@@ -154,7 +191,8 @@ export default function ShippingEstimate() {
             gp_percent: c.gp_percent !== null && c.gp_percent !== undefined ? c.gp_percent : "",
             sales_price: c.sales_price !== null && c.sales_price !== undefined ? c.sales_price : "",
             roe: c.roe !== null && c.roe !== undefined ? c.roe : "",
-            vatTyp: c.vat_type !== null && c.vat_type !== undefined ? c.vat_type : "",
+            vatTyp: c.vat_type !== null && c.vat_type !== undefined ? getVatLabel(c.vat_type) : "",
+            vat: c.vat !== null && c.vat !== undefined ? c.vat : "",
             discPercent: c.disc_percent !== null && c.disc_percent !== undefined ? c.disc_percent : "",
             comment: c.comment || ""
           }));
@@ -264,11 +302,14 @@ export default function ShippingEstimate() {
     const finalAmt = salesPrice * roe;
 
     const discPercent = parseFloat(row?.discPercent) || 0;
-    const vatPercent = parseFloat(row?.vatTyp) || 0;
+    const vatPercent = getVatPercent(row?.vatTyp);
 
     const disc = (finalAmt * discPercent) / 100;
     const exclusive = finalAmt - disc;
-    const vat = (exclusive * vatPercent) / 100;
+    let vat = (exclusive * vatPercent) / 100;
+    if (row?.vatTyp === "Manual VAT" || row?.vatTyp === "Manual VAT (Capital Goods)") {
+      vat = parseFloat(row?.vat) || 0;
+    }
     const inclusive = exclusive + vat;
 
     return {
@@ -298,7 +339,8 @@ export default function ShippingEstimate() {
     const baseAmount = safeNumber(amount);
     const discountAmount = (baseAmount * safeNumber(discountPercent)) / 100;
     const exclusiveAmount = baseAmount - discountAmount;
-    const vatAmount = (exclusiveAmount * safeNumber(vatPercent)) / 100;
+    const parsedVat = getVatPercent(vatPercent);
+    const vatAmount = (exclusiveAmount * parsedVat) / 100;
     const inclusiveAmount = exclusiveAmount + vatAmount;
 
     return {
@@ -488,7 +530,7 @@ export default function ShippingEstimate() {
 
       const payload = {
         freight_id: parseInt(getdata.freight_id || localFreigtId),
-        client_id: parseInt(getdata.client_ref || getdata.client_id),
+        client_id: parseInt(getdata.client_id || getdata.id || getdata.client_ref ),
         client_name: getdata.client_name,
         supplier_id: parseInt(freight.supplier_id) || null,
         customer_invoice_no: freight.customer_invoice_no || "",
@@ -762,7 +804,7 @@ export default function ShippingEstimate() {
         gp_percent: "",
         sales_price: "",
         roe: f.roe_origin_currencyorigin || "",
-        vatTyp: f.org_pickUp_vatTyp || "",
+        vatTyp: getVatLabel(f.org_pickUp_vatTyp || ""),
         discPercent: f["org_pickUp_disc%"] || "",
         comment: f.origin_pick_up_comment || "",
       }
@@ -778,7 +820,7 @@ export default function ShippingEstimate() {
         gp_percent: "",
         sales_price: "",
         roe: f.roe_freight_currency || "",
-        vatTyp: f.ocenfreight_charge_vatTyp || "",
+        vatTyp: getVatLabel(f.ocenfreight_charge_vatTyp || ""),
         discPercent: f["ocenfreight_charge_disc%"] || "",
         comment: f.freight_charge_comment || "",
       }
@@ -794,7 +836,7 @@ export default function ShippingEstimate() {
         gp_percent: "",
         sales_price: "",
         roe: f.Transit_currency_roe || "",
-        vatTyp: f.trans_clear_fees_vatTyp || "",
+        vatTyp: getVatLabel(f.trans_clear_fees_vatTyp || ""),
         discPercent: f["trans_clear_fees_disc%"] || "",
         comment: f.Transit_currency_comment || "",
       }
@@ -810,7 +852,7 @@ export default function ShippingEstimate() {
         gp_percent: "",
         sales_price: "",
         roe: f.Destination_freight_currency_Roe || "",
-        vatTyp: f.dest_clearing_fees_vatTyp || "",
+        vatTyp: getVatLabel(f.dest_clearing_fees_vatTyp || ""),
         discPercent: f["dest_clearing_fees_disc%"] || "",
         comment: f.Destination_freight_currency_comment || "",
       }
@@ -826,7 +868,7 @@ export default function ShippingEstimate() {
         gp_percent: "",
         sales_price: "",
         roe: f.Destination_AdminAgrncy_currency_roe || "",
-        vatTyp: f.admin_agencyFee_vatTyp || "",
+        vatTyp: getVatLabel(f.admin_agencyFee_vatTyp || ""),
         discPercent: f["admin_agencyFee_disc%"] || "",
         comment: f.Destination_AdminAgrncy_comment || "",
       }
@@ -842,7 +884,7 @@ export default function ShippingEstimate() {
         gp_percent: "",
         sales_price: "",
         roe: f.cust_duty_roe || "",
-        vatTyp: f.cust_duty_vatTyp || "",
+        vatTyp: getVatLabel(f.cust_duty_vatTyp || ""),
         discPercent: f["cust_duty_disc%"] || "",
         comment: f.cust_duty_comment || "",
       }
@@ -962,6 +1004,7 @@ export default function ShippingEstimate() {
         sales_price: "",
         roe: "",
         vatTyp: "",
+        vat: "",
         discPercent: "",
         comment: ""
       }
@@ -2135,21 +2178,9 @@ export default function ShippingEstimate() {
                                   onChange={(e) => updateRowField(setOriginRows, row.id, "vatTyp", e.target.value)}
                                   value={row.vatTyp || ""}
                                 >
-                                  <option value="">No Vat</option>
-                                  <option value="15">Standard Rate(15.00%)</option>
-                                  <option value="15">Standard Rate (Capital Goods) (15.00%)</option>
-                                  <option value="0">Zero Rate</option>
-                                  <option value="0">Zero Rate Exports(0.00%)</option>
-                                  <option value="0">Exempt and Non-Suppliers(0.00%)</option>
-                                  <option value="15">Export of Second Hands Goods(15.00%)</option>
-                                  <option value="15">Change in Use(15.00%)</option>
-                                  <option value="100">Customs VAT(100.00%)</option>
-                                  <option value="100">Goods and Services Imported(100.00%)</option>
-                                  <option value="100">Capital Goods and Imported(100.00%)</option>
-                                  <option value="100">VAT Adjustment (100.00%)</option>
-                                  <option value="15">Domestic Reverse Charge (15.00%)</option>
-                                  <option value="">Manual VAT</option>
-                                  <option value="">Manual VAT (Capital Goods)</option>
+                                  {VAT_OPTIONS.map((opt, i) => (
+                                    <option key={i} value={opt.value}>{opt.label}</option>
+                                  ))}
                                 </select>
                               </td>
                               <td>
@@ -2183,8 +2214,9 @@ export default function ShippingEstimate() {
                                 <input
                                   type="text"
                                   placeholder="0.00"
-                                  disabled
-                                  value={calc.vat ? calc.vat.toFixed(2) : "0.00"}
+                                  disabled={!(row.vatTyp === "Manual VAT" || row.vatTyp === "Manual VAT (Capital Goods)")}
+                                  value={(row.vatTyp === "Manual VAT" || row.vatTyp === "Manual VAT (Capital Goods)") ? (row.vat ?? "") : (calc.vat ? calc.vat.toFixed(2) : "0.00")}
+                                  onChange={(e) => updateRowField(setOriginRows, row.id, "vat", e.target.value)}
                                   className="supplier_form"
                                 />
                               </td>
@@ -2444,21 +2476,9 @@ export default function ShippingEstimate() {
                                   onChange={(e) => updateRowField(setFreightRows, row.id, "vatTyp", e.target.value)}
                                   value={row.vatTyp || ""}
                                 >
-                                  <option value="">No Vat</option>
-                                  <option value="15">Standard Rate(15.00%)</option>
-                                  <option value="15">Standard Rate (Capital Goods) (15.00%)</option>
-                                  <option value="0">Zero Rate</option>
-                                  <option value="0">Zero Rate Exports(0.00%)</option>
-                                  <option value="0">Exempt and Non-Suppliers(0.00%)</option>
-                                  <option value="15">Export of Second Hands Goods(15.00%)</option>
-                                  <option value="15">Change in Use(15.00%)</option>
-                                  <option value="100">Customs VAT(100.00%)</option>
-                                  <option value="100">Goods and Services Imported(100.00%)</option>
-                                  <option value="100">Capital Goods and Imported(100.00%)</option>
-                                  <option value="100">VAT Adjustment (100.00%)</option>
-                                  <option value="15">Domestic Reverse Charge (15.00%)</option>
-                                  <option value="">Manual VAT</option>
-                                  <option value="">Manual VAT (Capital Goods)</option>
+                                  {VAT_OPTIONS.map((opt, i) => (
+                                    <option key={i} value={opt.value}>{opt.label}</option>
+                                  ))}
                                 </select>
                               </td>
                               <td>
@@ -2492,8 +2512,9 @@ export default function ShippingEstimate() {
                                 <input
                                   type="text"
                                   placeholder="0.00"
-                                  disabled
-                                  value={calc.vat ? calc.vat.toFixed(2) : "0.00"}
+                                  disabled={!(row.vatTyp === "Manual VAT" || row.vatTyp === "Manual VAT (Capital Goods)")}
+                                  value={(row.vatTyp === "Manual VAT" || row.vatTyp === "Manual VAT (Capital Goods)") ? (row.vat ?? "") : (calc.vat ? calc.vat.toFixed(2) : "0.00")}
+                                  onChange={(e) => updateRowField(setFreightRows, row.id, "vat", e.target.value)}
                                   className="supplier_form"
                                 />
                               </td>
@@ -2763,21 +2784,9 @@ export default function ShippingEstimate() {
                                   onChange={(e) => updateRowField(setTransitRows, row.id, "vatTyp", e.target.value)}
                                   value={row.vatTyp || ""}
                                 >
-                                  <option value="">No Vat</option>
-                                  <option value="15">Standard Rate(15.00%)</option>
-                                  <option value="15">Standard Rate (Capital Goods) (15.00%)</option>
-                                  <option value="0">Zero Rate</option>
-                                  <option value="0">Zero Rate Exports(0.00%)</option>
-                                  <option value="0">Exempt and Non-Suppliers(0.00%)</option>
-                                  <option value="15">Export of Second Hands Goods(15.00%)</option>
-                                  <option value="15">Change in Use(15.00%)</option>
-                                  <option value="100">Customs VAT(100.00%)</option>
-                                  <option value="100">Goods and Services Imported(100.00%)</option>
-                                  <option value="100">Capital Goods and Imported(100.00%)</option>
-                                  <option value="100">VAT Adjustment (100.00%)</option>
-                                  <option value="15">Domestic Reverse Charge (15.00%)</option>
-                                  <option value="">Manual VAT</option>
-                                  <option value="">Manual VAT (Capital Goods)</option>
+                                  {VAT_OPTIONS.map((opt, i) => (
+                                    <option key={i} value={opt.value}>{opt.label}</option>
+                                  ))}
                                 </select>
                               </td>
                               <td>
@@ -2811,8 +2820,9 @@ export default function ShippingEstimate() {
                                 <input
                                   type="text"
                                   placeholder="0.00"
-                                  disabled
-                                  value={calc.vat ? calc.vat.toFixed(2) : "0.00"}
+                                  disabled={!(row.vatTyp === "Manual VAT" || row.vatTyp === "Manual VAT (Capital Goods)")}
+                                  value={(row.vatTyp === "Manual VAT" || row.vatTyp === "Manual VAT (Capital Goods)") ? (row.vat ?? "") : (calc.vat ? calc.vat.toFixed(2) : "0.00")}
+                                  onChange={(e) => updateRowField(setTransitRows, row.id, "vat", e.target.value)}
                                   className="supplier_form"
                                 />
                               </td>
@@ -3075,21 +3085,9 @@ export default function ShippingEstimate() {
                                   onChange={(e) => updateRowField(setDestinationRows, row.id, "vatTyp", e.target.value)}
                                   value={row.vatTyp || ""}
                                 >
-                                  <option value="">No Vat</option>
-                                  <option value="15">Standard Rate(15.00%)</option>
-                                  <option value="15">Standard Rate (Capital Goods) (15.00%)</option>
-                                  <option value="0">Zero Rate</option>
-                                  <option value="0">Zero Rate Exports(0.00%)</option>
-                                  <option value="0">Exempt and Non-Suppliers(0.00%)</option>
-                                  <option value="15">Export of Second Hands Goods(15.00%)</option>
-                                  <option value="15">Change in Use(15.00%)</option>
-                                  <option value="100">Customs VAT(100.00%)</option>
-                                  <option value="100">Goods and Services Imported(100.00%)</option>
-                                  <option value="100">Capital Goods and Imported(100.00%)</option>
-                                  <option value="100">VAT Adjustment (100.00%)</option>
-                                  <option value="15">Domestic Reverse Charge (15.00%)</option>
-                                  <option value="">Manual VAT</option>
-                                  <option value="">Manual VAT (Capital Goods)</option>
+                                  {VAT_OPTIONS.map((opt, i) => (
+                                    <option key={i} value={opt.value}>{opt.label}</option>
+                                  ))}
                                 </select>
                               </td>
                               <td>
@@ -3123,8 +3121,9 @@ export default function ShippingEstimate() {
                                 <input
                                   type="text"
                                   placeholder="0.00"
-                                  disabled
-                                  value={calc.vat ? calc.vat.toFixed(2) : "0.00"}
+                                  disabled={!(row.vatTyp === "Manual VAT" || row.vatTyp === "Manual VAT (Capital Goods)")}
+                                  value={(row.vatTyp === "Manual VAT" || row.vatTyp === "Manual VAT (Capital Goods)") ? (row.vat ?? "") : (calc.vat ? calc.vat.toFixed(2) : "0.00")}
+                                  onChange={(e) => updateRowField(setDestinationRows, row.id, "vat", e.target.value)}
                                   className="supplier_form"
                                 />
                               </td>
@@ -3384,21 +3383,9 @@ export default function ShippingEstimate() {
                                   onChange={(e) => updateRowField(setAdminRows, row.id, "vatTyp", e.target.value)}
                                   value={row.vatTyp || ""}
                                 >
-                                  <option value="">No Vat</option>
-                                  <option value="15">Standard Rate(15.00%)</option>
-                                  <option value="15">Standard Rate (Capital Goods) (15.00%)</option>
-                                  <option value="0">Zero Rate</option>
-                                  <option value="0">Zero Rate Exports(0.00%)</option>
-                                  <option value="0">Exempt and Non-Suppliers(0.00%)</option>
-                                  <option value="15">Export of Second Hands Goods(15.00%)</option>
-                                  <option value="15">Change in Use(15.00%)</option>
-                                  <option value="100">Customs VAT(100.00%)</option>
-                                  <option value="100">Goods and Services Imported(100.00%)</option>
-                                  <option value="100">Capital Goods and Imported(100.00%)</option>
-                                  <option value="100">VAT Adjustment (100.00%)</option>
-                                  <option value="15">Domestic Reverse Charge (15.00%)</option>
-                                  <option value="">Manual VAT</option>
-                                  <option value="">Manual VAT (Capital Goods)</option>
+                                  {VAT_OPTIONS.map((opt, i) => (
+                                    <option key={i} value={opt.value}>{opt.label}</option>
+                                  ))}
                                 </select>
                               </td>
                               <td>
@@ -3432,8 +3419,9 @@ export default function ShippingEstimate() {
                                 <input
                                   type="text"
                                   placeholder="0.00"
-                                  disabled
-                                  value={calc.vat ? calc.vat.toFixed(2) : "0.00"}
+                                  disabled={!(row.vatTyp === "Manual VAT" || row.vatTyp === "Manual VAT (Capital Goods)")}
+                                  value={(row.vatTyp === "Manual VAT" || row.vatTyp === "Manual VAT (Capital Goods)") ? (row.vat ?? "") : (calc.vat ? calc.vat.toFixed(2) : "0.00")}
+                                  onChange={(e) => updateRowField(setAdminRows, row.id, "vat", e.target.value)}
                                   className="supplier_form"
                                 />
                               </td>
@@ -3689,21 +3677,9 @@ export default function ShippingEstimate() {
                                   onChange={(e) => updateRowField(setCustomsRows, row.id, "vatTyp", e.target.value)}
                                   value={row.vatTyp || ""}
                                 >
-                                  <option value="">No Vat</option>
-                                  <option value="15">Standard Rate(15.00%)</option>
-                                  <option value="15">Standard Rate (Capital Goods) (15.00%)</option>
-                                  <option value="0">Zero Rate</option>
-                                  <option value="0">Zero Rate Exports(0.00%)</option>
-                                  <option value="0">Exempt and Non-Suppliers(0.00%)</option>
-                                  <option value="15">Export of Second Hands Goods(15.00%)</option>
-                                  <option value="15">Change in Use(15.00%)</option>
-                                  <option value="100">Customs VAT(100.00%)</option>
-                                  <option value="100">Goods and Services Imported(100.00%)</option>
-                                  <option value="100">Capital Goods and Imported(100.00%)</option>
-                                  <option value="100">VAT Adjustment (100.00%)</option>
-                                  <option value="15">Domestic Reverse Charge (15.00%)</option>
-                                  <option value="">Manual VAT</option>
-                                  <option value="">Manual VAT (Capital Goods)</option>
+                                  {VAT_OPTIONS.map((opt, i) => (
+                                    <option key={i} value={opt.value}>{opt.label}</option>
+                                  ))}
                                 </select>
                               </td>
                               <td>
@@ -3737,8 +3713,9 @@ export default function ShippingEstimate() {
                                 <input
                                   type="text"
                                   placeholder="0.00"
-                                  disabled
-                                  value={calc.vat ? calc.vat.toFixed(2) : "0.00"}
+                                  disabled={!(row.vatTyp === "Manual VAT" || row.vatTyp === "Manual VAT (Capital Goods)")}
+                                  value={(row.vatTyp === "Manual VAT" || row.vatTyp === "Manual VAT (Capital Goods)") ? (row.vat ?? "") : (calc.vat ? calc.vat.toFixed(2) : "0.00")}
+                                  onChange={(e) => updateRowField(setCustomsRows, row.id, "vat", e.target.value)}
                                   className="supplier_form"
                                 />
                               </td>

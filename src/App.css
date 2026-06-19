@@ -5114,8 +5114,7 @@ td {
 
 .cost-table tr.estimate-section-row td {
   background: #f7f8fb;
-  border-top: 2px solid #1b2245;
-  border-bottom: 1px solid #000;
+  border: 1px solid #000;
   font-size: 13px;
   font-weight: 700;
   padding: 8px !important;
@@ -5131,8 +5130,8 @@ td {
 
 .cost-table tr:has(td[colspan="6"] strong) td {
   background: #eef0f6;
-  border-top: 2px solid #1b2245;
-  border-bottom: 2px solid #1b2245;
+  border-top: 1px solid #1b2245;
+  border-bottom: 1px solid #1b2245;
   font-weight: 700;
   padding-top: 7px !important;
   padding-bottom: 7px !important;
@@ -6152,4 +6151,16 @@ input[placeholder="search"] {
 .wayWillView svg {
   height: 18px;
   width: 18px;
+}
+
+table.cost-table strong {
+  font-weight: 600;
+}
+
+.pdf-page input,
+.pdf-page select {
+  border: 1px solid #cdc8c8;
+  border-radius: 3px;
+  padding: 4px 5px !important;
+  font-size: 13px;
 }

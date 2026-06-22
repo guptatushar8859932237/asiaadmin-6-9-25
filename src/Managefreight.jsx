@@ -2044,13 +2044,12 @@ export default function Managefreight() {
                                                     <label>Package Type</label>
                                                     <br />
                                                     <select
-                                                      className="form-select"
+                                                      className="form-select form-control"
                                                       name="package_type"
                                                       value={
                                                         inputdata.package_type
                                                       }
                                                       onChange={handleupdateapi}
-                                                      className="form-control"
                                                     >
                                                       <option value="">
                                                         Select...

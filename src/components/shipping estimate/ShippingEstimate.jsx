@@ -11,6 +11,7 @@ import { RiFolderUserFill } from "react-icons/ri";
 import { MdArrowOutward } from "react-icons/md";
 import { useRef } from "react";
 import { exportEstimatePdf } from "../../utils/pdfExportUtils";
+
 const getVatPercent = (vatTyp) => {
   if (!vatTyp) return 0;
   if (!isNaN(vatTyp) && !isNaN(parseFloat(vatTyp))) {
@@ -1962,8 +1963,6 @@ export default function ShippingEstimate() {
                             <th>VAT </th>
                             <th>VAT Incl </th>
                             <th colSpan={2}>Comment </th>
-
-
                           </tr>
                         </thead>
 

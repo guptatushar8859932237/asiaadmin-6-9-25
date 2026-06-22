@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { useParams } from "react-router-dom";
+
 export default function SupplierEstimation() {
   const [data, setData] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
@@ -40,11 +41,13 @@ export default function SupplierEstimation() {
   const startIndex = (currentPage - 1) * pageSize;
   const endIndex = startIndex + pageSize;
   const currentData = filterdata.slice(startIndex, endIndex);
+
   const handleclicknanvi = (item) => {
     navigate("/Admin/supplier-estimation-view", {
       state: { data: item, freight_id: id },
     });
   };
+
   const handleclicknav = () => {
     // navigate("/Admin/FreightSupplier");
     window.history.back();

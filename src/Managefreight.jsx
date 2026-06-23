@@ -89,7 +89,7 @@ export default function Managefreight() {
     priority: "",
     is_active: "",
     ready_for_collection: "",
-    require_for_delivery:"",
+    require_for_delivery: "",
     quote_received: "",
     client_ref_name: "",
     client_quoted: "",
@@ -490,7 +490,7 @@ export default function Managefreight() {
     }
   };
 
-    const hanldeclicknavi2 = async (freight_id) => {
+  const hanldeclicknavi2 = async (freight_id) => {
     console.log(freight_id);
     JSON.stringify(localStorage.setItem("freightid", freight_id));
     try {
@@ -1239,7 +1239,7 @@ export default function Managefreight() {
                                                   />{" "}
                                                   Declined
                                                 </a>
-                                                 <a
+                                                <a
                                                   className="dropdown-item li_icon"
                                                   onClick={() => {
                                                     hanldeclicknavi2(
@@ -1478,6 +1478,9 @@ export default function Managefreight() {
                                       <div className="d-flex">
                                         <div className="me-2">
                                           {item?.staff_name}
+                                          {item?.confirmed_supplier_name &&
+                                            item?.confirmed_supplier_name !== "null" &&
+                                            `, ${item.confirmed_supplier_name}`}
                                         </div>
                                         <div>
                                           {" "}
@@ -2508,7 +2511,7 @@ export default function Managefreight() {
                                                       </RadioGroup>
                                                     </FormControl>
                                                   </div>
-                                                   <div className="shipRefer mb-3">
+                                                  <div className="shipRefer mb-3">
                                                     <FormControl>
                                                       <FormLabel id="demo-row-radio-buttons-group-label">
                                                         <label>
@@ -2964,7 +2967,6 @@ export default function Managefreight() {
                     <button className="blueBtn " variant="contained" onClick={postData}>
                       Apply
                     </button>
-
                   </div>
                 </div>
               </Box>

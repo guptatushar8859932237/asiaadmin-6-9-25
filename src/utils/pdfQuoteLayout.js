@@ -272,20 +272,20 @@ const PDF_QUOTE_STYLE = `
   display: none !important;
 }
 [data-pdf-capture-host] .pdf-quote-wrap {
-  width: 100%;
-  max-width: 100%;
-  margin: 0;
-  padding: 0;
+  width: 100% !important;
+  max-width: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
   font-family: Arial, Helvetica, sans-serif;
   font-size: 11px;
   color: #000;
 }
 [data-pdf-capture-host] .pdf-quote-table {
-  width: 100%;
-  border-collapse: collapse;
-  table-layout: fixed;
-  border: 1px solid #000;
-  background: #fff;
+  width: 100% !important;
+  border-collapse: collapse !important;
+  table-layout: fixed !important;
+  border: 1px solid #000 !important;
+  background: #fff !important;
 }
 [data-pdf-capture-host] .pdf-quote-table th,
 [data-pdf-capture-host] .pdf-quote-table td {
@@ -480,6 +480,14 @@ const buildSectionRows = ({
   return rows;
 };
 
+const renderDummyWidthRow = (visibleColumns, columnWidths) => {
+  const cells = visibleColumns.map((_, visibleIndex) => {
+    const width = columnWidths[visibleIndex];
+    return `<td style="width:${width}%; height:0; padding:0; border:0; line-height:0;"></td>`;
+  }).join("");
+  return `<tr style="height:0; line-height:0; visibility:hidden; border:0;">${cells}</tr>`;
+};
+
 const buildUnifiedQuoteTableHtml = ({
   headers,
   sections,
@@ -512,6 +520,9 @@ const buildUnifiedQuoteTableHtml = ({
   }
 
   if (!allRows.length) return "";
+
+  // Prepend the dummy row to establish fixed column widths
+  allRows.unshift(renderDummyWidthRow(visibleColumns, columnWidths));
 
   return `
     <table class="pdf-quote-table" width="100%" border="0" cellpadding="0" cellspacing="0">

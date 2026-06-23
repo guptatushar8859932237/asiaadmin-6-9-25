@@ -109,6 +109,7 @@ import ManageCollectionDelivery from "./ManageCollectionDelivery";
 import Invoices from "./components/Billing/Invoices";
 import Quotes from "./components/Billing/Quotes";
 import AddQuotesInvoice from "./components/Billing/AddQuotesInvoice";
+import CompanyAddresses from "./pages/CompanyAddresses";
 const Dashboard = lazy(() => import("./pages/Dashboard"));
 const Users = lazy(() => import("./pages/Users"));
 const Messages = lazy(() => import("./pages/Messages"));
@@ -256,6 +257,11 @@ export default function App() {
                   index
                   path="/Admin/manage-staff"
                   element={<ManageStaff />}
+                />
+                <Route
+                  index
+                  path="/Admin/company-address"
+                  element={<CompanyAddresses/>}
                 />
                 <Route
                   index

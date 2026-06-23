@@ -912,7 +912,7 @@ export default function Supplierestimationview() {
                       </div>
                       <div className="d-flex gap-3 align-items-center blueText">
                         <i onClick={() => downloadPDF1()} className="fa fa-download" aria-hidden="true" style={{ cursor: "pointer" }}></i>
-                        <i className="fa fa-address-card" onClick={() => downloadPDF()} style={{ cursor: "pointer" }}></i>
+                        {/* <i className="fa fa-address-card" onClick={() => downloadPDF()} style={{ cursor: "pointer" }}></i> */}
                         <button onClick={andlemodaloen} className="blueBtn">
                           Assign Supplier
                         </button>

@@ -28,6 +28,7 @@ import DriveFileMoveOutlinedIcon from "@mui/icons-material/DriveFileMoveOutlined
 import NotificationsActiveOutlinedIcon from "@mui/icons-material/NotificationsActiveOutlined";
 import LocalShippingOutlinedIcon from "@mui/icons-material/LocalShippingOutlined";
 import Groups2OutlinedIcon from "@mui/icons-material/Groups2Outlined";
+import PinDropIcon from '@mui/icons-material/PinDrop';
 import SecurityOutlinedIcon from "@mui/icons-material/SecurityOutlined";
 import QueryStatsIcon from "@mui/icons-material/QueryStats";
 import AssignmentIndIcon from "@mui/icons-material/AssignmentInd";
@@ -35,6 +36,7 @@ import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 import InsertDriveFileIcon from "@mui/icons-material/InsertDriveFile";
 import { Group } from "@mui/icons-material";
+import CompanyAddresses from "../../pages/CompanyAddresses";
 const routes = [
   {
     path: "/Admin/dashboard",
@@ -202,6 +204,11 @@ const routes = [
         name: "Manage Staff",
         icon: <Groups2OutlinedIcon />,
       },
+      {
+        path:"/Admin/company-address",
+        name:"Company Address",
+        icon: <PinDropIcon/>,
+      }
     ],
   },
   {

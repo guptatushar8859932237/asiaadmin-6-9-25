@@ -752,7 +752,68 @@ export default function ShippingEstimate() {
   const downloadPDF = () => {
     setShowData(false); // PDF ke liye limited UI
     // downloadPDF1()
-    navigate("/Admin/Downloadestimate", { state: { data: getdata122 } });
+    const allComponents = [];
+
+    const mapRowToComponent = (row, calc) => ({
+      ...(row.db_id && { id: row.db_id }),
+      admin_frieght_component_id: row.admin_frieght_component_id || null,
+      description: row.description || "",
+      qty: parseFloat(row.qty) || 0,
+      currency: row.currency || "",
+      cost: parseFloat(row.cost) || 0,
+      unit_type: row.unitType === "1" ? "L/S" : (row.unitType === "2" ? "W/M" : ""),
+      unit: parseFloat(calc.unit) || 0,
+      total_cost: parseFloat(calc.tCost) || 0,
+      gp_percent: parseFloat(row.gp_percent) || 0,
+      sales_price: parseFloat(calc.salesPrice) || 0,
+      roe: parseFloat(row.roe) || 0,
+      final_amount: parseFloat(calc.finalAmt) || 0,
+      vat_type: row.vatTyp || "",
+      disc_percent: parseFloat(row.discPercent) || 0,
+      discount: parseFloat(calc.disc) || 0,
+      exclusive: parseFloat(calc.exclusive) || 0,
+      vat: parseFloat(calc.vat) || 0,
+      vat_incl: parseFloat(calc.inclusive) || 0,
+      comment: row.comment || ""
+    });
+
+    originRowsData.forEach(({ row, calc }) => {
+      if (row.description) {
+        allComponents.push({ ...mapRowToComponent(row, calc), name: "Origin Charges" });
+      }
+    });
+    freightRowsData.forEach(({ row, calc }) => {
+      if (row.description) {
+        allComponents.push({ ...mapRowToComponent(row, calc), name: "Freight Charges" });
+      }
+    });
+    transitRowsData.forEach(({ row, calc }) => {
+      if (row.description) {
+        allComponents.push({ ...mapRowToComponent(row, calc), name: "Transit Charges" });
+      }
+    });
+    destinationRowsData.forEach(({ row, calc }) => {
+      if (row.description) {
+        allComponents.push({ ...mapRowToComponent(row, calc), name: "Destination Charges" });
+      }
+    });
+    adminRowsData.forEach(({ row, calc }) => {
+      if (row.description) {
+        allComponents.push({ ...mapRowToComponent(row, calc), name: "Admin Charges" });
+      }
+    });
+    customsRowsData.forEach(({ row, calc }) => {
+      if (row.description) {
+        allComponents.push({ ...mapRowToComponent(row, calc), name: "Customs Charges" });
+      }
+    });
+
+    const currentFreightState = {
+      ...freight,
+      components: allComponents
+    };
+
+    navigate("/Admin/Downloadestimate", { state: { data: getdata122, freight: currentFreightState } });
   };
 
   const downloadPDF1 = async () => {

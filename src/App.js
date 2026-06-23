@@ -488,11 +488,12 @@ export default function App() {
                   path="/Admin/supplier-estimation-view"
                   element={<Supplierestimationview />}
                 />
-                <Route
+                 {/* dont use this file   */}
+                {/* <Route
                   index
                   path="/Admin/DownloadEstimate"
                   element={<DownloadEstimation />}
-                />
+                /> */}
                 <Route
                   index
                   path="/Admin/bookinginstruction"

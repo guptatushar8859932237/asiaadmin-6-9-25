@@ -40,6 +40,14 @@ const getVatPercent = (vatTyp) => {
   return 0;
 };
 
+const getVatLabel = (val) => {
+  if (!val) return "";
+  if (String(val) === "15") return "Standard Rate(15.00%)";
+  if (String(val) === "100") return "Customs VAT(100.00%)";
+  if (String(val) === "0") return "Zero Rate";
+  return val;
+};
+
 const mapEstimateComponentsToFlatFields = (freight) => {
   if (!freight || typeof freight !== "object" || Array.isArray(freight)) {
     return freight;
@@ -626,6 +634,12 @@ const mapEstimateComponentsToFlatFields = (freight) => {
   return f;
 };
 
+const formatValue = (val) => {
+  const num = parseFloat(val);
+  if (isNaN(num) || num === 0) return "-";
+  return num.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+};
+
 export default function Downlaodestimate() {
   const [update, setUpdate] = useState([0]);
   const location = useLocation();
@@ -646,6 +660,360 @@ export default function Downlaodestimate() {
   const [selected, setSelected] = useState([]); // selected IDs
   const [open, setOpen] = useState(false);
   const navigate = useNavigate();
+
+  // Dynamic Rows for each section
+  const [originRows, setOriginRows] = useState([]);
+  const [freightRows, setFreightRows] = useState([]);
+  const [transitRows, setTransitRows] = useState([]);
+  const [destinationRows, setDestinationRows] = useState([]);
+  const [adminRows, setAdminRows] = useState([]);
+  const [customsRows, setCustomsRows] = useState([]);
+
+  const resolveRowUnit = (unitType) => {
+    if (!unitType || unitType === "Select") return 0;
+    if (String(unitType) === "1") return 1;
+    const rate = parseFloat(freight?.chargable_rate);
+    return Number.isNaN(rate) ? 0 : rate;
+  };
+
+  const displayRowUnit = (unitType) => {
+    if (!unitType || unitType === "Select") return "";
+    if (String(unitType) === "1") return 1;
+    return freight?.chargable_rate ?? "";
+  };
+
+  const calculateRowData = (row) => {
+    const qty = parseFloat(row?.qty) || 0;
+    const cost = parseFloat(row?.cost) || 0;
+    const unit = resolveRowUnit(row?.unitType);
+    const tCost = (row?.unitType && row?.unitType !== "Select") ? (cost * unit * qty) : 0;
+    const gpPercent = parseFloat(row?.gp_percent) || 0;
+    let salesPrice = tCost;
+    if (gpPercent > 0 && gpPercent < 100) {
+      salesPrice = tCost / (1 - gpPercent / 100);
+    }
+    const roe = parseFloat(row?.roe) || 0;
+    const finalAmt = salesPrice * roe;
+
+    const discPercent = parseFloat(row?.discPercent) || 0;
+    const vatPercent = getVatPercent(row?.vatTyp);
+
+    const disc = (finalAmt * discPercent) / 100;
+    const exclusive = finalAmt - disc;
+    let vat = (exclusive * vatPercent) / 100;
+    if (row?.vatTyp === "Manual VAT" || row?.vatTyp === "Manual VAT (Capital Goods)") {
+      vat = parseFloat(row?.vat) || 0;
+    }
+    const inclusive = exclusive + vat;
+
+    return {
+      unit,
+      tCost,
+      salesPrice,
+      finalAmt,
+      disc,
+      exclusive,
+      vat,
+      inclusive
+    };
+  };
+
+  const updateRowField = (setter, id, field, value) => {
+    setter((prev) =>
+      prev.map((row) => (row.id === id ? { ...row, [field]: value } : row))
+    );
+  };
+
+  const loadEstimateData = (estimateData) => {
+    if (!estimateData) return;
+
+    setFreight(prev => ({
+      ...prev,
+      ...estimateData,
+      supplier_id: estimateData.supplier_id || prev?.supplier_id || "",
+      customer_invoice_no: estimateData.customer_invoice_no || prev?.customer_invoice_no || "",
+      invoice_for_country: estimateData.invoice_for_country || prev?.invoice_for_country || "",
+      final_base_currency: estimateData.final_base_currency || prev?.final_base_currency || "Select",
+      chargable_rate: estimateData.chargeable ?? prev?.chargable_rate ?? "",
+    }));
+
+    if (estimateData.components && estimateData.components.length > 0) {
+      const mappedComponents = estimateData.components.map(c => ({
+        id: c.id,
+        db_id: c.id,
+        admin_frieght_component_id: c.admin_frieght_component_id,
+        description: c.description || c.component_description || "",
+        qty: c.qty !== null && c.qty !== undefined ? c.qty : "",
+        currency: c.currency || "Select",
+        cost: c.cost !== null && c.cost !== undefined ? c.cost : "",
+        unitType: c.unit_type === "L/S" ? "1" : (c.unit_type === "W/M" ? "2" : "Select"),
+        gp_percent: c.gp_percent !== null && c.gp_percent !== undefined ? c.gp_percent : "",
+        sales_price: c.sales_price !== null && c.sales_price !== undefined ? c.sales_price : "",
+        roe: c.roe !== null && c.roe !== undefined ? c.roe : "",
+        vatTyp: c.vat_type !== null && c.vat_type !== undefined ? getVatLabel(c.vat_type) : "",
+        vat: c.vat !== null && c.vat !== undefined ? c.vat : "",
+        discPercent: c.disc_percent !== null && c.disc_percent !== undefined ? c.disc_percent : "",
+        comment: c.comment || ""
+      }));
+
+      const origin = mappedComponents.filter(c => {
+        const orig = estimateData.components.find(x => x.id === c.db_id);
+        return orig && orig.name === "Origin Charges";
+      });
+      const freightC = mappedComponents.filter(c => {
+        const orig = estimateData.components.find(x => x.id === c.db_id);
+        return orig && orig.name === "Freight Charges";
+      });
+      const transit = mappedComponents.filter(c => {
+        const orig = estimateData.components.find(x => x.id === c.db_id);
+        return orig && orig.name === "Transit Charges";
+      });
+      const dest = mappedComponents.filter(c => {
+        const orig = estimateData.components.find(x => x.id === c.db_id);
+        return orig && orig.name === "Destination Charges";
+      });
+      const admin = mappedComponents.filter(c => {
+        const orig = estimateData.components.find(x => x.id === c.db_id);
+        return orig && orig.name === "Admin Charges";
+      });
+      const customs = mappedComponents.filter(c => {
+        const orig = estimateData.components.find(x => x.id === c.db_id);
+        return orig && orig.name === "Customs Charges";
+      });
+
+      setOriginRows(origin);
+      setFreightRows(freightC);
+      setTransitRows(transit);
+      setDestinationRows(dest);
+      setAdminRows(admin);
+      setCustomsRows(customs);
+    } else {
+      const f = mapEstimateComponentsToFlatFields(estimateData);
+      setOriginRows([
+        {
+          id: 1,
+          description: f.origin_pick_up_description || "Origin Pick Up",
+          qty: f.freight_charge_currencyQTY || "",
+          currency: f.pickup_freight_currency || "Select",
+          cost: f.origin_pick_up_cost || "",
+          unitType: f.origin_pick_up_unitType || "Select",
+          gp_percent: "",
+          sales_price: "",
+          roe: f.roe_origin_currencyorigin || "",
+          vatTyp: getVatLabel(f.org_pickUp_vatTyp || ""),
+          discPercent: f["org_pickUp_disc%"] || "",
+          comment: f.origin_pick_up_comment || "",
+        }
+      ]);
+      setFreightRows([
+        {
+          id: 2,
+          description: f.freight_charge_description || "Freight Charges",
+          qty: f.freight_charge_currency_unitTypeQTY || "",
+          currency: f.freight_charge_currency || "Select",
+          cost: f.freight_charge_currency_cost || "",
+          unitType: f.freight_charge_currency_unitType || "Select",
+          gp_percent: "",
+          sales_price: "",
+          roe: f.roe_freight_currency || "",
+          vatTyp: getVatLabel(f.ocenfreight_charge_vatTyp || ""),
+          discPercent: f["ocenfreight_charge_disc%"] || "",
+          comment: f.freight_charge_comment || "",
+        }
+      ]);
+      setTransitRows([
+        {
+          id: 3,
+          description: f.Transit_currency_description || "Transit Charges",
+          qty: f.Transit_currency_unitTpeQTY || "",
+          currency: f.Transit_currency || "Select",
+          cost: f.Transit_currency_Cost || "",
+          unitType: f.Transit_currency_unitTpe || "Select",
+          gp_percent: "",
+          sales_price: "",
+          roe: f.Transit_currency_roe || "",
+          vatTyp: getVatLabel(f.trans_clear_fees_vatTyp || ""),
+          discPercent: f["trans_clear_fees_disc%"] || "",
+          comment: f.Transit_currency_comment || "",
+        }
+      ]);
+      setDestinationRows([
+        {
+          id: 4,
+          description: f.Destination_freight_currency_description || "Destination Charges",
+          qty: f.Destination_freight_currency_unitTypeQTY || "",
+          currency: f.Destination_freight_currency || "Select",
+          cost: f.Destination_freight_currency_cost || "",
+          unitType: f.Destination_freight_currency_unitType || "Select",
+          gp_percent: "",
+          sales_price: "",
+          roe: f.Destination_freight_currency_Roe || "",
+          vatTyp: getVatLabel(f.dest_clearing_fees_vatTyp || ""),
+          discPercent: f["dest_clearing_fees_disc%"] || "",
+          comment: f.Destination_freight_currency_comment || "",
+        }
+      ]);
+      setAdminRows([
+        {
+          id: 5,
+          description: f.Destination_AdminAgrncy_description || "Admin Charges",
+          qty: f.Destination_AdminAgrncy_currency_unitQTY || "",
+          currency: f.admin_currency_charge || "Select",
+          cost: f.Destination_AdminAgrncy_currency_cost || "",
+          unitType: f.Destination_AdminAgrncy_currency_unitType || "Select",
+          gp_percent: "",
+          sales_price: "",
+          roe: f.Destination_AdminAgrncy_currency_roe || "",
+          vatTyp: getVatLabel(f.admin_agencyFee_vatTyp || ""),
+          discPercent: f["admin_agencyFee_disc%"] || "",
+          comment: f.Destination_AdminAgrncy_comment || "",
+        }
+      ]);
+      setCustomsRows([
+        {
+          id: 6,
+          description: f.cust_duty_description || "Customs Charges",
+          qty: f.cust_duty_qty || "",
+          currency: f.cust_duty_curr || "Select",
+          cost: f.cust_duty_cost || "",
+          unitType: f.cust_duty_unitTyp || "Select",
+          gp_percent: "",
+          sales_price: "",
+          roe: f.cust_duty_roe || "",
+          vatTyp: getVatLabel(f.cust_duty_vatTyp || ""),
+          discPercent: f["cust_duty_disc%"] || "",
+          comment: f.cust_duty_comment || "",
+        }
+      ]);
+    }
+  };
+
+  const renderRow = (row, calc, setter) => {
+    return (
+      <tr key={row.id}>
+        <td>{row.description || ""}</td>
+        <td>
+          <input
+            style={{ marginBottom: 0, fontSize: 13, color: "black", fontWeight: 400, border: "0px", verticalAlign: "middle" }}
+            type="text"
+            className="supplier_form"
+            onChange={(e) => updateRowField(setter, row.id, "qty", e.target.value)}
+            value={row.qty || ""}
+            placeholder="0.00"
+          />
+        </td>
+        <td>
+          <select
+            className="select_supplier"
+            style={{ margin: 0, fontSize: 13, fontWeight: 700, paddingLeft: 5, border: 0 }}
+            onChange={(e) => updateRowField(setter, row.id, "unitType", e.target.value)}
+            value={row.unitType || "Select"}
+          >
+            <option value="Select">Select</option>
+            <option value="1">L/S</option>
+            <option value="2">W/M</option>
+          </select>
+        </td>
+        <td>
+          <input
+            style={{ marginBottom: 0, fontSize: 13, color: "black", fontWeight: 400, border: "0px", verticalAlign: "middle" }}
+            type="text"
+            className="supplier_form"
+            disabled
+            value={displayRowUnit(row.unitType)}
+            placeholder="0.00"
+          />
+        </td>
+        <td>
+          <input
+            style={{ marginBottom: 0, fontSize: 13, color: "black", fontWeight: 400, border: "0px", verticalAlign: "middle" }}
+            type="text"
+            className="supplier_form"
+            onKeyPress={handlepresss}
+            onChange={(e) => updateRowField(setter, row.id, "cost", e.target.value)}
+            value={row.cost || ""}
+            placeholder="0.00"
+          />
+        </td>
+        <td>
+          <select
+            className="select_supplier"
+            style={{ margin: 0, fontSize: 13, fontWeight: 700, paddingLeft: 5, border: 0 }}
+            onChange={(e) => updateRowField(setter, row.id, "currency", e.target.value)}
+            value={row.currency || "Select"}
+          >
+            <option value="Select">Select</option>
+            <option value="RAND">RAND</option>
+            <option value="USD">USD</option>
+            <option value="INR">INR</option>
+            <option value="EURO">EURO</option>
+          </select>
+        </td>
+        <td>
+          <input
+            style={{ marginBottom: 0, fontSize: 13, color: "black", border: "0px", verticalAlign: "middle" }}
+            name="roe"
+            onChange={(e) => updateRowField(setter, row.id, "roe", e.target.value)}
+            value={row.roe || ""}
+            className="supplier_form"
+          />
+        </td>
+        <td>
+          <input
+            style={{ marginBottom: 0, fontSize: 13, color: "black", border: "0px", verticalAlign: "middle" }}
+            disabled
+            value={isNaN(calc.finalAmt) ? "0.00" : calc.finalAmt.toFixed(2)}
+            className="supplier_form"
+          />
+        </td>
+        <td>
+          <select
+            className="select_supplier"
+            style={{ margin: 0, fontSize: 13, fontWeight: 700, paddingLeft: 5, border: 0 }}
+            onChange={(e) => updateRowField(setter, row.id, "vatTyp", e.target.value)}
+            value={row.vatTyp || ""}
+          >
+            {VAT_OPTIONS.map((opt, i) => (
+              <option key={i} value={opt.value}>{opt.label}</option>
+            ))}
+          </select>
+        </td>
+        <td>
+          <input
+            style={{ marginBottom: 0, fontSize: 13, color: "black", width: "50px", border: "0px", verticalAlign: "middle" }}
+            type="text"
+            onChange={(e) => updateRowField(setter, row.id, "discPercent", e.target.value)}
+            value={row.discPercent || ""}
+            placeholder="0.00%"
+          />
+        </td>
+        <td>
+          <input
+            style={{ marginBottom: 0, fontSize: 13, color: "black", border: "0px", verticalAlign: "middle" }}
+            disabled
+            value={formatValue(calc.disc)}
+            className="supplier_form"
+          />
+        </td>
+        <td>
+          <input
+            style={{ marginBottom: 0, fontSize: 13, color: "black", border: "0px", verticalAlign: "middle" }}
+            disabled
+            value={formatValue(calc.exclusive)}
+            className="supplier_form"
+          />
+        </td>
+        <td>
+          <input
+            style={{ marginBottom: 0, fontSize: 13, color: "black", border: "0px", verticalAlign: "middle" }}
+            disabled
+            value={formatValue(calc.vat)}
+            className="supplier_form"
+          />
+        </td>
+      </tr>
+    );
+  };
 
   const getdata122 = location?.state?.data || {};
   console.log(getdata122?.data);
@@ -715,7 +1083,7 @@ export default function Downlaodestimate() {
         const rawData = response.data.data;
         const estimateData = Array.isArray(rawData) ? rawData[0] : rawData;
         if (estimateData) {
-          setFreight(mapEstimateComponentsToFlatFields(estimateData) || [0]);
+          loadEstimateData(estimateData);
         }
       }
     } catch (error) {
@@ -732,1245 +1100,156 @@ export default function Downlaodestimate() {
       [name]: value,
     }));
   };
-  const freight_amount =
-    freight?.origin_pick_up_entey * freight?.origin_pick_up_Unit;
-  const num1 = parseFloat(freight_amount || 0);
-  const num2 = parseFloat(freight.freight_gp || 0);
-  const num3 = num1 / (1 - num2 / 100);
-  const finalval = isNaN(num3) ? 0 : num3.toFixed(2);
-  const finalvalflo = parseFloat(finalval);
-  const originhandelc = (e) => {
-    const { name, value } = e.target;
-    setOrigin({ ...origin, [name]: value });
-  };
-  const oripick1 = parseFloat(freight.origin_pick_up_cost) || 0;
-  // const oripick19 = parseFloat(freight.freight_charge_currencyQTY) || 0;
-  // const oripick2 = parseFloat(freight.origin_pick_up_fees) || 0;
-  const oripick2 =
-    freight.origin_pick_up_unitType === "1" ? 1 : freight.chargable_rate;
-  const oripick3 = parseFloat(freight.origin_pickup_fee_gpcalc) || 0;
-  const oripick4 = freight.origin_pick_up_unitType
-    ? oripick1 * oripick2 * freight.freight_charge_currencyQTY
-    : 0.0;
-  let finalValue = 0;
-  if (oripick4 > 0) {
-    finalValue = oripick4 * (1 + oripick3 / 100);
-  }
-  const finalori1 = isNaN(finalValue) ? "0.00" : finalValue.toFixed(2);
-  const finalvlaueoriginPickup =
-    finalori1 * parseInt(freight?.roe_origin_currencyorigin);
-  const orifuel1 = parseFloat(freight.origin_pick_up_fuel_cost) || 0;
-  // const orifuel2 = parseFloat(freight.origin_pick_up_fuel_fees) || 0;
-  const orifuel2 =
-    freight.origin_pick_up_fuel_unitType === "1" ? 1 : freight.chargable_rate;
-  const orifuel3 = parseFloat(freight.origin_pick_fuelGP) || 0;
-  const orifuel4 = freight.origin_pick_up_fuel_unitType
-    ? orifuel1 * orifuel2 * freight.origin_pick_up_fuel_unitTypeQTY
-    : 0.0;
-  let finalValueFuel = 0;
-  if (orifuel4 > 0) {
-    finalValueFuel = orifuel4 * (1 + orifuel3 / 100);
-  }
-  const finalfuel1 = isNaN(finalValueFuel) ? "0.00" : finalValueFuel.toFixed(2);
-  const finalvlaueoFuel =
-    finalfuel1 * parseInt(freight?.roe_origin_fuel_currency);
-  const oricfs1 = parseFloat(freight.origin_pick_up_cfs_cost) || 0;
-  // const oricfs2 = parseFloat(freight.origin_pick_up_cfs_fees) || 0;
-  const oricfs2 = parseFloat(
-    freight.origin_pick_up_cfs_unitType === "1" ? 1 : freight.chargable_rate
-  );
-  const oricfs3 = parseFloat(freight.origin_pickup_vfs_gp) || 0;
-  const oricfs4 = freight.origin_pick_up_cfs_unitType
-    ? oricfs1 * oricfs2 * freight.origin_pick_up_cfs_unitTypeQTY
-    : 0.0;
-  let finalValuecfs = 0;
-  if (oricfs4 > 0) {
-    finalValuecfs = oricfs4 * (1 + oricfs3 / 100);
-  }
-  const finalcfs1 = isNaN(finalValuecfs) ? "0.00" : finalValuecfs.toFixed(2);
-  const finalvlaueocfs = finalcfs1 * parseInt(freight?.roe_origin_cfs_currency);
+    const originRowsData = originRows.map(row => ({
+    row,
+    calc: calculateRowData(row)
+  }));
+  const totalChangeRoeOrigin = originRowsData.reduce((sum, item) => sum + item.calc.finalAmt, 0);
+  const totalOriginDiscount = originRowsData.reduce((sum, item) => sum + item.calc.disc, 0);
+  const totalOriginExclusive = originRowsData.reduce((sum, item) => sum + item.calc.exclusive, 0);
+  const totalOriginVat = originRowsData.reduce((sum, item) => sum + item.calc.vat, 0);
 
-  const oridoc1 = parseFloat(freight.origin_pick_up_documantion_cost) || 0;
-  // const oridoc2 = parseFloat(freight.origin_pick_up_documantation_fees) || 0;
-  const oridoc2 = parseFloat(
-    freight.origin_pick_up_documantation_unitType === "1"
-      ? 1
-      : freight.chargable_rate
-  );
-  const oridoc3 = parseFloat(freight.origin_pick_documantation_cost_gp) || 0;
-  const oridoc4 = freight.origin_pick_up_documantation_unitType
-    ? oridoc1 * oridoc2 * freight.origin_pick_up_documantation_unitTypeQTY
-    : 0.0;
-  let finalValuedoc = 0;
-  if (oridoc4 > 0) {
-    finalValuedoc = oridoc4 * (1 + oridoc3 / 100);
-  }
-  console.log(oridoc4);
-  const finaldoc1 = isNaN(finalValuedoc) ? "0.00" : finalValuedoc.toFixed(2);
-  console.log(finaldoc1, "finaldoc1");
-  console.log(freight.roe_origin_doc_currency);
-  console.log(parseInt(freight?.roe_origin_doc_currency));
-  const finalvlaueodoc = finaldoc1 * parseInt(freight?.roe_origin_doc_currency);
+  const freightRowsData = freightRows.map(row => ({
+    row,
+    calc: calculateRowData(row)
+  }));
+  const totalChangeRoeFreight = freightRowsData.reduce((sum, item) => sum + item.calc.finalAmt, 0);
+  const totalFreightDiscount = freightRowsData.reduce((sum, item) => sum + item.calc.disc, 0);
+  const totalFreightExclusive = freightRowsData.reduce((sum, item) => sum + item.calc.exclusive, 0);
+  const totalFreightVat = freightRowsData.reduce((sum, item) => sum + item.calc.vat, 0);
 
-  const oriforewarding1 =
-    parseFloat(freight.origin_pick_up_forewarding_cost) || 0;
-  const oriforewarding2 = parseFloat(
-    freight.origin_pick_up_forewarding_unitType === "1"
-      ? 1
-      : freight.chargable_rate
-  );
-  // const oriforewarding2 =
-  //   parseFloat(freight.origin_pick_up_forewarding_fees) || 0;
-  const oriforewarding3 = parseFloat(freight.origin_pickup_forewarding_gp) || 0;
-  const oriforewarding4 = freight.origin_pick_up_forewarding_unitType
-    ? oriforewarding1 *
-    oriforewarding2 *
-    freight.origin_pick_up_forewarding_unitTypeQTY
-    : 0.0;
-  let finalValueforewarding = 0;
-  if (oriforewarding4 > 0) {
-    finalValueforewarding = oriforewarding4 * (1 + oriforewarding3 / 100);
-  }
-  console.log(oriforewarding4);
-  const finalforewarding1 = isNaN(finalValueforewarding)
-    ? "0.00"
-    : finalValueforewarding.toFixed(2);
-  console.log(finalforewarding1, "finalforewarding1");
-  console.log(freight.roe_origin_forewarding);
-  console.log(parseInt(freight?.roe_origin_forewarding));
-  const finalvlaueoforewarding =
-    finalforewarding1 * parseInt(freight?.roe_origin_forewarding);
-  const oricustome1 = parseFloat(freight.origin_pick_up_custome_cost) || 0;
-  const oricustome2 = parseFloat(
-    freight.origin_pick_up_custome_unitType === "1" ? 1 : freight.chargable_rate
-  );
-  const oricustome3 = parseFloat(freight.origin_pickup_custome_gp) || 0;
-  const oricustome4 = freight.origin_pick_up_custome_unitType
-    ? oricustome1 * oricustome2 * freight.origin_pick_up_custome_unitTypeQTY
-    : 0.0;
-  let finalValuecustome = 0;
-  if (oricustome4 > 0) {
-    finalValuecustome = oricustome4 * (1 + oricustome3 / 100);
-  }
-  console.log(oriforewarding4);
-  const finalcustomes1 = isNaN(finalValuecustome)
-    ? "0.00"
-    : finalValuecustome.toFixed(2);
-  console.log(finalcustomes1, "finalcustomes1");
-  console.log(freight.roe_origin_customes);
-  console.log(parseInt(freight?.roe_origin_customes));
-  const finalvlaueoCustomes =
-    finalcustomes1 * parseInt(freight?.roe_origin_customes);
-  const safeNumber = (val) => {
-    const num = Number(val);
-    return isNaN(num) ? 0 : num;
-  };
-  const totalChageswithOutExchange =
-    safeNumber(finalori1) +
-    safeNumber(finalfuel1) +
-    safeNumber(finalcfs1) +
-    safeNumber(finaldoc1) +
-    safeNumber(finalforewarding1) +
-    safeNumber(finalcustomes1);
-  console.log(totalChageswithOutExchange);
-  const totalChangeRoeOrigin =
-    safeNumber(finalvlaueoriginPickup) +
-    safeNumber(finalvlaueoFuel) +
-    safeNumber(finalvlaueocfs) +
-    safeNumber(finalvlaueodoc) +
-    safeNumber(finalvlaueoCustomes) +
-    safeNumber(finalvlaueoforewarding);
+  const transitRowsData = transitRows.map(row => ({
+    row,
+    calc: calculateRowData(row)
+  }));
+  const totalChangeRoeTransit = transitRowsData.reduce((sum, item) => sum + item.calc.finalAmt, 0);
+  const totalTransitDiscount = transitRowsData.reduce((sum, item) => sum + item.calc.disc, 0);
+  const totalTransitExclusive = transitRowsData.reduce((sum, item) => sum + item.calc.exclusive, 0);
+  const totalTransitVat = transitRowsData.reduce((sum, item) => sum + item.calc.vat, 0);
 
-  const formatValue = (val) => {
-    const num = parseFloat(val);
-    if (isNaN(num) || num === 0) return "-";
-    return num.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-  };
+  const destinationRowsData = destinationRows.map(row => ({
+    row,
+    calc: calculateRowData(row)
+  }));
+  const totalChangeRoeDestination = destinationRowsData.reduce((sum, item) => sum + item.calc.finalAmt, 0);
+  const totalDestinationDiscount = destinationRowsData.reduce((sum, item) => sum + item.calc.disc, 0);
+  const totalDestinationExclusive = destinationRowsData.reduce((sum, item) => sum + item.calc.exclusive, 0);
+  const totalDestinationVat = destinationRowsData.reduce((sum, item) => sum + item.calc.vat, 0);
 
-  const calculateRowVatAndDisc = (total, vatTyp, discPercentVal) => {
-    const totalVal = parseFloat(total) || 0;
-    const discPercent = parseFloat(discPercentVal) || 0;
-    const vatPercent = getVatPercent(vatTyp);
+  const adminRowsData = adminRows.map(row => ({
+    row,
+    calc: calculateRowData(row)
+  }));
+  const totalChangeRoeAdmin = adminRowsData.reduce((sum, item) => sum + item.calc.finalAmt, 0);
+  const totalAdminDiscount = adminRowsData.reduce((sum, item) => sum + item.calc.disc, 0);
+  const totalAdminExclusive = adminRowsData.reduce((sum, item) => sum + item.calc.exclusive, 0);
+  const totalAdminVat = adminRowsData.reduce((sum, item) => sum + item.calc.vat, 0);
 
-    const discount = (totalVal * discPercent) / 100;
-    const exclusive = totalVal - discount;
-    const vat = (exclusive * vatPercent) / 100;
-    const inclusive = exclusive + vat;
+  const customsRowsData = customsRows.map(row => ({
+    row,
+    calc: calculateRowData(row)
+  }));
+  const totalChangeRoeCustoms = customsRowsData.reduce((sum, item) => sum + item.calc.finalAmt, 0);
+  const totalCustomsDiscount = customsRowsData.reduce((sum, item) => sum + item.calc.disc, 0);
+  const totalCustomsExclusive = customsRowsData.reduce((sum, item) => sum + item.calc.exclusive, 0);
+  const totalCustomsVat = customsRowsData.reduce((sum, item) => sum + item.calc.vat, 0);
 
-    return {
-      discount,
-      exclusive,
-      vat,
-      inclusive
-    };
-  };
+  // Grand totals
+  const grandTotalFinalAmt = totalChangeRoeOrigin + totalChangeRoeFreight + totalChangeRoeTransit + totalChangeRoeDestination + totalChangeRoeAdmin + totalChangeRoeCustoms;
+  const grandTotalDiscount = totalOriginDiscount + totalFreightDiscount + totalTransitDiscount + totalDestinationDiscount + totalAdminDiscount + totalCustomsDiscount;
+  const grandTotalExclusive = totalOriginExclusive + totalFreightExclusive + totalTransitExclusive + totalDestinationExclusive + totalAdminExclusive + totalCustomsExclusive;
+  const grandTotalVat = totalOriginVat + totalFreightVat + totalTransitVat + totalDestinationVat + totalAdminVat + totalCustomsVat;
 
-  const pickUpCalc = calculateRowVatAndDisc(finalvlaueoriginPickup, freight?.org_pickUp_vatTyp, freight?.["org_pickUp_disc%"]);
-  const fuelCalc = calculateRowVatAndDisc(finalvlaueoFuel, "", 0);
-  const cfsCalc = calculateRowVatAndDisc(finalvlaueocfs, "", 0);
-  const docCalc = calculateRowVatAndDisc(finalvlaueodoc, "", 0);
-  const forwardingCalc = calculateRowVatAndDisc(finalvlaueoforewarding, "", 0);
-  const customsCalc = calculateRowVatAndDisc(finalvlaueoCustomes, "", 0);
+  const sumofall = 
+    originRowsData.reduce((sum, item) => sum + item.calc.tCost, 0) +
+    freightRowsData.reduce((sum, item) => sum + item.calc.tCost, 0) +
+    transitRowsData.reduce((sum, item) => sum + item.calc.tCost, 0) +
+    destinationRowsData.reduce((sum, item) => sum + item.calc.tCost, 0) +
+    adminRowsData.reduce((sum, item) => sum + item.calc.tCost, 0) +
+    customsRowsData.reduce((sum, item) => sum + item.calc.tCost, 0);
 
-  const totalOriginDiscount = pickUpCalc.discount + fuelCalc.discount + cfsCalc.discount + docCalc.discount + forwardingCalc.discount + customsCalc.discount;
-  const totalOriginExclusive = pickUpCalc.exclusive + fuelCalc.exclusive + cfsCalc.exclusive + docCalc.exclusive + forwardingCalc.exclusive + customsCalc.exclusive;
-  const totalOriginVat = pickUpCalc.vat + fuelCalc.vat + cfsCalc.vat + docCalc.vat + forwardingCalc.vat + customsCalc.vat;
-  // ////////////////////////////freight calculation
-  const orifreight1 = parseFloat(freight.freight_charge_currency_cost) || 0;
-  // const orifreight2 = parseFloat(freight.freight_charge_currency_fees) || 0;
-  const orifreight2 = parseFloat(
-    freight.freight_charge_currency_unitType === "1"
-      ? 1
-      : freight.chargable_rate
-  );
-  const orifreight3 = parseFloat(freight.freight_charge_currency_gp) || 0;
-  const orifreight4 = freight.freight_charge_currency_unitType
-    ? orifreight1 * orifreight2 * freight.freight_charge_currency_unitTypeQTY
-    : 0.0;
-  let finalValuefreight = 0;
-  if (orifreight4 > 0) {
-    console.log(orifreight4);
-    finalValuefreight = orifreight4 * (1 + orifreight3 / 100);
-  }
-  console.log(orifreight4);
-  const finalfreight1 = isNaN(finalValuefreight)
-    ? "0.00"
-    : finalValuefreight.toFixed(2);
-  const finalvlaueofreight =
-    finalfreight1 * parseInt(freight?.roe_freight_currency);
-  const oriinsurance1 =
-    parseFloat(freight.freight_currency_insurance_cost) || 0;
-  const oriindsurance2 = parseFloat(
-    freight.freight_currency_insurance_unittype === "1"
-      ? 1
-      : freight.chargable_rate
-  );
-  // const oriindsurance2 =
-  //   parseFloat(freight.freight_currency_insurance_unit) || 0;
-  const oriinsurance3 = parseFloat(freight.freightorigin_insurance_gp) || 0;
-  const oriinsurance4 = freight.freight_currency_insurance_unittype
-    ? oriinsurance1 *
-    oriindsurance2 *
-    freight.freight_currency_insurance_unittypeQTY
-    : 0.0;
-  let finalValueinsurance = 0;
-  if (oriinsurance4 > 0) {
-    finalValueinsurance = oriinsurance4 * (1 + oriinsurance3 / 100);
-  }
-  console.log(oriinsurance4);
-  const finalinsurance1 = isNaN(finalValueinsurance)
-    ? "0.00"
-    : finalValueinsurance.toFixed(2);
-  console.log(finalfreight1, "finalfreight1");
-  console.log(freight.roe_insurance_currency);
-  console.log(parseInt(freight?.roe_insurance_currency));
-  const finalvlaueoInsurance =
-    finalinsurance1 * parseInt(freight?.roe_insurance_currency);
-  console.log(finalvlaueoFuel, "finalvlaueoFuel");
-  console.log(orifuel1, orifuel3, orifuel4, finalValueFuel, finalvlaueoFuel);
-
-  const totalChageswithOutExchangeinsurance =
-    safeNumber(finalValuefreight) + safeNumber(finalValueinsurance);
-
-  console.log(totalChageswithOutExchangeinsurance);
-
-  const totalChangeRoeOriginaftercalcuinsurance =
-    safeNumber(finalvlaueoInsurance) + safeNumber(finalvlaueofreight);
-
-  ///////////////////////////////transit change/////////////////////////////////////////////
-
-  const oritransit1 = parseFloat(freight.Transit_currency_Cost) || 0;
-  // const oritransit2 = parseFloat(freight.Transit_currency_unit) || 0;
-  const oritransit2 = parseFloat(
-    freight.Transit_currency_unitTpe === "1" ? 1 : freight.chargable_rate
-  );
-  const oritransit3 = parseFloat(freight.Transit_currency_gp) || 0;
-  const oritransit4 = freight.Transit_currency_unitTpe
-    ? oritransit1 * oritransit2 * freight.Transit_currency_unitTpeQTY
-    : 0.0;
-  let finalValuetransit = 0;
-  if (oritransit4 > 0) {
-    finalValuetransit = oritransit4 * (1 + oritransit3 / 100);
-  }
-  console.log(oriinsurance4);
-  const finaltransit1 = isNaN(finalValuetransit)
-    ? "0.00"
-    : finalValuetransit.toFixed(2);
-  const finalvlaueotransit =
-    finaltransit1 * parseInt(freight?.Transit_currency_roe);
-
-  const oriThc1 = parseFloat(freight.transit_currency_THC_cost) || 0;
-  // const oriThc2 = parseFloat(freight.transit_currency_THC_init) || 0;
-  const oriThc2 = parseFloat(
-    freight.transit_currency_THC_initType === "1" ? 1 : freight.chargable_rate
-  );
-  const oriThc3 = parseFloat(freight.transit_currency_THC_gp) || 0;
-  const oriThc4 = freight.transit_currency_THC_initType
-    ? oriThc1 * oriThc2 * freight.transit_currency_THC_initTypeQTY
-    : 0.0;
-  let finalValueThc = 0;
-  if (oriThc4 > 0) {
-    finalValueThc = oriThc4 * (1 + oriThc3 / 100);
-  }
-  const finalThc1 = isNaN(finalValueThc) ? "0.00" : finalValueThc.toFixed(2);
-  const finalvlaueotfineal = finalThc1 * parseInt(freight?.roe_Transit_Thc);
-
-  const oriunpack1 = parseFloat(freight.Transit_currency_unpack_cost) || 0;
-  const oriunpack2 = parseFloat(
-    freight.Transit_currency_unpack_unitType === "1"
-      ? 1
-      : freight.chargable_rate
-  );
-  // const oriunpack2 = parseFloat(freight.Transit_currency_unpack_unit) || 0;
-  const oriunpack3 = parseFloat(freight.Transit_currency_unpack_gp) || 0;
-  const oriunpack4 = freight.Transit_currency_unpack_unitType
-    ? oriunpack1 * oriunpack2 * freight.transit_currency_THC_initTypeeQTY
-    : 0.0;
-  let finalValueUnpack = 0;
-  if (oriunpack4 > 0) {
-    finalValueUnpack = oriunpack4 * (1 + oriunpack3 / 100);
-  }
-  const finalunpack1 = isNaN(finalValueUnpack)
-    ? "0.00"
-    : finalValueUnpack.toFixed(2);
-  const finalvlaueotfunpack =
-    finalunpack1 * parseInt(freight?.Transit_unpack_roe);
-
-  const ori3rdparty1 = parseFloat(freight.transit_3rd_party_cost) || 0;
-  // const ori3rdparty2 = parseFloat(freight.transit_3rd_party_unit) || 0;
-  const ori3rdparty2 = parseFloat(
-    freight.transit_3rd_party_unittype === "1" ? 1 : freight.chargable_rate
-  );
-  const ori3rdparty3 = parseFloat(freight.transit_3rd_party_gp) || 0;
-  const ori3rdparty4 = freight.transit_3rd_party_unittype
-    ? ori3rdparty1 * ori3rdparty2 * freight.transit_3rd_party_unittypeQTY
-    : 0.0;
-  let finalValue3rdparty = 0;
-  if (ori3rdparty4 > 0) {
-    finalValue3rdparty = ori3rdparty4 * (1 + ori3rdparty3 / 100);
-  }
-  const final3rdparty1 = isNaN(finalValue3rdparty)
-    ? "0.00"
-    : finalValue3rdparty.toFixed(2);
-  const finalvlaueot3dparty =
-    final3rdparty1 * parseInt(freight?.transit_currency_3rd);
-
-  const ori3rdAdmin1 = parseFloat(freight.transit_admin_change) || 0;
-  // const ori3rdAdmin2 = parseFloat(freight.transit_admin_unit) || 0;
-  const ori3rdAdmin2 = parseFloat(
-    freight.transit_admin_unittype === "1" ? 1 : freight.chargable_rate
-  );
-  const ori3rdAdmin3 = parseFloat(freight.transit_admin_gp) || 0;
-  const ori3rdAdmin4 = freight.transit_admin_unittype
-    ? ori3rdAdmin1 * ori3rdAdmin2 * freight.transit_admin_unittypeQTY
-    : 0.0;
-  let finalValueAdmin = 0;
-  if (ori3rdAdmin4 > 0) {
-    finalValueAdmin = ori3rdAdmin4 * (1 + ori3rdAdmin3 / 100);
-  }
-  const final3rdAdmin1 = isNaN(finalValueAdmin)
-    ? "0.00"
-    : finalValueAdmin.toFixed(2);
-  const finalvlaueotAdmin =
-    final3rdAdmin1 * parseInt(freight?.roe_transit_admin);
-
-  const ori3rdport1 = parseFloat(freight.transit_currency_port) || 0;
-  const ori3rdport2 = parseFloat(
-    freight.transit_currency_port_unitType === "1" ? 1 : freight.chargable_rate
-  );
-  const ori3rdport3 = parseFloat(freight.transit_currency_port_gp) || 0;
-  const ori3rdport4 = freight.transit_currency_port_unitType
-    ? ori3rdport1 * ori3rdport2 * freight.transit_currency_port_unitTypeQTY
-    : 0.0;
-  let finalValueport = 0;
-  if (ori3rdport4 > 0) {
-    finalValueport = ori3rdport4 * (1 + ori3rdport3 / 100);
-  }
-  const final3rdport1 = isNaN(finalValueport)
-    ? "0.00"
-    : finalValueport.toFixed(2);
-  const finalvlaueotPort = final3rdport1 * parseInt(freight?.roe_trans_port);
-
-  const oriadv1 = parseFloat(freight.Transit_advanced_load) || 0;
-  // const oriadv2 = parseFloat(freight.Transit_advanced_unit) || 0;
-  const oriadv2 = parseFloat(
-    freight.Transit_advanced_unitType === "1" ? 1 : freight.chargable_rate
-  );
-  const oriadv3 = parseFloat(freight.Transit_advanced_gp) || 0;
-  const oriadv4 = freight.Transit_advanced_unitType
-    ? oriadv1 * oriadv2 * freight.Transit_advanced_unitTypeQTY
-    : 0.0;
-  let finalValueadv = 0;
-  if (oriadv4 > 0) {
-    finalValueadv = oriadv4 * (1 + oriadv3 / 100);
-  }
-  const final3rdadv1 = isNaN(finalValueadv) ? "0.00" : finalValueadv.toFixed(2);
-  const finalvlaueotadv =
-    final3rdadv1 * parseInt(freight?.Transit_advanced_gp_roe);
-
-  const oridocumentation1 =
-    parseFloat(freight.transit_change_Documentation) || 0;
-  // const oridocumentation2 =
-  //   parseFloat(freight.transit_change_Documentation_unit) || 0;
-  const oridocumentation2 = parseFloat(
-    freight.transit_change_Documentation_unitType === "1"
-      ? 1
-      : freight.chargable_rate
-  );
-  const oridocumentation3 =
-    parseFloat(freight.transit_change_Documentation_gp) || 0;
-  const oridocumentation4 = freight.transit_change_Documentation_unitType
-    ? oridocumentation1 *
-    oridocumentation2 *
-    freight.transit_change_Documentation_unitTypeQTY
-    : 0.0;
-  let finalValuedocumantation = 0;
-  if (oridocumentation4 > 0) {
-    finalValuedocumantation = oridocumentation4 * (1 + oridocumentation3 / 100);
-  }
-  const final3rdocumantation1 = isNaN(finalValuedocumantation)
-    ? "0.00"
-    : finalValuedocumantation.toFixed(2);
-  const finalvlaueotDocumantation =
-    final3rdocumantation1 * parseInt(freight?.roe_transit_change_Documentation);
-
-  const totalChageswithOuTransit =
-    safeNumber(oritransit4) +
-    safeNumber(oriunpack4) +
-    safeNumber(ori3rdparty4) +
-    safeNumber(ori3rdAdmin4) +
-    safeNumber(ori3rdport4) +
-    safeNumber(oridocumentation4) +
-    safeNumber(oriadv4) +
-    safeNumber(oriThc4);
-
-  console.log(totalChageswithOutExchangeinsurance);
-
-  const transitRoe =
-    safeNumber(finalvlaueotDocumantation) +
-    safeNumber(finalvlaueotransit) +
-    safeNumber(finalvlaueotadv) +
-    safeNumber(finalvlaueotfineal) +
-    safeNumber(finalvlaueotfunpack) +
-    safeNumber(finalvlaueot3dparty) +
-    safeNumber(finalvlaueotAdmin) +
-    safeNumber(finalvlaueotPort);
-
-  // ////////////////////////////////////destination charge////////////////////////
-
-  const destinationdocumentation1 =
-    parseFloat(freight.Destination_freight_currency_cost) || 0;
-  // const destinationdocumentation2 =
-  //   parseFloat(freight.Destination_freight_currency_unit) || 0;
-  const destinationdocumentation2 = parseFloat(
-    freight.Destination_freight_currency_unitType === "1"
-      ? 1
-      : freight.chargable_rate
-  );
-  const destinationdocumentation3 =
-    parseFloat(freight.Destination_freight_currency_gp) || 0;
-  const destinationdocumentation4 =
-    freight.Destination_freight_currency_unitType
-      ? destinationdocumentation1 *
-      destinationdocumentation2 *
-      freight.Destination_freight_currency_unitTypeQTY
-      : 0.0;
-  let finalValuedestanion = 0;
-  if (destinationdocumentation4 > 0) {
-    finalValuedestanion =
-      destinationdocumentation4 * (1 + destinationdocumentation3 / 100);
-  }
-  const final3rdestination1 = isNaN(finalValuedestanion)
-    ? "0.00"
-    : finalValuedestanion.toFixed(2);
-  const final3rdestinationRoe =
-    final3rdestination1 * parseInt(freight?.Destination_freight_currency_Roe);
-
-  const destinationTHCdocumentation1 =
-    parseFloat(freight.Destination_THC_currency_cost) || 0;
-  // const destinationTHCdocumentation2 =
-  //   parseFloat(freight.Destination_THC_currency_unit) || 0;
-  const destinationTHCdocumentation2 = parseFloat(
-    freight.Destination_THC_currency_unitType === "1"
-      ? 1
-      : freight.chargable_rate
-  );
-  const destinationTHCdocumentation3 =
-    parseFloat(freight.Destination_THC_currency_gp) || 0;
-  const destinationTHCdocumentation4 = freight.Destination_THC_currency_unitType
-    ? destinationTHCdocumentation1 *
-    destinationTHCdocumentation2 *
-    freight.Destination_THC_currency_unitTypeQTY
-    : 0.0;
-  let finalValueTHCdestanion = 0;
-  if (destinationTHCdocumentation4 > 0) {
-    finalValueTHCdestanion =
-      destinationTHCdocumentation4 * (1 + destinationTHCdocumentation3 / 100);
-  }
-  const final3rTHCdestination1 = isNaN(finalValueTHCdestanion)
-    ? "0.00"
-    : finalValueTHCdestanion.toFixed(2);
-  const final3rTHCdestinationRoe =
-    final3rTHCdestination1 * parseInt(freight?.Destination_THC_currency_Roe);
-
-  const destinationUnpackdocumentation1 =
-    parseFloat(freight.Destination_Unpack_currency_cost) || 0;
-  // const destinationUnpackdocumentation2 =
-  //   parseFloat(freight.Destination_Unpack_currency_unit) || 0;
-  const destinationUnpackdocumentation2 = parseFloat(
-    freight.Destination_Unpack_currency_unitType === "1"
-      ? 1
-      : freight.chargable_rate
-  );
-  const destinationUnpackdocumentation3 =
-    parseFloat(freight.Destination_Unpack_currency_gp) || 0;
-  const destinationUnpackdocumentation4 =
-    freight.Destination_Unpack_currency_unitType
-      ? destinationUnpackdocumentation1 *
-      destinationUnpackdocumentation2 *
-      freight.Destination_Unpack_currency_unitTypeQTY
-      : 0.0;
-  let finalValueUnpackdestanion = 0;
-  if (destinationUnpackdocumentation4 > 0) {
-    finalValueUnpackdestanion =
-      destinationUnpackdocumentation4 *
-      (1 + destinationUnpackdocumentation3 / 100);
-  }
-  const final3runpackdestination1 = isNaN(finalValueUnpackdestanion)
-    ? "0.00"
-    : finalValueUnpackdestanion.toFixed(2);
-  const final3rUnpackdestinationRoe =
-    final3runpackdestination1 *
-    parseInt(freight?.Destination_Unpack_currency_roe);
-
-  const destinationfuelsurchargedocumentation1 =
-    parseFloat(freight.Destination_fuelsurcharge_currency_cost) || 0;
-  // const destinationfuelsurchargedocumentation2 =
-  // parseFloat(freight.Destination_fuelsurcharge_currency_unit) || 0;
-  const destinationfuelsurchargedocumentation2 = parseFloat(
-    freight.Destination_fuelsurcharge_currency_typeUnit === "1"
-      ? 1
-      : freight.chargable_rate
-  );
-  const destinationfuelsurchargedocumentation3 =
-    parseFloat(freight.Destination_fuelsurcharge_currency_gp) || 0;
-  const destinationfuelsurchargedocumentation4 =
-    freight.Destination_fuelsurcharge_currency_typeUnit
-      ? destinationfuelsurchargedocumentation1 *
-      destinationfuelsurchargedocumentation2 *
-      freight.Destination_fuelsurcharge_currency_typeUnitQTY
-      : 0.0;
-  let finalValueFulesurchargedestanion = 0;
-  if (destinationfuelsurchargedocumentation4 > 0) {
-    finalValueFulesurchargedestanion =
-      destinationfuelsurchargedocumentation4 *
-      (1 + destinationfuelsurchargedocumentation3 / 100);
-  }
-  const final3rfuelsurchargedestination1 = isNaN(
-    finalValueFulesurchargedestanion
-  )
-    ? "0.00"
-    : finalValueFulesurchargedestanion.toFixed(2);
-  const final3rfuelsurCahrgeestinationRoe =
-    final3rfuelsurchargedestination1 *
-    parseInt(freight?.Destination_fuelsurcharge_currency_roe);
-
-  const destinatiadminsurcharge1 =
-    parseFloat(freight.Destination_adminsurcharge_currency_cost) || 0;
-  const destinatiadminsurcharge2 = parseFloat(
-    freight.Destination_adminsurcharge_currency_unitType === "1"
-      ? 1
-      : freight.chargable_rate
-  );
-  // const destinatiadminsurcharge2 =
-  //   parseFloat(freight.Destination_adminsurcharge_currency_unit) || 0;
-  const destinatiadminsurcharge3 =
-    parseFloat(freight.Destination_adminsurcharge_currency_gp) || 0;
-  const destinatiadminsurcharge4 =
-    freight.Destination_adminsurcharge_currency_unitType
-      ? destinatiadminsurcharge1 *
-      destinatiadminsurcharge2 *
-      freight.Destination_adminsurcharge_currency_unitTypeQTY
-      : 0.0;
-  let finalValueadminsurchargedestanion = 0;
-  if (destinatiadminsurcharge4 > 0) {
-    finalValueadminsurchargedestanion =
-      destinatiadminsurcharge4 * (1 + destinatiadminsurcharge3 / 100);
-  }
-  const Valueadminsurchargedestanion = isNaN(finalValueadminsurchargedestanion)
-    ? "0.00"
-    : finalValueadminsurchargedestanion.toFixed(2);
-  const adminsurcharge2 =
-    Valueadminsurchargedestanion *
-    parseInt(freight?.Destination_adminsurcharge_currency_roe);
-
-  const destinatiportcargo1 =
-    parseFloat(freight.Destination_portcargo_currency_cost) || 0;
-  const destinatiportcargo2 = parseFloat(
-    freight.Destination_portcargo_currency_unitType === "1"
-      ? 1
-      : freight.chargable_rate
-  );
-  // const destinatiportcargo2 =
-  //   parseFloat(freight.Destination_portcargo_currency_unit) || 0;
-  const destinatiportcargo3 =
-    parseFloat(freight.Destination_portcargo_currency_gp) || 0;
-  const destinatiportcargo4 = freight.Destination_portcargo_currency_unitType
-    ? destinatiportcargo1 *
-    destinatiportcargo2 *
-    freight.Destination_portcargo_currency_unitTypeQTY
-    : 0.0;
-  let finalValueportcargostanion = 0;
-  if (destinatiportcargo4 > 0) {
-    finalValueportcargostanion =
-      destinatiportcargo4 * (1 + destinatiportcargo3 / 100);
-  }
-  const Vaportcargoion = isNaN(finalValueportcargostanion)
-    ? "0.00"
-    : finalValueportcargostanion.toFixed(2);
-  const admiportcargo2 =
-    Vaportcargoion * parseInt(freight?.Destination_portcargo_currency_roe);
-
-  const destinatiAdvancedLoad1 =
-    parseFloat(freight.Destination_AdvancedLoad_currency_cost) || 0;
-  // const destinatiAdvancedLoad2 =
-  //   parseFloat(freight.Destination_AdvancedLoad_currency_unit) || 0;
-  const destinatiAdvancedLoad2 = parseFloat(
-    freight.Destination_AdvancedLoad_currency_unitType === "1"
-      ? 1
-      : freight.chargable_rate
-  );
-  const destinatiAdvancedLoad3 =
-    parseFloat(freight.Destination_AdvancedLoad_currency_gp) || 0;
-  const destinatiAdvancedLoad4 =
-    destinatiAdvancedLoad1 *
-    destinatiAdvancedLoad2 *
-    freight.Destination_AdvancedLoad_currency_unitTypeQTY;
-  let finalValueAdvancedLoadstanion = 0;
-  if (destinatiAdvancedLoad4 > 0) {
-    finalValueAdvancedLoadstanion =
-      destinatiAdvancedLoad4 * (1 + destinatiAdvancedLoad3 / 100);
-  }
-  const VAdvancedLoadion = isNaN(finalValueAdvancedLoadstanion)
-    ? "0.00"
-    : finalValueAdvancedLoadstanion.toFixed(2);
-  const desdvancedLoadion =
-    VAdvancedLoadion * parseInt(freight?.Destination_AdvancedLoad_currency_roe);
-
-  const destinati3rdpartyDesc1 =
-    parseFloat(freight.Destination_3rdpartyDesc_currency_cost) || 0;
-  const destinati3rdpartyDesc2 =
-    // parseFloat(freight.Destination_3rdpartyDesc_currency_unit) || 0;
-    parseFloat(
-      freight.Destination_3rdpartyDesc_currency_unitType === "1"
-        ? 1
-        : freight.chargable_rate
-    );
-  const destinati3rdpartyDesc3 =
-    parseFloat(freight.Destination_3rdpartyDesc_currency_gp) || 0;
-  const destinati3rdpartyload4 =
-    freight.Destination_3rdpartyDesc_currency_unitType
-      ? destinati3rdpartyDesc1 *
-      destinati3rdpartyDesc2 *
-      freight.Destination_3rdpartyDesc_currency_unitTypeQTY
-      : 0.0;
-  let finalValue3rdpartyloadstanion = 0;
-  if (destinati3rdpartyload4 > 0) {
-    finalValue3rdpartyloadstanion =
-      destinati3rdpartyload4 * (1 + destinati3rdpartyDesc3 / 100);
-  }
-  const VAdvanced3rdpartyLoadion = isNaN(finalValue3rdpartyloadstanion)
-    ? "0.00"
-    : finalValue3rdpartyloadstanion.toFixed(2);
-  const desdva3rdpartyion =
-    VAdvanced3rdpartyLoadion *
-    parseInt(freight?.Destination_3rdpartyDesc_currency_roe);
-
-  const destindeliveryyDesc1 =
-    parseFloat(freight.Destination_delivery_currency_cost) || 0;
-  const destindeliveryyDesc2 =
-    // parseFloat(freight.Destination_delivery_currency_unit) || 0;
-    parseFloat(
-      freight.Destination_delivery_currency_unitType === "1"
-        ? 1
-        : freight.chargable_rate
-    );
-
-  const destindeliveryyDesc3 =
-    parseFloat(freight.Destination_delivery_currency_gp) || 0;
-  const destindeliveryyDesc4 = freight.Destination_delivery_currency_unitType
-    ? destindeliveryyDesc1 *
-    destindeliveryyDesc2 *
-    freight.Destination_delivery_currency_unitTypeQTY
-    : 0.0;
-  let finaldeliveryrtyloadstanion = 0;
-  if (destindeliveryyDesc4 > 0) {
-    finaldeliveryrtyloadstanion =
-      destindeliveryyDesc4 * (1 + destindeliveryyDesc3 / 100);
-  }
-  const VAdvandeliverytyLoadion = isNaN(finaldeliveryrtyloadstanion)
-    ? "0.00"
-    : finaldeliveryrtyloadstanion.toFixed(2);
-  const desddeliverytyion =
-    VAdvandeliverytyLoadion *
-    parseInt(freight?.Destination_delivery_currency_roe);
-
-  const destindfuelchangerDesc1 =
-    parseFloat(freight.Destination_fuelcharge_currency_cost) || 0;
-  const destindfuelchangerDesc2 =
-    // parseFloat(freight.Destination_fuelcharge_currency_unit) || 0;
-    parseFloat(
-      freight.Destination_fuelcharge_currency_unitType === "1"
-        ? 1
-        : freight.chargable_rate
-    );
-  const destindfuelchangerDesc3 =
-    parseFloat(freight.Destination_fuelcharge_currency_gp) || 0;
-  const destindfuelchangerDesc4 =
-    freight.Destination_fuelcharge_currency_unitType
-      ? destindfuelchangerDesc1 *
-      destindfuelchangerDesc2 *
-      freight.Destination_fuelcharge_currency_unitTypeQTY
-      : 0.0;
-  let finalfuelchangertyloadstanion = 0;
-  if (destindfuelchangerDesc4 > 0) {
-    finalfuelchangertyloadstanion =
-      destindfuelchangerDesc4 * (1 + destindfuelchangerDesc3 / 100);
-  }
-  const VAdvfuelchangeon = isNaN(finalfuelchangertyloadstanion)
-    ? "0.00"
-    : finalfuelchangertyloadstanion.toFixed(2);
-  const defuelchangyion =
-    VAdvfuelchangeon * parseInt(freight?.Destination_fuelcharge_currency_roe);
-
-  const totalChaDestinationTransit =
-    safeNumber(destinationdocumentation4) +
-    safeNumber(destinationTHCdocumentation4) +
-    safeNumber(destinationUnpackdocumentation4) +
-    safeNumber(destinationfuelsurchargedocumentation4) +
-    safeNumber(destinatiadminsurcharge4) +
-    safeNumber(destinatiportcargo4) +
-    safeNumber(destinatiAdvancedLoad4) +
-    safeNumber(destinati3rdpartyload4) +
-    safeNumber(destindeliveryyDesc4) +
-    safeNumber(destindfuelchangerDesc4);
-
-  console.log(totalChageswithOutExchangeinsurance);
-
-  const totalChaDestinationTransitRoe =
-    safeNumber(finalvlaueotDocumantation) +
-    safeNumber(final3rdestinationRoe) +
-    safeNumber(final3rTHCdestinationRoe) +
-    safeNumber(final3rUnpackdestinationRoe) +
-    safeNumber(final3rfuelsurCahrgeestinationRoe) +
-    safeNumber(adminsurcharge2) +
-    safeNumber(admiportcargo2) +
-    safeNumber(desdvancedLoadion) +
-    safeNumber(desdva3rdpartyion) +
-    safeNumber(desddeliverytyion);
-
-  // /////////////////////////////////admin calculation/////////////////////////////
-
-  const deadminAgencyesc1 =
-    parseFloat(freight.Destination_AdminAgrncy_currency_cost) || 0;
-  const deadminAgencyesc2 =
-    // parseFloat(freight.Destination_AdminAgrncy_currency_unit) || 0;
-    parseFloat(
-      freight.Destination_AdminAgrncy_currency_unitType === "1"
-        ? 1
-        : freight.chargable_rate
-    );
-  const deadminAgencyesc3 =
-    parseFloat(freight.Destination_AdminAgrncy_currency_gp) || 0;
-  const deadminAgencyesc4 = freight.Destination_AdminAgrncy_currency_unitType
-    ? deadminAgencyesc1 *
-    deadminAgencyesc2 *
-    freight.Destination_AdminAgrncy_currency_unitQTY
-    : 0.0;
-  let finaldminAgencyestanion = 0;
-  if (deadminAgencyesc4 > 0) {
-    finaldminAgencyestanion = deadminAgencyesc4 * (1 + deadminAgencyesc3 / 100);
-  }
-  const VAadminAgencyngeon = isNaN(finaldminAgencyestanion)
-    ? "0.00"
-    : finaldminAgencyestanion.toFixed(2);
-  const defuelchdminAgencyngangyion =
-    VAadminAgencyngeon *
-    parseInt(freight?.Destination_AdminAgrncy_currency_roe);
-
-  const deaddisbursemantc1 =
-    parseFloat(freight.Destination_disbursemant_currency_cost) || 0;
-  const deaddisbursemantc2 =
-    // parseFloat(freight.Destination_disbursemant_currency_unit) || 0;
-    parseFloat(
-      freight.Destination_AdminAgrncy_currency_unitType === "1"
-        ? 1
-        : freight.chargable_rate
-    );
-  const deaddisbursemantc3 =
-    parseFloat(freight.Destination_disbursemant_currency_gp) || 0;
-  const deaddisbursemantc4 = freight.Destination_AdminAgrncy_currency_unitType
-    ? deaddisbursemantc1 *
-    deaddisbursemantc2 *
-    freight.Destination_disbursemant_currency_unitTypeQTY
-    : 0.0;
-  let finaladdisbursematanion = 0;
-  if (deaddisbursemantc4 > 0) {
-    finaladdisbursematanion =
-      deaddisbursemantc4 * (1 + deaddisbursemantc3 / 100);
-  }
-  const VAdisbursemon = isNaN(finaladdisbursematanion)
-    ? "0.00"
-    : finaladdisbursematanion.toFixed(2);
-  const dedisbursementon =
-    VAdisbursemon * parseInt(freight?.Destination_disbursemant_currency_roe);
-
-  const deadoctc1 = parseFloat(freight.Destination_doc_currency_cost) || 0;
-  const deadoctc2 = parseFloat(
-    freight.Destination_doc_currency_unittype === "1"
-      ? 1
-      : freight.chargable_rate
-  );
-  // const deadoctc2 = parseFloat(freight.Destination_doc_currency_unit) || 0;
-  const deadoctc3 = parseFloat(freight.Destination_doc_currency_gp) || 0;
-  const deadoctc4 = freight.Destination_doc_currency_unittype
-    ? deadoctc1 * deadoctc2 * freight.Destination_doc_currency_unittypeQTY
-    : 0.0;
-  let finaadoctnion = 0;
-  if (deadoctc4 > 0) {
-    finaadoctnion = deadoctc4 * (1 + deadoctc3 / 100);
-  }
-  const VAdocon = isNaN(finaadoctnion) ? "0.00" : finaadoctnion.toFixed(2);
-  const dedisbudoon = VAdocon * parseInt(freight?.Destination_doc_currency_roe);
-
-  const totaAdminransit =
-    safeNumber(deadminAgencyesc4) +
-    safeNumber(deaddisbursemantc4) +
-    safeNumber(deadoctc4);
-
-  console.log(totalChageswithOutExchangeinsurance);
-
-  const totalAdminnsitRoe =
-    safeNumber(defuelchdminAgencyngangyion) +
-    safeNumber(dedisbursementon) +
-    safeNumber(dedisbudoon);
-
-  const sumofall =
-    totaAdminransit +
-    totalChaDestinationTransit +
-    totalChageswithOuTransit +
-    totalChageswithOutExchangeinsurance +
-    totalChageswithOutExchange;
-
-  const sumofRoe =
-    totalAdminnsitRoe +
-    totalChaDestinationTransitRoe +
-    transitRoe +
-    totalChangeRoeOriginaftercalcuinsurance +
-    totalChangeRoeOrigin;
+  const sumofRoe = grandTotalFinalAmt;
+  const totalVatInclusive = grandTotalExclusive + grandTotalVat;
 
   const estimateCalculate = async () => {
     try {
+      const allComponents = [];
+
+      const mapRowToComponent = (row, calc, sectionName) => ({
+        ...(row.db_id && { id: row.db_id }),
+        admin_frieght_component_id: row.admin_frieght_component_id || null,
+        description: row.description || "",
+        qty: parseFloat(row.qty) || 0,
+        currency: row.currency || "",
+        cost: parseFloat(row.cost) || 0,
+        unit_type: row.unitType === "1" ? "L/S" : (row.unitType === "2" ? "W/M" : ""),
+        unit: parseFloat(calc.unit) || 0,
+        total_cost: parseFloat(calc.tCost) || 0,
+        gp_percent: parseFloat(row.gp_percent) || 0,
+        sales_price: parseFloat(calc.salesPrice) || 0,
+        roe: parseFloat(row.roe) || 0,
+        final_amount: parseFloat(calc.finalAmt) || 0,
+        vat_type: row.vatTyp || "",
+        disc_percent: parseFloat(row.discPercent) || 0,
+        discount: parseFloat(calc.disc) || 0,
+        exclusive: parseFloat(calc.exclusive) || 0,
+        vat: parseFloat(calc.vat) || 0,
+        vat_incl: parseFloat(calc.inclusive) || 0,
+        comment: row.comment || "",
+        name: sectionName
+      });
+
+      originRowsData.forEach(({ row, calc }) => {
+        if (row.description) {
+          allComponents.push(mapRowToComponent(row, calc, "Origin Charges"));
+        }
+      });
+      freightRowsData.forEach(({ row, calc }) => {
+        if (row.description) {
+          allComponents.push(mapRowToComponent(row, calc, "Freight Charges"));
+        }
+      });
+      transitRowsData.forEach(({ row, calc }) => {
+        if (row.description) {
+          allComponents.push(mapRowToComponent(row, calc, "Transit Charges"));
+        }
+      });
+      destinationRowsData.forEach(({ row, calc }) => {
+        if (row.description) {
+          allComponents.push(mapRowToComponent(row, calc, "Destination Charges"));
+        }
+      });
+      adminRowsData.forEach(({ row, calc }) => {
+        if (row.description) {
+          allComponents.push(mapRowToComponent(row, calc, "Admin Charges"));
+        }
+      });
+      customsRowsData.forEach(({ row, calc }) => {
+        if (row.description) {
+          allComponents.push(mapRowToComponent(row, calc, "Customs Charges"));
+        }
+      });
+
       const payload = {
-        freight_id: getdata.freight_id,
-        client_id: getdata.client_ref,
+        freight_id: parseInt(getFreightId()),
+        client_id: parseInt(getdata.client_id || getdata.id || getdata.client_ref ),
         client_name: getdata.client_name,
-        serial_number: freight.serial_number,
-        date: update.date,
-        client_ref: getdata.client_ref,
-        product_desc: getdata.product_desc,
-        type: getdata.type,
-        freight: getdata.freight,
-
-        incoterm: getdata.incoterm,
-        dimension: getdata.dimension,
-        supplier_id: freight.supplier_id,
-        weight: getdata.weight,
-        org_pickUp_vatTyp: freight.org_pickUp_vatTyp,
-        "org_pickUp_disc%": freight["org_pickUp_disc%"],
-        origin_pick_up_cost: freight.origin_pick_up_cost,
-        origin_pick_up_fees: freight.origin_pick_up_fees,
-        origin_pickup_fee_gpcalc: freight.origin_pickup_fee_gpcalc,
-        roe_origin_currencyorigin: freight.roe_origin_currencyorigin,
-        finalvlaueoriginPickup: finalvlaueoriginPickup,
-        oripick4: oripick4,
-        finalori1: finalori1,
-        origin_pick_up_fuel_cost: freight.origin_pick_up_fuel_cost,
-        origin_pick_up_fuel_fees: freight.origin_pick_up_fuel_fees,
-        origin_pick_fuelGP: freight.origin_pick_fuelGP,
-        chargable_rate: freight.chargable_rate,
-        orifuel4: orifuel4,
-        finalfuel1: finalfuel1,
-        roe_origin_fuel_currency: freight.roe_origin_fuel_currency,
-        finalvlaueoFuel: finalvlaueoFuel,
-        origin_pick_up_cfs_cost: freight.origin_pick_up_cfs_cost,
-        origin_pick_up_cfs_fees: freight.origin_pick_up_cfs_fees,
-        origin_pickup_vfs_gp: freight.origin_pickup_vfs_gp,
-        oricfs4: oricfs4,
-        finalcfs1: finalcfs1,
-        roe_origin_cfs_currency: freight.roe_origin_cfs_currency,
-        roe_freight_currency: freight.roe_freight_currency,
-        finalvlaueocfs: finalvlaueocfs,
-        origin_pick_up_documantion_cost:
-          freight.origin_pick_up_documantion_cost,
-        origin_pick_up_documantation_fees:
-          freight.origin_pick_up_documantation_fees,
-        origin_pick_documantation_cost_gp:
-          freight.origin_pick_documantation_cost_gp,
-        oridoc4: oridoc4,
-        finaldoc1: finaldoc1,
-        roe_origin_doc_currency: freight.roe_origin_doc_currency,
-        finalvlaueodoc: finalvlaueodoc,
-        origin_pick_up_forewarding_cost:
-          freight.origin_pick_up_forewarding_cost,
-        origin_pick_up_forewarding_fees:
-          freight.origin_pick_up_forewarding_fees,
-        origin_pickup_forewarding_gp: freight.origin_pickup_forewarding_gp,
-        oriforewarding4: oriforewarding4,
-        roe_origin_forewarding: freight.roe_origin_forewarding,
-        finalforewarding1: finalforewarding1,
-        finalvlaueoforewarding: finalvlaueoforewarding,
-        origin_pick_up_custome_cost: freight.origin_pick_up_custome_cost,
-        origin_pick_up_custome_clearance:
-          freight.origin_pick_up_custome_clearance,
-        origin_pickup_custome_gp: freight.origin_pickup_custome_gp,
-        oricustome4: oricustome4,
-        roe_origin_customes: freight.roe_origin_customes,
-        finalcustomes1: finalcustomes1,
-        finalvlaueoCustomes: finalvlaueoCustomes,
-        totalChageswithOutExchange: totalChageswithOutExchange,
-        totalChangeRoeOrigin: totalChangeRoeOrigin,
-        freight_charge_currency_cost: freight.freight_charge_currency_cost,
-        freight_charge_currency_fees: freight.freight_charge_currency_fees,
-        freight_charge_currency_gp: freight.freight_charge_currency_gp,
-        orifreight4: orifreight4,
-        finalfreight1: finalfreight1,
-        finalvlaueofreight: finalvlaueofreight,
-        freight_currency_insurance_cost:
-          freight.freight_currency_insurance_cost,
-        freight_currency_insurance_unit:
-          freight.freight_currency_insurance_unit,
-        freightorigin_insurance_gp: freight.freightorigin_insurance_gp,
-        oriinsurance4: oriinsurance4,
-        roe_insurance_currency: freight.roe_insurance_currency,
-        finalinsurance1: finalinsurance1,
-        finalvlaueoInsurance: finalvlaueoInsurance,
-        totalChageswithOutExchangeinsurance:
-          totalChageswithOutExchangeinsurance,
-        totalChangeRoeOriginaftercalcuinsurance:
-          totalChangeRoeOriginaftercalcuinsurance,
-        Transit_currency_Cost: freight.Transit_currency_Cost,
-        Transit_currency_unit: freight.Transit_currency_unit,
-        Transit_currency_gp: freight.Transit_currency_gp,
-        Transit_currency_roe: freight.Transit_currency_roe,
-        finaltransit1: finaltransit1,
-        finalvlaueotransit: finalvlaueotransit,
-        oritransit4: oritransit4,
-        transit_currency_THC_cost: freight.transit_currency_THC_cost,
-        transit_currency_THC_init: freight.transit_currency_THC_init,
-        transit_currency_THC_gp: freight.transit_currency_THC_gp,
-        roe_Transit_Thc: freight.roe_Transit_Thc,
-        finalThc1: finalThc1,
-        finalvlaueotfineal: finalvlaueotfineal,
-        oriThc4: oriThc4,
-        Transit_currency_unpack_cost: freight.Transit_currency_unpack_cost,
-        Transit_currency_unpack_unit: freight.Transit_currency_unpack_unit,
-        Transit_currency_unpack_gp: freight.Transit_currency_unpack_gp,
-        Transit_unpack_roe: freight.Transit_unpack_roe,
-        finalunpack1: finalunpack1,
-        finalvlaueotfunpack: finalvlaueotfunpack,
-        oriunpack4: oriunpack4,
-        transit_3rd_party_cost: freight.transit_3rd_party_cost,
-        transit_3rd_party_unit: freight.transit_3rd_party_unit,
-        transit_3rd_party_gp: freight.transit_3rd_party_gp,
-        ori3rdparty4: ori3rdparty4,
-        final3rdparty1: final3rdparty1,
-        finalvlaueot3dparty: finalvlaueot3dparty,
-        transit_currency_3rd: freight.transit_currency_3rd,
-        transit_admin_change: freight.transit_admin_change,
-        transit_admin_unit: freight.transit_admin_unit,
-        transit_admin_gp: freight.transit_admin_gp,
-        ori3rdAdmin4: ori3rdAdmin4,
-        final3rdAdmin1: final3rdAdmin1,
-        finalvlaueotAdmin: finalvlaueotAdmin,
-        roe_transit_admin: freight.roe_transit_admin,
-        transit_currency_port: freight.transit_currency_port,
-        transit_currency_port_unit: freight.transit_currency_port_unit,
-        transit_currency_port_gp: freight.transit_currency_port_gp,
-        ori3rdport4: ori3rdport4,
-        final3rdport1: final3rdport1,
-        finalvlaueotPort: finalvlaueotPort,
-        roe_trans_port: freight.roe_trans_port,
-        Transit_advanced_load: freight.Transit_advanced_load,
-        Transit_advanced_unit: freight.Transit_advanced_unit,
-        Transit_advanced_gp: freight.Transit_advanced_gp,
-        Transit_advanced_gp_roe: freight.Transit_advanced_gp_roe,
-        oriadv4: oriadv4,
-        final3rdadv1: final3rdadv1,
-        finalvlaueotadv: finalvlaueotadv,
-        transit_change_Documentation: freight.transit_change_Documentation,
-        transit_change_Documentation_unit:
-          freight.transit_change_Documentation_unit,
-        transit_change_Documentation_gp:
-          freight.transit_change_Documentation_gp,
-        roe_transit_change_Documentation:
-          freight.roe_transit_change_Documentation,
-        oridocumentation4: oridocumentation4,
-        final3rdocumantation1: final3rdocumantation1,
-        finalvlaueotDocumantation: finalvlaueotDocumantation,
-        totalChageswithOuTransit: totalChageswithOuTransit,
-        transitRoe: transitRoe,
-        Destination_freight_currency_cost:
-          freight.Destination_freight_currency_cost,
-        Destination_freight_currency_unit:
-          freight.Destination_freight_currency_unit,
-        Destination_freight_currency_gp:
-          freight.Destination_freight_currency_gp,
-        destinationdocumentation4: destinationdocumentation4,
-        final3rdestination1: final3rdestination1,
-        final3rdestinationRoe: final3rdestinationRoe,
-        Destination_freight_currency_Roe:
-          freight.Destination_freight_currency_Roe,
-
-        Destination_THC_currency_cost: freight.Destination_THC_currency_cost,
-        Destination_THC_currency_unit: freight.Destination_THC_currency_unit,
-        Destination_THC_currency_gp: freight.Destination_THC_currency_gp,
-        destinationTHCdocumentation4: destinationTHCdocumentation4,
-        final3rTHCdestination1: final3rTHCdestination1,
-        final3rTHCdestinationRoe: final3rTHCdestinationRoe,
-        Destination_THC_currency_Roe: freight.Destination_THC_currency_Roe,
-        Destination_Unpack_currency_cost:
-          freight.Destination_Unpack_currency_cost,
-        Destination_Unpack_currency_unit:
-          freight.Destination_Unpack_currency_unit,
-        Destination_Unpack_currency_gp: freight.Destination_Unpack_currency_gp,
-        destinationUnpackdocumentation4: destinationUnpackdocumentation4,
-        final3runpackdestination1: final3runpackdestination1,
-        final3rUnpackdestinationRoe: final3rUnpackdestinationRoe,
-        Destination_Unpack_currency_roe:
-          freight.Destination_Unpack_currency_roe,
-        Destination_fuelsurcharge_currency_cost:
-          freight.Destination_fuelsurcharge_currency_cost,
-        Destination_fuelsurcharge_currency_unit:
-          freight.Destination_fuelsurcharge_currency_unit,
-        Destination_fuelsurcharge_currency_gp:
-          freight.Destination_fuelsurcharge_currency_gp,
-        destinationfuelsurchargedocumentation4:
-          destinationfuelsurchargedocumentation4,
-        final3rfuelsurchargedestination1: final3rfuelsurchargedestination1,
-        final3rfuelsurCahrgeestinationRoe: final3rfuelsurCahrgeestinationRoe,
-        Destination_fuelsurcharge_currency_roe:
-          freight.Destination_fuelsurcharge_currency_roe,
-        Destination_adminsurcharge_currency_cost:
-          freight.Destination_adminsurcharge_currency_cost,
-        Destination_adminsurcharge_currency_unit:
-          freight.Destination_adminsurcharge_currency_unit,
-        Destination_adminsurcharge_currency_gp:
-          freight.Destination_adminsurcharge_currency_gp,
-        destinatiadminsurcharge4: destinatiadminsurcharge4,
-        Valueadminsurchargedestanion: Valueadminsurchargedestanion,
-        adminsurcharge2: adminsurcharge2,
-        Destination_adminsurcharge_currency_roe:
-          freight.Destination_adminsurcharge_currency_roe,
-        Destination_portcargo_currency_cost:
-          freight.Destination_portcargo_currency_cost,
-        Destination_portcargo_currency_unit:
-          freight.Destination_portcargo_currency_unit,
-        Destination_portcargo_currency_gp:
-          freight.Destination_portcargo_currency_gp,
-        destinatiportcargo4: destinatiportcargo4,
-        Vaportcargoion: Vaportcargoion,
-        admiportcargo2: admiportcargo2,
-        Destination_portcargo_currency_roe:
-          freight.Destination_portcargo_currency_roe,
-        Destination_AdvancedLoad_currency_cost:
-          freight.Destination_AdvancedLoad_currency_cost,
-        Destination_AdvancedLoad_currency_unit:
-          freight.Destination_AdvancedLoad_currency_unit,
-        Destination_AdvancedLoad_currency_gp:
-          freight.Destination_AdvancedLoad_currency_gp,
-        destinatiAdvancedLoad4: destinatiAdvancedLoad4,
-        VAdvancedLoadion: VAdvancedLoadion,
-        desdvancedLoadion: desdvancedLoadion,
-        Destination_AdvancedLoad_currency_roe:
-          freight.Destination_AdvancedLoad_currency_roe,
-        Destination_3rdpartyDesc_currency_cost:
-          freight.Destination_3rdpartyDesc_currency_cost,
-        Destination_3rdpartyDesc_currency_unit:
-          freight.Destination_3rdpartyDesc_currency_unit,
-        Destination_3rdpartyDesc_currency_gp:
-          freight.Destination_3rdpartyDesc_currency_gp,
-        destinati3rdpartyload4: destinati3rdpartyload4,
-        VAdvanced3rdpartyLoadion: VAdvanced3rdpartyLoadion,
-        desdva3rdpartyion: desdva3rdpartyion,
-        Destination_3rdpartyDesc_currency_roe:
-          freight.Destination_3rdpartyDesc_currency_roe,
-        Destination_delivery_currency_cost:
-          freight.Destination_delivery_currency_cost,
-        Destination_delivery_currency_unit:
-          freight.Destination_delivery_currency_unit,
-        Destination_delivery_currency_gp:
-          freight.Destination_delivery_currency_gp,
-        destindeliveryyDesc4: destindeliveryyDesc4,
-        VAdvandeliverytyLoadion: VAdvandeliverytyLoadion,
-        desddeliverytyion: desddeliverytyion,
-        Destination_delivery_currency_roe:
-          freight.Destination_delivery_currency_roe,
-        Destination_fuelcharge_currency_cost:
-          freight.Destination_fuelcharge_currency_cost,
-        Destination_fuelcharge_currency_unit:
-          freight.Destination_fuelcharge_currency_unit,
-        Destination_fuelcharge_currency_gp:
-          freight.Destination_fuelcharge_currency_gp,
-        destindfuelchangerDesc4: destindfuelchangerDesc4,
-        VAdvfuelchangeon: VAdvfuelchangeon,
-        defuelchangyion: defuelchangyion,
-        Destination_fuelcharge_currency_roe:
-          freight.Destination_fuelcharge_currency_roe,
-        totalChaDestinationTransit: totalChaDestinationTransit,
-        totalChaDestinationTransitRoe: totalChaDestinationTransitRoe,
-        Destination_AdminAgrncy_currency_cost:
-          freight.Destination_AdminAgrncy_currency_cost,
-        Destination_AdminAgrncy_currency_unit:
-          freight.Destination_AdminAgrncy_currency_unit,
-        Destination_AdminAgrncy_currency_gp:
-          freight.Destination_AdminAgrncy_currency_gp,
-        deadminAgencyesc4: deadminAgencyesc4,
-        // finaldminAgencyestanion: finaldminAgencyestanion,
-        VAadminAgencyngeon: VAadminAgencyngeon,
-        defuelchdminAgencyngangyion: defuelchdminAgencyngangyion,
-        Destination_AdminAgrncy_currency_roe:
-          freight.Destination_AdminAgrncy_currency_roe,
-        Destination_disbursemant_currency_cost:
-          freight.Destination_disbursemant_currency_cost,
-        Destination_disbursemant_currency_unit:
-          freight.Destination_disbursemant_currency_unit,
-        Destination_disbursemant_currency_gp:
-          freight.Destination_disbursemant_currency_gp,
-        deaddisbursemantc4: deaddisbursemantc4,
-        VAdisbursemon: VAdisbursemon,
-        dedisbursementon: dedisbursementon,
-        Destination_disbursemant_currency_roe:
-          freight.Destination_disbursemant_currency_roe,
-        Destination_doc_currency_cost: freight.Destination_doc_currency_cost,
-        Destination_doc_currency_unit: freight.Destination_doc_currency_unit,
-        Destination_doc_currency_gp: freight.Destination_doc_currency_gp,
-        deadoctc4: deadoctc4,
-        VAdocon: VAdocon,
-        dedisbudoon: dedisbudoon,
-        Destination_doc_currency_roe: freight.Destination_doc_currency_roe,
-        deadoctc4: deadoctc4,
-        totaAdminransit: totaAdminransit,
-        totalAdminnsitRoe: totalAdminnsitRoe,
-        sumofall: sumofall,
-        sumofRoe: sumofRoe,
-        freight_charge_currencyQTY: freight.freight_charge_currencyQTY,
-        origin_pick_up_fuel_unitTypeQTY:
-          freight.origin_pick_up_fuel_unitTypeQTY,
-        origin_pick_up_cfs_unitTypeQTY: freight.origin_pick_up_cfs_unitTypeQTY,
-        origin_pick_up_forewarding_unitTypeQTY:
-          freight.origin_pick_up_forewarding_unitTypeQTY,
-        origin_pick_up_documantation_unitTypeQTY:
-          freight.origin_pick_up_documantation_unitTypeQTY,
-        origin_pick_up_custome_unitTypeQTY:
-          freight.origin_pick_up_custome_unitTypeQTY,
-        freight_charge_currency_unitTypeQTY:
-          freight.freight_charge_currency_unitTypeQTY,
-        freight_currency_insurance_unittypeQTY:
-          freight.freight_currency_insurance_unittypeQTY,
-        Transit_currency_unitTpeQTY: freight.Transit_currency_unitTpeQTY,
-        transit_currency_THC_initTypeQTY:
-          freight.transit_currency_THC_initTypeQTY,
-        transit_currency_THC_initTypeeQTY:
-          freight.transit_currency_THC_initTypeeQTY,
-        transit_3rd_party_unittypeQTY: freight.transit_3rd_party_unittypeQTY,
-        transit_admin_unittypeQTY: freight.transit_admin_unittypeQTY,
-        transit_currency_port_unitTypeQTY:
-          freight.transit_currency_port_unitTypeQTY,
-        Transit_advanced_unitTypeQTY: freight.Transit_advanced_unitTypeQTY,
-        transit_change_Documentation_unitTypeQTY:
-          freight.transit_change_Documentation_unitTypeQTY,
-        Destination_freight_currency_unitTypeQTY:
-          freight.Destination_freight_currency_unitTypeQTY,
-        Destination_THC_currency_unitTypeQTY:
-          freight.Destination_THC_currency_unitTypeQTY,
-        Destination_Unpack_currency_unitTypeQTY:
-          freight.Destination_Unpack_currency_unitTypeQTY,
-        Destination_fuelsurcharge_currency_typeUnitQTY:
-          freight.Destination_fuelsurcharge_currency_typeUnitQTY,
-        Destination_adminsurcharge_currency_unitTypeQTY:
-          freight.Destination_adminsurcharge_currency_unitTypeQTY,
-        Destination_portcargo_currency_unitTypeQTY:
-          freight.Destination_portcargo_currency_unitTypeQTY,
-        Destination_AdvancedLoad_currency_unitTypeQTY:
-          freight.Destination_AdvancedLoad_currency_unitTypeQTY,
-        Destination_3rdpartyDesc_currency_unitTypeQTY:
-          freight.Destination_3rdpartyDesc_currency_unitTypeQTY,
-        Destination_delivery_currency_unitTypeQTY:
-          freight.Destination_delivery_currency_unitTypeQTY,
-        Destination_fuelcharge_currency_unitTypeQTY:
-          freight.Destination_fuelcharge_currency_unitTypeQTY,
-        Destination_AdminAgrncy_currency_unitQTY:
-          freight.Destination_AdminAgrncy_currency_unitQTY,
-        Destination_disbursemant_currency_unitTypeQTY:
-          freight.Destination_disbursemant_currency_unitTypeQTY,
-        origin_pick_up_unitType: freight.origin_pick_up_unitType,
-        origin_pick_up_fuel_unitType: freight.origin_pick_up_fuel_unitType,
-        origin_pick_up_cfs_unitType: freight.origin_pick_up_cfs_unitType,
-        origin_pick_up_forewarding_unitType:
-          freight.origin_pick_up_forewarding_unitType,
-        origin_pick_up_documantation_unitType:
-          freight.origin_pick_up_documantation_unitType,
-        origin_pick_up_custome_unitType:
-          freight.origin_pick_up_custome_unitType,
-        freight_charge_currency_unitType:
-          freight.freight_charge_currency_unitType,
-        freight_currency_insurance_unittype:
-          freight.freight_currency_insurance_unittype,
-        Transit_currency_unitTpe: freight.Transit_currency_unitTpe,
-        transit_currency_THC_initType: freight.transit_currency_THC_initType,
-        Transit_currency_unpack_unitType:
-          freight.Transit_currency_unpack_unitType,
-        transit_3rd_party_unittype: freight.transit_3rd_party_unittype,
-        transit_admin_unittype: freight.transit_admin_unittype,
-        transit_currency_port_unitType: freight.transit_currency_port_unitType,
-        Transit_advanced_unitType: freight.Transit_advanced_unitType,
-        transit_change_Documentation_unitType:
-          freight.transit_change_Documentation_unitType,
-        Destination_freight_currency_unitType:
-          freight.Destination_freight_currency_unitType,
-        Destination_THC_currency_unitType:
-          freight.Destination_THC_currency_unitType,
-        Destination_Unpack_currency_unitType:
-          freight.Destination_Unpack_currency_unitType,
-        Destination_fuelsurcharge_currency_typeUnit:
-          freight.Destination_fuelsurcharge_currency_typeUnit,
-        Destination_adminsurcharge_currency_unitType:
-          freight.Destination_adminsurcharge_currency_unitType,
-        Destination_portcargo_currency_unitType:
-          freight.Destination_portcargo_currency_unitType,
-        Destination_AdvancedLoad_currency_unitType:
-          freight.Destination_AdvancedLoad_currency_unitType,
-        Destination_3rdpartyDesc_currency_unitType:
-          freight.Destination_3rdpartyDesc_currency_unitType,
-        Destination_delivery_currency_unitType:
-          freight.Destination_delivery_currency_unitType,
-        Destination_fuelcharge_currency_unitType:
-          freight.Destination_fuelcharge_currency_unitType,
-        Destination_AdminAgrncy_currency_unitType:
-          freight.Destination_AdminAgrncy_currency_unitType,
-        Destination_doc_currency_unittype:
-          freight.Destination_doc_currency_unittype,
-        Destination_AdminAgrncy_currency_unitType:
-          freight.Destination_AdminAgrncy_currency_unitType,
-        Destination_doc_currency_unittypeQTY:
-          freight.Destination_doc_currency_unittypeQTY,
-        ...(getdata.quote_estimate_id && {
-          quote_estimate_id: getdata.quote_estimate_id,
-        }),
+        supplier_id: parseInt(getSupplierId()) || null,
+        customer_invoice_no: freight.customer_invoice_no || "",
+        invoice_for_country: freight.invoice_for_country || "",
+        quote_type: "ADMIN",
+        date: getdata.date ? new Date(getdata.date).toISOString().split('T')[0] : getTodayDate(),
+        final_base_currency: freight.final_base_currency || "Select",
+        sumof_totalcost: parseFloat(sumofall) || 0,
+        sumof_finalamount: parseFloat(sumofRoe) || 0,
+        sumof_vatincl: parseFloat(totalVatInclusive) || 0,
+        chargeable: parseFloat(freight.chargable_rate) || 0,
+        components: allComponents,
       };
+
+      console.log("[Add Invoice] add-freight-quotes-estimate payload:", payload);
       const response = await axios.post(
-        `${process.env.REACT_APP_BASE_URL}addEstimateShippingQuote`,
+        `${process.env.REACT_APP_BASE_URL}add-freight-quotes-estimate`,
         payload
       );
       if (response.data.success === true) {
@@ -1979,10 +1258,11 @@ export default function Downlaodestimate() {
         console.log("some thing went wrong");
       }
     } catch (error) {
-      console.log(error.data);
+      console.log("Full Error =>", error);
     }
   };
-  const supplier = () => {
+
+const supplier = () => {
     const fId = getFreightId();
     if (!fId) {
       console.log("No freight ID found, skipping supplier fetch");
@@ -2242,7 +1522,7 @@ export default function Downlaodestimate() {
 
     const options = {
       margin: 0,
-      filename: "supplier-estimate.pdf",
+      filename: "client-estimate.pdf",
       image: { type: "jpeg", quality: 0.98 },
       html2canvas: { 
         scale: 1.5, 
@@ -3144,1080 +2424,143 @@ export default function Downlaodestimate() {
                       </thead>
 
                       <tbody>
-                        {/* origin charges */}
-
-                        {!isNaN(finalvlaueoriginPickup) &&
-                          finalvlaueoriginPickup !== 0 && (
-                            <tr>
-                              <td>Pick-Up Fee</td>
-                              <td>
-                                <input
-                                  style={{
-                                    marginBottom: 0,
-                                    fontSize: 13,
-                                    color: "black",
-                                    fontWeight: 400,
-                                    border: "0px",
-
-                                    verticalAlign: "middle",
-                                  }}
-                                  type="text"
-                                  className="supplier_form"
-                                  onChange={handlechangecalc}
-                                  value={freight?.freight_charge_currencyQTY}
-                                  name="freight_charge_currencyQTY"
-                                  id="floatingInput"
-                                  placeholder="0.00"
-                                />
-                              </td>
-                              <td>
-                                <select
-                                  className="select_supplier"
-                                  style={{
-                                    margin: 0,
-                                    fontSize: 13,
-                                    fontWeight: 700,
-                                    paddingLeft: 5,
-                                    border: 0,
-                                  }}
-                                  onChange={handlechangecalc}
-                                  name="origin_pick_up_unitType"
-                                  value={freight?.origin_pick_up_unitType}
-                                >
-                                  <option>Select</option>
-                                  <option value="1">L/S</option>
-                                  <option value="2">W/M</option>
-                                </select>
-                              </td>
-                              <td>
-                                <input
-                                  style={{
-                                    marginBottom: 0,
-                                    fontSize: 13,
-                                    color: "black",
-                                    fontWeight: 400,
-                                    border: "0px",
-
-                                    verticalAlign: "middle",
-                                  }}
-                                  type="text"
-                                  onKeyPress={handlepresss}
-                                  className="supplier_form"
-                                  disabled
-                                  onChange={handlechangecalc}
-                                  value={
-                                    freight.origin_pick_up_unitType
-                                      ? oripick2
-                                        ? oripick2
-                                        : 0
-                                      : 0
-                                  }
-                                  name="origin_pick_up_fees"
-                                  id="floatingInput"
-                                  placeholder="0.00"
-                                />
-                              </td>
-                              <td>
-                                <input
-                                  style={{
-                                    marginBottom: 0,
-                                    fontSize: 13,
-                                    color: "black",
-                                    fontWeight: 400,
-                                    border: "0px",
-
-                                    verticalAlign: "middle",
-                                  }}
-                                  type="text"
-                                  onKeyPress={handlepresss}
-                                  className="supplier_form"
-                                  onChange={handlechangecalc}
-                                  value={freight?.origin_pick_up_cost}
-                                  name="origin_pick_up_cost"
-                                  id="floatingInput"
-                                  placeholder="0.00"
-                                />
-                              </td>
-                              <td>
-                                <select
-                                  className="select_supplier"
-                                  style={{
-                                    margin: 0,
-                                    fontSize: 13,
-                                    fontWeight: 700,
-                                    paddingLeft: 5,
-                                    border: 0,
-                                  }}
-                                  onChange={handlechangecalc}
-                                  name="pickup_freight_currency"
-                                  value={freight?.pickup_freight_currency}
-                                >
-                                  <option>Select</option>
-                                  <option value="RAND">RAND</option>
-                                  <option value="USD">USD</option>
-                                  <option value="INR">INR</option>
-                                  <option value="EURO">EURO</option>
-                                </select>
-                              </td>
-                              <td>
-                                <input
-                                  style={{
-                                    marginBottom: 0,
-                                    fontSize: 13,
-                                    color: "black",
-
-                                    border: "0px",
-                                    verticalAlign: "middle",
-                                  }}
-                                  name="roe_origin_currencyorigin"
-                                  onChange={handlechangecalc}
-                                  value={freight.roe_origin_currencyorigin}
-                                  className="supplier_form"
-                                />
-                              </td>
-                              <td>
-                                <input
-                                  style={{
-                                    marginBottom: 0,
-                                    fontSize: 13,
-                                    color: "black",
-
-                                    border: "0px",
-                                    verticalAlign: "middle",
-                                  }}
-                                  disabled
-                                  value={isNaN(finalvlaueoriginPickup) ? 0 : finalvlaueoriginPickup.toFixed(2)}
-                                  className="supplier_form"
-                                />
-                              </td>
-                              <td>
-                                <select
-                                  className="select_supplier"
-                                  style={{
-                                    margin: 0,
-                                    fontSize: 13,
-                                    fontWeight: 700,
-                                    paddingLeft: 5,
-                                    border: 0,
-                                  }}
-                                  onChange={handlechangecalc}
-                                  name="org_pickUp_vatTyp"
-                                  value={freight?.org_pickUp_vatTyp || ""}
-                                >
-                                  {VAT_OPTIONS.map((opt, i) => (
-                                    <option key={i} value={opt.value}>{opt.label}</option>
-                                  ))}
-                                </select>
-                              </td>
-                              <td>
-                                <input
-                                  style={{
-                                    marginBottom: 0,
-                                    fontSize: 13,
-                                    color: "black",
-                                    width: "50px",
-                                    border: "0px",
-
-                                    verticalAlign: "middle",
-                                  }}
-                                  type="text"
-                                  onChange={handlechangecalc}
-                                  value={freight?.["org_pickUp_disc%"] || ""}
-                                  name="org_pickUp_disc%"
-                                  placeholder="0.00%"
-                                />
-                              </td>
-                              <td>
-                                <input
-                                  style={{
-                                    marginBottom: 0,
-                                    fontSize: 13,
-                                    color: "black",
-                                    border: "0px",
-                                    verticalAlign: "middle",
-                                  }}
-                                  disabled
-                                  value={formatValue(pickUpCalc.discount)}
-                                  className="supplier_form"
-                                />
-                              </td>
-                              <td>
-                                <input
-                                  style={{
-                                    marginBottom: 0,
-                                    fontSize: 13,
-                                    color: "black",
-                                    border: "0px",
-                                    verticalAlign: "middle",
-                                  }}
-                                  disabled
-                                  value={formatValue(pickUpCalc.exclusive)}
-                                  className="supplier_form"
-                                />
-                              </td>
-                              <td>
-                                <input
-                                  style={{
-                                    marginBottom: 0,
-                                    fontSize: 13,
-                                    color: "black",
-                                    border: "0px",
-                                    verticalAlign: "middle",
-                                  }}
-                                  disabled
-                                  value={formatValue(pickUpCalc.vat)}
-                                  className="supplier_form"
-                                />
+                        {/* 1. Origin Charges */}
+                        {originRows.length > 0 && (
+                          <>
+                            <tr className="estimate-section-row" style={{ backgroundColor: "#f0f2f5" }}>
+                              <td colSpan={13}>
+                                <strong>Origin Charges</strong>
                               </td>
                             </tr>
-                          )}
-
-                        {!isNaN(finalvlaueoFuel) && finalvlaueoFuel !== 0 && (
-                          <tr>
-                            <td>Fuel Surcharge</td>
-                            <td>
-                              <input
-                                style={{
-                                  marginBottom: 0,
-                                  fontSize: 13,
-                                  color: "black",
-                                  fontWeight: 400,
-                                  border: "0px",
-
-                                  verticalAlign: "middle",
-                                }}
-                                type="text"
-                                className="supplier_form"
-                                onChange={handlechangecalc}
-                                value={freight?.origin_pick_up_fuel_unitTypeQTY}
-                                name="origin_pick_up_fuel_unitTypeQTY"
-                                id="floatingInput"
-                                placeholder="0.00"
-                              />
-                            </td>
-                            <td>
-                              <select
-                                className="select_supplier"
-                                style={{
-                                  margin: 0,
-                                  fontSize: 13,
-                                  fontWeight: 700,
-                                  paddingLeft: 5,
-                                  border: 0,
-                                }}
-                                onChange={handlechangecalc}
-                                name="origin_pick_up_fuel_unitType"
-                                value={freight?.origin_pick_up_fuel_unitType}
-                              >
-                                <option>Select</option>
-                                <option value="1">L/S</option>
-                                <option value="2">W/M</option>
-                              </select>
-                            </td>
-                            <td>
-                              <input
-                                style={{
-                                  marginBottom: 0,
-                                  fontSize: 13,
-                                  color: "black",
-                                  fontWeight: 400,
-                                  border: "0px",
-
-                                  verticalAlign: "middle",
-                                }}
-                                type="text"
-                                onKeyPress={handlepresss}
-                                className="supplier_form"
-                                disabled
-                                onChange={handlechangecalc}
-                                value={
-                                  freight.origin_pick_up_fuel_unitType
-                                    ? orifuel2
-                                      ? orifuel2
-                                      : 0
-                                    : 0.0
-                                }
-                                name="origin_pick_up_fuel_fees"
-                                id="floatingInput"
-                                placeholder="0.00"
-                              />
-                            </td>
-                            <td>
-                              <input
-                                style={{
-                                  marginBottom: 0,
-                                  fontSize: 13,
-                                  color: "black",
-                                  fontWeight: 400,
-                                  border: "0px",
-
-                                  verticalAlign: "middle",
-                                }}
-                                type="text"
-                                onKeyPress={handlepresss}
-                                className="supplier_form"
-                                onChange={handlechangecalc}
-                                value={freight?.origin_pick_up_fuel_cost}
-                                name="origin_pick_up_fuel_cost"
-                                id="floatingInput"
-                                placeholder="0.00"
-                              />
-                            </td>
-                            <td>
-                              <select
-                                className="select_supplier"
-                                style={{
-                                  margin: 0,
-                                  fontSize: 13,
-                                  fontWeight: 700,
-                                  paddingLeft: 5,
-                                  border: 0,
-                                }}
-                                onChange={handlechangecalc}
-                                name="pickup_freight_currency"
-                                value={freight?.pickup_freight_currency}
-                              >
-                                <option>Select</option>
-                                <option value="RAND">RAND</option>
-                                <option value="USD">USD</option>
-                                <option value="INR">INR</option>
-                                <option value="EURO">EURO</option>
-                              </select>
-                            </td>
-                            <td>
-                              <input
-                                style={{
-                                  marginBottom: 0,
-                                  fontSize: 13,
-                                  color: "black",
-
-                                  border: "0px",
-                                  verticalAlign: "middle",
-                                }}
-                                name="roe_origin_fuel_currency"
-                                value={freight.roe_origin_fuel_currency}
-                                onChange={handlechangecalc}
-                                className="supplier_form"
-                              />
-                            </td>
-                            <td>
-                              <input
-                                style={{
-                                  marginBottom: 0,
-                                  fontSize: 13,
-                                  color: "black",
-                                  border: "0px",
-                                  verticalAlign: "middle",
-                                }}
-                                disabled
-                                value={isNaN(finalvlaueoFuel) ? 0 : finalvlaueoFuel.toFixed(2)}
-                                className="supplier_form"
-                              />
-                            </td>
-                            <td>
-                              <select disabled className="select_supplier" style={{ margin: 0, fontSize: 13, fontWeight: 700, paddingLeft: 5, border: 0 }}>
-                                <option value="">No Vat</option>
-                              </select>
-                            </td>
-                            <td>
-                              <input disabled style={{ marginBottom: 0, fontSize: 13, color: "black", width: "50px", border: "0px", verticalAlign: "middle" }} placeholder="0.00%" />
-                            </td>
-                            <td>
-                              <input disabled style={{ marginBottom: 0, fontSize: 13, color: "black", border: "0px", verticalAlign: "middle" }} value={formatValue(fuelCalc.discount)} className="supplier_form" />
-                            </td>
-                            <td>
-                              <input disabled style={{ marginBottom: 0, fontSize: 13, color: "black", border: "0px", verticalAlign: "middle" }} value={formatValue(fuelCalc.exclusive)} className="supplier_form" />
-                            </td>
-                            <td>
-                              <input disabled style={{ marginBottom: 0, fontSize: 13, color: "black", border: "0px", verticalAlign: "middle" }} value={formatValue(fuelCalc.vat)} className="supplier_form" />
-                            </td>
-                          </tr>
+                            {originRowsData.map(({ row, calc }) => renderRow(row, calc, setOriginRows))}
+                            <tr style={{ fontWeight: "bold", backgroundColor: "#fafafa" }}>
+                              <td colSpan={7}>Total - Origin Charges</td>
+                              <td>{formatValue(totalChangeRoeOrigin)}</td>
+                              <td></td>
+                              <td></td>
+                              <td>{formatValue(totalOriginDiscount)}</td>
+                              <td>{formatValue(totalOriginExclusive)}</td>
+                              <td>{formatValue(totalOriginVat)}</td>
+                            </tr>
+                          </>
                         )}
 
-                        {!isNaN(finalvlaueocfs) && finalvlaueocfs !== 0 && (
-                          <tr>
-                            <td>CFS Charge</td>
-                            <td>
-                              <input
-                                style={{
-                                  marginBottom: 0,
-                                  fontSize: 13,
-                                  color: "black",
-                                  fontWeight: 400,
-                                  border: "0px",
-
-                                  verticalAlign: "middle",
-                                }}
-                                type="text"
-                                className="supplier_form"
-                                onChange={handlechangecalc}
-                                value={freight?.origin_pick_up_cfs_unitTypeQTY}
-                                name="origin_pick_up_cfs_unitTypeQTY"
-                                id="floatingInput"
-                                placeholder="0.00"
-                              />
-                            </td>
-                            <td>
-                              <select
-                                className="select_supplier"
-                                style={{
-                                  margin: 0,
-                                  fontSize: 13,
-                                  fontWeight: 700,
-                                  paddingLeft: 5,
-                                  border: 0,
-                                }}
-                                onChange={handlechangecalc}
-                                name="origin_pick_up_cfs_unitType"
-                                value={freight?.origin_pick_up_cfs_unitType}
-                              >
-                                <option>Select</option>
-                                <option value="1">L/S</option>
-                                <option value="2">W/m</option>
-                              </select>
-                            </td>
-                            <td>
-                              <input
-                                style={{
-                                  marginBottom: 0,
-                                  fontSize: 13,
-                                  color: "black",
-                                  fontWeight: 400,
-                                  border: "0px",
-
-                                  verticalAlign: "middle",
-                                }}
-                                type="text"
-                                onKeyPress={handlepresss}
-                                className="supplier_form"
-                                disabled
-                                onChange={handlechangecalc}
-                                value={
-                                  freight.origin_pick_up_cfs_unitType
-                                    ? oricfs2
-                                      ? oricfs2
-                                      : 0
-                                    : 0.0
-                                }
-                                name="origin_pick_up_cfs_fees"
-                                id="floatingInput"
-                                placeholder="0.00"
-                              />
-                            </td>
-                            <td>
-                              <input
-                                style={{
-                                  marginBottom: 0,
-                                  fontSize: 13,
-                                  color: "black",
-                                  fontWeight: 400,
-                                  border: "0px",
-
-                                  verticalAlign: "middle",
-                                }}
-                                type="text"
-                                onKeyPress={handlepresss}
-                                className="supplier_form"
-                                onChange={handlechangecalc}
-                                value={freight?.origin_pick_up_cfs_cost}
-                                name="origin_pick_up_cfs_cost"
-                                id="floatingInput"
-                                placeholder="0.00"
-                              />
-                            </td>
-                            <td>
-                              <select
-                                className="select_supplier"
-                                style={{
-                                  margin: 0,
-                                  fontSize: 13,
-                                  fontWeight: 700,
-                                  paddingLeft: 5,
-                                  border: 0,
-                                }}
-                                onChange={handlechangecalc}
-                                name="pickup_freight_currency"
-                                value={freight?.pickup_freight_currency}
-                              >
-                                <option>Select</option>
-                                <option value="RAND">RAND</option>
-                                <option value="USD">USD</option>
-                                <option value="INR">INR</option>
-                                <option value="EURO">EURO</option>
-                              </select>
-                            </td>
-                            <td>
-                              <input
-                                style={{
-                                  marginBottom: 0,
-                                  fontSize: 13,
-                                  color: "black",
-
-                                  border: "0px",
-                                  verticalAlign: "middle",
-                                }}
-                                name="roe_origin_cfs_currency"
-                                value={freight.roe_origin_cfs_currency}
-                                onChange={handlechangecalc}
-                                className="supplier_form"
-                              />
-                            </td>
-                            <td>
-                              <input
-                                style={{
-                                  marginBottom: 0,
-                                  fontSize: 13,
-                                  color: "black",
-                                  border: "0px",
-                                  verticalAlign: "middle",
-                                }}
-                                disabled
-                                value={isNaN(finalvlaueocfs) ? 0 : finalvlaueocfs.toFixed(2)}
-                                className="supplier_form"
-                              />
-                            </td>
-                            <td>
-                              <select disabled className="select_supplier" style={{ margin: 0, fontSize: 13, fontWeight: 700, paddingLeft: 5, border: 0 }}>
-                                <option value="">No Vat</option>
-                              </select>
-                            </td>
-                            <td>
-                              <input disabled style={{ marginBottom: 0, fontSize: 13, color: "black", width: "50px", border: "0px", verticalAlign: "middle" }} placeholder="0.00%" />
-                            </td>
-                            <td>
-                              <input disabled style={{ marginBottom: 0, fontSize: 13, color: "black", border: "0px", verticalAlign: "middle" }} value={formatValue(cfsCalc.discount)} className="supplier_form" />
-                            </td>
-                            <td>
-                              <input disabled style={{ marginBottom: 0, fontSize: 13, color: "black", border: "0px", verticalAlign: "middle" }} value={formatValue(cfsCalc.exclusive)} className="supplier_form" />
-                            </td>
-                            <td>
-                              <input disabled style={{ marginBottom: 0, fontSize: 13, color: "black", border: "0px", verticalAlign: "middle" }} value={formatValue(cfsCalc.vat)} className="supplier_form" />
-                            </td>
-                          </tr>
-                        )}
-
-                        {!isNaN(finalvlaueodoc) && finalvlaueodoc !== 0 && (
-                          <tr>
-                            <td>Documentation Fee</td>
-                            <td>
-                              <input
-                                style={{
-                                  marginBottom: 0,
-                                  fontSize: 13,
-                                  color: "black",
-                                  fontWeight: 400,
-                                  border: "0px",
-
-                                  verticalAlign: "middle",
-                                }}
-                                type="text"
-                                className="supplier_form"
-                                onChange={handlechangecalc}
-                                value={
-                                  freight?.origin_pick_up_documantation_unitTypeQTY
-                                }
-                                name="origin_pick_up_documantation_unitTypeQTY"
-                                id="floatingInput"
-                                placeholder="0.00"
-                              />
-                            </td>
-                            <td>
-                              <select
-                                className="select_supplier"
-                                style={{
-                                  margin: 0,
-                                  fontSize: 13,
-                                  fontWeight: 700,
-                                  paddingLeft: 5,
-                                  border: 0,
-                                }}
-                                onChange={handlechangecalc}
-                                name="origin_pick_up_documantation_unitType"
-                                value={
-                                  freight?.origin_pick_up_documantation_unitType
-                                }
-                              >
-                                <option>Select</option>
-                                <option value="1">L/S</option>
-                                <option value="2">W/M</option>
-                              </select>
-                            </td>
-                            <td>
-                              <input
-                                style={{
-                                  marginBottom: 0,
-                                  fontSize: 13,
-                                  color: "black",
-                                  fontWeight: 400,
-                                  border: "0px",
-
-                                  verticalAlign: "middle",
-                                }}
-                                type="text"
-                                onKeyPress={handlepresss}
-                                disabled
-                                className="supplier_form"
-                                onChange={handlechangecalc}
-                                value={
-                                  freight.origin_pick_up_documantation_unitType
-                                    ? oridoc2
-                                      ? oridoc2
-                                      : 0
-                                    : 0.0
-                                }
-                                name="origin_pick_up_documantation_fees"
-                                id="floatingInput"
-                                placeholder="0.00"
-                              />
-                            </td>
-                            <td>
-                              <input
-                                style={{
-                                  marginBottom: 0,
-                                  fontSize: 13,
-                                  color: "black",
-                                  fontWeight: 400,
-                                  border: "0px",
-
-                                  verticalAlign: "middle",
-                                }}
-                                type="text"
-                                onKeyPress={handlepresss}
-                                className="supplier_form"
-                                onChange={handlechangecalc}
-                                value={freight?.origin_pick_up_documantion_cost}
-                                name="origin_pick_up_documantion_cost"
-                                id="floatingInput"
-                                placeholder="0.00"
-                              />
-                            </td>
-                            <td>
-                              <select
-                                className="select_supplier"
-                                style={{
-                                  margin: 0,
-                                  fontSize: 13,
-                                  fontWeight: 700,
-                                  paddingLeft: 5,
-                                  border: 0,
-                                }}
-                                onChange={handlechangecalc}
-                                name="pickup_freight_currency"
-                                value={freight?.pickup_freight_currency}
-                              >
-                                <option>Select</option>
-                                <option value="RAND">RAND</option>
-                                <option value="USD">USD</option>
-                                <option value="INR">INR</option>
-                                <option value="EURO">EURO</option>
-                              </select>
-                            </td>
-                            <td>
-                              <input
-                                style={{
-                                  marginBottom: 0,
-                                  fontSize: 13,
-                                  color: "black",
-
-                                  border: "0px",
-                                  verticalAlign: "middle",
-                                }}
-                                onChange={handlechangecalc}
-                                name="roe_origin_doc_currency"
-                                value={freight.roe_origin_doc_currency}
-                                className="supplier_form"
-                              />
-                            </td>
-                            <td>
-                              <input
-                                style={{
-                                  marginBottom: 0,
-                                  fontSize: 13,
-                                  color: "black",
-
-                                  border: "0px",
-                                  verticalAlign: "middle",
-                                }}
-                                disabled
-                                value={
-                                  isNaN(finalvlaueodoc)
-                                    ? 0
-                                    : finalvlaueodoc.toFixed(2)
-                                }
-                                placeholder="0.00"
-                                className="supplier_form"
-                              />
-                            </td>
-                            <td>
-                              <select disabled className="select_supplier" style={{ margin: 0, fontSize: 13, fontWeight: 700, paddingLeft: 5, border: 0 }}>
-                                <option value="">No Vat</option>
-                              </select>
-                            </td>
-                            <td>
-                              <input disabled style={{ marginBottom: 0, fontSize: 13, color: "black", width: "50px", border: "0px", verticalAlign: "middle" }} placeholder="0.00%" />
-                            </td>
-                            <td>
-                              <input disabled style={{ marginBottom: 0, fontSize: 13, color: "black", border: "0px", verticalAlign: "middle" }} value={formatValue(docCalc.discount)} className="supplier_form" />
-                            </td>
-                            <td>
-                              <input disabled style={{ marginBottom: 0, fontSize: 13, color: "black", border: "0px", verticalAlign: "middle" }} value={formatValue(docCalc.exclusive)} className="supplier_form" />
-                            </td>
-                            <td>
-                              <input disabled style={{ marginBottom: 0, fontSize: 13, color: "black", border: "0px", verticalAlign: "middle" }} value={formatValue(docCalc.vat)} className="supplier_form" />
-                            </td>
-                          </tr>
-                        )}
-
-                        {!isNaN(finalvlaueoforewarding) &&
-                          finalvlaueoforewarding !== 0 && (
-                            <tr>
-                              <td>Forwarding Fee</td>
-                              <td>
-                                <input
-                                  style={{
-                                    marginBottom: 0,
-                                    fontSize: 13,
-                                    color: "black",
-                                    fontWeight: 400,
-                                    border: "0px",
-
-                                    verticalAlign: "middle",
-                                  }}
-                                  type="text"
-                                  className="supplier_form"
-                                  onChange={handlechangecalc}
-                                  value={
-                                    freight?.origin_pick_up_forewarding_unitTypeQTY
-                                  }
-                                  name="origin_pick_up_forewarding_unitTypeQTY"
-                                  id="floatingInput"
-                                  placeholder="0.00"
-                                />
-                              </td>
-                              <td>
-                                <select
-                                  className="select_supplier"
-                                  style={{
-                                    margin: 0,
-                                    fontSize: 13,
-                                    fontWeight: 700,
-                                    paddingLeft: 5,
-                                    border: 0,
-                                  }}
-                                  onChange={handlechangecalc}
-                                  name="origin_pick_up_forewarding_unitType"
-                                  value={freight?.origin_pick_up_forewarding_unitType}
-                                >
-                                  <option>Select</option>
-                                  <option value="1">L/S</option>
-                                  <option value="2">W/M</option>
-                                </select>
-                              </td>
-                              <td>
-                                <input
-                                  style={{
-                                    marginBottom: 0,
-                                    fontSize: 13,
-                                    color: "black",
-                                    fontWeight: 400,
-                                    border: "0px",
-
-                                    verticalAlign: "middle",
-                                  }}
-                                  type="text"
-                                  onKeyPress={handlepresss}
-                                  className="supplier_form"
-                                  disabled
-                                  onChange={handlechangecalc}
-                                  value={
-                                    freight.origin_pick_up_forewarding_unitType
-                                      ? oriforewarding2
-                                        ? oriforewarding2
-                                        : 0
-                                      : 0
-                                  }
-                                  name="origin_pick_up_forewarding_fees"
-                                  id="floatingInput"
-                                  placeholder="0.00"
-                                />
-                              </td>
-                              <td>
-                                <input
-                                  style={{
-                                    marginBottom: 0,
-                                    fontSize: 13,
-                                    color: "black",
-                                    fontWeight: 400,
-                                    border: "0px",
-
-                                    verticalAlign: "middle",
-                                  }}
-                                  type="text"
-                                  onKeyPress={handlepresss}
-                                  className="supplier_form"
-                                  onChange={handlechangecalc}
-                                  value={freight?.origin_pick_up_forewarding_cost}
-                                  name="origin_pick_up_forewarding_cost"
-                                  id="floatingInput"
-                                  placeholder="0.00"
-                                />
-                              </td>
-                              <td>
-                                <select
-                                  className="select_supplier"
-                                  style={{
-                                    margin: 0,
-                                    fontSize: 13,
-                                    fontWeight: 700,
-                                    paddingLeft: 5,
-                                    border: 0,
-                                  }}
-                                  onChange={handlechangecalc}
-                                  name="pickup_freight_currency"
-                                  value={freight?.pickup_freight_currency}
-                                >
-                                  <option>Select</option>
-                                  <option value="RAND">RAND</option>
-                                  <option value="USD">USD</option>
-                                  <option value="INR">INR</option>
-                                  <option value="EURO">EURO</option>
-                                </select>
-                              </td>
-                              <td>
-                                <input
-                                  style={{
-                                    marginBottom: 0,
-                                    fontSize: 13,
-                                    color: "black",
-
-                                    border: "0px",
-                                    verticalAlign: "middle",
-                                  }}
-                                  name="roe_origin_forewarding"
-                                  value={freight.roe_origin_forewarding}
-                                  onChange={handlechangecalc}
-                                  className="supplier_form"
-                                />
-                              </td>
-                              <td>
-                                <input
-                                  style={{
-                                    marginBottom: 0,
-                                    fontSize: 13,
-                                    color: "black",
-
-                                    border: "0px",
-                                    verticalAlign: "middle",
-                                  }}
-                                  disabled
-                                  value={
-                                    isNaN(finalvlaueoforewarding)
-                                      ? 0
-                                      : finalvlaueoforewarding.toFixed(2)
-                                  }
-                                  placeholder="0.00"
-                                  className="supplier_form"
-                                />
-                              </td>
-                              <td>
-                                <select disabled className="select_supplier" style={{ margin: 0, fontSize: 13, fontWeight: 700, paddingLeft: 5, border: 0 }}>
-                                  <option value="">No Vat</option>
-                                </select>
-                              </td>
-                              <td>
-                                <input disabled style={{ marginBottom: 0, fontSize: 13, color: "black", width: "50px", border: "0px", verticalAlign: "middle" }} placeholder="0.00%" />
-                              </td>
-                              <td>
-                                <input disabled style={{ marginBottom: 0, fontSize: 13, color: "black", border: "0px", verticalAlign: "middle" }} value={formatValue(forwardingCalc.discount)} className="supplier_form" />
-                              </td>
-                              <td>
-                                <input disabled style={{ marginBottom: 0, fontSize: 13, color: "black", border: "0px", verticalAlign: "middle" }} value={formatValue(forwardingCalc.exclusive)} className="supplier_form" />
-                              </td>
-                              <td>
-                                <input disabled style={{ marginBottom: 0, fontSize: 13, color: "black", border: "0px", verticalAlign: "middle" }} value={formatValue(forwardingCalc.vat)} className="supplier_form" />
+                        {/* 2. Freight Charges */}
+                        {freightRows.length > 0 && (
+                          <>
+                            <tr className="estimate-section-row" style={{ backgroundColor: "#f0f2f5" }}>
+                              <td colSpan={13}>
+                                <strong>Freight Charges</strong>
                               </td>
                             </tr>
-                          )}
+                            {freightRowsData.map(({ row, calc }) => renderRow(row, calc, setFreightRows))}
+                            <tr style={{ fontWeight: "bold", backgroundColor: "#fafafa" }}>
+                              <td colSpan={7}>Total - Freight Charges</td>
+                              <td>{formatValue(totalChangeRoeFreight)}</td>
+                              <td></td>
+                              <td></td>
+                              <td>{formatValue(totalFreightDiscount)}</td>
+                              <td>{formatValue(totalFreightExclusive)}</td>
+                              <td>{formatValue(totalFreightVat)}</td>
+                            </tr>
+                          </>
+                        )}
 
-                        {!isNaN(finalvlaueoCustomes) &&
-                          finalvlaueoCustomes !== 0 && (
-                            <tr>
-                              <td>Customs Clearance</td>
-                              <td>
-                                <input
-                                  style={{
-                                    marginBottom: 0,
-                                    fontSize: 13,
-                                    color: "black",
-                                    fontWeight: 400,
-                                    border: "0px",
-
-                                    verticalAlign: "middle",
-                                  }}
-                                  type="text"
-                                  className="supplier_form"
-                                  onChange={handlechangecalc}
-                                  value={freight?.origin_pick_up_custome_unitTypeQTY}
-                                  name="origin_pick_up_custome_unitTypeQTY"
-                                  id="floatingInput"
-                                  placeholder="0.00"
-                                />
-                              </td>
-                              <td>
-                                <select
-                                  className="select_supplier"
-                                  style={{
-                                    margin: 0,
-                                    fontSize: 13,
-                                    fontWeight: 700,
-                                    paddingLeft: 5,
-                                    border: 0,
-                                  }}
-                                  onChange={handlechangecalc}
-                                  name="origin_pick_up_custome_unitType"
-                                  value={freight?.origin_pick_up_custome_unitType}
-                                >
-                                  <option>Select</option>
-                                  <option value="1">L/S</option>
-                                  <option value="2">W/M</option>
-                                </select>
-                              </td>
-                              <td>
-                                <input
-                                  style={{
-                                    marginBottom: 0,
-                                    fontSize: 13,
-                                    color: "black",
-                                    fontWeight: 400,
-                                    border: "0px",
-
-                                    verticalAlign: "middle",
-                                  }}
-                                  type="text"
-                                  onKeyPress={handlepresss}
-                                  className="supplier_form"
-                                  disabled
-                                  onChange={handlechangecalc}
-                                  value={
-                                    freight.origin_pick_up_custome_unitType
-                                      ? oricustome2
-                                        ? oricustome2
-                                        : 0.0
-                                      : 0.0
-                                  }
-                                  name="origin_pick_up_custome_clearance"
-                                  id="floatingInput"
-                                  placeholder="0.00"
-                                />
-                              </td>
-                              <td>
-                                <input
-                                  style={{
-                                    marginBottom: 0,
-                                    fontSize: 13,
-                                    color: "black",
-                                    fontWeight: 400,
-                                    border: "0px",
-
-                                    verticalAlign: "middle",
-                                  }}
-                                  type="text"
-                                  onKeyPress={handlepresss}
-                                  className="supplier_form"
-                                  onChange={handlechangecalc}
-                                  value={freight?.origin_pick_up_custome_cost}
-                                  name="origin_pick_up_custome_cost"
-                                  id="floatingInput"
-                                  placeholder="0.00"
-                                />
-                              </td>
-                              <td>
-                                <select
-                                  className="select_supplier"
-                                  style={{
-                                    margin: 0,
-                                    fontSize: 13,
-                                    fontWeight: 700,
-                                    paddingLeft: 5,
-                                    border: 0,
-                                  }}
-                                  onChange={handlechangecalc}
-                                  name="pickup_freight_currency"
-                                  value={freight?.pickup_freight_currency}
-                                >
-                                  <option>Select</option>
-                                  <option value="RAND">RAND</option>
-                                  <option value="USD">USD</option>
-                                  <option value="INR">INR</option>
-                                  <option value="EURO">EURO</option>
-                                </select>
-                              </td>
-                              <td>
-                                <input
-                                  style={{
-                                    marginBottom: 0,
-                                    fontSize: 13,
-                                    color: "black",
-
-                                    border: "0px",
-                                    verticalAlign: "middle",
-                                  }}
-                                  onChange={handlechangecalc}
-                                  name="roe_origin_customes"
-                                  value={freight.roe_origin_customes}
-                                  className="supplier_form"
-                                />
-                              </td>
-                              <td>
-                                <input
-                                  style={{
-                                    marginBottom: 0,
-                                    fontSize: 13,
-                                    color: "black",
-
-                                    border: "0px",
-                                    verticalAlign: "middle",
-                                  }}
-                                  disabled
-                                  value={
-                                    isNaN(finalvlaueoCustomes)
-                                      ? 0
-                                      : finalvlaueoCustomes.toFixed(2)
-                                  }
-                                  placeholder="0.00"
-                                  className="supplier_form"
-                                />
-                              </td>
-                              <td>
-                                <select disabled className="select_supplier" style={{ margin: 0, fontSize: 13, fontWeight: 700, paddingLeft: 5, border: 0 }}>
-                                  <option value="">No Vat</option>
-                                </select>
-                              </td>
-                              <td>
-                                <input disabled style={{ marginBottom: 0, fontSize: 13, color: "black", width: "50px", border: "0px", verticalAlign: "middle" }} placeholder="0.00%" />
-                              </td>
-                              <td>
-                                <input disabled style={{ marginBottom: 0, fontSize: 13, color: "black", border: "0px", verticalAlign: "middle" }} value={formatValue(customsCalc.discount)} className="supplier_form" />
-                              </td>
-                              <td>
-                                <input disabled style={{ marginBottom: 0, fontSize: 13, color: "black", border: "0px", verticalAlign: "middle" }} value={formatValue(customsCalc.exclusive)} className="supplier_form" />
-                              </td>
-                              <td>
-                                <input disabled style={{ marginBottom: 0, fontSize: 13, color: "black", border: "0px", verticalAlign: "middle" }} value={formatValue(customsCalc.vat)} className="supplier_form" />
+                        {/* 3. Transit Charges */}
+                        {transitRows.length > 0 && (
+                          <>
+                            <tr className="estimate-section-row" style={{ backgroundColor: "#f0f2f5" }}>
+                              <td colSpan={13}>
+                                <strong>Transit Charges</strong>
                               </td>
                             </tr>
-                          )}
+                            {transitRowsData.map(({ row, calc }) => renderRow(row, calc, setTransitRows))}
+                            <tr style={{ fontWeight: "bold", backgroundColor: "#fafafa" }}>
+                              <td colSpan={7}>Total - Transit Charges</td>
+                              <td>{formatValue(totalChangeRoeTransit)}</td>
+                              <td></td>
+                              <td></td>
+                              <td>{formatValue(totalTransitDiscount)}</td>
+                              <td>{formatValue(totalTransitExclusive)}</td>
+                              <td>{formatValue(totalTransitVat)}</td>
+                            </tr>
+                          </>
+                        )}
 
-                        <tr>
+                        {/* 4. Destination Charges */}
+                        {destinationRows.length > 0 && (
+                          <>
+                            <tr className="estimate-section-row" style={{ backgroundColor: "#f0f2f5" }}>
+                              <td colSpan={13}>
+                                <strong>Destination Charges</strong>
+                              </td>
+                            </tr>
+                            {destinationRowsData.map(({ row, calc }) => renderRow(row, calc, setDestinationRows))}
+                            <tr style={{ fontWeight: "bold", backgroundColor: "#fafafa" }}>
+                              <td colSpan={7}>Total - Destination Charges</td>
+                              <td>{formatValue(totalChangeRoeDestination)}</td>
+                              <td></td>
+                              <td></td>
+                              <td>{formatValue(totalDestinationDiscount)}</td>
+                              <td>{formatValue(totalDestinationExclusive)}</td>
+                              <td>{formatValue(totalDestinationVat)}</td>
+                            </tr>
+                          </>
+                        )}
+
+                        {/* 5. Admin Charges */}
+                        {adminRows.length > 0 && (
+                          <>
+                            <tr className="estimate-section-row" style={{ backgroundColor: "#f0f2f5" }}>
+                              <td colSpan={13}>
+                                <strong>Admin Charges</strong>
+                              </td>
+                            </tr>
+                            {adminRowsData.map(({ row, calc }) => renderRow(row, calc, setAdminRows))}
+                            <tr style={{ fontWeight: "bold", backgroundColor: "#fafafa" }}>
+                              <td colSpan={7}>Total - Admin Charges</td>
+                              <td>{formatValue(totalChangeRoeAdmin)}</td>
+                              <td></td>
+                              <td></td>
+                              <td>{formatValue(totalAdminDiscount)}</td>
+                              <td>{formatValue(totalAdminExclusive)}</td>
+                              <td>{formatValue(totalAdminVat)}</td>
+                            </tr>
+                          </>
+                        )}
+
+                        {/* 6. Customs Charges */}
+                        {customsRows.length > 0 && (
+                          <>
+                            <tr className="estimate-section-row" style={{ backgroundColor: "#f0f2f5" }}>
+                              <td colSpan={13}>
+                                <strong>Customs Charges</strong>
+                              </td>
+                            </tr>
+                            {customsRowsData.map(({ row, calc }) => renderRow(row, calc, setCustomsRows))}
+                            <tr style={{ fontWeight: "bold", backgroundColor: "#fafafa" }}>
+                              <td colSpan={7}>Total - Customs Charges</td>
+                              <td>{formatValue(totalChangeRoeCustoms)}</td>
+                              <td></td>
+                              <td></td>
+                              <td>{formatValue(totalCustomsDiscount)}</td>
+                              <td>{formatValue(totalCustomsExclusive)}</td>
+                              <td>{formatValue(totalCustomsVat)}</td>
+                            </tr>
+                          </>
+                        )}
+
+                        {/* Grand Total Row */}
+                        <tr style={{ fontWeight: "bold", backgroundColor: "#e2e8f0", borderTop: "2px solid #475569" }}>
                           <td colSpan={7}>
-                            <strong>Total - Origin Charges </strong>
+                            <strong>GRAND TOTAL</strong>
                           </td>
-                          <td> {formatValue(totalChangeRoeOrigin)} </td>
+                          <td>{formatValue(grandTotalFinalAmt)}</td>
                           <td></td>
                           <td></td>
-                          <td> {formatValue(totalOriginDiscount)} </td>
-                          <td> {formatValue(totalOriginExclusive)} </td>
-                          <td> {formatValue(totalOriginVat)} </td>
+                          <td>{formatValue(grandTotalDiscount)}</td>
+                          <td>{formatValue(grandTotalExclusive)}</td>
+                          <td>{formatValue(grandTotalVat)}</td>
                         </tr>
                       </tbody>
                     </table>

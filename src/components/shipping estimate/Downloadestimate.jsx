@@ -1033,8 +1033,8 @@ export default function Downlaodestimate() {
     localStorage.setItem("supplierid", getdata122.supplier_id);
   }
 
-  const getFreightId = () => getdata122?.freight_id || getdata122?.id ;
-  const getQuoteEstimateId = () => getdata122?.freight_quote_estimate_id ;
+  const getFreightId = () => getdata122?.freight_id || getdata122?.id;
+  const getQuoteEstimateId = () => getdata122?.freight_quote_estimate_id;
   const getQouteEstimateId2 = () => getdata122?.quote_estimate_id
   const getSupplierId = () => getdata122?.supplier_id || freight?.supplier_id || localStorage.getItem("supplierid");
 
@@ -1101,7 +1101,7 @@ export default function Downlaodestimate() {
       [name]: value,
     }));
   };
-    const originRowsData = originRows.map(row => ({
+  const originRowsData = originRows.map(row => ({
     row,
     calc: calculateRowData(row)
   }));
@@ -1161,7 +1161,7 @@ export default function Downlaodestimate() {
   const grandTotalExclusive = totalOriginExclusive + totalFreightExclusive + totalTransitExclusive + totalDestinationExclusive + totalAdminExclusive + totalCustomsExclusive;
   const grandTotalVat = totalOriginVat + totalFreightVat + totalTransitVat + totalDestinationVat + totalAdminVat + totalCustomsVat;
 
-  const sumofall = 
+  const sumofall =
     originRowsData.reduce((sum, item) => sum + item.calc.tCost, 0) +
     freightRowsData.reduce((sum, item) => sum + item.calc.tCost, 0) +
     transitRowsData.reduce((sum, item) => sum + item.calc.tCost, 0) +
@@ -1233,7 +1233,7 @@ export default function Downlaodestimate() {
 
       const payload = {
         freight_id: parseInt(getFreightId()),
-        client_id: parseInt(getdata.client_id || getdata.id || getdata.client_ref ),
+        client_id: parseInt(getdata.client_id || getdata.id || getdata.client_ref),
         client_name: getdata.client_name,
         supplier_id: parseInt(getSupplierId()) || null,
         customer_invoice_no: freight.customer_invoice_no || "",
@@ -1263,7 +1263,7 @@ export default function Downlaodestimate() {
     }
   };
 
-const supplier = () => {
+  const supplier = () => {
     const fId = getFreightId();
     if (!fId) {
       console.log("No freight ID found, skipping supplier fetch");
@@ -1525,9 +1525,9 @@ const supplier = () => {
       margin: 0,
       filename: "client-estimate.pdf",
       image: { type: "jpeg", quality: 0.98 },
-      html2canvas: { 
-        scale: 1.5, 
-        useCORS: true, 
+      html2canvas: {
+        scale: 1.5,
+        useCORS: true,
         windowWidth: 1600,
         backgroundColor: "#ffffff",
         scrollX: 0,
@@ -1622,23 +1622,21 @@ const supplier = () => {
                             </p>
                             <p
                               style={{
-                                fontSize: 14,
+                                fontSize: 13,
                                 fontWeight: 500,
                                 marginBottom: "unset",
                                 lineHeight: "1.5",
                                 marginTop: 5,
                               }}
                             >
-                              Asia Direct, Unit 4 Villa Valencia 2 Anemoon Road
-                              Glen Marais 1619 South Africa Web
-                              www.asiaDirect.africa{" "}
+                              {freight?.company_address?.company_name || ""}<br />
+                              {freight?.company_address?.address_line || ""}
                             </p>
                             <p>
-                              <span>VAT Number: 4740280377</span>
-                              <br />
-                              TEL: +27 10 448 0733
+                              <span><b>Registration No.:-</b> {freight?.company_address?.company_registration_no || ""}</span><br />
+                              <span><b>VAT No.:-</b> {freight?.company_address?.tax_vat_no || ""}</span><br />
+                              <span><b>Importers code:-</b> {freight?.company_address?.postal_code || ""}</span> 
                             </p>
-                            <p> </p>
                           </td>
                         </tr>
                       </tbody>
@@ -2078,7 +2076,7 @@ const supplier = () => {
                                   }}><strong>
                                       Invoice For
                                     </strong></td>
-                                    <td
+                                  <td
                                     style={{ paddingBottom: 10, fontSize: 14 }}
                                   >
                                     {freight?.invoice_for_country || ""}
@@ -2106,7 +2104,7 @@ const supplier = () => {
                                   }}><strong>
                                       Invoice No.
                                     </strong></td>
-                                    <td
+                                  <td
                                     style={{ fontSize: 14 }}
                                   >
                                     {freight?.customer_invoice_no || ""}
@@ -2132,7 +2130,7 @@ const supplier = () => {
                                     <strong>Reference</strong>
                                   </td>
                                   <td
-                                    style={{  fontSize: 14 }}
+                                    style={{ fontSize: 14 }}
                                   >
                                     {freight?.reference_no}
                                   </td>

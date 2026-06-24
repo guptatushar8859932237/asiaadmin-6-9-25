@@ -123,6 +123,47 @@ export default function Supplierestimationview() {
     supplierSelected();
   }, []);
 
+  const fetchCompanyAddressForCountry = async (countryName) => {
+    try {
+      const response = await axios.get(
+        `${process.env.REACT_APP_BASE_URL}company-addresses`,
+        { params: { country: countryName } }
+      );
+      if (response.data && response.data.success && response.data.data) {
+        const addressList = response.data.data;
+        const address = Array.isArray(addressList) ? addressList[0] : addressList;
+        if (address) {
+          setFreight((prev) => ({
+            ...prev,
+            company_id: address.id,
+            company_address: address,
+          }));
+        }
+      }
+    } catch (error) {
+      console.error("Error fetching company address for country:", error);
+    }
+  };
+
+  const handleInvoiceForChange = async (e) => {
+    const selectedCountry = e.target.value;
+    setFreight((prev) => ({
+      ...prev,
+      invoice_for_country: selectedCountry,
+    }));
+
+    if (!selectedCountry) {
+      setFreight((prev) => ({
+        ...prev,
+        company_id: "",
+        company_address: null,
+      }));
+      return;
+    }
+
+    await fetchCompanyAddressForCountry(selectedCountry);
+  };
+
   const getFreightDataById = async () => {
     const payload = {
       freight_id: localFreigtId,
@@ -169,7 +210,14 @@ export default function Supplierestimationview() {
           invoice_for_country: estimateData.invoice_for_country || prev?.invoice_for_country || "",
           final_base_currency: estimateData.final_base_currency || prev?.final_base_currency || "Select",
           chargable_rate: estimateData.chargeable ?? prev?.chargable_rate ?? "",
+          company_id: estimateData.company_id || estimateData.company_address?.id || prev?.company_id || "",
+          company_country: estimateData.company_address?.country || prev?.company_country || "",
+          company_address: estimateData.company_address || prev?.company_address || null,
         }));
+
+        if (estimateData.invoice_for_country && !estimateData.company_address) {
+          fetchCompanyAddressForCountry(estimateData.invoice_for_country);
+        }
 
         if (estimateData.components && estimateData.components.length > 0) {
           isEstimateLoaded.current = true;
@@ -736,6 +784,7 @@ export default function Supplierestimationview() {
         supplier_id: parseInt(supplierId) || null,
         customer_invoice_no: freight.customer_invoice_no || "",
         invoice_for_country: freight.invoice_for_country || "",
+        company_id: freight.company_id ? parseInt(freight.company_id) : null,
         quote_type: "ADMIN",
         date: freightDetails.date ? new Date(freightDetails.date).toISOString().split('T')[0] : getTodayDate(),
         final_base_currency: freight.final_base_currency || "Select",
@@ -931,10 +980,16 @@ export default function Supplierestimationview() {
                     }}
                     className="pdf-page"
                   >
-                    <table style={{ width: "100%" }}>
+                    <table
+                      style={{
+                        width: "100%",
+                        tableLayout: "fixed",
+                        borderCollapse: "collapse",
+                      }}
+                    >
                       <tbody>
                         <tr>
-                          <td style={{ width: "50%" }}>
+                          <td style={{ width: "50%", paddingBottom: "10px" }}>
                             <div>
                               <img
                                 style={{ height: 55 }}
@@ -943,7 +998,7 @@ export default function Supplierestimationview() {
                               />
                             </div>
                           </td>
-                          <td style={{ width: "50%", color: "#000", paddingBottom: "10px" }}>
+                          <td style={{ width: "50%", color: "#000", paddingBottom: "10px", textAlign: "left" }}>
                             <p
                               style={{
                                 fontSize: 16,
@@ -964,14 +1019,13 @@ export default function Supplierestimationview() {
                                 marginTop: 10,
                               }}
                             >
-                              Asia Direct, Unit 4 Villa Valencia 2 Anemoon Road
-                              Glen Marais 1619 South Africa Web
-                              www.asiaDirect.africa{" "}
+                              {freight?.company_address?.company_name || ""}<br/>
+                              {freight?.company_address?.address_line || ""}
                             </p>
                             <p>
-                              <span>VAT Number: 4740280377</span>
-                              <br />
-                              TEL: +27 10 448 0733
+                              <span><b>Registration No.:-</b> {freight?.company_address?.company_registration_no || ""}</span> <br />
+                              <span><b>VAT No.:-</b> {freight?.company_address?.tax_vat_no || ""}</span> <br />
+                              <span><b>Importers code:-</b></span>{freight?.company_address?.postal_code || ""}
                             </p>
                           </td>
                         </tr>
@@ -1381,7 +1435,7 @@ export default function Supplierestimationview() {
                                     <select
                                       name="invoice_for_country"
                                       value={freight.invoice_for_country || ""}
-                                      onChange={handlechangecalc}
+                                      onChange={handleInvoiceForChange}
                                       style={{ width: "100%", padding: "2px" }}
                                     >
                                       <option value="">Select Country</option>

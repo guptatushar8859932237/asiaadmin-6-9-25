@@ -263,7 +263,7 @@ export default function CompanyAddresses() {
               placeholder="Country"
               value={inputdata.country || ""}
               onChange={handlechange}
-              disabled={isReadOnly}
+              disabled={true}
             />
           </Field>
           <Field label="Postal Code">
@@ -315,6 +315,7 @@ export default function CompanyAddresses() {
                     <th>Sr.No.</th>
                     <th>Company Name</th>
                     <th>Email</th>
+                    <th>Country</th>
                     <th>Telephone</th>
                     <th>Registration No / Tax No</th>
                     <th>Address</th>
@@ -327,6 +328,7 @@ export default function CompanyAddresses() {
                       <td>{(pageIndex - 1) * pageSize + index + 1}</td>
                       <td>{item.company_name || "-"}</td>
                       <td>{item.email || "-"}</td>
+                      <td>{item.country || "-"}</td>
                       <td>{item.telephone || "-"}</td>
                       <td>
                         <div><strong>Reg:</strong> {item.company_registration_no || "-"}</div>
@@ -365,7 +367,7 @@ export default function CompanyAddresses() {
                   ))}
                   {displayedAddresses.length === 0 && (
                     <tr>
-                      <td colSpan="7" className="text-center">
+                      <td colSpan="8" className="text-center">
                         No company addresses found
                       </td>
                     </tr>

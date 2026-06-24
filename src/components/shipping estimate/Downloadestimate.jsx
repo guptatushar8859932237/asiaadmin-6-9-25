@@ -1026,15 +1026,16 @@ export default function Downlaodestimate() {
     localStorage.setItem("freightid", getdata122.id);
   }
   const initialQuoteEstimateId = getdata122?.freight_quote_estimate_id || getdata122?.quote_estimate_id;
-  if (initialQuoteEstimateId) {
-    localStorage.setItem("freight_quote_estimate_id", initialQuoteEstimateId);
-  }
+  // if (initialQuoteEstimateId) {
+  //   localStorage.setItem("freight_quote_estimate_id", initialQuoteEstimateId);
+  // }
   if (getdata122?.supplier_id) {
     localStorage.setItem("supplierid", getdata122.supplier_id);
   }
 
-  const getFreightId = () => getdata122?.freight_id || getdata122?.id || localStorage.getItem("freightid");
-  const getQuoteEstimateId = () => getdata122?.freight_quote_estimate_id || getdata122?.quote_estimate_id || localStorage.getItem("freight_quote_estimate_id");
+  const getFreightId = () => getdata122?.freight_id || getdata122?.id ;
+  const getQuoteEstimateId = () => getdata122?.freight_quote_estimate_id ;
+  const getQouteEstimateId2 = () => getdata122?.quote_estimate_id
   const getSupplierId = () => getdata122?.supplier_id || freight?.supplier_id || localStorage.getItem("supplierid");
 
   useEffect(() => {
@@ -1374,7 +1375,7 @@ const supplier = () => {
   };
 
   const getNewDataapi = async () => {
-    const quoteEstimateId = getQuoteEstimateId();
+    const quoteEstimateId = getQouteEstimateId2();
     if (!quoteEstimateId) {
       console.log("No quote_estimate_id or freight_quote_estimate_id found to fetch estimate in getNewDataapi");
       return;

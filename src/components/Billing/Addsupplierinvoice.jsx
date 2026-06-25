@@ -1993,15 +1993,12 @@ export default function Addsupplierinvoice() {
           <div className="custom-modal-content">
             <div className="custom-modal-header">
               <h5 className="bold">Select Shipment</h5>
-
-              <button className="btn-close" onClick={() => closemodal()}>
-                <CloseIcon />
-              </button>
+              <button className="btn-close" onClick={() => closemodal()}> <CloseIcon /> </button>
             </div>
 
-            <div className="custom-modal-body">
-              <div style={{ margin: "20px" }}>
-                <option value="">Select Shipment</option>
+            <div className="custom-modal-body newModalGap" >
+              <div>
+                <label className="">Select Shipment</label>
                 <select
                   className="form-select"
                   value={selected}
@@ -2014,13 +2011,11 @@ export default function Addsupplierinvoice() {
                     </option>
                   ))}
                 </select>
-
-                <br />
               </div>
             </div>
 
             <div className="custom-modal-footer">
-              <button className="btn btn-primary" onClick={apidataget}>
+              <button className="blueBtn" onClick={apidataget}>
                 Add Shipment
               </button>
             </div>

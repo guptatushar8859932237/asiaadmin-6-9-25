@@ -15,7 +15,6 @@ export default function SupplierSageInvoice() {
   const limit = 10;
   const navigate = useNavigate();
   const [printItem, setPrintItem] = useState(null);
-  const [search, setSearch] = useState("");
 
   useEffect(() => {
     getClients(currentPage);
@@ -24,19 +23,12 @@ export default function SupplierSageInvoice() {
   const getClients = async (pageNo = 1) => {
     try {
       const response = await axios.get(
-        `${process.env.REACT_APP_BASE_URL}getAllSupplierShipmentInvoices?page=${pageNo}&limit=${limit}&search=${search}`
+        `${process.env.REACT_APP_BASE_URL}getAllSupplierInvoices?page=${pageNo}&limit=${limit}`
       );
       console.log(response.data);
-      const fetchedData = response.data.data || [];
-      const normalizedData = fetchedData.map((item) => ({
-        ...item,
-        supplier_invoice_id: item.supplier_shipment_invoice_id,
-        invoice_total: item.sumof_vatincl !== undefined ? item.sumof_vatincl : item.invoice_total,
-        supplier_invoice_no: item.customer_invoice_no || item.supplier_invoice_no,
-      }));
-      setData(normalizedData);
+      setData(response.data.data || []);
       setTotalPage(
-        response.data.pagination?.totalPages || 1
+        Math.ceil((response.data.total || 1) / limit)
       );
     } catch (error) {
       console.error(
@@ -44,11 +36,6 @@ export default function SupplierSageInvoice() {
         error.message
       );
     }
-  };
-
-  const handleSearch = () => {
-    setCurrentPage(1);
-    getClients(1);
   };
 
   const handlePageChange = (page) => {
@@ -115,31 +102,12 @@ export default function SupplierSageInvoice() {
   return (
     <div className="wpWrapper">
       <div className="container-fluid">
-        <div className="d-flex justify-content-between align-items-center mb-3 manageFreight">
-          <button
-            className="btn btn-secondary"
-            onClick={naviagetpage}
-          >
-            Add New Invoice
-          </button>
-          <div className="d-flex align-items-center gap-2">
-            <input
-              name="search"
-              value={search}
-              className="form-control"
-              placeholder="Search..."
-              onChange={(e) => setSearch(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === "Enter") {
-                  handleSearch();
-                }
-              }}
-            />
-            <button className="blueBtn" onClick={handleSearch}>
-              Search
-            </button>
-          </div>
-        </div>
+        <button
+          className="btn btn-secondary"
+          onClick={naviagetpage}
+        >
+          Add New Invoice
+        </button>
         <div className="table-responsive tableResFixed mt-4">
           <table className="table table-striped tableICon">
             <thead>
@@ -170,15 +138,13 @@ export default function SupplierSageInvoice() {
                       <td>{item.waybill}</td>
                       <td>{item.supplier_invoice_no || "-"}</td>
                       <td>
-                        {item?.supplier_invoice_date
-                          ? new Date(item.supplier_invoice_date).toLocaleDateString("en-GB")
-                          : "-"}
+                        {new Date(
+                          item?.supplier_invoice_date,
+                        ).toLocaleDateString("en-GB") || "-"}
                       </td>
-                      <td>
-                        {item?.due_date
-                          ? new Date(item.due_date).toLocaleDateString("en-GB")
-                          : "-"}
-                      </td>
+                      <td>{new Date(
+                          item?.due_date,
+                        ).toLocaleDateString("en-GB") || "-"}</td>
                       <td>{item.final_base_currency || "-"}</td>
                       <td>
                         {item.invoice_total}

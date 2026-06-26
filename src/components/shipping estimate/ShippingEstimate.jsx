@@ -571,7 +571,7 @@ export default function ShippingEstimate() {
 
       const payload = {
         freight_id: parseInt(getdata.freight_id || localFreigtId),
-        client_id: parseInt(getdata.client_id || getdata.id || getdata.client_ref ),
+        client_id: parseInt(getdata.client_id || getdata.id || getdata.client_ref),
         client_name: getdata.client_name,
         supplier_id: parseInt(freight.supplier_id) || null,
         customer_invoice_no: freight.customer_invoice_no || "",
@@ -1282,12 +1282,12 @@ export default function ShippingEstimate() {
                                   marginTop: 10,
                                 }}
                               >
-                              {freight?.company_address?.company_name || ""}<br/>
-                              {freight?.company_address?.address_line || ""}
+                                {freight?.company_address?.company_name || ""}<br />
+                                {freight?.company_address?.address_line || ""}
                               </p>
                               <p>
                                 <span><b>Registration No.:-</b> {freight?.company_address?.company_registration_no || ""}</span> <br />
-                                 <span><b>VAT No.:-</b> {freight?.company_address?.tax_vat_no || ""}</span> <br />
+                                <span><b>VAT No.:-</b> {freight?.company_address?.tax_vat_no || ""}</span> <br />
                                 <span><b>Importers code:-</b></span>{freight?.company_address?.postal_code || ""}
                               </p>
                             </td>

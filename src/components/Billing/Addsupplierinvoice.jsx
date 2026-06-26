@@ -20,6 +20,16 @@ const getVatPercent = (vatTyp) => {
   return 0;
 };
 
+const toLocalDateString = (dateVal) => {
+  if (!dateVal) return "";
+  const date = new Date(dateVal);
+  if (Number.isNaN(date.getTime())) return "";
+  const yyyy = date.getFullYear();
+  const mm = String(date.getMonth() + 1).padStart(2, "0");
+  const dd = String(date.getDate()).padStart(2, "0");
+  return `${yyyy}-${mm}-${dd}`;
+};
+
 const getVatLabel = (val) => {
   if (!val) return "";
   if (String(val) === "15") return "Standard Rate(15.00%)";
@@ -100,8 +110,9 @@ export default function Addsupplierinvoice() {
     // Check if we are copying an invoice
     if (copyInvoiceData) {
       const invoiceId = copyInvoiceData.supplier_shipment_invoice_id || copyInvoiceData.supplier_invoice_id;
-      if (invoiceId) {
-        loadSupplierInvoiceData(invoiceId);
+      const shipmentId = copyInvoiceData.shipment_id;
+      if (invoiceId && shipmentId) {
+        loadSupplierInvoiceData(invoiceId, shipmentId);
       }
     }
   }, [copyInvoiceData]);
@@ -266,16 +277,22 @@ export default function Addsupplierinvoice() {
     }
   };
 
-  const loadSupplierInvoiceData = async (invoiceId) => {
+  const loadSupplierInvoiceData = async (invoiceId, shipmentId) => {
     try {
-      const response = await axios.get(`${process.env.REACT_APP_BASE_URL}getSupplierInvoiceById/${invoiceId}`);
+      const response = await axios.post(
+        `${process.env.REACT_APP_BASE_URL}GetSupplierShipmentInvoiceById`,
+        {
+          supplier_shipment_invoice_id: parseInt(invoiceId),
+          shipment_id: parseInt(shipmentId)
+        }
+      );
       if (response.data && response.data.success && response.data.data) {
         const invoiceData = Array.isArray(response.data.data) ? response.data.data[0] : response.data.data;
         if (invoiceData) {
           setFreight({
             customer_invoice_no: invoiceData.customer_invoice_no || "",
             invoice_for_country: invoiceData.invoice_for_country || "",
-            due_date: invoiceData.due_date ? invoiceData.due_date.split("T")[0] : "",
+            due_date: toLocalDateString(invoiceData.due_date),
             final_base_currency: invoiceData.final_base_currency || "Select",
             chargable_rate: invoiceData.chargeable || "",
             company_id: invoiceData.company_id || "",
@@ -774,6 +791,11 @@ export default function Addsupplierinvoice() {
   const shipmentDate = (key) => {
     const value = shipmentValue(key);
     if (!value || value === "0000-00-00") return "";
+    const datePart = value.includes("T") ? value.split("T")[0] : value;
+    const parts = datePart.split("-");
+    if (parts.length === 3) {
+      return `${parts[2]}/${parts[1]}/${parts[0]}`;
+    }
     const date = new Date(value);
     return Number.isNaN(date.getTime()) ? "" : date.toLocaleDateString("en-GB");
   };

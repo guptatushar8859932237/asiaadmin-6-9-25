@@ -20,6 +20,16 @@ const getVatPercent = (vatTyp) => {
   return 0;
 };
 
+const toLocalDateString = (dateVal) => {
+  if (!dateVal) return "";
+  const date = new Date(dateVal);
+  if (Number.isNaN(date.getTime())) return "";
+  const yyyy = date.getFullYear();
+  const mm = String(date.getMonth() + 1).padStart(2, "0");
+  const dd = String(date.getDate()).padStart(2, "0");
+  return `${yyyy}-${mm}-${dd}`;
+};
+
 const getVatLabel = (val) => {
   if (!val) return "";
   if (String(val) === "15") return "Standard Rate(15.00%)";
@@ -283,7 +293,7 @@ export default function Editsupplierinvoiceedit() {
             reference_no: invoiceData.reference_no || "",
             customer_invoice_no: invoiceData.customer_invoice_no || "",
             invoice_for_country: invoiceData.invoice_for_country || "",
-            due_date: invoiceData.due_date ? invoiceData.due_date.split("T")[0] : "",
+            due_date: toLocalDateString(invoiceData.due_date),
             final_base_currency: invoiceData.final_base_currency || "Select",
             chargable_rate: invoiceData.chargeable || "",
             company_id: invoiceData.company_id || "",
@@ -785,6 +795,11 @@ export default function Editsupplierinvoiceedit() {
   const shipmentDate = (...keys) => {
     const value = shipmentValue(...keys);
     if (!value || value === "0000-00-00") return "";
+    const datePart = value.includes("T") ? value.split("T")[0] : value;
+    const parts = datePart.split("-");
+    if (parts.length === 3) {
+      return `${parts[2]}/${parts[1]}/${parts[0]}`;
+    }
     const date = new Date(value);
     return Number.isNaN(date.getTime()) ? "" : date.toLocaleDateString("en-GB");
   };

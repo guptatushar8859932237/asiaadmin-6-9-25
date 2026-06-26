@@ -688,13 +688,13 @@ export default function Viewsupplierinvoice({ hiddenPrintItem, onPrintComplete }
         style={
           hiddenPrintItem
             ? {
-                position: "absolute",
-                top: "-9999px",
-                left: "-9999px",
-                width: "max-content",
-                minWidth: "1200px",
-                zIndex: -1000,
-              }
+              position: "absolute",
+              top: "-9999px",
+              left: "-9999px",
+              width: "max-content",
+              minWidth: "1200px",
+              zIndex: -1000,
+            }
             : {}
         }
       >

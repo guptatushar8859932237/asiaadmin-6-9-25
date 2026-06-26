@@ -6,6 +6,7 @@ import CloseIcon from "@mui/icons-material/Close";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import logo from "../../Assests/logo.png";
 import html2pdf from "html2pdf.js";
+import { exportEstimatePdf } from "../../utils/pdfExportUtils";
 
 const getVatPercent = (vatTyp) => {
   if (!vatTyp) return 0;
@@ -152,7 +153,7 @@ export default function Addsupplierinvoice() {
     }
   };
 
-  const apidataget = async (shipmentId) => {
+  const apidataget = async (shipmentId, initialInvoiceData = null) => {
     const payload = {
       shipment_id: shipmentId,
     };
@@ -162,7 +163,30 @@ export default function Addsupplierinvoice() {
         payload
       );
       if (response.data && response.data.shipment) {
-        setGetdata(response.data.shipment);
+        const shipmentObj = { ...response.data.shipment };
+
+        const clientName = shipmentObj.client_name
+          || initialInvoiceData?.client_name
+          || initialInvoiceData?.shipment?.client_name
+          || response.data.details?.[0]?.client_name
+          || response.data.clearance?.[0]?.client_name
+          || response.data.details?.[0]?.client_address_1
+          || response.data.clearance?.[0]?.client_address_1
+          || "";
+
+        const address1 = shipmentObj.address_1
+          || initialInvoiceData?.address_1
+          || initialInvoiceData?.shipment?.address_1
+          || response.data.details?.[0]?.address_1
+          || response.data.clearance?.[0]?.address_1
+          || response.data.details?.[0]?.client_address_1
+          || response.data.clearance?.[0]?.client_address_1
+          || "";
+
+        shipmentObj.client_name = clientName;
+        shipmentObj.address_1 = address1;
+
+        setGetdata(shipmentObj);
         setSelected(shipmentId);
         setOpenmodal(false);
 
@@ -260,7 +284,7 @@ export default function Addsupplierinvoice() {
 
           setSelectedSupplier(invoiceData.supplier_id || "");
           if (invoiceData.shipment_id) {
-            apidataget(invoiceData.shipment_id);
+            apidataget(invoiceData.shipment_id, invoiceData);
           }
 
           const items = invoiceData.items || invoiceData.components || [];
@@ -305,12 +329,12 @@ export default function Addsupplierinvoice() {
   };
 
   const initializeDefaultRows = () => {
-    setOriginRows([{ id: 1, description: "Origin Pick Up", qty: "", currency: "Select", cost: "", unitType: "Select", gp_percent: "", sales_price: "", roe: "", vatTyp: "", vat: "", discPercent: "", comment: "" }]);
-    setFreightRows([{ id: 2, description: "Freight Charges", qty: "", currency: "Select", cost: "", unitType: "Select", gp_percent: "", sales_price: "", roe: "", vatTyp: "", vat: "", discPercent: "", comment: "" }]);
-    setTransitRows([{ id: 3, description: "Transit Charges", qty: "", currency: "Select", cost: "", unitType: "Select", gp_percent: "", sales_price: "", roe: "", vatTyp: "", vat: "", discPercent: "", comment: "" }]);
-    setDestinationRows([{ id: 4, description: "Destination Charges", qty: "", currency: "Select", cost: "", unitType: "Select", gp_percent: "", sales_price: "", roe: "", vatTyp: "", vat: "", discPercent: "", comment: "" }]);
-    setAdminRows([{ id: 5, description: "Admin Charges", qty: "", currency: "Select", cost: "", unitType: "Select", gp_percent: "", sales_price: "", roe: "", vatTyp: "", vat: "", discPercent: "", comment: "" }]);
-    setCustomsRows([{ id: 6, description: "Customs Charges", qty: "", currency: "Select", cost: "", unitType: "Select", gp_percent: "", sales_price: "", roe: "", vatTyp: "", vat: "", discPercent: "", comment: "" }]);
+    setOriginRows([]);
+    setFreightRows([]);
+    setTransitRows([]);
+    setDestinationRows([]);
+    setAdminRows([]);
+    setCustomsRows([]);
   };
 
   const handlechangecalc = (e) => {
@@ -724,17 +748,15 @@ export default function Addsupplierinvoice() {
     }, 500);
   };
 
-  const downloadPDF1 = () => {
+  const downloadPDF1 = async () => {
     const element = pdfRef.current;
     if (!element) return;
-    const options = {
-      margin: 10,
-      filename: "SupplierInvoice.pdf",
-      image: { type: "jpeg", quality: 1 },
-      html2canvas: { scale: 2, useCORS: true },
-      jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
-    };
-    html2pdf().from(element).set(options).save();
+    try {
+      await exportEstimatePdf(element, "SupplierInvoice.pdf");
+    } catch (error) {
+      console.error("PDF generation failed:", error);
+      toast.error("Failed to generate PDF");
+    }
   };
 
   // Find names to display
@@ -1593,12 +1615,12 @@ export default function Addsupplierinvoice() {
                             }}>
                               <strong>Invoice For</strong>
                             </td>
-                            <td style={{ fontSize: 13, paddingRight: 10 }}>
+                            <td style={{ fontSize: 13, paddingRight: 10, textAlign: "right" }}>
                               <select
                                 name="invoice_for_country"
                                 value={freight.invoice_for_country || ""}
                                 onChange={handleInvoiceForChange}
-                                style={{ width: "100%", padding: "2px", border: "1px solid #ccc" }}
+                                style={{ width: "50%", padding: "2px", border: "1px solid #ccc" }}
                               >
                                 <option value="">Select Country</option>
                                 <option value="South Africa">South Africa</option>
@@ -1615,13 +1637,13 @@ export default function Addsupplierinvoice() {
                             }}>
                               <strong>Invoice No.</strong>
                             </td>
-                            <td style={{ fontSize: 13, paddingTop: "5px", paddingRight: 10 }}>
+                            <td style={{ fontSize: 13, paddingTop: "5px", paddingRight: 10, textAlign: "right" }}>
                               <input
                                 type="text"
                                 name="customer_invoice_no"
                                 value={freight.customer_invoice_no || ""}
                                 onChange={handlechangecalc}
-                                style={{ width: "100%", padding: "2px", border: "1px solid #ccc" }}
+                                style={{ width: "50%", padding: "2px", border: "1px solid #ccc" }}
                               />
                             </td>
                           </tr>
@@ -1633,8 +1655,8 @@ export default function Addsupplierinvoice() {
                             }}>
                               <strong>Reference</strong>
                             </td>
-                            <td style={{ fontSize: 13, paddingTop: "5px", paddingRight: 10 }}>
-                              {getdata?.email || getdata?.reference_no}
+                            <td style={{ fontSize: 13, paddingTop: "5px", paddingRight: 10, textAlign: "right" }}>
+                              {getdata?.reference_no || ""}
                             </td>
                           </tr>
                           <tr>
@@ -1645,7 +1667,7 @@ export default function Addsupplierinvoice() {
                             }}>
                               <strong>Quote Date</strong>
                             </td>
-                            <td style={{ fontSize: 13, paddingTop: "5px", paddingRight: 10 }}>
+                            <td style={{ fontSize: 13, paddingTop: "5px", paddingRight: 10, textAlign: "right" }}>
                               {getdata?.date ? new Date(getdata?.date).toLocaleDateString("en-GB") : ""}
                             </td>
                           </tr>
@@ -1657,13 +1679,13 @@ export default function Addsupplierinvoice() {
                             }}>
                               <strong>Due Date</strong>
                             </td>
-                            <td style={{ fontSize: 13, paddingTop: "5px", paddingRight: 10 }}>
+                            <td style={{ fontSize: 13, paddingTop: "5px", paddingRight: 10, textAlign: "right" }}>
                               <input
                                 type="date"
                                 name="due_date"
                                 value={freight.due_date || ""}
                                 onChange={handlechangecalc}
-                                style={{ width: "100%", padding: "2px", border: "1px solid #ccc" }}
+                                style={{ width: "50%", padding: "2px", border: "1px solid #ccc" }}
                               />
                             </td>
                           </tr>
@@ -1902,7 +1924,7 @@ export default function Addsupplierinvoice() {
                 </tbody>
               </table>
 
-              <table style={{ width: "100%"}}>
+              <table style={{ width: "100%" }}>
                 <tbody>
                   <tr>
                     <td

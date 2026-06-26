@@ -1699,7 +1699,7 @@ export default function ShippingEstimate() {
                               </table>
                             </td>
                             <td>
-                              <table>
+                              <table style={{ width: "100%" }}>
                                 <tbody>
                                   <tr>
                                     <td style={{
@@ -1711,13 +1711,15 @@ export default function ShippingEstimate() {
                                     }}><strong>
                                         Invoice For
                                       </strong></td>
-                                    <td style={{ fontSize: 13, marginBottom: 4, }}>
+                                    <td style={{
+                                      fontSize: 13, marginBottom: 4, textAlign: "right",
+                                      paddingRight: "10px"
+                                    }}>
                                       <select
                                         name="invoice_for_country"
                                         value={freight.invoice_for_country || ""}
                                         onChange={handleInvoiceForChange}
-                                        style={{ width: "100%", padding: "2px" }}
-                                      >
+                                        style={{ width: "180px", padding: "2px" }}>
                                         <option value="">Select Country</option>
                                         <option value="South Africa">South Africa</option>
                                         <option value="Zambia">Zambia</option>
@@ -1729,12 +1731,15 @@ export default function ShippingEstimate() {
                                     <td style={{
                                       width: 170,
                                       display: "block",
-                                      padding: "5px 10px 0px 10px",
+                                      padding: "5px 10px 5px 10px",
                                       fontSize: 13,
                                     }}><strong>
                                         Invoice No.
                                       </strong></td>
-                                    <td style={{ fontSize: 13, paddingTop: "5px" }}>
+                                    <td style={{
+                                      fontSize: 13, paddingTop: "5px", textAlign: "right",
+                                      paddingRight: "10px"
+                                    }}>
                                       <input
                                         type="text"
                                         name="customer_invoice_no"
@@ -1755,7 +1760,12 @@ export default function ShippingEstimate() {
                                       <strong>Reference</strong>
                                     </td>
                                     <td
-                                      style={{ fontSize: 13 }}
+                                      style={{
+                                        fontSize: 13, textAlign: "right",
+                                        padding: "5px 10px 5px 0px",
+                                        paddingRight: "10px",
+                                        paddingBottom: "5px"
+                                      }}
                                     >
                                       {freight?.reference_no}
                                     </td>
@@ -1763,7 +1773,7 @@ export default function ShippingEstimate() {
                                   <tr>
                                     <td
                                       style={{
-                                        padding: "0px 10px 0px 10px",
+                                        padding: "5px 10px 0px 10px",
                                         width: 170,
                                         display: "block",
                                         paddingBottom: 0,
@@ -1774,7 +1784,8 @@ export default function ShippingEstimate() {
                                     </td>
                                     <td
                                       style={{
-                                        fontSize: 13,
+                                        fontSize: 13, textAlign: "right",
+                                        paddingRight: "10px"
                                       }}
                                     >
                                       {new Date(getdata?.date).toLocaleDateString(

@@ -37,25 +37,8 @@ export default function Batches() {
   const [inputdata, setInputdata] = useState([]);
   const [loader, setLoader] = useState(false);
   const [pagenationData, setPagenationData] = useState(1);
-  const [batches, setBatches] = useState([]);
   const [selectedimage, setSelectedimage] = useState(null);
   const navigate = useNavigate();
-  useEffect(() => {
-    getbatcghes();
-  }, []);
-  const getbatcghes = () => {
-    setLoader(true);
-    axios
-      .get(`${process.env.REACT_APP_BASE_URL}getWarehouse`)
-      .then((response) => {
-        setLoader(false);
-        setBatches(response.data.data);
-      })
-      .catch((error) => {
-        setLoader(false);
-        console.log(error.response.data.message);
-      });
-  };
   const handlecjhaneg = (e) => {
     const { name, value } = e.target;
     setEditData({ ...editData, [name]: value });
@@ -66,7 +49,7 @@ export default function Batches() {
     setCurrentPage(currentData);
     getdata(currentData);
   };
-  const getdata = (page) => {
+  const getdata = (page = currentPage) => {
     setLoader(true);
     const payload = {
       page: page,
@@ -88,7 +71,7 @@ export default function Batches() {
   useEffect(() => {
     const delayDebounce = setTimeout(() => {
       getdata(1);
-    }, 800);
+    }, 500);
 
     return () => clearTimeout(delayDebounce);
   }, [querry]);
@@ -101,8 +84,6 @@ export default function Batches() {
   const handlechnage = (e) => {
     const value = e.target.value;
     setQuerry(value);
-
-    getdata(1); // 👈 call API when typing
   };
   const handlekey = (e) => {
     if (e.charCode < 48 || e.charCode > 57) {
@@ -439,14 +420,8 @@ export default function Batches() {
   let formattedDate = `${year}-${month}-${day}`;
   return (
     <>
-      {loader ? (
-        <div class="loader-container">
-          <div class="loader"></div>
-          <p class="loader-text">Updating... This may take some time</p>
-        </div>
-      ) : (
-        <div className="wpWrapper">
-          <div className="container-fluid">
+      <div className="wpWrapper">
+        <div className="container-fluid">
             <div className="row">
               <div className=" manageFreight">
                 <div className="col-12">
@@ -479,8 +454,14 @@ export default function Batches() {
                 </div>
               </div>
               <div className="table-responsive mt-4">
-                <TableContainer className="table table-striped tableICon">
-                  <Table className="batch_table">
+                {loader ? (
+                  <div className="loader-container" style={{ height: "40vh", background: "transparent" }}>
+                    <div className="loader"></div>
+                    <p className="loader-text">Updating... This may take some time</p>
+                  </div>
+                ) : (
+                  <TableContainer className="table table-striped tableICon">
+                    <Table className="batch_table">
                     <TableHead>
                       <TableRow className="border-bottom">
                         <TableCell className="fw-bold">Batch No.</TableCell>
@@ -715,6 +696,7 @@ export default function Batches() {
                     </TableBody>
                   </Table>
                 </TableContainer>
+                )}
               </div>
               <Modal
                 open={isModalOpen1}
@@ -1558,7 +1540,6 @@ export default function Batches() {
             </Modal>
           </div>
         </div>
-      )}
-    </>
-  );
-}
+      </>
+    );
+  }

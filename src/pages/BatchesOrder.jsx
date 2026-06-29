@@ -61,16 +61,18 @@ export default function BatchesOrder() {
   useEffect(() => {
     clickapival();
   }, []);
+
   const clickapival = () => {
     const data1234 = { batch_id: batchId };
     axios
       .post(`${process.env.REACT_APP_BASE_URL}getFreightsByBatch`, data1234)
       .then((response) => {
         console.log(response.data.data);
-        setFreightData(response.data.data);
+        setFreightData(response.data.data || []);
       })
       .catch((error) => {
-        toast.error(error.response.data.message);
+        setFreightData([]);
+        console.log(error.response?.data?.message || error.message, "No Batches Found");
       });
   };
   useEffect(() => {
@@ -86,6 +88,7 @@ export default function BatchesOrder() {
     const data123 = {
       freight_id: item.freight_ID,
       batch_id: item.batch_id,
+      order_id:item.order_id
     };
     console.log(data123);
     axios
@@ -418,7 +421,7 @@ export default function BatchesOrder() {
                                   <p class="client_para1 ">  {datat1.total_freight_packages}</p>
                                 </td>
                               </tr>
-                             
+
                               <tr>
                                 <td>
                                   <p class="client_para1 ">Shipments:</p>
@@ -684,37 +687,39 @@ export default function BatchesOrder() {
                     </TableRow>
                   </TableHead>
                   <TableBody>
-                    {freightData &&
-                      freightData.length > 0 &&
+                    {freightData && freightData.length > 0 ? (
                       freightData.map((item, index) => {
-                        console.log(item)
-                        return(
-                          <>
-                            <TableRow key={index} className="border-bottom">
-                          <TableCell>{item.freight_number===null?item.order_number:item.freight_number}</TableCell>
-                          <TableCell>{item.client_Name}</TableCell>
-                          <TableCell>{item.no_of_packages}</TableCell>
-                          <TableCell>{item.freight}</TableCell>
-                          <TableCell>{item.weight}</TableCell>
-                          <TableCell>{item.dimensions}</TableCell>
-                          <TableCell>{item.package_type}</TableCell>
-                          <TableCell>
-                            <VisibilityIcon
-                              onClick={() => handleclcick(item)}
-                              style={{
-                                color: "rgb(27 34 69)",
-                                cursor: "pointer",
-                                width: "20px",
-                              }}
-                            />
-                            <Delete className='ms-2' onClick={() => handleclcickrevert(item)} />
-                          </TableCell>
-                        </TableRow>
-                          </>
-                        )
-                      }
-                      
-                      )}
+                        console.log(item);
+                        return (
+                          <TableRow key={index} className="border-bottom">
+                            <TableCell>{item.freight_number === null ? item.order_number : item.freight_number}</TableCell>
+                            <TableCell>{item.client_Name}</TableCell>
+                            <TableCell>{item.no_of_packages}</TableCell>
+                            <TableCell>{item.freight}</TableCell>
+                            <TableCell>{item.weight}</TableCell>
+                            <TableCell>{item.dimensions}</TableCell>
+                            <TableCell>{item.package_type}</TableCell>
+                            <TableCell>
+                              <VisibilityIcon
+                                onClick={() => handleclcick(item)}
+                                style={{
+                                  color: "rgb(27 34 69)",
+                                  cursor: "pointer",
+                                  width: "20px",
+                                }}
+                              />
+                              <Delete className='ms-2' style={{ cursor: "pointer" }} onClick={() => handleclcickrevert(item)} />
+                            </TableCell>
+                          </TableRow>
+                        );
+                      })
+                    ) : (
+                      <TableRow>
+                        <TableCell colSpan={8} align="center" className="fw-semibold text-secondary py-4">
+                          No records found for this batch
+                        </TableCell>
+                      </TableRow>
+                    )}
                   </TableBody>
                 </Table>
               </TableContainer>

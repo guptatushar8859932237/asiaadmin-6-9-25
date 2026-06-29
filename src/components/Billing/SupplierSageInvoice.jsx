@@ -74,7 +74,8 @@ export default function SupplierSageInvoice() {
     if (result.isConfirmed) {
       try {
         const response = await axios.post(
-          `${process.env.REACT_APP_BASE_URL}deleteSupplierInvoice/${id}`
+          `${process.env.REACT_APP_BASE_URL}deleteSupplierShipmentInvoice`,
+          { supplier_shipment_invoice_id: id }
         );
         if (response.data.success) {
           // REFRESH CURRENT PAGE

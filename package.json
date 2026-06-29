@@ -38,6 +38,7 @@
     "html2pdf.js": "^0.14.0",
     "jquery": "^4.0.0",
     "jspdf": "^4.2.1",
+    "jspdf-autotable": "^5.0.8",
     "jwt-decode": "^4.0.0",
     "multiselect-react-dropdown": "^2.0.25",
     "node-modules": "^1.0.1",

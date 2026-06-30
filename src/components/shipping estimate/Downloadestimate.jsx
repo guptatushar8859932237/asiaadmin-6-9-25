@@ -1798,7 +1798,6 @@ export default function Downlaodestimate() {
       doc.setTextColor(20, 20, 20);
       doc.text("QUOTE INFORMATION", margin, cursorY);
       cursorY += 3;
-
       // ---- Charges table (autoTable) -----------------------------------
       const tableBody = [
         ...buildSectionRows("Origin Charges", originRowsData, {

@@ -344,7 +344,7 @@ export default function Viewsupplierinvoice({ hiddenPrintItem, onPrintComplete }
       const doc = new jsPDF({ orientation: "landscape", unit: "mm", format: "a4" });
       const pageWidth = doc.internal.pageSize.getWidth();   // 297 mm
       const pageHeight = doc.internal.pageSize.getHeight();  // 210 mm
-      const margin = 5;
+      const margin = 10;
       const contentWidth = pageWidth - margin * 2;
       const colSplitX = margin + contentWidth / 2;
 
@@ -361,11 +361,8 @@ export default function Viewsupplierinvoice({ hiddenPrintItem, onPrintComplete }
           console.error("Could not embed logo:", err);
         }
       }
-
-      // Company info – top-right, matching Downloadestimate.jsx layout
       const companyX = margin + 150;
       const addr = freight.company_address;
-
       doc.setFont("helvetica", "bold");
       doc.setFontSize(14);
       doc.setTextColor(20, 20, 20);
@@ -373,7 +370,6 @@ export default function Viewsupplierinvoice({ hiddenPrintItem, onPrintComplete }
       doc.setDrawColor(200, 40, 40);
       doc.setLineWidth(0.6);
       doc.line(companyX, cursorY + 6.5, companyX + 38, cursorY + 6.5);
-
       doc.setFont("helvetica", "normal");
       doc.setFontSize(8.5);
       doc.setTextColor(60, 60, 60);
@@ -389,13 +385,11 @@ export default function Viewsupplierinvoice({ hiddenPrintItem, onPrintComplete }
       doc.setFont("helvetica", "normal");
       doc.text(addr?.company_registration_no || "", companyX + 28, infoY);
       infoY += 3.6;
-
       doc.setFont("helvetica", "bold");
       doc.text("VAT No.:- ", companyX, infoY);
       doc.setFont("helvetica", "normal");
       doc.text(addr?.tax_vat_no || "", companyX + 14, infoY);
       infoY += 3.6;
-
       doc.setFont("helvetica", "bold");
       doc.text("Importers code:- ", companyX, infoY);
       doc.setFont("helvetica", "normal");
@@ -412,7 +406,6 @@ export default function Viewsupplierinvoice({ hiddenPrintItem, onPrintComplete }
       doc.setTextColor(20, 20, 20);
       doc.text("SUPPLIER SHIPMENT INVOICE", pageWidth / 2, cursorY + 4.8, { align: "center" });
       cursorY += 7;
-
       // ── 3. TWO-COLUMN INFO BOX ───────────────────────────────────────────────
       const rowH = 4.5;
       const barH = 5.5;
@@ -420,7 +413,6 @@ export default function Viewsupplierinvoice({ hiddenPrintItem, onPrintComplete }
       const lPad = 3;
       const lW = contentWidth / 2 - lPad * 2;
       const rW = contentWidth / 2 - lPad * 2;
-
       const drawRow = (doc, x, rowTop, width, label, value) => {
         const baseline = rowTop + rowH * 0.68;
         drawLabelValueRow(doc, x, baseline, width, label, value);
@@ -546,7 +538,7 @@ export default function Viewsupplierinvoice({ hiddenPrintItem, onPrintComplete }
         const rows = [];
 
         // Section header row
-        rows.push([{ content: title, colSpan: 18, styles: sectionStyle }]);
+        rows.push([{ content: title, colSpan: 17, styles: sectionStyle }]);
 
         rowsData.forEach(({ row, calc }) => {
           const uom = row.unitType === "1" ? "L/S" : row.unitType === "2" ? "W/M" : "";
@@ -574,8 +566,24 @@ export default function Viewsupplierinvoice({ hiddenPrintItem, onPrintComplete }
             formatValuePDF(calc.exclusive),
             vatDisplay,
             fmt(calc.inclusive),
-            row.comment || "",
           ]);
+
+          // Comment row beneath the item row (only when a comment exists)
+          if (row.comment && String(row.comment).trim() !== "") {
+            rows.push([
+              {
+                content: `Comment: ${row.comment}`,
+                colSpan: 17,
+                styles: {
+                  fontStyle: "italic",
+                  textColor: [90, 90, 90],
+                  cellWidth: "auto",
+                  overflow: "linebreak",
+                  halign: "left",
+                },
+              },
+            ]);
+          }
         });
 
         // Section total row
@@ -592,7 +600,6 @@ export default function Viewsupplierinvoice({ hiddenPrintItem, onPrintComplete }
           styledCell(formatValuePDF(totals.disc), { ...totalStyle, halign: "right" }),
           styledCell(formatValuePDF(totals.exclusive), { ...totalStyle, halign: "right" }),
           styledCell(formatValuePDF(totals.vat), { ...totalStyle, halign: "right" }),
-          styledCell("", totalStyle),
         ]);
 
         return rows;
@@ -615,7 +622,6 @@ export default function Viewsupplierinvoice({ hiddenPrintItem, onPrintComplete }
           { content: formatValuePDF([...originRowsData, ...freightRowsData, ...transitRowsData, ...destinationRowsData, ...adminRowsData, ...customsRowsData].reduce((s, i) => s + i.calc.disc, 0)), styles: { fillColor: [226, 232, 240], fontStyle: "bold", halign: "right" } },
           { content: formatValuePDF([...originRowsData, ...freightRowsData, ...transitRowsData, ...destinationRowsData, ...adminRowsData, ...customsRowsData].reduce((s, i) => s + i.calc.exclusive, 0)), styles: { fillColor: [226, 232, 240], fontStyle: "bold", halign: "right" } },
           { content: formatValuePDF([...originRowsData, ...freightRowsData, ...transitRowsData, ...destinationRowsData, ...adminRowsData, ...customsRowsData].reduce((s, i) => s + i.calc.vat, 0)), styles: { fillColor: [226, 232, 240], fontStyle: "bold", halign: "right" } },
-          { content: "", styles: { fillColor: [226, 232, 240] } },
         ],
       ];
 
@@ -625,7 +631,7 @@ export default function Viewsupplierinvoice({ hiddenPrintItem, onPrintComplete }
         head: [[
           "Description", "QTY", "Currency", "Cost", "Unit Type", "Unit",
           "T/ Cost", "GP%", "Sales/ P", "ROE", "Final Amount",
-          "VAT Type", "Disc %", "Discount", "Exclusive", "VAT", "VAT Incl", "Comment",
+          "VAT Type", "Disc %", "Discount", "Exclusive", "VAT", "VAT Incl",
         ]],
         body: tableBody,
         theme: "grid",
@@ -644,26 +650,7 @@ export default function Viewsupplierinvoice({ hiddenPrintItem, onPrintComplete }
           halign: "left",
           lineColor: [255, 255, 255],
         },
-        columnStyles: {
-          0: { cellWidth: 26 },
-          1: { cellWidth: 9, halign: "right" },
-          2: { cellWidth: 15, halign: "center" },
-          3: { cellWidth: 15, halign: "right" },
-          4: { cellWidth: 15, halign: "center" },
-          5: { cellWidth: 9, halign: "right" },
-          6: { cellWidth: 14, halign: "right" },
-          7: { cellWidth: 10, halign: "right" },
-          8: { cellWidth: 14, halign: "right" },
-          9: { cellWidth: 9, halign: "right" },
-          10: { cellWidth: 20, halign: "right" },
-          11: { cellWidth: 14, halign: "center" },
-          12: { cellWidth: 9, halign: "right" },
-          13: { cellWidth: 14, halign: "right" },
-          14: { cellWidth: 16, halign: "right" },
-          15: { cellWidth: 12, halign: "right" },
-          16: { cellWidth: 14, halign: "right" },
-          17: { cellWidth: "auto" },
-        },
+
         rowPageBreak: "avoid",
         showHead: "everyPage",
         didDrawPage: (data) => {
@@ -715,75 +702,95 @@ export default function Viewsupplierinvoice({ hiddenPrintItem, onPrintComplete }
   const renderRowsForSection = (rowsData, dropdownOptions, sectionTitle, totalTCost, totalFinalAmt) => (
     <>
       <tr className="estimate-section-row">
-        <td colSpan={19}><strong>{sectionTitle}</strong></td>
+        <td colSpan={17}><strong>{sectionTitle}</strong></td>
       </tr>
       {rowsData.map(({ row, calc }) => (
-        <tr key={row.id}>
-          <td>
-            <select className="supplier_form" value={row.admin_frieght_component_id || ""} disabled>
-              <option value="">Select</option>
-              <option value="Note">Note</option>
-              {dropdownOptions.map((item) => (
-                <option key={item.admin_frieght_component_id} value={item.admin_frieght_component_id}>
-                  {item.code ? `${item.code} - ${item.description}` : item.description}
-                </option>
-              ))}
-            </select>
-          </td>
-          <td><input className="supplier_form" type="text" disabled value={row.qty || ""} placeholder="0.00" style={{ marginBottom: 0, fontSize: 13, border: "0px" }} /></td>
-          <td>
-            <select className="select_supplier" disabled value={row.currency || "Select"} style={{ margin: 0, fontSize: 13, fontWeight: 700, paddingLeft: 5, border: 0 }}>
-              <option value="Select">Select</option>
-              <option value="RAND">RAND</option>
-              <option value="USD">USD</option>
-              <option value="INR">INR</option>
-              <option value="EURO">EURO</option>
-            </select>
-          </td>
-          <td><input className="supplier_form" type="text" disabled value={row.cost || ""} placeholder="0.00" style={{ marginBottom: 0, fontSize: 13, border: "0px" }} /></td>
-          <td>
-            <select className="select_supplier" disabled value={row.unitType || "Select"} style={{ margin: 0, fontSize: 13, fontWeight: 700, paddingLeft: 5, border: 0 }}>
-              <option value="Select">Select</option>
-              <option value="1">L/S</option>
-              <option value="2">W/M</option>
-            </select>
-          </td>
-          <td><input className="supplier_form" type="text" disabled value={resolveRowUnitDisplay(row)} placeholder="0.00" style={{ marginBottom: 0, fontSize: 13, border: "0px" }} /></td>
-          <td><input className="supplier_form" type="text" disabled value={fmt(calc.tCost)} placeholder="0.00" style={{ marginBottom: 0, fontSize: 13, border: "0px" }} /></td>
-          <td><input className="supplier_form" type="text" disabled value={row.gp_percent || ""} placeholder="0.00" style={{ marginBottom: 0, fontSize: 13, border: "0px" }} /></td>
-          <td><input className="supplier_form" type="text" disabled value={fmt(calc.salesPrice)} placeholder="0.00" style={{ marginBottom: 0, fontSize: 13, border: "0px" }} /></td>
-          <td><input className="supplier_form" disabled value={row.roe || ""} placeholder="1.00" style={{ marginBottom: 0, fontSize: 13, border: "0px" }} /></td>
-          <td><input className="supplier_form" disabled value={fmt(calc.finalAmt)} placeholder="0.00" style={{ marginBottom: 0, fontSize: 13, border: "0px" }} /></td>
-          <td>
-            <select disabled value={row.vatTyp || ""}>
-              {VAT_OPTIONS.map((opt, i) => (
-                <option key={i} value={opt.value}>{opt.label}</option>
-              ))}
-            </select>
-          </td>
-          <td><input type="text" placeholder="0.00" disabled className="supplier_form" value={row.discPercent || ""} /></td>
-          <td><input type="text" placeholder="0.00" disabled value={fmt(calc.disc)} className="supplier_form" /></td>
-          <td><input type="text" placeholder="0.00" disabled value={fmt(calc.exclusive)} className="supplier_form" /></td>
-          <td>
-            <input
-              type="text" placeholder="0.00" disabled className="supplier_form"
-              value={
-                row.vatTyp === "Manual VAT" || row.vatTyp === "Manual VAT (Capital Goods)"
-                  ? row.vat ?? ""
-                  : fmt(calc.vat)
-              }
-            />
-          </td>
-          <td><input type="text" placeholder="0.00" disabled value={fmt(calc.inclusive)} className="supplier_form" /></td>
-          <td><input type="text" placeholder="Comment" disabled value={row.comment || ""} className="supplier_form" /></td>
-          <td></td>
-        </tr>
+        <React.Fragment key={row.id}>
+          <tr>
+            <td>
+              <select className="supplier_form" value={row.admin_frieght_component_id || ""} disabled>
+                <option value="">Select</option>
+                <option value="Note">Note</option>
+                {dropdownOptions.map((item) => (
+                  <option key={item.admin_frieght_component_id} value={item.admin_frieght_component_id}>
+                    {item.code ? `${item.code} - ${item.description}` : item.description}
+                  </option>
+                ))}
+              </select>
+            </td>
+            <td><input className="supplier_form" type="text" disabled value={row.qty || ""} placeholder="0.00" style={{ marginBottom: 0, fontSize: 13, border: "0px" }} /></td>
+            <td>
+              <select className="select_supplier" disabled value={row.currency || "Select"} style={{ margin: 0, fontSize: 13, fontWeight: 700, paddingLeft: 5, border: 0 }}>
+                <option value="Select">Select</option>
+                <option value="RAND">RAND</option>
+                <option value="USD">USD</option>
+                <option value="INR">INR</option>
+                <option value="EURO">EURO</option>
+              </select>
+            </td>
+            <td><input className="supplier_form" type="text" disabled value={row.cost || ""} placeholder="0.00" style={{ marginBottom: 0, fontSize: 13, border: "0px" }} /></td>
+            <td>
+              <select className="select_supplier" disabled value={row.unitType || "Select"} style={{ margin: 0, fontSize: 13, fontWeight: 700, paddingLeft: 5, border: 0 }}>
+                <option value="Select">Select</option>
+                <option value="1">L/S</option>
+                <option value="2">W/M</option>
+              </select>
+            </td>
+            <td><input className="supplier_form" type="text" disabled value={resolveRowUnitDisplay(row)} placeholder="0.00" style={{ marginBottom: 0, fontSize: 13, border: "0px" }} /></td>
+            <td><input className="supplier_form" type="text" disabled value={fmt(calc.tCost)} placeholder="0.00" style={{ marginBottom: 0, fontSize: 13, border: "0px" }} /></td>
+            <td><input className="supplier_form" type="text" disabled value={row.gp_percent || ""} placeholder="0.00" style={{ marginBottom: 0, fontSize: 13, border: "0px" }} /></td>
+            <td><input className="supplier_form" type="text" disabled value={fmt(calc.salesPrice)} placeholder="0.00" style={{ marginBottom: 0, fontSize: 13, border: "0px" }} /></td>
+            <td><input className="supplier_form" disabled value={row.roe || ""} placeholder="1.00" style={{ marginBottom: 0, fontSize: 13, border: "0px" }} /></td>
+            <td><input className="supplier_form" disabled value={fmt(calc.finalAmt)} placeholder="0.00" style={{ marginBottom: 0, fontSize: 13, border: "0px" }} /></td>
+            <td>
+              <select disabled value={row.vatTyp || ""}>
+                {VAT_OPTIONS.map((opt, i) => (
+                  <option key={i} value={opt.value}>{opt.label}</option>
+                ))}
+              </select>
+            </td>
+            <td><input type="text" placeholder="0.00" disabled className="supplier_form" value={row.discPercent || ""} /></td>
+            <td><input type="text" placeholder="0.00" disabled value={fmt(calc.disc)} className="supplier_form" /></td>
+            <td><input type="text" placeholder="0.00" disabled value={fmt(calc.exclusive)} className="supplier_form" /></td>
+            <td>
+              <input
+                type="text" placeholder="0.00" disabled className="supplier_form"
+                value={
+                  row.vatTyp === "Manual VAT" || row.vatTyp === "Manual VAT (Capital Goods)"
+                    ? row.vat ?? ""
+                    : fmt(calc.vat)
+                }
+              />
+            </td>
+            <td><input type="text" placeholder="0.00" disabled value={fmt(calc.inclusive)} className="supplier_form" /></td>
+          </tr>
+          {row.comment && String(row.comment).trim() !== "" && (
+            <tr>
+              <td colSpan={17} style={{ width: "100%" }}>
+                <div
+                  className="supplier_form"
+                  style={{
+                    width: "100%",
+                    maxWidth: "100%",
+                    boxSizing: "border-box",
+                    whiteSpace: "normal",
+                    wordBreak: "break-word",
+                    overflowWrap: "break-word",
+                    padding: "4px 6px",
+                  }}
+                >
+                  {`Comment: ${row.comment}`}
+                </div>
+              </td>
+            </tr>
+          )}
+        </React.Fragment>
       ))}
       <tr>
         <td colSpan={6}><strong>Total - {sectionTitle}</strong></td>
         <td colSpan={4}>{fmt(totalTCost)}</td>
         <td>{fmt(totalFinalAmt)}</td>
-        <td colSpan={8}></td>
+        <td colSpan={6}></td>
       </tr>
     </>
   );
@@ -969,7 +976,7 @@ export default function Viewsupplierinvoice({ hiddenPrintItem, onPrintComplete }
                       <th>Unit type</th><th>Unit</th><th>T/ Cost</th><th>GP%</th>
                       <th>Sales/ P</th><th>ROE</th><th>Final Amount</th><th>VAT Type</th>
                       <th>Disc %</th><th>Discount</th><th>Exclusive</th><th>VAT</th>
-                      <th>VAT Incl</th><th colSpan={2}>Comment</th>
+                      <th>VAT Incl</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -985,7 +992,6 @@ export default function Viewsupplierinvoice({ hiddenPrintItem, onPrintComplete }
                       <td>{fmt(sumofRoe)}</td>
                       <td></td><td></td><td></td><td></td><td></td>
                       <td>{fmt(totalVatInclusive)}</td>
-                      <td></td><td></td>
                     </tr>
                   </tbody>
                 </table>

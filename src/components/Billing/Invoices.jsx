@@ -5,11 +5,11 @@ const Invoices = () => {
     return (
         <div className="wpWrapper">
             <div className="container-fluid">
-                {/* <button
+                <button
                     className="btn btn-secondary"
                 >
-                    Add New Invoice
-                </button> */}
+                    Add Invoice
+                </button>
 
                 <div className="table-responsive tableResFixed mt-4">
                     <table className="table table-striped tableICon">
@@ -20,7 +20,6 @@ const Invoices = () => {
                                 <th>Waybill</th>
                                 <th>Customer Invoice Number</th>
                                 <th>Inv Date</th>
-                                <th>Due Date</th>
                                 <th>Currency</th>
                                 <th>Total</th>
                                 <th>Amount Due</th>
@@ -35,7 +34,6 @@ const Invoices = () => {
                                 <td>SIV0001401</td>
                                 <td>2603JAI0035</td>
                                 <td>12/05/2026</td>
-                                <td>31/05/2026</td>
                                 <td>USD/ ZAR / GBP / ETC</td>
                                 <td>2465.05</td>
                                 <td>2465.05</td>

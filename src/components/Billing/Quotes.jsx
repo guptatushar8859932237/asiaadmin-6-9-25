@@ -125,7 +125,7 @@ const Quotes = () => {
                         className="btn btn-secondary"
                         onClick={naviagetpage}
                     >
-                        Add Quote Estimation
+                        Add Quote Invoice
                     </button>
                     <div className="d-flex align-items-center gap-2">
                         <input

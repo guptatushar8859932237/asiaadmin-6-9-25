@@ -38,6 +38,12 @@ const getVatLabel = (val) => {
   return val;
 };
 
+const getCountry = (country, company_address) => {
+  if (country) return country;
+  if (company_address?.country) return company_address.country;
+  return "";
+};
+
 const VAT_OPTIONS = [
   { value: "", label: "No Vat" },
   { value: "Standard Rate(15.00%)", label: "Standard Rate(15.00%)" },
@@ -56,11 +62,10 @@ const VAT_OPTIONS = [
   { value: "Manual VAT (Capital Goods)", label: "Manual VAT (Capital Goods)" }
 ];
 
-export default function AddQuotesInvoice() {
+export default function AddNewFreightQuoteInvoice() {
   const location = useLocation();
   const navigate = useNavigate();
   const pdfRef = useRef();
-  const isInvoice = location.state?.isInvoice;
 
   const [freight, setFreight] = useState({
     customer_invoice_no: "",
@@ -76,15 +81,16 @@ export default function AddQuotesInvoice() {
   const [getdata, setGetdata] = useState({});
   const [openmodal, setOpenmodal] = useState(false);
   const [openmodal1, setOpenmodal1] = useState(false);
+  const [openmodal2, setOpenmodal2] = useState(false);
+  const [orderList, setOrderList] = useState([]);
+  const [selectedOrder, setSelectedOrder] = useState("");
 
-  // Selected values from dropdowns
-  const [selected, setSelected] = useState(""); // selected freight ID
-  const [selectedSupplier, setSelectedSupplier] = useState(""); // selected supplier ID
+  const [selected, setSelected] = useState(""); 
+  const [selectedSupplier, setSelectedSupplier] = useState(""); 
 
-  const [dat, setDat] = useState([]); // Freight list
-  const [dat1, setDat1] = useState([]); // Supplier list
+  const [dat, setDat] = useState([]); 
+  const [dat1, setDat1] = useState([]); 
 
-  // Dynamic Rows for each section
   const [originRows, setOriginRows] = useState([]);
   const [freightRows, setFreightRows] = useState([]);
   const [transitRows, setTransitRows] = useState([]);
@@ -92,7 +98,6 @@ export default function AddQuotesInvoice() {
   const [adminRows, setAdminRows] = useState([]);
   const [customsRows, setCustomsRows] = useState([]);
 
-  // Component dropdown lists
   const [originDropdown, setOriginDropdown] = useState([]);
   const [freightDropdown, setFreightDropdown] = useState([]);
   const [transitDropdown, setTransitDropdown] = useState([]);
@@ -103,12 +108,10 @@ export default function AddQuotesInvoice() {
   const copyInvoiceData = location?.state?.copyInvoiceData;
 
   useEffect(() => {
-    // Fetch base lists
     getFreights();
     getsuppliers();
     fetchDropdowns();
 
-    // Check if we are copying an invoice
     if (copyInvoiceData) {
       const invoiceId = copyInvoiceData.freight_quote_estimate_id || copyInvoiceData.quote_invoice_id;
       const freightId = copyInvoiceData.freight_id;
@@ -140,6 +143,47 @@ export default function AddQuotesInvoice() {
       });
   };
 
+  const handleOpenOrderModal = async () => {
+    try {
+      const response = await axios.get(`${process.env.REACT_APP_BASE_URL}getFreightOrderList`);
+      if (response.data && response.data.success) {
+        setOrderList(response.data.data || []);
+        setOpenmodal2(true);
+      } else {
+        toast.error("Failed to load order list");
+      }
+    } catch (error) {
+      console.error("Error fetching order list:", error);
+      toast.error("Something went wrong while fetching orders");
+    }
+  };
+
+  const handleSelectOrder = async (orderId) => {
+    if (!orderId) return;
+    setSelectedOrder(orderId);
+    try {
+      const response = await axios.post(
+        `${process.env.REACT_APP_BASE_URL}OrderDetailsById`,
+        { orderId: parseInt(orderId) }
+      );
+      if (response.data && response.data.success && response.data.data && response.data.data.length > 0) {
+        const orderInfo = response.data.data[0];
+        if (orderInfo.freight_id) {
+          apidataget(orderInfo.freight_id);
+        } else {
+          toast.error("This order is not associated with a freight ID");
+        }
+      } else {
+        toast.error("Failed to fetch order details");
+      }
+    } catch (error) {
+      console.error("Error fetching order details:", error);
+      toast.error("Something went wrong while fetching order details");
+    } finally {
+      setOpenmodal2(false);
+    }
+  };
+
   const fetchDropdowns = async () => {
     const chargeTypes = [
       { type: "Origin Charges", setter: setOriginDropdown },
@@ -165,10 +209,8 @@ export default function AddQuotesInvoice() {
     }
   };
 
-  const apidataget = async (freightId, initialInvoiceData = null) => {
-    const payload = {
-      freight_id: freightId,
-    };
+  const apidataget = async (freightId) => {
+    const payload = { freight_id: freightId };
     try {
       const response = await axios.post(
         `${process.env.REACT_APP_BASE_URL}freight-list-byId`,
@@ -181,16 +223,14 @@ export default function AddQuotesInvoice() {
         setSelected(freightId);
         setOpenmodal(false);
 
-        // Prepopulate chargeable rate
         const chargeable = freightObj.chargable_rate || freightObj.chargeable || "";
         setFreight((prev) => ({
           ...prev,
           chargable_rate: chargeable,
         }));
 
-        // Fetch quote estimate details to prepopulate tables if available
         if (freightId) {
-          getFreightQuoteEstimateByFreight(freightId);
+          getFreightQuoteInvoiceByFreight(freightId);
         }
       }
     } catch (error) {
@@ -199,28 +239,35 @@ export default function AddQuotesInvoice() {
     }
   };
 
-  const getFreightQuoteEstimateByFreight = async (freightId) => {
+  const getFreightQuoteInvoiceByFreight = async (freightId) => {
     try {
+      // Replaced incorrect endpoint logic to target GetNewFreightQuoteInvoiceById exclusively
       const response = await axios.post(
-        `${process.env.REACT_APP_BASE_URL}GetFreightQuoteEstimateById`,
-        { freight_id: parseInt(freightId) }
+        `${process.env.REACT_APP_BASE_URL}GetNewFreightQuoteInvoiceById`,
+         {
+          quote_invoice_id: null,
+          freight_id: parseInt(freightId)
+        }
       );
       if (response.data && response.data.success && response.data.data) {
         const rawData = response.data.data;
-        const estimateData = Array.isArray(rawData) ? rawData[0] : rawData;
-        if (estimateData) {
+        const invoiceData = Array.isArray(rawData) ? rawData[0] : rawData;
+        if (invoiceData) {
           setFreight((prev) => ({
             ...prev,
-            customer_invoice_no: estimateData.customer_invoice_no || prev.customer_invoice_no,
-            invoice_for_country: estimateData.invoice_for_country || prev.invoice_for_country,
-            final_base_currency: estimateData.final_base_currency || prev.final_base_currency,
-            chargable_rate: estimateData.chargeable !== undefined ? estimateData.chargeable : prev.chargable_rate,
-            company_id: estimateData.company_id || estimateData.company_address?.id || prev.company_id,
-            company_address: estimateData.company_address || prev.company_address,
-            freight_quote_estimate_id: estimateData.id || estimateData.freight_quote_estimate_id || null,
+            customer_invoice_no: invoiceData.customer_invoice_no || prev.customer_invoice_no,
+            invoice_for_country: getCountry(invoiceData.invoice_for_country, invoiceData.company_address) || prev.invoice_for_country,
+            final_base_currency: invoiceData.final_base_currency || prev.final_base_currency,
+            chargable_rate: invoiceData.chargeable !== undefined ? invoiceData.chargeable : prev.chargable_rate,
+            company_id: invoiceData.company_id || invoiceData.company_address?.id || prev.company_id,
+            company_address: invoiceData.company_address || prev.company_address,
+            client_id: invoiceData.client_id || prev.client_id,
+            client_name: invoiceData.client_name || prev.client_name,
+            quote_type: invoiceData.quote_type || prev.quote_type,
+            freight_quote_estimate_id: invoiceData.freight_quote_estimate_id || null,
           }));
 
-          const items = estimateData.components || [];
+          const items = invoiceData.components || [];
           if (items.length > 0) {
             const mappedComponents = items.map((c) => ({
               id: c.id || Date.now() + Math.random(),
@@ -254,26 +301,26 @@ export default function AddQuotesInvoice() {
           } else {
             initializeDefaultRows();
           }
+        } else {
+          initializeDefaultRows();
         }
       } else {
         initializeDefaultRows();
       }
     } catch (error) {
-      console.error("Error loading quote estimate details:", error);
+      console.error("Error loading invoice by freight:", error);
       initializeDefaultRows();
     }
   };
 
   const loadQuoteInvoiceData = async (invoiceId, freightId) => {
     try {
-      const apiEndpoint = isInvoice ? "GetNewFreightQuoteInvoiceById" : "GetFreightQuoteEstimateById";
-      const payload = isInvoice
-        ? { quote_invoice_id: parseInt(invoiceId), freight_id: parseInt(freightId) }
-        : { freight_quote_estimate_id: parseInt(invoiceId), freight_id: parseInt(freightId) };
-
       const response = await axios.post(
-        `${process.env.REACT_APP_BASE_URL}${apiEndpoint}`,
-        payload
+        `${process.env.REACT_APP_BASE_URL}GetNewFreightQuoteInvoiceById`,
+        {
+          quote_invoice_id: parseInt(invoiceId),
+          freight_id: parseInt(freightId)
+        }
       );
       if (response.data && response.data.success && response.data.data) {
         const invoiceData = response.data.data;
@@ -291,7 +338,7 @@ export default function AddQuotesInvoice() {
 
           setSelectedSupplier(invoiceData.supplier_id || "");
           if (invoiceData.freight_id) {
-            apidataget(invoiceData.freight_id, invoiceData);
+            apidataget(invoiceData.freight_id);
           }
 
           const items = invoiceData.components || [];
@@ -656,58 +703,52 @@ export default function AddQuotesInvoice() {
     try {
       const allComponents = [];
 
-      const mapRowToComponent = (row, calc, name) => ({
-        admin_frieght_component_id: row.admin_frieght_component_id || null,
-        description: row.description || "",
-        qty: parseFloat(row.qty) || 0,
-        currency: row.currency || "",
-        cost: parseFloat(row.cost) || 0,
-        unit_type: row.unitType || "",
-        unit: parseFloat(calc.unit) || 0,
-        total_cost: parseFloat(calc.tCost) || 0,
-        gp_percent: parseFloat(row.gp_percent) || 0,
-        sales_price: parseFloat(calc.salesPrice) || 0,
-        roe: parseFloat(row.roe) || 0,
-        final_amount: parseFloat(calc.finalAmt) || 0,
-        vat_type: row.vatTyp || "",
-        disc_percent: parseFloat(row.discPercent) || 0,
-        discount: parseFloat(calc.disc) || 0,
-        exclusive: parseFloat(calc.exclusive) || 0,
-        vat: parseFloat(calc.vat) || 0,
-        vat_incl: parseFloat(calc.inclusive) || 0,
-        comment: row.comment || "",
-        name: name
-      });
+      const mapRowToComponent = (row, calc, name) => {
+        const comp = {
+          admin_frieght_component_id: row.admin_frieght_component_id || null,
+          description: row.description || "",
+          qty: parseFloat(row.qty) || 0,
+          currency: row.currency || "",
+          cost: parseFloat(row.cost) || 0,
+          unit_type: row.unitType || "",
+          unit: parseFloat(calc.unit) || 0,
+          total_cost: parseFloat(calc.tCost) || 0,
+          gp_percent: parseFloat(row.gp_percent) || 0,
+          sales_price: parseFloat(calc.salesPrice) || 0,
+          roe: parseFloat(row.roe) || 0,
+          final_amount: parseFloat(calc.finalAmt) || 0,
+          vat_type: row.vatTyp || "",
+          disc_percent: parseFloat(row.discPercent) || 0,
+          discount: parseFloat(calc.disc) || 0,
+          exclusive: parseFloat(calc.exclusive) || 0,
+          vat: parseFloat(calc.vat) || 0,
+          vat_incl: parseFloat(calc.inclusive) || 0,
+          comment: row.comment || "",
+          name: name
+        };
+        if (row.db_id) {
+          comp.id = row.db_id;
+        }
+        return comp;
+      };
 
       originRowsData.forEach(({ row, calc }) => {
-        if (row.description) {
-          allComponents.push(mapRowToComponent(row, calc, "Origin Charges"));
-        }
+        if (row.description) allComponents.push(mapRowToComponent(row, calc, "Origin Charges"));
       });
       freightRowsData.forEach(({ row, calc }) => {
-        if (row.description) {
-          allComponents.push(mapRowToComponent(row, calc, "Freight Charges"));
-        }
+        if (row.description) allComponents.push(mapRowToComponent(row, calc, "Freight Charges"));
       });
       transitRowsData.forEach(({ row, calc }) => {
-        if (row.description) {
-          allComponents.push(mapRowToComponent(row, calc, "Transit Charges"));
-        }
+        if (row.description) allComponents.push(mapRowToComponent(row, calc, "Transit Charges"));
       });
       destinationRowsData.forEach(({ row, calc }) => {
-        if (row.description) {
-          allComponents.push(mapRowToComponent(row, calc, "Destination Charges"));
-        }
+        if (row.description) allComponents.push(mapRowToComponent(row, calc, "Destination Charges"));
       });
       adminRowsData.forEach(({ row, calc }) => {
-        if (row.description) {
-          allComponents.push(mapRowToComponent(row, calc, "Admin Charges"));
-        }
+        if (row.description) allComponents.push(mapRowToComponent(row, calc, "Admin Charges"));
       });
       customsRowsData.forEach(({ row, calc }) => {
-        if (row.description) {
-          allComponents.push(mapRowToComponent(row, calc, "Customs Charges"));
-        }
+        if (row.description) allComponents.push(mapRowToComponent(row, calc, "Customs Charges"));
       });
 
       const payload = {
@@ -718,7 +759,6 @@ export default function AddQuotesInvoice() {
         invoice_for_country: freight.invoice_for_country || "",
         supplier_id: selectedSupplier ? parseInt(selectedSupplier) : null,
         customer_invoice_no: freight.customer_invoice_no || "",
-        // date: freight.due_date ? new Date(freight.due_date).toISOString().split("T")[0] : null,
         final_base_currency: freight.final_base_currency || "Select",
         sumof_totalcost: parseFloat(sumofall) || 0,
         sumof_finalamount: parseFloat(sumofRoe) || 0,
@@ -726,23 +766,18 @@ export default function AddQuotesInvoice() {
         chargeable: parseFloat(freight.chargable_rate) || 0,
         quote_type: "ADMIN",
         components: allComponents,
+        freight_quote_estimate_id: freight.freight_quote_estimate_id || (location.state?.copyInvoiceData?.freight_quote_estimate_id || null),
       };
 
-      if (isInvoice) {
-        payload.freight_quote_estimate_id = freight.freight_quote_estimate_id || (location.state?.copyInvoiceData?.freight_quote_estimate_id || null);
-      }
-
-      const apiEndpoint = isInvoice ? "addUpdateNewFreightQuoteInvoice" : "add-freight-quotes-estimate";
-      console.log(`[Add Quote Invoice] ${apiEndpoint} payload:`, payload);
       const response = await axios.post(
-        `${process.env.REACT_APP_BASE_URL}${apiEndpoint}`,
+        `${process.env.REACT_APP_BASE_URL}addUpdateNewFreightQuoteInvoice`,
         payload
       );
       if (response.data && response.data.success === true) {
-        toast.success(response.data.message || (isInvoice ? "Invoice saved successfully" : "Freight Quote Invoice saved successfully"));
-        navigate(isInvoice ? "/Admin/invoices" : "/Admin/quotes");
+        toast.success(response.data.message || "Invoice saved successfully");
+        navigate("/Admin/invoices");
       } else {
-        toast.error(response.data.message || (isInvoice ? "Failed to save Invoice" : "Failed to save Freight Quote Invoice"));
+        toast.error(response.data.message || "Failed to save Invoice");
       }
     } catch (error) {
       console.error("Save Error:", error);
@@ -756,14 +791,13 @@ export default function AddQuotesInvoice() {
 
   const closemodal = () => setOpenmodal(false);
   const closemodal1 = () => setOpenmodal1(false);
-
   const andlemodaloen = () => setOpenmodal(true);
   const andndndn = () => setOpenmodal1(true);
 
   const setSelecSupplier = (value) => {
     setSelectedSupplier(value);
     setTimeout(() => {
-      setOpenmodal1(false);
+      closemodal1();
     }, 500);
   };
 
@@ -777,10 +811,6 @@ export default function AddQuotesInvoice() {
       toast.error("Failed to generate PDF");
     }
   };
-
-  // Find names to display
-  const selectedFreightObj = dat.find((item) => String(item.freight_id) === String(selected));
-  const selectedSupplierObj = dat1.find((item) => String(item.id) === String(selectedSupplier));
 
   const shipmentValue = (...keys) => {
     for (const key of keys) {
@@ -847,14 +877,7 @@ export default function AddQuotesInvoice() {
             </td>
             <td>
               <input
-                style={{
-                  marginBottom: 0,
-                  fontSize: 13,
-                  color: "black",
-                  fontWeight: 400,
-                  border: "0px",
-                  verticalAlign: "middle",
-                }}
+                style={{ marginBottom: 0, fontSize: 13, color: "black", fontWeight: 400, border: "0px", verticalAlign: "middle" }}
                 type="text"
                 className="supplier_form"
                 onChange={(e) => updateRowField(setter, row.id, "qty", e.target.value)}
@@ -865,13 +888,7 @@ export default function AddQuotesInvoice() {
             <td>
               <select
                 className="select_supplier"
-                style={{
-                  margin: 0,
-                  fontSize: 13,
-                  fontWeight: 700,
-                  paddingLeft: 5,
-                  border: 0,
-                }}
+                style={{ margin: 0, fontSize: 13, fontWeight: 700, paddingLeft: 5, border: 0 }}
                 onChange={(e) => updateRowField(setter, row.id, "currency", e.target.value)}
                 value={row.currency || "Select"}
               >
@@ -884,14 +901,7 @@ export default function AddQuotesInvoice() {
             </td>
             <td>
               <input
-                style={{
-                  marginBottom: 0,
-                  fontSize: 13,
-                  color: "black",
-                  fontWeight: 400,
-                  border: "0px",
-                  verticalAlign: "middle",
-                }}
+                style={{ marginBottom: 0, fontSize: 13, color: "black", fontWeight: 400, border: "0px", verticalAlign: "middle" }}
                 type="text"
                 className="supplier_form"
                 onKeyPress={handlepresss}
@@ -903,13 +913,7 @@ export default function AddQuotesInvoice() {
             <td>
               <select
                 className="select_supplier"
-                style={{
-                  margin: 0,
-                  fontSize: 13,
-                  fontWeight: 700,
-                  paddingLeft: 5,
-                  border: 0,
-                }}
+                style={{ margin: 0, fontSize: 13, fontWeight: 700, paddingLeft: 5, border: 0 }}
                 onChange={(e) => updateRowField(setter, row.id, "unitType", e.target.value)}
                 value={row.unitType || "Select"}
               >
@@ -922,14 +926,7 @@ export default function AddQuotesInvoice() {
             </td>
             <td>
               <input
-                style={{
-                  marginBottom: 0,
-                  fontSize: 13,
-                  color: "black",
-                  fontWeight: 400,
-                  border: "0px",
-                  verticalAlign: "middle",
-                }}
+                style={{ marginBottom: 0, fontSize: 13, color: "black", fontWeight: 400, border: "0px", verticalAlign: "middle" }}
                 type="text"
                 className="supplier_form"
                 disabled
@@ -939,14 +936,7 @@ export default function AddQuotesInvoice() {
             </td>
             <td>
               <input
-                style={{
-                  marginBottom: 0,
-                  fontSize: 13,
-                  color: "black",
-                  fontWeight: 400,
-                  border: "0px",
-                  verticalAlign: "middle",
-                }}
+                style={{ marginBottom: 0, fontSize: 13, color: "black", fontWeight: 400, border: "0px", verticalAlign: "middle" }}
                 disabled
                 type="text"
                 className="supplier_form"
@@ -956,14 +946,7 @@ export default function AddQuotesInvoice() {
             </td>
             <td>
               <input
-                style={{
-                  marginBottom: 0,
-                  fontSize: 13,
-                  color: "black",
-                  fontWeight: 400,
-                  border: "0px",
-                  verticalAlign: "middle",
-                }}
+                style={{ marginBottom: 0, fontSize: 13, color: "black", fontWeight: 400, border: "0px", verticalAlign: "middle" }}
                 type="text"
                 className="supplier_form"
                 onChange={(e) => updateRowField(setter, row.id, "gp_percent", e.target.value)}
@@ -973,14 +956,7 @@ export default function AddQuotesInvoice() {
             </td>
             <td>
               <input
-                style={{
-                  marginBottom: 0,
-                  fontSize: 13,
-                  color: "black",
-                  fontWeight: 400,
-                  border: "0px",
-                  verticalAlign: "middle",
-                }}
+                style={{ marginBottom: 0, fontSize: 13, color: "black", fontWeight: 400, border: "0px", verticalAlign: "middle" }}
                 disabled
                 type="text"
                 className="supplier_form"
@@ -990,13 +966,7 @@ export default function AddQuotesInvoice() {
             </td>
             <td>
               <input
-                style={{
-                  marginBottom: 0,
-                  fontSize: 13,
-                  color: "black",
-                  border: "0px",
-                  verticalAlign: "middle",
-                }}
+                style={{ marginBottom: 0, fontSize: 13, color: "black", border: "0px", verticalAlign: "middle" }}
                 onChange={(e) => updateRowField(setter, row.id, "roe", e.target.value)}
                 value={row.roe || ""}
                 className="supplier_form"
@@ -1005,13 +975,7 @@ export default function AddQuotesInvoice() {
             </td>
             <td>
               <input
-                style={{
-                  marginBottom: 0,
-                  fontSize: 13,
-                  color: "black",
-                  border: "0px",
-                  verticalAlign: "middle",
-                }}
+                style={{ marginBottom: 0, fontSize: 13, color: "black", border: "0px", verticalAlign: "middle" }}
                 disabled
                 value={formatMoney(calc.finalAmt)}
                 placeholder="0.00"
@@ -1172,17 +1136,50 @@ export default function AddQuotesInvoice() {
         </div>
       )}
 
+      {openmodal2 && (
+        <div className="custom-modal">
+          <div className="custom-modal-content">
+            <div className="custom-modal-header">
+              <h5 className="bold">Select Order</h5>
+              <button className="btn-close" onClick={() => setOpenmodal2(false)}>
+                <CloseIcon />
+              </button>
+            </div>
+            <div className="custom-modal-body">
+              <div style={{ margin: "20px" }}>
+                <select
+                  className="form-select"
+                  value={selectedOrder}
+                  onChange={(e) => handleSelectOrder(e.target.value)}
+                >
+                  <option value="">Select Order</option>
+                  {orderList.map((item) => (
+                    <option key={item.order_id} value={item.order_id}>
+                      {item.order_number}
+                    </option>
+                  ))}
+                </select>
+                <br />
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
       <div className="wpWrapper">
         <div className="container-fluid">
           <div className="d-flex justify-content-between align-items-center mb-4">
             <div className="d-flex align-items-center gap-3">
               <ArrowBackIcon onClick={handleclicknav} style={{ cursor: "pointer" }} />
-              <h4 className="freight_hd mb-0">{isInvoice ? "Add Freight Invoice" : "Add Freight Quote Invoice"}</h4>
+              <h4 className="freight_hd mb-0">Add Freight Invoice</h4>
             </div>
             <div className="d-flex gap-3 align-items-center blueText">
               <i onClick={downloadPDF1} className="fa fa-download" style={{ cursor: "pointer" }} aria-hidden="true"></i>
               <button onClick={andlemodaloen} className="blueBtn">
                 Select Freight
+              </button>
+              <button onClick={handleOpenOrderModal} className="blueBtn">
+                Select Order
               </button>
               <button onClick={andndndn} className="blueBtn">
                 Select Supplier
@@ -1201,45 +1198,19 @@ export default function AddQuotesInvoice() {
               }}
               className="pdf-page"
             >
-              <table
-                style={{
-                  width: "100%",
-                  tableLayout: "fixed",
-                  borderCollapse: "collapse",
-                }}
-              >
+              <table style={{ width: "100%", tableLayout: "fixed", borderCollapse: "collapse" }}>
                 <tbody>
                   <tr>
                     <td style={{ width: "50%", paddingBottom: "10px" }}>
                       <div>
-                        <img
-                          style={{ height: 55 }}
-                          src={logo}
-                          alt="logo"
-                        />
+                        <img style={{ height: 55 }} src={logo} alt="logo" />
                       </div>
                     </td>
                     <td style={{ width: "50%", color: "#000", paddingBottom: "10px", textAlign: "left" }}>
-                      <p
-                        style={{
-                          fontSize: 16,
-                          fontWeight: 600,
-                          marginBottom: "unset",
-                          borderBottom: "1px solid #cb191e",
-                          display: "inline-block",
-                        }}
-                      >
+                      <p style={{ fontSize: 16, fontWeight: 600, marginBottom: "unset", borderBottom: "1px solid #cb191e", display: "inline-block" }}>
                         Asia Direct - Africa
                       </p>
-                      <p
-                        style={{
-                          fontSize: 13,
-                          fontWeight: 500,
-                          marginBottom: "unset",
-                          lineHeight: "1.5",
-                          marginTop: 10,
-                        }}
-                      >
+                      <p style={{ fontSize: 13, fontWeight: 500, marginBottom: "unset", lineHeight: "1.5", marginTop: 10 }}>
                         {freight.company_address?.company_name || ""}<br />
                         {freight.company_address?.address_line || ""}
                       </p>
@@ -1253,55 +1224,24 @@ export default function AddQuotesInvoice() {
                 </tbody>
               </table>
 
-              <table
-                style={{
-                  border: "1px solid #1b2245",
-                  padding: "10px 20px",
-                  width: "100%",
-                }}
-              >
+              <table style={{ border: "1px solid #1b2245", padding: "10px 20px", width: "100%" }}>
                 <tbody>
                   <tr>
-                    <td
-                      style={{
-                        textAlign: "center",
-                        fontSize: 13,
-                        fontWeight: 600,
-                        width: "100%",
-                      }}
-                    >
-                      {isInvoice ? "FREIGHT INVOICE" : "FREIGHT ESTIMATE"}
+                    <td style={{ textAlign: "center", fontSize: 13, fontWeight: 600, width: "100%" }}>
+                      FREIGHT INVOICE
                     </td>
                   </tr>
                 </tbody>
               </table>
 
-              <table
-                style={{
-                  border: "1px solid #1b2245",
-                  borderTop: "unset",
-                  width: "100%",
-                }}
-              >
+              <table style={{ border: "1px solid #1b2245", borderTop: "unset", width: "100%" }}>
                 <tbody>
                   <tr>
-                    <td
-                      style={{
-                        width: "50%",
-                        borderRight: "1px solid #1a2142",
-                        height: "100%",
-                        verticalAlign: "top",
-                      }}
-                    >
-                      <table>
+                    <td style={{ width: "50%", borderRight: "1px solid #1a2142", height: "100%", verticalAlign: "top" }}>
+                      <table style={{ width: "100%" }}>
                         <tbody>
                           <tr>
-                            <td
-                              style={{
-                                fontSize: 13,
-                                padding: "5px 10px"
-                              }}
-                            >
+                            <td style={{ fontSize: 13, padding: "5px 10px" }}>
                               <strong>
                                 {getdata?.client_name || "-"}
                                 <br />
@@ -1311,16 +1251,7 @@ export default function AddQuotesInvoice() {
                           </tr>
                         </tbody>
                       </table>
-                      <table
-                        style={{
-                          background: "#1b2245",
-                          width: "100%",
-                          color: "white",
-                          fontSize: 13,
-                          textAlign: "center",
-                          padding: 2,
-                        }}
-                      >
+                      <table style={{ background: "#1b2245", width: "100%", color: "white", fontSize: 13, textAlign: "center", padding: 2 }}>
                         <tbody>
                           <tr>
                             <td style={{ fontSize: 13 }}>
@@ -1385,17 +1316,7 @@ export default function AddQuotesInvoice() {
                           </tr>
                         </tbody>
                       </table>
-                      <table
-                        style={{
-                          background: "#1b2245",
-                          width: "100%",
-                          color: "white",
-                          fontSize: 13,
-                          textAlign: "center",
-                          margin: "0px",
-                          padding: 2,
-                        }}
-                      >
+                      <table style={{ background: "#1b2245", width: "100%", color: "white", fontSize: 13, textAlign: "center", margin: "0px", padding: 2 }}>
                         <tbody>
                           <tr>
                             <td style={{ fontSize: 13 }}>
@@ -1428,21 +1349,11 @@ export default function AddQuotesInvoice() {
                         </tbody>
                       </table>
                     </td>
-                    <td
-                      style={{
-                        width: "50%",
-                        height: "100%",
-                        verticalAlign: "top",
-                      }}
-                    >
+                    <td style={{ width: "50%", height: "100%", verticalAlign: "top" }}>
                       <table style={{ width: "100%" }}>
                         <tbody>
                           <tr>
-                            <td style={{
-                              width: 170,
-                              padding: "0px 10px 0px 10px",
-                              fontSize: 13,
-                            }}>
+                            <td style={{ width: 170, padding: "0px 10px 0px 10px", fontSize: 13 }}>
                               <strong>Invoice For</strong>
                             </td>
                             <td style={{ fontSize: 13, paddingRight: 10, textAlign: "right" }}>
@@ -1459,30 +1370,8 @@ export default function AddQuotesInvoice() {
                               </select>
                             </td>
                           </tr>
-                          {/* <tr>
-                            <td style={{
-                              width: 170,
-                              padding: "5px 10px 0px 10px",
-                              fontSize: 13,
-                            }}>
-                              <strong>Due Date</strong>
-                            </td>
-                            <td style={{ fontSize: 13, paddingTop: "5px", paddingRight: 10, textAlign: "right" }}>
-                              <input
-                                type="date"
-                                name="due_date"
-                                value={freight.due_date || ""}
-                                onChange={handlechangecalc}
-                                style={{ width: "50%", padding: "2px", border: "1px solid #ccc" }}
-                              />
-                            </td>
-                          </tr> */}
                           <tr>
-                            <td style={{
-                              width: 170,
-                              padding: "5px 10px 0px 10px",
-                              fontSize: 13,
-                            }}>
+                            <td style={{ width: 170, padding: "5px 10px 0px 10px", fontSize: 13 }}>
                               <strong>Invoice No.</strong>
                             </td>
                             <td style={{ fontSize: 13, paddingTop: "5px", paddingRight: 10, textAlign: "right" }}>
@@ -1496,23 +1385,15 @@ export default function AddQuotesInvoice() {
                             </td>
                           </tr>
                           <tr>
-                            <td style={{
-                              width: 170,
-                              padding: "5px 10px 0px 10px",
-                              fontSize: 13,
-                            }}>
+                            <td style={{ width: 170, padding: "5px 10px 0px 10px", fontSize: 13 }}>
                               <strong>Reference</strong>
                             </td>
                             <td style={{ fontSize: 13, paddingTop: "5px", paddingRight: 10, textAlign: "right" }}>
-                              {freight.reference_no || "-"}
+                              {getdata?.freight_number || "-"}
                             </td>
                           </tr>
                           <tr>
-                            <td style={{
-                              width: 170,
-                              padding: "5px 10px 0px 10px",
-                              fontSize: 13,
-                            }}>
+                            <td style={{ width: 170, padding: "5px 10px 0px 10px", fontSize: 13 }}>
                               <strong>Quote Date</strong>
                             </td>
                             <td style={{ fontSize: 13, paddingTop: "5px", paddingRight: 10, textAlign: "right" }}>
@@ -1521,17 +1402,7 @@ export default function AddQuotesInvoice() {
                           </tr>
                         </tbody>
                       </table>
-                      <table
-                        style={{
-                          background: "#1b2245",
-                          width: "100%",
-                          color: "white",
-                          fontSize: 13,
-                          textAlign: "center",
-                          margin: "5px 0px",
-                          padding: 2,
-                        }}
-                      >
+                      <table style={{ background: "#1b2245", width: "100%", color: "white", fontSize: 13, textAlign: "center", margin: "5px 0px", padding: 2 }}>
                         <tbody>
                           <tr>
                             <td style={{ fontSize: 13 }}>
@@ -1585,24 +1456,8 @@ export default function AddQuotesInvoice() {
                 <tbody>
                   <tr>
                     <td style={{ padding: 0, borderRight: "1px solid black" }}>
-                      <div
-                        style={{
-                          border: "1px solid black",
-                          width: "33%",
-                          borderBottom: "0px solid transparent",
-                          height: 22,
-                          borderTop: "unset",
-                        }}
-                      >
-                        <p
-                          style={{
-                            margin: 0,
-                            fontSize: 13,
-                            fontWeight: 700,
-                            textTransform: "uppercase",
-                            paddingLeft: 5,
-                          }}
-                        >
+                      <div style={{ border: "1px solid black", width: "33%", borderBottom: "0px solid transparent", height: 22, borderTop: "unset" }}>
+                        <p style={{ margin: 0, fontSize: 13, fontWeight: 700, textTransform: "uppercase", paddingLeft: 5 }}>
                           SHIPMENT ESTIMATE
                         </p>
                       </div>

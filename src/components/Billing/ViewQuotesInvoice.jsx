@@ -81,6 +81,7 @@ export default function ViewQuotesInvoice({ hiddenPrintItem, onPrintComplete }) 
   const [customsRows, setCustomsRows] = useState([]);
 
   const viewItem = hiddenPrintItem || location.state?.item;
+  const isInvoice = location.state?.isInvoice || !!viewItem?.quote_invoice_id || !!hiddenPrintItem?.isInvoice;
   const quoteInvoiceId = viewItem?.freight_quote_estimate_id || viewItem?.quote_invoice_id || (typeof viewItem === "object" ? null : viewItem);
   const freightId = viewItem?.freight_id;
 
@@ -121,12 +122,14 @@ export default function ViewQuotesInvoice({ hiddenPrintItem, onPrintComplete }) 
 
   const fetchInvoiceData = async () => {
     try {
+      const apiEndpoint = isInvoice ? "GetNewFreightQuoteInvoiceById" : "GetFreightQuoteEstimateById";
+      const payload = isInvoice
+        ? { quote_invoice_id: parseInt(quoteInvoiceId), freight_id: parseInt(freightId) }
+        : { freight_quote_estimate_id: parseInt(quoteInvoiceId), freight_id: parseInt(freightId) };
+
       const response = await axios.post(
-        `${process.env.REACT_APP_BASE_URL}GetFreightQuoteEstimateById`,
-        {
-          freight_quote_estimate_id: parseInt(quoteInvoiceId),
-          freight_id: parseInt(freightId)
-        }
+        `${process.env.REACT_APP_BASE_URL}${apiEndpoint}`,
+        payload
       );
       if (response.data && response.data.success && response.data.data) {
         const invoiceData = response.data.data;
@@ -687,7 +690,7 @@ export default function ViewQuotesInvoice({ hiddenPrintItem, onPrintComplete }) 
             <div className="d-flex justify-content-between align-items-center mb-4">
               <div className="d-flex align-items-center gap-3">
                 <ArrowBackIcon onClick={handleclicknav} style={{ cursor: "pointer" }} />
-                <h4 className="freight_hd mb-0">View Freight Quote Invoice</h4>
+                <h4 className="freight_hd mb-0">{isInvoice ? "View Freight Invoice" : "View Freight Quote Invoice"}</h4>
               </div>
               <div className="d-flex gap-3 align-items-center blueText">
                 <i onClick={downloadPDF1} className="fa fa-download" style={{ cursor: "pointer" }} aria-hidden="true"></i>
@@ -774,7 +777,7 @@ export default function ViewQuotesInvoice({ hiddenPrintItem, onPrintComplete }) 
                         fontWeight: 700,
                       }}
                     >
-                      FREIGHT ESTIMATE
+                      {isInvoice ? "FREIGHT INVOICE" : "FREIGHT ESTIMATE"}
                     </td>
                   </tr>
                 </tbody>

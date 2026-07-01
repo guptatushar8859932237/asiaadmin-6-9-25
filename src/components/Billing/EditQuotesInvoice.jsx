@@ -77,6 +77,9 @@ export default function EditQuotesInvoice() {
   const location = useLocation();
   const navigate = useNavigate();
   const pdfRef = useRef();
+  
+  const editItem = location.state?.item;
+  const isInvoice = location.state?.isInvoice || !!editItem?.quote_invoice_id;
 
   const [freight, setFreight] = useState({
     customer_invoice_no: "",
@@ -89,6 +92,7 @@ export default function EditQuotesInvoice() {
     client_id: null,
     client_name: "",
     quote_type: "ADMIN",
+    freight_quote_estimate_id: null,
   });
 
   const [getdata, setGetdata] = useState({});
@@ -118,7 +122,6 @@ export default function EditQuotesInvoice() {
   const [adminDropdown, setAdminDropdown] = useState([]);
   const [customsDropdown, setCustomsDropdown] = useState([]);
 
-  const editItem = location.state?.item;
   const quoteInvoiceId = editItem?.freight_quote_estimate_id || editItem?.quote_invoice_id;
   const freightId = editItem?.freight_id;
 
@@ -276,18 +279,20 @@ export default function EditQuotesInvoice() {
 
   const fetchInvoiceData = async () => {
     try {
+      const apiEndpoint = isInvoice ? "GetNewFreightQuoteInvoiceById" : "GetFreightQuoteEstimateById";
+      const payload = isInvoice
+        ? { quote_invoice_id: parseInt(quoteInvoiceId), freight_id: parseInt(freightId) }
+        : { freight_quote_estimate_id: parseInt(quoteInvoiceId), freight_id: parseInt(freightId) };
+
       const response = await axios.post(
-        `${process.env.REACT_APP_BASE_URL}GetFreightQuoteEstimateById`,
-        {
-          freight_quote_estimate_id: parseInt(quoteInvoiceId),
-          freight_id: parseInt(freightId)
-        }
+        `${process.env.REACT_APP_BASE_URL}${apiEndpoint}`,
+        payload
       );
-      console.log("GetFreightQuoteEstimateById response data:", response.data);
+      console.log(`${apiEndpoint} response data:`, response.data);
       if (response.data && response.data.success && response.data.data) {
         const rawData = response.data.data;
         const invoiceData = Array.isArray(rawData)
-          ? (rawData.find((item) => String(item.id || item.freight_quote_estimate_id) === String(quoteInvoiceId)) || rawData[0])
+          ? (rawData.find((item) => String(item.id || item.freight_quote_estimate_id || item.quote_invoice_id) === String(quoteInvoiceId)) || rawData[0])
           : rawData;
         if (invoiceData) {
           setFreight({
@@ -303,6 +308,7 @@ export default function EditQuotesInvoice() {
             client_id: invoiceData.client_id || null,
             client_name: invoiceData.client_name || "",
             quote_type: invoiceData.quote_type || "ADMIN",
+            freight_quote_estimate_id: invoiceData.freight_quote_estimate_id || null,
           });
 
           setSelectedSupplier(invoiceData.supplier_id || "");
@@ -733,8 +739,6 @@ export default function EditQuotesInvoice() {
       });
 
       const payload = {
-        freight_quote_estimate_id: parseInt(quoteInvoiceId),
-        id: parseInt(quoteInvoiceId),
         freight_id: parseInt(selected),
         company_id: freight.company_id,
         invoice_for_country: freight.invoice_for_country || "",
@@ -752,16 +756,25 @@ export default function EditQuotesInvoice() {
         components: allComponents,
       };
 
-      console.log("[Edit Quote Invoice] add-freight-quotes-estimate payload:", payload);
+      if (isInvoice) {
+        payload.quote_invoice_id = parseInt(quoteInvoiceId);
+        payload.freight_quote_estimate_id = freight.freight_quote_estimate_id || null;
+      } else {
+        payload.freight_quote_estimate_id = parseInt(quoteInvoiceId);
+        payload.id = parseInt(quoteInvoiceId);
+      }
+
+      const apiEndpoint = isInvoice ? "addUpdateNewFreightQuoteInvoice" : "add-freight-quotes-estimate";
+      console.log(`[Edit Quote Invoice] ${apiEndpoint} payload:`, payload);
       const response = await axios.post(
-        `${process.env.REACT_APP_BASE_URL}add-freight-quotes-estimate`,
+        `${process.env.REACT_APP_BASE_URL}${apiEndpoint}`,
         payload
       );
       if (response.data && response.data.success === true) {
-        toast.success(response.data.message || "Freight Quote Invoice saved successfully");
-        navigate("/Admin/quotes");
+        toast.success(response.data.message || (isInvoice ? "Invoice saved successfully" : "Freight Quote Invoice saved successfully"));
+        navigate(isInvoice ? "/Admin/invoices" : "/Admin/quotes");
       } else {
-        toast.error(response.data.message || "Failed to save Freight Quote Invoice");
+        toast.error(response.data.message || (isInvoice ? "Failed to save Invoice" : "Failed to save Freight Quote Invoice"));
       }
     } catch (error) {
       console.error("Save Error:", error);
@@ -1194,7 +1207,7 @@ export default function EditQuotesInvoice() {
           <div className="d-flex justify-content-between align-items-center mb-4">
             <div className="d-flex align-items-center gap-3">
               <ArrowBackIcon onClick={handleclicknav} style={{ cursor: "pointer" }} />
-              <h4 className="freight_hd mb-0">Edit Freight Quote Invoice</h4>
+              <h4 className="freight_hd mb-0">{isInvoice ? "Edit Freight Invoice" : "Edit Freight Quote Invoice"}</h4>
             </div>
             <div className="d-flex gap-3 align-items-center blueText">
               <i onClick={downloadPDF1} className="fa fa-download" style={{ cursor: "pointer" }} aria-hidden="true"></i>
@@ -1287,7 +1300,7 @@ export default function EditQuotesInvoice() {
                         width: "100%",
                       }}
                     >
-                      FREIGHT ESTIMATE
+                      {isInvoice ? "FREIGHT INVOICE" : "FREIGHT ESTIMATE"}
                     </td>
                   </tr>
                 </tbody>

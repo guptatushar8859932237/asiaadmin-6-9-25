@@ -111,6 +111,9 @@ import Quotes from "./components/Billing/Quotes";
 import AddQuotesInvoice from "./components/Billing/AddQuotesInvoice";
 import EditQuotesInvoice from "./components/Billing/EditQuotesInvoice";
 import ViewQuotesInvoice from "./components/Billing/ViewQuotesInvoice";
+import AddNewFreightQuoteInvoice from "./components/Billing/AddNewFreightQuoteInvoice";
+import EditNewFreightQuoteInvoice from "./components/Billing/EditNewFreightQuoteInvoice";
+import ViewNewFreightQuoteInvoice from "./components/Billing/ViewNewFreightQuoteInvoice";
 import CompanyAddresses from "./pages/CompanyAddresses";
 const Dashboard = lazy(() => import("./pages/Dashboard"));
 const Users = lazy(() => import("./pages/Users"));
@@ -174,6 +177,9 @@ export default function App() {
                 <Route path="/Admin/addquotesinvoice" element={<AddQuotesInvoice />} />
                 <Route path="/Admin/editquotesinvoice" element={<EditQuotesInvoice />} />
                 <Route path="/Admin/viewquotesinvoice" element={<ViewQuotesInvoice />} />
+                <Route path="/Admin/addnewfreightquoteinvoice" element={<AddNewFreightQuoteInvoice />} />
+                <Route path="/Admin/editnewfreightquoteinvoice" element={<EditNewFreightQuoteInvoice />} />
+                <Route path="/Admin/viewnewfreightquoteinvoice" element={<ViewNewFreightQuoteInvoice />} />
                 <Route
                   index
                   path="/Admin/sageinvoice"

@@ -56,7 +56,24 @@ const VAT_OPTIONS = [
   { value: "Manual VAT (Capital Goods)", label: "Manual VAT (Capital Goods)" }
 ];
 
-export default function AddQuotesInvoice() {
+const formatCountryName = (country) => {
+  if (!country) return "";
+  const cleaned = country.trim().toLowerCase();
+  if (cleaned === "south africa") return "South Africa";
+  if (cleaned === "zambia") return "Zambia";
+  if (cleaned === "zimbabwe") return "Zimbabwe";
+  return "";
+};
+
+const getCountry = (countryVal, companyAddress) => {
+  let country = formatCountryName(countryVal);
+  if (!country && companyAddress) {
+    country = formatCountryName(companyAddress.country);
+  }
+  return country;
+};
+
+export default function EditQuotesInvoice() {
   const location = useLocation();
   const navigate = useNavigate();
   const pdfRef = useRef();
@@ -69,6 +86,9 @@ export default function AddQuotesInvoice() {
     chargable_rate: "",
     company_id: "",
     company_address: null,
+    client_id: null,
+    client_name: "",
+    quote_type: "ADMIN",
   });
 
   const [getdata, setGetdata] = useState({});
@@ -98,7 +118,9 @@ export default function AddQuotesInvoice() {
   const [adminDropdown, setAdminDropdown] = useState([]);
   const [customsDropdown, setCustomsDropdown] = useState([]);
 
-  const copyInvoiceData = location?.state?.copyInvoiceData;
+  const editItem = location.state?.item;
+  const quoteInvoiceId = editItem?.freight_quote_estimate_id || editItem?.quote_invoice_id;
+  const freightId = editItem?.freight_id;
 
   useEffect(() => {
     // Fetch base lists
@@ -106,15 +128,11 @@ export default function AddQuotesInvoice() {
     getsuppliers();
     fetchDropdowns();
 
-    // Check if we are copying an invoice
-    if (copyInvoiceData) {
-      const invoiceId = copyInvoiceData.freight_quote_estimate_id || copyInvoiceData.quote_invoice_id;
-      const freightId = copyInvoiceData.freight_id;
-      if (invoiceId && freightId) {
-        loadQuoteInvoiceData(invoiceId, freightId);
-      }
+    // Fetch existing quote invoice data
+    if (quoteInvoiceId && freightId) {
+      fetchInvoiceData();
     }
-  }, [copyInvoiceData]);
+  }, [quoteInvoiceId, freightId]);
 
   const getFreights = () => {
     axios
@@ -163,9 +181,9 @@ export default function AddQuotesInvoice() {
     }
   };
 
-  const apidataget = async (freightId, initialInvoiceData = null) => {
+  const apidataget = async (freightIdVal, skipEstimate = false, initialInvoiceData = null) => {
     const payload = {
-      freight_id: freightId,
+      freight_id: freightIdVal,
     };
     try {
       const response = await axios.post(
@@ -176,19 +194,11 @@ export default function AddQuotesInvoice() {
         const freightObj = { ...response.data.data[0] };
 
         setGetdata(freightObj);
-        setSelected(freightId);
+        setSelected(freightIdVal);
         setOpenmodal(false);
 
-        // Prepopulate chargeable rate
-        const chargeable = freightObj.chargable_rate || freightObj.chargeable || "";
-        setFreight((prev) => ({
-          ...prev,
-          chargable_rate: chargeable,
-        }));
-
-        // Fetch quote estimate details to prepopulate tables if available
-        if (freightId) {
-          getFreightQuoteEstimateByFreight(freightId);
+        if (!skipEstimate) {
+          getFreightQuoteEstimateByFreight(freightIdVal);
         }
       }
     } catch (error) {
@@ -210,11 +220,14 @@ export default function AddQuotesInvoice() {
           setFreight((prev) => ({
             ...prev,
             customer_invoice_no: estimateData.customer_invoice_no || prev.customer_invoice_no,
-            invoice_for_country: estimateData.invoice_for_country || prev.invoice_for_country,
+            invoice_for_country: getCountry(estimateData.invoice_for_country, estimateData.company_address) || prev.invoice_for_country,
             final_base_currency: estimateData.final_base_currency || prev.final_base_currency,
             chargable_rate: estimateData.chargeable !== undefined ? estimateData.chargeable : prev.chargable_rate,
             company_id: estimateData.company_id || estimateData.company_address?.id || prev.company_id,
             company_address: estimateData.company_address || prev.company_address,
+            client_id: estimateData.client_id || prev.client_id,
+            client_name: estimateData.client_name || prev.client_name,
+            quote_type: estimateData.quote_type || prev.quote_type,
           }));
 
           const items = estimateData.components || [];
@@ -261,31 +274,40 @@ export default function AddQuotesInvoice() {
     }
   };
 
-  const loadQuoteInvoiceData = async (invoiceId, freightId) => {
+  const fetchInvoiceData = async () => {
     try {
       const response = await axios.post(
         `${process.env.REACT_APP_BASE_URL}GetFreightQuoteEstimateById`,
         {
-          freight_quote_estimate_id: parseInt(invoiceId),
+          freight_quote_estimate_id: parseInt(quoteInvoiceId),
           freight_id: parseInt(freightId)
         }
       );
+      console.log("GetFreightQuoteEstimateById response data:", response.data);
       if (response.data && response.data.success && response.data.data) {
-        const invoiceData = response.data.data;
+        const rawData = response.data.data;
+        const invoiceData = Array.isArray(rawData)
+          ? (rawData.find((item) => String(item.id || item.freight_quote_estimate_id) === String(quoteInvoiceId)) || rawData[0])
+          : rawData;
         if (invoiceData) {
           setFreight({
+            reference_no: invoiceData.reference_no || "",
             customer_invoice_no: invoiceData.customer_invoice_no || "",
-            invoice_for_country: invoiceData.invoice_for_country || "",
+            invoice_for_country: getCountry(invoiceData.invoice_for_country, invoiceData.company_address),
             due_date: toLocalDateString(invoiceData.due_date || invoiceData.date),
             final_base_currency: invoiceData.final_base_currency || "Select",
             chargable_rate: invoiceData.chargeable || "",
             company_id: invoiceData.company_id || "",
             company_address: invoiceData.company_address || null,
+            created_at: invoiceData.created_at || "",
+            client_id: invoiceData.client_id || null,
+            client_name: invoiceData.client_name || "",
+            quote_type: invoiceData.quote_type || "ADMIN",
           });
 
           setSelectedSupplier(invoiceData.supplier_id || "");
           if (invoiceData.freight_id) {
-            apidataget(invoiceData.freight_id, invoiceData);
+            apidataget(invoiceData.freight_id, true, invoiceData);
           }
 
           const items = invoiceData.components || [];
@@ -325,7 +347,7 @@ export default function AddQuotesInvoice() {
         }
       }
     } catch (error) {
-      console.error("Error fetching quote invoice by id:", error);
+      console.error("Error fetching supplier invoice by id:", error);
     }
   };
 
@@ -650,28 +672,34 @@ export default function AddQuotesInvoice() {
     try {
       const allComponents = [];
 
-      const mapRowToComponent = (row, calc, name) => ({
-        admin_frieght_component_id: row.admin_frieght_component_id || null,
-        description: row.description || "",
-        qty: parseFloat(row.qty) || 0,
-        currency: row.currency || "",
-        cost: parseFloat(row.cost) || 0,
-        unit_type: row.unitType || "",
-        unit: parseFloat(calc.unit) || 0,
-        total_cost: parseFloat(calc.tCost) || 0,
-        gp_percent: parseFloat(row.gp_percent) || 0,
-        sales_price: parseFloat(calc.salesPrice) || 0,
-        roe: parseFloat(row.roe) || 0,
-        final_amount: parseFloat(calc.finalAmt) || 0,
-        vat_type: row.vatTyp || "",
-        disc_percent: parseFloat(row.discPercent) || 0,
-        discount: parseFloat(calc.disc) || 0,
-        exclusive: parseFloat(calc.exclusive) || 0,
-        vat: parseFloat(calc.vat) || 0,
-        vat_incl: parseFloat(calc.inclusive) || 0,
-        comment: row.comment || "",
-        name: name
-      });
+      const mapRowToComponent = (row, calc, name) => {
+        const comp = {
+          admin_frieght_component_id: row.admin_frieght_component_id || null,
+          description: row.description || "",
+          qty: parseFloat(row.qty) || 0,
+          currency: row.currency || "",
+          cost: parseFloat(row.cost) || 0,
+          unit_type: row.unitType || "",
+          unit: parseFloat(calc.unit) || 0,
+          total_cost: parseFloat(calc.tCost) || 0,
+          gp_percent: parseFloat(row.gp_percent) || 0,
+          sales_price: parseFloat(calc.salesPrice) || 0,
+          roe: parseFloat(row.roe) || 0,
+          final_amount: parseFloat(calc.finalAmt) || 0,
+          vat_type: row.vatTyp || "",
+          disc_percent: parseFloat(row.discPercent) || 0,
+          discount: parseFloat(calc.disc) || 0,
+          exclusive: parseFloat(calc.exclusive) || 0,
+          vat: parseFloat(calc.vat) || 0,
+          vat_incl: parseFloat(calc.inclusive) || 0,
+          comment: row.comment || "",
+          name: name
+        };
+        if (row.db_id) {
+          comp.id = row.db_id;
+        }
+        return comp;
+      };
 
       originRowsData.forEach(({ row, calc }) => {
         if (row.description) {
@@ -705,11 +733,13 @@ export default function AddQuotesInvoice() {
       });
 
       const payload = {
+        freight_quote_estimate_id: parseInt(quoteInvoiceId),
+        id: parseInt(quoteInvoiceId),
         freight_id: parseInt(selected),
-        client_id: getdata?.client_id || getdata?.user_id || null,
-        client_name: getdata?.client_name || "",
         company_id: freight.company_id,
         invoice_for_country: freight.invoice_for_country || "",
+        client_id: freight.client_id || getdata?.client_id || getdata?.user_id || null,
+        client_name: freight.client_name || getdata?.client_name || "",
         supplier_id: selectedSupplier ? parseInt(selectedSupplier) : null,
         customer_invoice_no: freight.customer_invoice_no || "",
         // date: freight.due_date ? new Date(freight.due_date).toISOString().split("T")[0] : null,
@@ -718,11 +748,11 @@ export default function AddQuotesInvoice() {
         sumof_finalamount: parseFloat(sumofRoe) || 0,
         sumof_vatincl: parseFloat(totalVatInclusive) || 0,
         chargeable: parseFloat(freight.chargable_rate) || 0,
-        quote_type:"ADMIN",
+        quote_type: freight.quote_type || "ADMIN",
         components: allComponents,
       };
 
-      console.log("[Add Quote Invoice] add-freight-quotes-estimate payload:", payload);
+      console.log("[Edit Quote Invoice] add-freight-quotes-estimate payload:", payload);
       const response = await axios.post(
         `${process.env.REACT_APP_BASE_URL}add-freight-quotes-estimate`,
         payload
@@ -905,8 +935,6 @@ export default function AddQuotesInvoice() {
                 <option value="Select">Select</option>
                 <option value="L/S">L/S</option>
                 <option value="W/M">W/M</option>
-                <option value="CBM">CBM</option>
-                <option value="PCS">PCS</option>
               </select>
             </td>
             <td>
@@ -1166,7 +1194,7 @@ export default function AddQuotesInvoice() {
           <div className="d-flex justify-content-between align-items-center mb-4">
             <div className="d-flex align-items-center gap-3">
               <ArrowBackIcon onClick={handleclicknav} style={{ cursor: "pointer" }} />
-              <h4 className="freight_hd mb-0">Add Freight Quote Invoice</h4>
+              <h4 className="freight_hd mb-0">Edit Freight Quote Invoice</h4>
             </div>
             <div className="d-flex gap-3 align-items-center blueText">
               <i onClick={downloadPDF1} className="fa fa-download" style={{ cursor: "pointer" }} aria-hidden="true"></i>

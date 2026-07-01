@@ -3,7 +3,6 @@ import React, { useEffect, useState, useRef } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import CloseIcon from "@mui/icons-material/Close";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import logo from "../../Assests/logo.png";
 import { exportEstimatePdf } from "../../utils/pdfExportUtils";
@@ -18,16 +17,6 @@ const getVatPercent = (vatTyp) => {
     return parseFloat(match[1]);
   }
   return 0;
-};
-
-const toLocalDateString = (dateVal) => {
-  if (!dateVal) return "";
-  const date = new Date(dateVal);
-  if (Number.isNaN(date.getTime())) return "";
-  const yyyy = date.getFullYear();
-  const mm = String(date.getMonth() + 1).padStart(2, "0");
-  const dd = String(date.getDate()).padStart(2, "0");
-  return `${yyyy}-${mm}-${dd}`;
 };
 
 const getVatLabel = (val) => {
@@ -56,12 +45,13 @@ const VAT_OPTIONS = [
   { value: "Manual VAT (Capital Goods)", label: "Manual VAT (Capital Goods)" }
 ];
 
-export default function AddQuotesInvoice() {
+export default function ViewQuotesInvoice({ hiddenPrintItem, onPrintComplete }) {
   const location = useLocation();
   const navigate = useNavigate();
   const pdfRef = useRef();
 
   const [freight, setFreight] = useState({
+    reference_no: "",
     customer_invoice_no: "",
     invoice_for_country: "",
     due_date: "",
@@ -69,28 +59,12 @@ export default function AddQuotesInvoice() {
     chargable_rate: "",
     company_id: "",
     company_address: null,
+    created_at: "",
   });
 
   const [getdata, setGetdata] = useState({});
-  const [openmodal, setOpenmodal] = useState(false);
-  const [openmodal1, setOpenmodal1] = useState(false);
 
-  // Selected values from dropdowns
-  const [selected, setSelected] = useState(""); // selected freight ID
-  const [selectedSupplier, setSelectedSupplier] = useState(""); // selected supplier ID
-
-  const [dat, setDat] = useState([]); // Freight list
-  const [dat1, setDat1] = useState([]); // Supplier list
-
-  // Dynamic Rows for each section
-  const [originRows, setOriginRows] = useState([]);
-  const [freightRows, setFreightRows] = useState([]);
-  const [transitRows, setTransitRows] = useState([]);
-  const [destinationRows, setDestinationRows] = useState([]);
-  const [adminRows, setAdminRows] = useState([]);
-  const [customsRows, setCustomsRows] = useState([]);
-
-  // Component dropdown lists
+  // Dropdown Options state
   const [originDropdown, setOriginDropdown] = useState([]);
   const [freightDropdown, setFreightDropdown] = useState([]);
   const [transitDropdown, setTransitDropdown] = useState([]);
@@ -98,45 +72,27 @@ export default function AddQuotesInvoice() {
   const [adminDropdown, setAdminDropdown] = useState([]);
   const [customsDropdown, setCustomsDropdown] = useState([]);
 
-  const copyInvoiceData = location?.state?.copyInvoiceData;
+  // Dynamic Rows state
+  const [originRows, setOriginRows] = useState([]);
+  const [freightRows, setFreightRows] = useState([]);
+  const [transitRows, setTransitRows] = useState([]);
+  const [destinationRows, setDestinationRows] = useState([]);
+  const [adminRows, setAdminRows] = useState([]);
+  const [customsRows, setCustomsRows] = useState([]);
+
+  const viewItem = hiddenPrintItem || location.state?.item;
+  const quoteInvoiceId = viewItem?.freight_quote_estimate_id || viewItem?.quote_invoice_id || (typeof viewItem === "object" ? null : viewItem);
+  const freightId = viewItem?.freight_id;
 
   useEffect(() => {
-    // Fetch base lists
-    getFreights();
-    getsuppliers();
     fetchDropdowns();
+  }, []);
 
-    // Check if we are copying an invoice
-    if (copyInvoiceData) {
-      const invoiceId = copyInvoiceData.freight_quote_estimate_id || copyInvoiceData.quote_invoice_id;
-      const freightId = copyInvoiceData.freight_id;
-      if (invoiceId && freightId) {
-        loadQuoteInvoiceData(invoiceId, freightId);
-      }
+  useEffect(() => {
+    if (quoteInvoiceId && freightId) {
+      fetchInvoiceData();
     }
-  }, [copyInvoiceData]);
-
-  const getFreights = () => {
-    axios
-      .get(`${process.env.REACT_APP_BASE_URL}getFreightDropdown`)
-      .then((response) => {
-        setDat(response.data.data || []);
-      })
-      .catch((error) => {
-        console.error("Error loading freights dropdown:", error);
-      });
-  };
-
-  const getsuppliers = () => {
-    axios
-      .get(`${process.env.REACT_APP_BASE_URL}supplier-list`)
-      .then((response) => {
-        setDat1(response.data.data || []);
-      })
-      .catch((error) => {
-        console.error("Error loading suppliers:", error);
-      });
-  };
+  }, [quoteInvoiceId, freightId]);
 
   const fetchDropdowns = async () => {
     const chargeTypes = [
@@ -163,110 +119,12 @@ export default function AddQuotesInvoice() {
     }
   };
 
-  const apidataget = async (freightId, initialInvoiceData = null) => {
-    const payload = {
-      freight_id: freightId,
-    };
-    try {
-      const response = await axios.post(
-        `${process.env.REACT_APP_BASE_URL}freight-list-byId`,
-        payload
-      );
-      if (response.data && response.data.data) {
-        const freightObj = { ...response.data.data[0] };
-
-        setGetdata(freightObj);
-        setSelected(freightId);
-        setOpenmodal(false);
-
-        // Prepopulate chargeable rate
-        const chargeable = freightObj.chargable_rate || freightObj.chargeable || "";
-        setFreight((prev) => ({
-          ...prev,
-          chargable_rate: chargeable,
-        }));
-
-        // Fetch quote estimate details to prepopulate tables if available
-        if (freightId) {
-          getFreightQuoteEstimateByFreight(freightId);
-        }
-      }
-    } catch (error) {
-      console.error("Error fetching freight details:", error);
-      toast.error("Failed to load freight details");
-    }
-  };
-
-  const getFreightQuoteEstimateByFreight = async (freightId) => {
-    try {
-      const response = await axios.post(
-        `${process.env.REACT_APP_BASE_URL}GetFreightQuoteEstimateById`,
-        { freight_id: parseInt(freightId) }
-      );
-      if (response.data && response.data.success && response.data.data) {
-        const rawData = response.data.data;
-        const estimateData = Array.isArray(rawData) ? rawData[0] : rawData;
-        if (estimateData) {
-          setFreight((prev) => ({
-            ...prev,
-            customer_invoice_no: estimateData.customer_invoice_no || prev.customer_invoice_no,
-            invoice_for_country: estimateData.invoice_for_country || prev.invoice_for_country,
-            final_base_currency: estimateData.final_base_currency || prev.final_base_currency,
-            chargable_rate: estimateData.chargeable !== undefined ? estimateData.chargeable : prev.chargable_rate,
-            company_id: estimateData.company_id || estimateData.company_address?.id || prev.company_id,
-            company_address: estimateData.company_address || prev.company_address,
-          }));
-
-          const items = estimateData.components || [];
-          if (items.length > 0) {
-            const mappedComponents = items.map((c) => ({
-              id: c.id || Date.now() + Math.random(),
-              db_id: c.id,
-              admin_frieght_component_id: c.admin_frieght_component_id || "",
-              description: c.description || c.component_description || "",
-              qty: c.qty !== null && c.qty !== undefined ? c.qty : "",
-              currency: c.currency || "Select",
-              cost: c.cost !== null && c.cost !== undefined ? c.cost : "",
-              unitType: c.unit_type || "Select",
-              gp_percent: c.gp_percent !== null && c.gp_percent !== undefined ? c.gp_percent : "",
-              sales_price: c.sales_price !== null && c.sales_price !== undefined ? c.sales_price : "",
-              roe: c.roe !== null && c.roe !== undefined ? c.roe : "",
-              vatTyp: c.vat_type !== null && c.vat_type !== undefined ? getVatLabel(c.vat_type) : "",
-              vat: c.vat !== null && c.vat !== undefined ? c.vat : "",
-              discPercent: c.disc_percent !== null && c.disc_percent !== undefined ? c.disc_percent : "",
-              comment: c.comment || "",
-              name: c.name || c.section_name || ""
-            }));
-
-            const filterBySection = (name) => {
-              return mappedComponents.filter((c) => c.name.toLowerCase().includes(name.toLowerCase()));
-            };
-
-            setOriginRows(filterBySection("Origin Charges"));
-            setFreightRows(filterBySection("Freight Charges"));
-            setTransitRows(filterBySection("Transit Charges"));
-            setDestinationRows(filterBySection("Destination Charges"));
-            setAdminRows(filterBySection("Admin Charges"));
-            setCustomsRows(filterBySection("Customs Charges"));
-          } else {
-            initializeDefaultRows();
-          }
-        }
-      } else {
-        initializeDefaultRows();
-      }
-    } catch (error) {
-      console.error("Error loading quote estimate details:", error);
-      initializeDefaultRows();
-    }
-  };
-
-  const loadQuoteInvoiceData = async (invoiceId, freightId) => {
+  const fetchInvoiceData = async () => {
     try {
       const response = await axios.post(
         `${process.env.REACT_APP_BASE_URL}GetFreightQuoteEstimateById`,
         {
-          freight_quote_estimate_id: parseInt(invoiceId),
+          freight_quote_estimate_id: parseInt(quoteInvoiceId),
           freight_id: parseInt(freightId)
         }
       );
@@ -274,16 +132,17 @@ export default function AddQuotesInvoice() {
         const invoiceData = response.data.data;
         if (invoiceData) {
           setFreight({
+            reference_no: invoiceData.reference_no || "",
             customer_invoice_no: invoiceData.customer_invoice_no || "",
             invoice_for_country: invoiceData.invoice_for_country || "",
-            due_date: toLocalDateString(invoiceData.due_date || invoiceData.date),
+            due_date: invoiceData.due_date || invoiceData.date ? (invoiceData.due_date || invoiceData.date).split("T")[0] : "",
             final_base_currency: invoiceData.final_base_currency || "Select",
             chargable_rate: invoiceData.chargeable || "",
             company_id: invoiceData.company_id || "",
             company_address: invoiceData.company_address || null,
+            created_at: invoiceData.created_at || "",
           });
 
-          setSelectedSupplier(invoiceData.supplier_id || "");
           if (invoiceData.freight_id) {
             apidataget(invoiceData.freight_id, invoiceData);
           }
@@ -323,9 +182,12 @@ export default function AddQuotesInvoice() {
             initializeDefaultRows();
           }
         }
+      } else {
+        initializeDefaultRows();
       }
     } catch (error) {
-      console.error("Error fetching quote invoice by id:", error);
+      console.error("Error loading freight quote invoice details:", error);
+      initializeDefaultRows();
     }
   };
 
@@ -338,87 +200,74 @@ export default function AddQuotesInvoice() {
     setCustomsRows([]);
   };
 
-  const handlechangecalc = (e) => {
-    const { name, value } = e.target;
-    setFreight((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
-
-  const handleInvoiceForChange = async (e) => {
-    const selectedCountry = e.target.value;
-    setFreight((prev) => ({
-      ...prev,
-      invoice_for_country: selectedCountry,
-    }));
-
-    if (!selectedCountry) {
-      setFreight((prev) => ({
-        ...prev,
-        company_id: "",
-        company_address: null,
-      }));
-      return;
-    }
-
+  const apidataget = async (freightIdVal, initialInvoiceData = null) => {
+    const payload = {
+      freight_id: freightIdVal,
+    };
     try {
-      const response = await axios.get(
-        `${process.env.REACT_APP_BASE_URL}company-addresses`,
-        { params: { country: selectedCountry } }
+      const response = await axios.post(
+        `${process.env.REACT_APP_BASE_URL}freight-list-byId`,
+        payload
       );
-      if (response.data && response.data.success && response.data.data) {
-        const addressList = response.data.data;
-        const address = Array.isArray(addressList) ? addressList[0] : addressList;
-        if (address) {
-          setFreight((prev) => ({
-            ...prev,
-            company_id: address.id,
-            company_address: address,
-          }));
-        }
+      if (response.data && response.data.data) {
+        const freightObj = { ...response.data.data[0] };
+        setGetdata(freightObj);
       }
     } catch (error) {
-      console.error("Error loading company addresses:", error);
+      console.error("Error loading freight details:", error);
     }
   };
 
-  const handlepresss = (e) => {
-    if (e.charCode < 42 || e.charCode > 57) {
-      e.preventDefault();
+  const handleclicknav = () => {
+    navigate(-1);
+  };
+
+  const downloadPDF1 = async () => {
+    const element = pdfRef.current;
+    if (!element) return;
+    try {
+      await exportEstimatePdf(element, "QuoteInvoice.pdf");
+    } catch (error) {
+      console.error("PDF generation failed:", error);
+      toast.error("Failed to generate PDF");
     }
   };
 
-  const appendRow = (setter) => {
-    setter((prev) => [
-      ...prev,
-      {
-        id: Date.now() + Math.random(),
-        description: "",
-        qty: "",
-        currency: "Select",
-        cost: "",
-        unitType: "Select",
-        gp_percent: "",
-        sales_price: "",
-        roe: "",
-        vatTyp: "",
-        vat: "",
-        discPercent: "",
-        comment: "",
-      },
-    ]);
+  const isPrintingRef = useRef(false);
+
+  useEffect(() => {
+    if (getdata && Object.keys(getdata).length > 0 && (location.state?.autoPrint || hiddenPrintItem) && !isPrintingRef.current) {
+      isPrintingRef.current = true;
+      setTimeout(async () => {
+        await downloadPDF1();
+        if (onPrintComplete) {
+          onPrintComplete();
+        }
+      }, 1500);
+    }
+  }, [getdata, location.state, hiddenPrintItem]);
+
+  const shipmentValue = (...keys) => {
+    for (const key of keys) {
+      const value = getdata?.[key] ?? freight?.[key];
+      if (value !== undefined && value !== null && value !== "") return value;
+    }
+    return "";
   };
 
-  const deleteRow = (setter, id) => {
-    setter((prev) => prev.filter((row) => row.id !== id));
+  const shipmentDate = (...keys) => {
+    const value = shipmentValue(...keys);
+    if (!value || value === "0000-00-00") return "";
+    const date = new Date(value);
+    return Number.isNaN(date.getTime()) ? "" : date.toLocaleDateString("en-GB");
   };
 
-  const updateRowField = (setter, id, field, value) => {
-    setter((prev) =>
-      prev.map((row) => (row.id === id ? { ...row, [field]: value } : row))
-    );
+  const safeNumber = (val) => {
+    const num = Number(val);
+    return isNaN(num) ? 0 : num;
   };
+
+  const formatMoney = (value) => safeNumber(value).toFixed(2);
 
   const resolveRowUnit = (unitType) => {
     if (!unitType || unitType === "Select") return 0;
@@ -467,111 +316,6 @@ export default function AddQuotesInvoice() {
       inclusive,
     };
   };
-
-  const handleDropdownChange = (setter, dropdownData, id, selectedId) => {
-    const component = dropdownData.find(item => String(item.admin_frieght_component_id) === String(selectedId));
-    setter(prev => prev.map(row => {
-      if (row.id === id) {
-        return {
-          ...row,
-          admin_frieght_component_id: component ? component.admin_frieght_component_id : "",
-          description: component ? component.description : (selectedId === "Note" ? "Note" : ""),
-        };
-      }
-      return row;
-    }));
-  };
-
-  useEffect(() => {
-    if (originDropdown.length > 0 && originRows.length > 0) {
-      setOriginRows(prev => prev.map(row => {
-        if (!row.admin_frieght_component_id && row.description && row.description !== "Note") {
-          const comp = originDropdown.find(d => d.description === row.description || d.code === row.description);
-          if (comp) {
-            return { ...row, admin_frieght_component_id: comp.admin_frieght_component_id };
-          }
-        }
-        return row;
-      }));
-    }
-  }, [originDropdown, originRows.length]);
-
-  useEffect(() => {
-    if (freightDropdown.length > 0 && freightRows.length > 0) {
-      setFreightRows(prev => prev.map(row => {
-        if (!row.admin_frieght_component_id && row.description && row.description !== "Note") {
-          const comp = freightDropdown.find(d => d.description === row.description || d.code === row.description);
-          if (comp) {
-            return { ...row, admin_frieght_component_id: comp.admin_frieght_component_id };
-          }
-        }
-        return row;
-      }));
-    }
-  }, [freightDropdown, freightRows.length]);
-
-  useEffect(() => {
-    if (transitDropdown.length > 0 && transitRows.length > 0) {
-      setTransitRows(prev => prev.map(row => {
-        if (!row.admin_frieght_component_id && row.description && row.description !== "Note") {
-          const comp = transitDropdown.find(d => d.description === row.description || d.code === row.description);
-          if (comp) {
-            return { ...row, admin_frieght_component_id: comp.admin_frieght_component_id };
-          }
-        }
-        return row;
-      }));
-    }
-  }, [transitDropdown, transitRows.length]);
-
-  useEffect(() => {
-    if (destinationDropdown.length > 0 && destinationRows.length > 0) {
-      setDestinationRows(prev => prev.map(row => {
-        if (!row.admin_frieght_component_id && row.description && row.description !== "Note") {
-          const comp = destinationDropdown.find(d => d.description === row.description || d.code === row.description);
-          if (comp) {
-            return { ...row, admin_frieght_component_id: comp.admin_frieght_component_id };
-          }
-        }
-        return row;
-      }));
-    }
-  }, [destinationDropdown, destinationRows.length]);
-
-  useEffect(() => {
-    if (adminDropdown.length > 0 && adminRows.length > 0) {
-      setAdminRows(prev => prev.map(row => {
-        if (!row.admin_frieght_component_id && row.description && row.description !== "Note") {
-          const comp = adminDropdown.find(d => d.description === row.description || d.code === row.description);
-          if (comp) {
-            return { ...row, admin_frieght_component_id: comp.admin_frieght_component_id };
-          }
-        }
-        return row;
-      }));
-    }
-  }, [adminDropdown, adminRows.length]);
-
-  useEffect(() => {
-    if (customsDropdown.length > 0 && customsRows.length > 0) {
-      setCustomsRows(prev => prev.map(row => {
-        if (!row.admin_frieght_component_id && row.description && row.description !== "Note") {
-          const comp = customsDropdown.find(d => d.description === row.description || d.code === row.description);
-          if (comp) {
-            return { ...row, admin_frieght_component_id: comp.admin_frieght_component_id };
-          }
-        }
-        return row;
-      }));
-    }
-  }, [customsDropdown, customsRows.length]);
-
-  const safeNumber = (val) => {
-    const num = Number(val);
-    return isNaN(num) ? 0 : num;
-  };
-
-  const formatMoney = (value) => safeNumber(value).toFixed(2);
 
   const originRowsData = originRows.map((row) => ({
     row,
@@ -637,172 +381,13 @@ export default function AddQuotesInvoice() {
     adminRowsData.reduce((sum, item) => sum + item.calc.inclusive, 0) +
     customsRowsData.reduce((sum, item) => sum + item.calc.inclusive, 0);
 
-  const estimateCalculate = async () => {
-    if (!selected) {
-      toast.error("Please select a freight first.");
-      return;
-    }
-    if (!selectedSupplier) {
-      toast.error("Please select a supplier first.");
-      return;
-    }
-
-    try {
-      const allComponents = [];
-
-      const mapRowToComponent = (row, calc, name) => ({
-        admin_frieght_component_id: row.admin_frieght_component_id || null,
-        description: row.description || "",
-        qty: parseFloat(row.qty) || 0,
-        currency: row.currency || "",
-        cost: parseFloat(row.cost) || 0,
-        unit_type: row.unitType || "",
-        unit: parseFloat(calc.unit) || 0,
-        total_cost: parseFloat(calc.tCost) || 0,
-        gp_percent: parseFloat(row.gp_percent) || 0,
-        sales_price: parseFloat(calc.salesPrice) || 0,
-        roe: parseFloat(row.roe) || 0,
-        final_amount: parseFloat(calc.finalAmt) || 0,
-        vat_type: row.vatTyp || "",
-        disc_percent: parseFloat(row.discPercent) || 0,
-        discount: parseFloat(calc.disc) || 0,
-        exclusive: parseFloat(calc.exclusive) || 0,
-        vat: parseFloat(calc.vat) || 0,
-        vat_incl: parseFloat(calc.inclusive) || 0,
-        comment: row.comment || "",
-        name: name
-      });
-
-      originRowsData.forEach(({ row, calc }) => {
-        if (row.description) {
-          allComponents.push(mapRowToComponent(row, calc, "Origin Charges"));
-        }
-      });
-      freightRowsData.forEach(({ row, calc }) => {
-        if (row.description) {
-          allComponents.push(mapRowToComponent(row, calc, "Freight Charges"));
-        }
-      });
-      transitRowsData.forEach(({ row, calc }) => {
-        if (row.description) {
-          allComponents.push(mapRowToComponent(row, calc, "Transit Charges"));
-        }
-      });
-      destinationRowsData.forEach(({ row, calc }) => {
-        if (row.description) {
-          allComponents.push(mapRowToComponent(row, calc, "Destination Charges"));
-        }
-      });
-      adminRowsData.forEach(({ row, calc }) => {
-        if (row.description) {
-          allComponents.push(mapRowToComponent(row, calc, "Admin Charges"));
-        }
-      });
-      customsRowsData.forEach(({ row, calc }) => {
-        if (row.description) {
-          allComponents.push(mapRowToComponent(row, calc, "Customs Charges"));
-        }
-      });
-
-      const payload = {
-        freight_id: parseInt(selected),
-        client_id: getdata?.client_id || getdata?.user_id || null,
-        client_name: getdata?.client_name || "",
-        company_id: freight.company_id,
-        invoice_for_country: freight.invoice_for_country || "",
-        supplier_id: selectedSupplier ? parseInt(selectedSupplier) : null,
-        customer_invoice_no: freight.customer_invoice_no || "",
-        // date: freight.due_date ? new Date(freight.due_date).toISOString().split("T")[0] : null,
-        final_base_currency: freight.final_base_currency || "Select",
-        sumof_totalcost: parseFloat(sumofall) || 0,
-        sumof_finalamount: parseFloat(sumofRoe) || 0,
-        sumof_vatincl: parseFloat(totalVatInclusive) || 0,
-        chargeable: parseFloat(freight.chargable_rate) || 0,
-        quote_type:"ADMIN",
-        components: allComponents,
-      };
-
-      console.log("[Add Quote Invoice] add-freight-quotes-estimate payload:", payload);
-      const response = await axios.post(
-        `${process.env.REACT_APP_BASE_URL}add-freight-quotes-estimate`,
-        payload
-      );
-      if (response.data && response.data.success === true) {
-        toast.success(response.data.message || "Freight Quote Invoice saved successfully");
-        navigate("/Admin/quotes");
-      } else {
-        toast.error(response.data.message || "Failed to save Freight Quote Invoice");
-      }
-    } catch (error) {
-      console.error("Save Error:", error);
-      toast.error(error.response?.data?.message || "Something went wrong while saving");
-    }
-  };
-
-  const handleclicknav = () => {
-    window.history.back();
-  };
-
-  const closemodal = () => setOpenmodal(false);
-  const closemodal1 = () => setOpenmodal1(false);
-
-  const andlemodaloen = () => setOpenmodal(true);
-  const andndndn = () => setOpenmodal1(true);
-
-  const setSelecSupplier = (value) => {
-    setSelectedSupplier(value);
-    setTimeout(() => {
-      setOpenmodal1(false);
-    }, 500);
-  };
-
-  const downloadPDF1 = async () => {
-    const element = pdfRef.current;
-    if (!element) return;
-    try {
-      await exportEstimatePdf(element, "QuoteInvoice.pdf");
-    } catch (error) {
-      console.error("PDF generation failed:", error);
-      toast.error("Failed to generate PDF");
-    }
-  };
-
-  // Find names to display
-  const selectedFreightObj = dat.find((item) => String(item.freight_id) === String(selected));
-  const selectedSupplierObj = dat1.find((item) => String(item.id) === String(selectedSupplier));
-
-  const shipmentValue = (...keys) => {
-    for (const key of keys) {
-      const value = getdata?.[key] ?? freight?.[key];
-      if (value !== undefined && value !== null && value !== "") return value;
-    }
-    return "";
-  };
-
-  const shipmentDate = (key) => {
-    const value = shipmentValue(key);
-    if (!value || value === "0000-00-00") return "";
-    const datePart = value.includes("T") ? value.split("T")[0] : value;
-    const parts = datePart.split("-");
-    if (parts.length === 3) {
-      return `${parts[2]}/${parts[1]}/${parts[0]}`;
-    }
-    const date = new Date(value);
-    return Number.isNaN(date.getTime()) ? "" : date.toLocaleDateString("en-GB");
-  };
-
-  const renderRowsForSection = (rowsData, rowsState, setter, dropdownOptions, sectionTitle, totalTCost, totalFinalAmt) => {
+  const renderRowsForSection = (rowsData, dropdownOptions, sectionTitle, totalTCost, totalFinalAmt) => {
     return (
       <>
         <tr className="estimate-section-row">
           <td colSpan={19}>
             <strong>
-              {sectionTitle}{" "}
-              <i
-                className="fa fa-plus appendIcon"
-                style={{ cursor: "pointer" }}
-                onClick={() => appendRow(setter)}
-              ></i>
+              {sectionTitle}
             </strong>
           </td>
         </tr>
@@ -812,26 +397,18 @@ export default function AddQuotesInvoice() {
               <select
                 className="supplier_form"
                 value={row.admin_frieght_component_id || (row.description === "Note" ? "Note" : "")}
-                onChange={(e) =>
-                  handleDropdownChange(setter, dropdownOptions, row.id, e.target.value)
-                }
+                disabled
               >
                 <option value="">Select</option>
                 <option value="Note">Note</option>
-                {dropdownOptions.map((item) => {
-                  const isAlreadySelected = rowsState.some(
-                    (r) => r.admin_frieght_component_id === item.admin_frieght_component_id && r.id !== row.id
-                  );
-                  return (
-                    <option
-                      key={item.admin_frieght_component_id}
-                      value={item.admin_frieght_component_id}
-                      disabled={isAlreadySelected}
-                    >
-                      {item.code ? `${item.code} - ${item.description}` : item.description}
-                    </option>
-                  );
-                })}
+                {dropdownOptions.map((item) => (
+                  <option
+                    key={item.admin_frieght_component_id}
+                    value={item.admin_frieght_component_id}
+                  >
+                    {item.code ? `${item.code} - ${item.description}` : item.description}
+                  </option>
+                ))}
               </select>
             </td>
             <td>
@@ -846,7 +423,7 @@ export default function AddQuotesInvoice() {
                 }}
                 type="text"
                 className="supplier_form"
-                onChange={(e) => updateRowField(setter, row.id, "qty", e.target.value)}
+                disabled
                 value={row.qty || ""}
                 placeholder="0.00"
               />
@@ -861,7 +438,7 @@ export default function AddQuotesInvoice() {
                   paddingLeft: 5,
                   border: 0,
                 }}
-                onChange={(e) => updateRowField(setter, row.id, "currency", e.target.value)}
+                disabled
                 value={row.currency || "Select"}
               >
                 <option value="Select">Select</option>
@@ -883,8 +460,7 @@ export default function AddQuotesInvoice() {
                 }}
                 type="text"
                 className="supplier_form"
-                onKeyPress={handlepresss}
-                onChange={(e) => updateRowField(setter, row.id, "cost", e.target.value)}
+                disabled
                 value={row.cost || ""}
                 placeholder="0.00"
               />
@@ -899,14 +475,12 @@ export default function AddQuotesInvoice() {
                   paddingLeft: 5,
                   border: 0,
                 }}
-                onChange={(e) => updateRowField(setter, row.id, "unitType", e.target.value)}
+                disabled
                 value={row.unitType || "Select"}
               >
                 <option value="Select">Select</option>
                 <option value="L/S">L/S</option>
                 <option value="W/M">W/M</option>
-                <option value="CBM">CBM</option>
-                <option value="PCS">PCS</option>
               </select>
             </td>
             <td>
@@ -955,7 +529,7 @@ export default function AddQuotesInvoice() {
                 }}
                 type="text"
                 className="supplier_form"
-                onChange={(e) => updateRowField(setter, row.id, "gp_percent", e.target.value)}
+                disabled
                 value={row.gp_percent || ""}
                 placeholder="0.00"
               />
@@ -986,7 +560,7 @@ export default function AddQuotesInvoice() {
                   border: "0px",
                   verticalAlign: "middle",
                 }}
-                onChange={(e) => updateRowField(setter, row.id, "roe", e.target.value)}
+                disabled
                 value={row.roe || ""}
                 className="supplier_form"
                 placeholder="1.00"
@@ -1009,7 +583,7 @@ export default function AddQuotesInvoice() {
             </td>
             <td>
               <select
-                onChange={(e) => updateRowField(setter, row.id, "vatTyp", e.target.value)}
+                disabled
                 value={row.vatTyp || ""}
               >
                 {VAT_OPTIONS.map((opt, i) => (
@@ -1023,7 +597,7 @@ export default function AddQuotesInvoice() {
               <input
                 type="text"
                 placeholder="0.00"
-                onChange={(e) => updateRowField(setter, row.id, "discPercent", e.target.value)}
+                disabled
                 className="supplier_form"
                 value={row.discPercent || ""}
               />
@@ -1050,13 +624,12 @@ export default function AddQuotesInvoice() {
               <input
                 type="text"
                 placeholder="0.00"
-                disabled={!(row.vatTyp === "Manual VAT" || row.vatTyp === "Manual VAT (Capital Goods)")}
+                disabled
                 value={
                   row.vatTyp === "Manual VAT" || row.vatTyp === "Manual VAT (Capital Goods)"
                     ? row.vat ?? ""
                     : formatMoney(calc.vat)
                 }
-                onChange={(e) => updateRowField(setter, row.id, "vat", e.target.value)}
                 className="supplier_form"
               />
             </td>
@@ -1069,20 +642,13 @@ export default function AddQuotesInvoice() {
                 className="supplier_form"
               />
             </td>
-            <td>
+            <td colSpan={2}>
               <input
                 type="text"
                 placeholder="Comment"
-                onChange={(e) => updateRowField(setter, row.id, "comment", e.target.value)}
+                disabled
                 value={row.comment || ""}
                 className="supplier_form"
-              />
-            </td>
-            <td>
-              <i
-                className="fa fa-trash text-danger"
-                style={{ cursor: "pointer" }}
-                onClick={() => deleteRow(setter, row.id)}
               />
             </td>
           </tr>
@@ -1101,83 +667,33 @@ export default function AddQuotesInvoice() {
 
   return (
     <>
-      {openmodal1 && (
-        <div className="custom-modal">
-          <div className="custom-modal-content">
-            <div className="custom-modal-header">
-              <h5 className="bold">Select Supplier</h5>
-              <button className="btn-close" onClick={() => closemodal1()}>
-                <CloseIcon />
-              </button>
-            </div>
-            <div className="custom-modal-body">
-              <div style={{ margin: "20px" }}>
-                <select
-                  className="form-select"
-                  value={selectedSupplier}
-                  onChange={(e) => setSelecSupplier(e.target.value)}
-                >
-                  <option value="">Select Supplier</option>
-                  {dat1.map((item) => (
-                    <option key={item.id} value={item.id}>
-                      {item.name}
-                    </option>
-                  ))}
-                </select>
-                <br />
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {openmodal && (
-        <div className="custom-modal">
-          <div className="custom-modal-content">
-            <div className="custom-modal-header">
-              <h5 className="bold">Select Freight</h5>
-              <button className="btn-close" onClick={() => closemodal()}>
-                <CloseIcon />
-              </button>
-            </div>
-            <div className="custom-modal-body">
-              <div style={{ margin: "20px" }}>
-                <select
-                  className="form-select"
-                  value={selected}
-                  onChange={(e) => apidataget(e.target.value)}
-                >
-                  <option value="">Select Freight</option>
-                  {dat.map((item) => (
-                    <option key={item.freight_id} value={item.freight_id}>
-                      {item.freight_number}
-                    </option>
-                  ))}
-                </select>
-                <br />
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-
-      <div className="wpWrapper">
+      <div
+        className="wpWrapper "
+        style={
+          hiddenPrintItem
+            ? {
+              position: "absolute",
+              top: "-9999px",
+              left: "-9999px",
+              width: "max-content",
+              minWidth: "1200px",
+              zIndex: -1000,
+            }
+            : {}
+        }
+      >
         <div className="container-fluid">
-          <div className="d-flex justify-content-between align-items-center mb-4">
-            <div className="d-flex align-items-center gap-3">
-              <ArrowBackIcon onClick={handleclicknav} style={{ cursor: "pointer" }} />
-              <h4 className="freight_hd mb-0">Add Freight Quote Invoice</h4>
+          {!hiddenPrintItem && (
+            <div className="d-flex justify-content-between align-items-center mb-4">
+              <div className="d-flex align-items-center gap-3">
+                <ArrowBackIcon onClick={handleclicknav} style={{ cursor: "pointer" }} />
+                <h4 className="freight_hd mb-0">View Freight Quote Invoice</h4>
+              </div>
+              <div className="d-flex gap-3 align-items-center blueText">
+                <i onClick={downloadPDF1} className="fa fa-download" style={{ cursor: "pointer" }} aria-hidden="true"></i>
+              </div>
             </div>
-            <div className="d-flex gap-3 align-items-center blueText">
-              <i onClick={downloadPDF1} className="fa fa-download" style={{ cursor: "pointer" }} aria-hidden="true"></i>
-              <button onClick={andlemodaloen} className="blueBtn">
-                Select Freight
-              </button>
-              <button onClick={andndndn} className="blueBtn">
-                Select Supplier
-              </button>
-            </div>
-          </div>
+          )}
 
           <section ref={pdfRef} style={{ margin: 0, padding: 0 }}>
             <div
@@ -1201,11 +717,7 @@ export default function AddQuotesInvoice() {
                   <tr>
                     <td style={{ width: "50%", paddingBottom: "10px" }}>
                       <div>
-                        <img
-                          style={{ height: 55 }}
-                          src={logo}
-                          alt="logo"
-                        />
+                        <img style={{ height: 55 }} src={logo} alt="logo" />
                       </div>
                     </td>
                     <td style={{ width: "50%", color: "#000", paddingBottom: "10px", textAlign: "left" }}>
@@ -1232,7 +744,7 @@ export default function AddQuotesInvoice() {
                         {freight.company_address?.company_name || ""}<br />
                         {freight.company_address?.address_line || ""}
                       </p>
-                      <p>
+                      <p style={{ fontSize: 13 }}>
                         <span><b>Registration No.:-</b> {freight.company_address?.company_registration_no || ""}</span> <br />
                         <span><b>VAT No.:-</b> {freight.company_address?.tax_vat_no || ""}</span> <br />
                         <span><b>Importers code:-</b></span>{freight.company_address?.postal_code || ""}
@@ -1252,11 +764,14 @@ export default function AddQuotesInvoice() {
                 <tbody>
                   <tr>
                     <td
+                      colSpan={2}
                       style={{
+                        background: "#1b2245",
                         textAlign: "center",
+                        color: "white",
+                        padding: "5px 0px",
                         fontSize: 13,
-                        fontWeight: 600,
-                        width: "100%",
+                        fontWeight: 700,
                       }}
                     >
                       FREIGHT ESTIMATE
@@ -1342,17 +857,9 @@ export default function AddQuotesInvoice() {
                                 <strong>Volumetric (kgs)</strong>
                                 <span>{getdata?.volumetric_weight || "-"}</span>
                               </div>
-                              <div className="d-flex justify-content-between align-items-center my-1">
+                              <div className="d-flex justify-content-between my-1">
                                 <strong>Chargeable</strong>
-                                <input
-                                  type="text"
-                                  name="chargable_rate"
-                                  className="form-control form-control-sm w-50"
-                                  style={{ height: 28 }}
-                                  value={freight.chargable_rate}
-                                  onChange={handlechangecalc}
-                                  onKeyPress={handlepresss}
-                                />
+                                <span>{freight.chargable_rate || "-"}</span>
                               </div>
                               <div className="d-flex justify-content-between my-1">
                                 <strong>Commodity</strong>
@@ -1372,45 +879,25 @@ export default function AddQuotesInvoice() {
                               </div>
                             </td>
                           </tr>
-                        </tbody>
-                      </table>
-                      <table
-                        style={{
-                          background: "#1b2245",
-                          width: "100%",
-                          color: "white",
-                          fontSize: 13,
-                          textAlign: "center",
-                          margin: "0px",
-                          padding: 2,
-                        }}
-                      >
-                        <tbody>
                           <tr>
-                            <td style={{ fontSize: 13 }}>
+                            <td
+                              style={{
+                                background: "#1b2245",
+                                color: "white",
+                                fontSize: 13,
+                                textAlign: "center",
+                                padding: 2,
+                              }}
+                              colSpan={2}
+                            >
                               Rate of Exchange
                             </td>
                           </tr>
-                        </tbody>
-                      </table>
-                      <table style={{ width: "100%" }}>
-                        <tbody>
                           <tr>
-                            <td style={{ padding: "5px 10px" }}>
-                              <div className="d-flex justify-content-between align-items-center">
+                            <td style={{ padding: "10px" }} colSpan={2}>
+                              <div className="d-flex justify-content-between">
                                 <strong>Final Base Currency</strong>
-                                <select
-                                  name="final_base_currency"
-                                  className="form-select form-select-sm w-50"
-                                  value={freight.final_base_currency || "Select"}
-                                  onChange={handlechangecalc}
-                                >
-                                  <option value="Select">Select</option>
-                                  <option value="USD">USD</option>
-                                  <option value="RAND">RAND</option>
-                                  <option value="EURO">EURO</option>
-                                  <option value="INR">INR</option>
-                                </select>
+                                <span>{freight.final_base_currency || "-"}</span>
                               </div>
                             </td>
                           </tr>
@@ -1435,17 +922,7 @@ export default function AddQuotesInvoice() {
                               <strong>Invoice For</strong>
                             </td>
                             <td style={{ fontSize: 13, paddingRight: 10, textAlign: "right" }}>
-                              <select
-                                name="invoice_for_country"
-                                value={freight.invoice_for_country || ""}
-                                onChange={handleInvoiceForChange}
-                                style={{ width: "50%", padding: "2px", border: "1px solid #ccc" }}
-                              >
-                                <option value="">Select Country</option>
-                                <option value="South Africa">South Africa</option>
-                                <option value="Zambia">Zambia</option>
-                                <option value="Zimbabwe">Zimbabwe</option>
-                              </select>
+                              {freight.invoice_for_country || "-"}
                             </td>
                           </tr>
                           {/* <tr>
@@ -1457,13 +934,7 @@ export default function AddQuotesInvoice() {
                               <strong>Due Date</strong>
                             </td>
                             <td style={{ fontSize: 13, paddingTop: "5px", paddingRight: 10, textAlign: "right" }}>
-                              <input
-                                type="date"
-                                name="due_date"
-                                value={freight.due_date || ""}
-                                onChange={handlechangecalc}
-                                style={{ width: "50%", padding: "2px", border: "1px solid #ccc" }}
-                              />
+                              {shipmentDate("due_date") || "-"}
                             </td>
                           </tr> */}
                           <tr>
@@ -1475,13 +946,7 @@ export default function AddQuotesInvoice() {
                               <strong>Invoice No.</strong>
                             </td>
                             <td style={{ fontSize: 13, paddingTop: "5px", paddingRight: 10, textAlign: "right" }}>
-                              <input
-                                type="text"
-                                name="customer_invoice_no"
-                                value={freight.customer_invoice_no || ""}
-                                onChange={handlechangecalc}
-                                style={{ width: "50%", padding: "2px", border: "1px solid #ccc" }}
-                              />
+                              {freight.customer_invoice_no || "-"}
                             </td>
                           </tr>
                           <tr>
@@ -1505,7 +970,7 @@ export default function AddQuotesInvoice() {
                               <strong>Quote Date</strong>
                             </td>
                             <td style={{ fontSize: 13, paddingTop: "5px", paddingRight: 10, textAlign: "right" }}>
-                              {shipmentDate("quote_invoice_date") || "-"}
+                              {shipmentDate("quote_invoice_date", "date") || "-"}
                             </td>
                           </tr>
                         </tbody>
@@ -1625,13 +1090,13 @@ export default function AddQuotesInvoice() {
                     </tr>
                   </thead>
                   <tbody>
-                    {renderRowsForSection(originRowsData, originRows, setOriginRows, originDropdown, "Origin Charges", totalChageswithOutExchange, totalChangeRoeOrigin)}
-                    {renderRowsForSection(freightRowsData, freightRows, setFreightRows, freightDropdown, "Freight Charges", totalChageswithOutExchangeinsurance, totalChangeRoeOriginaftercalcuinsurance)}
-                    {renderRowsForSection(transitRowsData, transitRows, setTransitRows, transitDropdown, "Transit Charges", totalChageswithOuTransit, transitRoe)}
-                    {renderRowsForSection(destinationRowsData, destinationRows, setDestinationRows, destinationDropdown, "Destination Charges", totalChaDestinationTransit, totalChaDestinationTransitRoe)}
-                    {renderRowsForSection(adminRowsData, adminRows, setAdminRows, adminDropdown, "Admin Charges", totaAdminransit, totalAdminnsitRoe)}
-                    {renderRowsForSection(customsRowsData, customsRows, setCustomsRows, customsDropdown, "Customs Charges", customsTotalTCost, customsTotalFinalAmt)}
-                    
+                    {renderRowsForSection(originRowsData, originDropdown, "Origin Charges")}
+                    {renderRowsForSection(freightRowsData, freightDropdown, "Freight Charges")}
+                    {renderRowsForSection(transitRowsData, transitDropdown, "Transit Charges")}
+                    {renderRowsForSection(destinationRowsData, destinationDropdown, "Destination Charges")}
+                    {renderRowsForSection(adminRowsData, adminDropdown, "Admin Charges")}
+                    {renderRowsForSection(customsRowsData, customsDropdown, "Customs Charges")}
+
                     <tr>
                       <td colSpan={6}>
                         <strong>Total - Charge</strong>
@@ -1652,12 +1117,6 @@ export default function AddQuotesInvoice() {
               </div>
             </div>
           </section>
-
-          <div className="text-center mt-3 mb-5">
-            <button type="button" className="ship_btn" onClick={estimateCalculate}>
-              Save Estimate
-            </button>
-          </div>
         </div>
       </div>
       <ToastContainer />

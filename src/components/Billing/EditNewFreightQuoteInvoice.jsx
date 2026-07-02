@@ -794,6 +794,7 @@ export default function EditNewFreightQuoteInvoice() {
 
       const payload = {
         freight_id: (selected && parseInt(selected) !== 0) ? parseInt(selected) : null,
+        order_id: getdata?.order_id,
         company_id: freight.company_id,
         invoice_for_country: freight.invoice_for_country || "",
         client_id: freight.client_id || getdata?.client_id || getdata?.user_id || null,

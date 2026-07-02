@@ -155,8 +155,8 @@ const Invoices = () => {
                                             </td>
                                             <td>{item.customer_invoice_no} </td>
                                             <td>
-                                                {item.quote_invoice_date || item.invoice_date
-                                                    ? new Date(item.quote_invoice_date || item.invoice_date).toLocaleDateString("en-GB")
+                                                {item.inv_date || item.inv_date
+                                                    ? new Date(item.inv_date || item.inv_date).toLocaleDateString("en-GB")
                                                     : "-"}
                                             </td>
                                             <td>{item.final_base_currency || "-"}</td>
@@ -214,12 +214,6 @@ const Invoices = () => {
                                                             <button type="button"
                                                                 className="dropdown-item">
                                                                 Create Supplier Adjust
-                                                            </button>
-                                                        </li>
-                                                        <li>
-                                                            <button type="button"
-                                                                className="dropdown-item">
-                                                                Create Invoice
                                                             </button>
                                                         </li>
                                                     </ul>

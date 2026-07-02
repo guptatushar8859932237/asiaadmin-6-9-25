@@ -927,8 +927,6 @@ export default function AddNewFreightQuoteInvoice() {
                 <option value="Select">Select</option>
                 <option value="L/S">L/S</option>
                 <option value="W/M">W/M</option>
-                <option value="CBM">CBM</option>
-                <option value="PCS">PCS</option>
               </select>
             </td>
             <td>

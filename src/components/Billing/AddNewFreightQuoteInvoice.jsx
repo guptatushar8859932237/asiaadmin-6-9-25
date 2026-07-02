@@ -168,10 +168,16 @@ export default function AddNewFreightQuoteInvoice() {
       );
       if (response.data && response.data.success && response.data.data && response.data.data.length > 0) {
         const orderInfo = response.data.data[0];
-        if (orderInfo.freight_id) {
+        if (orderInfo.freight_id && parseInt(orderInfo.freight_id) !== 0) {
           apidataget(orderInfo.freight_id);
         } else {
-          toast.error("This order is not associated with a freight ID");
+          setGetdata(orderInfo);
+          setSelected(0);
+          setFreight((prev) => ({
+            ...prev,
+            chargable_rate: orderInfo.chargable_rate || orderInfo.chargeable || "",
+          }));
+          initializeDefaultRows();
         }
       } else {
         toast.error("Failed to fetch order details");
@@ -691,8 +697,8 @@ export default function AddNewFreightQuoteInvoice() {
     customsRowsData.reduce((sum, item) => sum + item.calc.inclusive, 0);
 
   const estimateCalculate = async () => {
-    if (!selected) {
-      toast.error("Please select a freight first.");
+    if (selected === "" || selected === undefined || selected === null) {
+      toast.error("Please select an order first.");
       return;
     }
     if (!selectedSupplier) {
@@ -752,7 +758,7 @@ export default function AddNewFreightQuoteInvoice() {
       });
 
       const payload = {
-        freight_id: parseInt(selected),
+        freight_id: (selected && parseInt(selected) !== 0) ? parseInt(selected) : null,
         client_id: getdata?.client_id || getdata?.user_id || null,
         client_name: getdata?.client_name || "",
         company_id: freight.company_id,
@@ -1106,35 +1112,7 @@ export default function AddNewFreightQuoteInvoice() {
         </div>
       )}
 
-      {openmodal && (
-        <div className="custom-modal">
-          <div className="custom-modal-content">
-            <div className="custom-modal-header">
-              <h5 className="bold">Select Freight</h5>
-              <button className="btn-close" onClick={() => closemodal()}>
-                <CloseIcon />
-              </button>
-            </div>
-            <div className="custom-modal-body">
-              <div style={{ margin: "20px" }}>
-                <select
-                  className="form-select"
-                  value={selected}
-                  onChange={(e) => apidataget(e.target.value)}
-                >
-                  <option value="">Select Freight</option>
-                  {dat.map((item) => (
-                    <option key={item.freight_id} value={item.freight_id}>
-                      {item.freight_number}
-                    </option>
-                  ))}
-                </select>
-                <br />
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
+
 
       {openmodal2 && (
         <div className="custom-modal">
@@ -1175,9 +1153,7 @@ export default function AddNewFreightQuoteInvoice() {
             </div>
             <div className="d-flex gap-3 align-items-center blueText">
               <i onClick={downloadPDF1} className="fa fa-download" style={{ cursor: "pointer" }} aria-hidden="true"></i>
-              <button onClick={andlemodaloen} className="blueBtn">
-                Select Freight
-              </button>
+
               <button onClick={handleOpenOrderModal} className="blueBtn">
                 Select Order
               </button>

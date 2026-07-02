@@ -131,7 +131,7 @@ const Invoices = () => {
                             <tr>
                                 <th>Reference</th>
                                 <th>Customer Name</th>
-                                <th>Freight Number</th>
+                                <th>Freight / Order Number</th>
                                 <th>Customer Invoice Number</th>
                                 <th>Inv Date</th>
                                 <th>Currency</th>
@@ -148,8 +148,12 @@ const Invoices = () => {
                                         <tr key={item.quote_invoice_id}>
                                             <td>{item.reference_no || "-"}</td>
                                             <td>{item.client_name || "-"}</td>
-                                            <td>{item.freight_number || "-"}</td>
-                                            <td>{item.customer_invoice_no || "-"}</td>
+                                            <td>
+                                                {[item.freight_number, item.order_number]
+                                                    .filter(Boolean)
+                                                    .join(" / ") || "-"}
+                                            </td>
+                                            <td>{item.customer_invoice_no} </td>
                                             <td>
                                                 {item.quote_invoice_date || item.invoice_date
                                                     ? new Date(item.quote_invoice_date || item.invoice_date).toLocaleDateString("en-GB")
@@ -164,7 +168,7 @@ const Invoices = () => {
                                                     <div type="button" data-bs-toggle="dropdown">
                                                         <BsThreeDotsVertical />
                                                     </div>
-                                                   <ul className="dropdown-menu">
+                                                    <ul className="dropdown-menu">
                                                         <li>
                                                             <button type="button"
                                                                 className="dropdown-item"

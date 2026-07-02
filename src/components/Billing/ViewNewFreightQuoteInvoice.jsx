@@ -89,7 +89,7 @@ export default function ViewNewFreightQuoteInvoice({ hiddenPrintItem, onPrintCom
   }, []);
 
   useEffect(() => {
-    if (quoteInvoiceId && freightId) {
+    if (quoteInvoiceId) {
       fetchInvoiceData();
     }
   }, [quoteInvoiceId, freightId]);
@@ -125,7 +125,7 @@ export default function ViewNewFreightQuoteInvoice({ hiddenPrintItem, onPrintCom
         `${process.env.REACT_APP_BASE_URL}GetNewFreightQuoteInvoiceById`,
         {
           quote_invoice_id: parseInt(quoteInvoiceId),
-          freight_id: parseInt(freightId)
+          freight_id: (freightId && parseInt(freightId) !== 0) ? parseInt(freightId) : null
         }
       );
       if (response.data && response.data.success && response.data.data) {
@@ -143,8 +143,10 @@ export default function ViewNewFreightQuoteInvoice({ hiddenPrintItem, onPrintCom
             created_at: invoiceData.created_at || "",
           });
 
-          if (invoiceData.freight_id) {
+          if (invoiceData.freight_id && parseInt(invoiceData.freight_id) !== 0) {
             apidataget(invoiceData.freight_id, invoiceData);
+          } else {
+            setGetdata(invoiceData);
           }
 
           const items = invoiceData.components || [];

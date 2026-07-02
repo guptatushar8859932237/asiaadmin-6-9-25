@@ -7,6 +7,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { Button, InputLabel, MenuItem, Modal, Select } from "@mui/material";
+
 export default function Addshipment() {
   const location = useLocation();
   const data123 = location?.state?.id || {};
@@ -73,8 +74,6 @@ export default function Addshipment() {
     
       handleClose();
     };
-
-
   
   const [data1, setData1] = useState("");
   const [freightOptions, setFreightOptions] = useState([]);
@@ -86,14 +85,17 @@ export default function Addshipment() {
   const [selectedOption, setSelectedOption] = useState(null);
   const [selectedOption1, setSelectedOption1] = useState(null);
   const navigate = useNavigate();
+
   useEffect(() => {
     getCountries();
   }, []);
+
   useEffect(() => {
     getFreightOptions(data);
     getBatchOptions(data);
     GetClearanceOrder(data);
   }, [data?.des_country_id, data?.origin_country_id]);
+  
   const getFreightOptions = async (data) => {
     try {
       const payload = {
@@ -110,6 +112,7 @@ export default function Addshipment() {
       console.error("Error fetching freight options:", error.message);
     }
   };
+
   const GetClearanceOrder = async (data) => {
     try {
       const payload = {
@@ -127,6 +130,7 @@ export default function Addshipment() {
       console.error("Error fetching freight options:", error.message);
     }
   }
+
   const getBatchOptions = async (data) => {
     try {
       const payload = {
@@ -171,6 +175,7 @@ export default function Addshipment() {
     console.log(newValue)
     setSelectedOption(newValue);
   };
+
 const addShipment = async () => {
   const requiredFields = {
     load: "Load",
@@ -224,7 +229,7 @@ const addShipment = async () => {
       navigate("/Admin/manage-shipment");
     }
   } catch (error) {
-    toast.error("Error adding shipment");
+    toast.error(error?.response?.data?.message || "Error adding shipment");
   }
 };
 

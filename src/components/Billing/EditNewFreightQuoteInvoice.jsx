@@ -134,7 +134,7 @@ export default function EditNewFreightQuoteInvoice() {
     fetchDropdowns();
 
     // Fetch existing quote invoice data
-    if (quoteInvoiceId && freightId) {
+    if (quoteInvoiceId) {
       fetchInvoiceData();
     }
   }, [quoteInvoiceId, freightId]);
@@ -186,10 +186,16 @@ export default function EditNewFreightQuoteInvoice() {
       );
       if (response.data && response.data.success && response.data.data && response.data.data.length > 0) {
         const orderInfo = response.data.data[0];
-        if (orderInfo.freight_id) {
+        if (orderInfo.freight_id && parseInt(orderInfo.freight_id) !== 0) {
           apidataget(orderInfo.freight_id, false);
         } else {
-          toast.error("This order is not associated with a freight ID");
+          setGetdata(orderInfo);
+          setSelected(0);
+          setFreight((prev) => ({
+            ...prev,
+            chargable_rate: orderInfo.chargable_rate || orderInfo.chargeable || "",
+          }));
+          initializeDefaultRows();
         }
       } else {
         toast.error("Failed to fetch order details");
@@ -329,7 +335,7 @@ export default function EditNewFreightQuoteInvoice() {
         `${process.env.REACT_APP_BASE_URL}GetNewFreightQuoteInvoiceById`,
         {
           quote_invoice_id: parseInt(quoteInvoiceId),
-          freight_id: parseInt(freightId)
+          freight_id: (freightId && parseInt(freightId) !== 0) ? parseInt(freightId) : null
         }
       );
       console.log("GetNewFreightQuoteInvoiceById response data:", response.data);
@@ -356,8 +362,11 @@ export default function EditNewFreightQuoteInvoice() {
           });
 
           setSelectedSupplier(invoiceData.supplier_id || "");
-          if (invoiceData.freight_id) {
+          if (invoiceData.freight_id && parseInt(invoiceData.freight_id) !== 0) {
             apidataget(invoiceData.freight_id, true, invoiceData);
+          } else {
+            setGetdata(invoiceData);
+            setSelected(0);
           }
 
           const items = invoiceData.components || [];
@@ -710,8 +719,8 @@ export default function EditNewFreightQuoteInvoice() {
     customsRowsData.reduce((sum, item) => sum + item.calc.inclusive, 0);
 
   const estimateCalculate = async () => {
-    if (!selected) {
-      toast.error("Please select a freight first.");
+    if (selected === "" || selected === undefined || selected === null) {
+      toast.error("Please select an order first.");
       return;
     }
     if (!selectedSupplier) {
@@ -784,7 +793,7 @@ export default function EditNewFreightQuoteInvoice() {
       });
 
       const payload = {
-        freight_id: parseInt(selected),
+        freight_id: (selected && parseInt(selected) !== 0) ? parseInt(selected) : null,
         company_id: freight.company_id,
         invoice_for_country: freight.invoice_for_country || "",
         client_id: freight.client_id || getdata?.client_id || getdata?.user_id || null,
@@ -1211,35 +1220,7 @@ export default function EditNewFreightQuoteInvoice() {
         </div>
       )}
 
-      {openmodal && (
-        <div className="custom-modal">
-          <div className="custom-modal-content">
-            <div className="custom-modal-header">
-              <h5 className="bold">Select Freight</h5>
-              <button className="btn-close" onClick={() => closemodal()}>
-                <CloseIcon />
-              </button>
-            </div>
-            <div className="custom-modal-body">
-              <div style={{ margin: "20px" }}>
-                <select
-                  className="form-select"
-                  value={selected}
-                  onChange={(e) => apidataget(e.target.value)}
-                >
-                  <option value="">Select Freight</option>
-                  {dat.map((item) => (
-                    <option key={item.freight_id} value={item.freight_id}>
-                      {item.freight_number}
-                    </option>
-                  ))}
-                </select>
-                <br />
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
+
 
       {openmodal2 && (
         <div className="custom-modal">
@@ -1280,9 +1261,7 @@ export default function EditNewFreightQuoteInvoice() {
             </div>
             <div className="d-flex gap-3 align-items-center blueText">
               <i onClick={downloadPDF1} className="fa fa-download" style={{ cursor: "pointer" }} aria-hidden="true"></i>
-              <button onClick={andlemodaloen} className="blueBtn">
-                Select Freight
-              </button>
+
               <button onClick={handleOpenOrderModal} className="blueBtn">
                 Select Order
               </button>

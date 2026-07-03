@@ -92,6 +92,7 @@ export default function EditNewFreightQuoteInvoice() {
     client_name: "",
     quote_type: "ADMIN",
     freight_quote_estimate_id: null,
+    order_id: null,
   });
 
   const [getdata, setGetdata] = useState({});
@@ -186,6 +187,10 @@ export default function EditNewFreightQuoteInvoice() {
       );
       if (response.data && response.data.success && response.data.data && response.data.data.length > 0) {
         const orderInfo = response.data.data[0];
+        setFreight((prev) => ({
+          ...prev,
+          order_id: orderInfo.order_id || orderInfo.id || parseInt(orderId) || null,
+        }));
         if (orderInfo.freight_id && parseInt(orderInfo.freight_id) !== 0) {
           apidataget(orderInfo.freight_id, false);
         } else {
@@ -283,6 +288,7 @@ export default function EditNewFreightQuoteInvoice() {
             client_id: estimateData.client_id || prev.client_id,
             client_name: estimateData.client_name || prev.client_name,
             quote_type: estimateData.quote_type || prev.quote_type,
+            order_id: estimateData.order_id || prev.order_id || null,
           }));
 
           const items = estimateData.components || [];
@@ -359,6 +365,7 @@ export default function EditNewFreightQuoteInvoice() {
             client_name: invoiceData.client_name || "",
             quote_type: invoiceData.quote_type || "ADMIN",
             freight_quote_estimate_id: invoiceData.freight_quote_estimate_id || null,
+            order_id: invoiceData.order_id || null,
           });
 
           setSelectedSupplier(invoiceData.supplier_id || "");
@@ -794,7 +801,7 @@ export default function EditNewFreightQuoteInvoice() {
 
       const payload = {
         freight_id: (selected && parseInt(selected) !== 0) ? parseInt(selected) : null,
-        order_id: freight.order_id || getdata?.order_id,
+        order_id: (freight.order_id || getdata?.order_id) ? parseInt(freight.order_id || getdata?.order_id) : null,
         company_id: freight.company_id,
         invoice_for_country: freight.invoice_for_country || "",
         client_id: freight.client_id || getdata?.client_id || getdata?.user_id || null,

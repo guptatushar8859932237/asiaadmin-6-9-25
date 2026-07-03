@@ -93,6 +93,7 @@ export default function EditQuotesInvoice() {
     client_name: "",
     quote_type: "ADMIN",
     freight_quote_estimate_id: null,
+    order_id: null,
   });
 
   const [getdata, setGetdata] = useState({});
@@ -231,6 +232,7 @@ export default function EditQuotesInvoice() {
             client_id: estimateData.client_id || prev.client_id,
             client_name: estimateData.client_name || prev.client_name,
             quote_type: estimateData.quote_type || prev.quote_type,
+            order_id: estimateData.order_id || prev.order_id || null,
           }));
 
           const items = estimateData.components || [];
@@ -315,6 +317,7 @@ export default function EditQuotesInvoice() {
             client_name: invoiceData.client_name || "",
             quote_type: invoiceData.quote_type || "ADMIN",
             freight_quote_estimate_id: invoiceData.freight_quote_estimate_id || null,
+            order_id: invoiceData.order_id || null,
           });
 
           setSelectedSupplier(invoiceData.supplier_id || "");
@@ -748,6 +751,7 @@ export default function EditQuotesInvoice() {
 
       const payload = {
         freight_id: parseInt(selected),
+        order_id: (freight.order_id || getdata?.order_id) ? parseInt(freight.order_id || getdata?.order_id) : null,
         company_id: freight.company_id,
         invoice_for_country: freight.invoice_for_country || "",
         client_id: freight.client_id || getdata?.client_id || getdata?.user_id || null,

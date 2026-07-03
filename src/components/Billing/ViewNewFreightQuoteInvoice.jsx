@@ -6,6 +6,7 @@ import "react-toastify/dist/ReactToastify.css";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import logo from "../../Assests/logo.png";
 import { exportEstimatePdf } from "../../utils/pdfExportUtils";
+import { FaDownload } from "react-icons/fa";
 
 const getVatPercent = (vatTyp) => {
   if (!vatTyp) return 0;
@@ -129,7 +130,10 @@ export default function ViewNewFreightQuoteInvoice({ hiddenPrintItem, onPrintCom
         }
       );
       if (response.data && response.data.success && response.data.data) {
-        const invoiceData = response.data.data;
+        const rawData = response.data.data;
+        const invoiceData = Array.isArray(rawData)
+          ? (rawData.find((item) => String(item.id || item.freight_quote_estimate_id || item.quote_invoice_id) === String(quoteInvoiceId)) || rawData[0])
+          : rawData;
         if (invoiceData) {
           setFreight({
             reference_no: invoiceData.reference_no || "",
@@ -211,12 +215,15 @@ export default function ViewNewFreightQuoteInvoice({ hiddenPrintItem, onPrintCom
         `${process.env.REACT_APP_BASE_URL}freight-list-byId`,
         payload
       );
-      if (response.data && response.data.data) {
+      if (response.data && response.data.data && response.data.data[0]) {
         const freightObj = { ...response.data.data[0] };
         setGetdata(freightObj);
+      } else {
+        setGetdata(initialInvoiceData || {});
       }
     } catch (error) {
       console.error("Error loading freight details:", error);
+      setGetdata(initialInvoiceData || {});
     }
   };
 
@@ -692,7 +699,7 @@ export default function ViewNewFreightQuoteInvoice({ hiddenPrintItem, onPrintCom
                 <h4 className="freight_hd mb-0">View Freight Invoice</h4>
               </div>
               <div className="d-flex gap-3 align-items-center blueText">
-                <i onClick={downloadPDF1} className="fa fa-download" style={{ cursor: "pointer" }} aria-hidden="true"></i>
+                <FaDownload onClick={downloadPDF1} style={{ cursor: "pointer" }} />
               </div>
             </div>
           )}

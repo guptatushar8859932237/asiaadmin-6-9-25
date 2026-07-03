@@ -6,6 +6,7 @@ import "react-toastify/dist/ReactToastify.css";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import logo from "../../Assests/logo.png";
 import { exportEstimatePdf } from "../../utils/pdfExportUtils";
+import { FaDownload } from "react-icons/fa";
 
 const getVatPercent = (vatTyp) => {
   if (!vatTyp) return 0;
@@ -90,7 +91,7 @@ export default function ViewQuotesInvoice({ hiddenPrintItem, onPrintComplete }) 
   }, []);
 
   useEffect(() => {
-    if (quoteInvoiceId && freightId) {
+    if (quoteInvoiceId) {
       fetchInvoiceData();
     }
   }, [quoteInvoiceId, freightId]);
@@ -124,15 +125,24 @@ export default function ViewQuotesInvoice({ hiddenPrintItem, onPrintComplete }) 
     try {
       const apiEndpoint = isInvoice ? "GetNewFreightQuoteInvoiceById" : "GetFreightQuoteEstimateById";
       const payload = isInvoice
-        ? { quote_invoice_id: parseInt(quoteInvoiceId), freight_id: parseInt(freightId) }
-        : { freight_quote_estimate_id: parseInt(quoteInvoiceId), freight_id: parseInt(freightId) };
+        ? {
+            quote_invoice_id: parseInt(quoteInvoiceId),
+            freight_id: (freightId && parseInt(freightId) !== 0) ? parseInt(freightId) : null
+          }
+        : {
+            freight_quote_estimate_id: parseInt(quoteInvoiceId),
+            freight_id: (freightId && parseInt(freightId) !== 0) ? parseInt(freightId) : null
+          };
 
       const response = await axios.post(
         `${process.env.REACT_APP_BASE_URL}${apiEndpoint}`,
         payload
       );
       if (response.data && response.data.success && response.data.data) {
-        const invoiceData = response.data.data;
+        const rawData = response.data.data;
+        const invoiceData = Array.isArray(rawData)
+          ? (rawData.find((item) => String(item.id || item.freight_quote_estimate_id || item.quote_invoice_id) === String(quoteInvoiceId)) || rawData[0])
+          : rawData;
         if (invoiceData) {
           setFreight({
             reference_no: invoiceData.reference_no || "",
@@ -146,8 +156,10 @@ export default function ViewQuotesInvoice({ hiddenPrintItem, onPrintComplete }) 
             created_at: invoiceData.created_at || "",
           });
 
-          if (invoiceData.freight_id) {
+          if (invoiceData.freight_id && parseInt(invoiceData.freight_id) !== 0) {
             apidataget(invoiceData.freight_id, invoiceData);
+          } else {
+            setGetdata(invoiceData);
           }
 
           const items = invoiceData.components || [];
@@ -212,12 +224,15 @@ export default function ViewQuotesInvoice({ hiddenPrintItem, onPrintComplete }) 
         `${process.env.REACT_APP_BASE_URL}freight-list-byId`,
         payload
       );
-      if (response.data && response.data.data) {
+      if (response.data && response.data.data && response.data.data[0]) {
         const freightObj = { ...response.data.data[0] };
         setGetdata(freightObj);
+      } else {
+        setGetdata(initialInvoiceData || {});
       }
     } catch (error) {
       console.error("Error loading freight details:", error);
+      setGetdata(initialInvoiceData || {});
     }
   };
 
@@ -693,7 +708,7 @@ export default function ViewQuotesInvoice({ hiddenPrintItem, onPrintComplete }) 
                 <h4 className="freight_hd mb-0">{isInvoice ? "View Freight Invoice" : "View Freight Quote Invoice"}</h4>
               </div>
               <div className="d-flex gap-3 align-items-center blueText">
-                <i onClick={downloadPDF1} className="fa fa-download" style={{ cursor: "pointer" }} aria-hidden="true"></i>
+                <FaDownload onClick={downloadPDF1} style={{ cursor: "pointer" }} />
               </div>
             </div>
           )}

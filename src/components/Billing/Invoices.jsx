@@ -132,8 +132,10 @@ const Invoices = () => {
                                 <th>Reference</th>
                                 <th>Customer Name</th>
                                 <th>Freight / Order Number</th>
-                                <th>Customer Invoice Number</th>
+                                {/* <th>Customer Invoice No.</th> */}
+                                <th>Customer Ref</th>
                                 <th>Inv Date</th>
+                                <th>Country</th>
                                 <th>Currency</th>
                                 <th>Total</th>
                                 <th>Amount Due</th>
@@ -153,12 +155,14 @@ const Invoices = () => {
                                                     .filter(Boolean)
                                                     .join(" / ") || "-"}
                                             </td>
-                                            <td>{item.customer_invoice_no} </td>
+                                            {/* <td>{item.customer_invoice_no || "-"} </td> */}
+                                            <td>{item.customer_ref || "-"}</td>
                                             <td>
                                                 {item.inv_date || item.inv_date
                                                     ? new Date(item.inv_date || item.inv_date).toLocaleDateString("en-GB")
                                                     : "-"}
                                             </td>
+                                            <td>{item.invoice_for_country || "-"}</td>
                                             <td>{item.final_base_currency || "-"}</td>
                                             <td>{item.sumof_vatincl !== undefined ? item.sumof_vatincl : "0.00"}</td>
                                             <td>{item.sumof_vatincl !== undefined ? item.sumof_vatincl : "0.00"}</td>

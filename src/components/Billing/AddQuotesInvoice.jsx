@@ -112,7 +112,7 @@ export default function AddQuotesInvoice() {
     if (copyInvoiceData) {
       const invoiceId = copyInvoiceData.freight_quote_estimate_id || copyInvoiceData.quote_invoice_id;
       const freightId = copyInvoiceData.freight_id;
-      if (invoiceId && freightId) {
+      if (invoiceId) {
         loadQuoteInvoiceData(invoiceId, freightId);
       }
     }
@@ -268,15 +268,24 @@ export default function AddQuotesInvoice() {
     try {
       const apiEndpoint = isInvoice ? "GetNewFreightQuoteInvoiceById" : "GetFreightQuoteEstimateById";
       const payload = isInvoice
-        ? { quote_invoice_id: parseInt(invoiceId), freight_id: parseInt(freightId) }
-        : { freight_quote_estimate_id: parseInt(invoiceId), freight_id: parseInt(freightId) };
+        ? {
+            quote_invoice_id: parseInt(invoiceId),
+            freight_id: (freightId && parseInt(freightId) !== 0) ? parseInt(freightId) : null
+          }
+        : {
+            freight_quote_estimate_id: parseInt(invoiceId),
+            freight_id: (freightId && parseInt(freightId) !== 0) ? parseInt(freightId) : null
+          };
 
       const response = await axios.post(
         `${process.env.REACT_APP_BASE_URL}${apiEndpoint}`,
         payload
       );
       if (response.data && response.data.success && response.data.data) {
-        const invoiceData = response.data.data;
+        const rawData = response.data.data;
+        const invoiceData = Array.isArray(rawData)
+          ? (rawData.find((item) => String(item.id || item.freight_quote_estimate_id || item.quote_invoice_id) === String(invoiceId)) || rawData[0])
+          : rawData;
         if (invoiceData) {
           setFreight({
             customer_invoice_no: invoiceData.customer_invoice_no || "",
@@ -290,8 +299,10 @@ export default function AddQuotesInvoice() {
           });
 
           setSelectedSupplier(invoiceData.supplier_id || "");
-          if (invoiceData.freight_id) {
+          if (invoiceData.freight_id && parseInt(invoiceData.freight_id) !== 0) {
             apidataget(invoiceData.freight_id, invoiceData);
+          } else {
+            setGetdata(invoiceData);
           }
 
           const items = invoiceData.components || [];

@@ -329,7 +329,10 @@ export default function AddNewFreightQuoteInvoice() {
         }
       );
       if (response.data && response.data.success && response.data.data) {
-        const invoiceData = response.data.data;
+        const rawData = response.data.data;
+        const invoiceData = Array.isArray(rawData)
+          ? (rawData.find((item) => String(item.id || item.freight_quote_estimate_id || item.quote_invoice_id) === String(invoiceId)) || rawData[0])
+          : rawData;
         if (invoiceData) {
           setFreight({
             customer_invoice_no: invoiceData.customer_invoice_no || "",

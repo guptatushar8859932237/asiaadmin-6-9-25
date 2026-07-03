@@ -132,7 +132,7 @@ export default function EditQuotesInvoice() {
     fetchDropdowns();
 
     // Fetch existing quote invoice data
-    if (quoteInvoiceId && freightId) {
+    if (quoteInvoiceId) {
       fetchInvoiceData();
     }
   }, [quoteInvoiceId, freightId]);
@@ -281,8 +281,14 @@ export default function EditQuotesInvoice() {
     try {
       const apiEndpoint = isInvoice ? "GetNewFreightQuoteInvoiceById" : "GetFreightQuoteEstimateById";
       const payload = isInvoice
-        ? { quote_invoice_id: parseInt(quoteInvoiceId), freight_id: parseInt(freightId) }
-        : { freight_quote_estimate_id: parseInt(quoteInvoiceId), freight_id: parseInt(freightId) };
+        ? {
+            quote_invoice_id: parseInt(quoteInvoiceId),
+            freight_id: (freightId && parseInt(freightId) !== 0) ? parseInt(freightId) : null
+          }
+        : {
+            freight_quote_estimate_id: parseInt(quoteInvoiceId),
+            freight_id: (freightId && parseInt(freightId) !== 0) ? parseInt(freightId) : null
+          };
 
       const response = await axios.post(
         `${process.env.REACT_APP_BASE_URL}${apiEndpoint}`,
@@ -312,8 +318,10 @@ export default function EditQuotesInvoice() {
           });
 
           setSelectedSupplier(invoiceData.supplier_id || "");
-          if (invoiceData.freight_id) {
+          if (invoiceData.freight_id && parseInt(invoiceData.freight_id) !== 0) {
             apidataget(invoiceData.freight_id, true, invoiceData);
+          } else {
+            setGetdata(invoiceData);
           }
 
           const items = invoiceData.components || [];

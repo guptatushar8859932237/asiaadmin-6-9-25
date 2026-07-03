@@ -5,7 +5,8 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import logo from "../../Assests/logo.png";
-import { exportEstimatePdf } from "../../utils/pdfExportUtils";
+import jsPDF from "jspdf";
+import autoTable from "jspdf-autotable";
 
 const getVatPercent = (vatTyp) => {
   if (!vatTyp) return 0;
@@ -225,11 +226,385 @@ export default function ViewQuotesInvoice({ hiddenPrintItem, onPrintComplete }) 
     navigate(-1);
   };
 
-  const downloadPDF1 = async () => {
-    const element = pdfRef.current;
-    if (!element) return;
+  // ── PDF helpers (same pattern as Viewsupplierinvoice.jsx) ──────────────────
+
+  const loadImageAsDataUrl = async (url) => {
     try {
-      await exportEstimatePdf(element, "QuoteInvoice.pdf");
+      const res = await fetch(url);
+      const blob = await res.blob();
+      return await new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.onloadend = () => resolve(reader.result);
+        reader.onerror = () => resolve(null);
+        reader.readAsDataURL(blob);
+      });
+    } catch (err) {
+      console.error("Could not load logo for PDF:", err);
+      return null;
+    }
+  };
+
+  // Bold label left, plain value right-aligned within width
+  const drawLabelValueRow = (doc, x, y, width, label, value) => {
+    doc.setFontSize(8.5);
+    doc.setTextColor(20, 20, 20);
+    const valStr = String(value ?? "");
+    const labelStr = String(label ?? "");
+    doc.setFont("helvetica", "normal");
+    const valW = valStr ? doc.getTextWidth(valStr) : 0;
+    const maxLabelW = width - valW - 3;
+    doc.setFont("helvetica", "bold");
+    const truncated = doc.splitTextToSize(labelStr, maxLabelW > 0 ? maxLabelW : width)[0] ?? "";
+    doc.text(truncated, x, y);
+    doc.setFont("helvetica", "normal");
+    if (valStr) doc.text(valStr, x + width, y, { align: "right" });
+  };
+
+  // Navy filled bar with centred white bold text
+  const drawSectionBar = (doc, x, y, width, height, text) => {
+    doc.setFillColor(27, 34, 69);
+    doc.rect(x, y, width, height, "F");
+    doc.setTextColor(255, 255, 255);
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(9);
+    doc.text(text, x + width / 2, y + height / 2 + 1.2, { align: "center" });
+    doc.setTextColor(20, 20, 20);
+  };
+
+  // ── PDF export (jsPDF + autoTable, A4 landscape) ───────────────────────────
+
+  const downloadPDF1 = async () => {
+    try {
+      const doc = new jsPDF({ orientation: "landscape", unit: "mm", format: "a4" });
+      const pageWidth = doc.internal.pageSize.getWidth();   // 297 mm
+      const pageHeight = doc.internal.pageSize.getHeight();  // 210 mm
+      const margin = 10;
+      const contentWidth = pageWidth - margin * 2;
+      const colSplitX = margin + contentWidth / 2;
+
+      // ── 1. LOGO + COMPANY INFO ───────────────────────────────────────────────
+      let cursorY = margin;
+
+      const logoDataUrl = await loadImageAsDataUrl(logo);
+      if (logoDataUrl) {
+        try {
+          const imgFmt = (logoDataUrl.split(";")[0].split("/")[1] || "PNG").toUpperCase();
+          doc.addImage(logoDataUrl, imgFmt, margin, cursorY, 38, 17);
+        } catch (err) {
+          console.error("Could not embed logo:", err);
+        }
+      }
+      const companyX = margin + 150;
+      const addr = freight.company_address;
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(14);
+      doc.setTextColor(20, 20, 20);
+      doc.text("Asia Direct - Africa", companyX, cursorY + 5);
+      doc.setDrawColor(200, 40, 40);
+      doc.setLineWidth(0.6);
+      doc.line(companyX, cursorY + 6.5, companyX + 38, cursorY + 6.5);
+      doc.setFont("helvetica", "normal");
+      doc.setFontSize(8.5);
+      doc.setTextColor(60, 60, 60);
+      let infoY = cursorY + 11;
+      const companyLines = [
+        addr?.company_name || "",
+        addr?.address_line || "",
+      ].filter(Boolean);
+      companyLines.forEach((line) => { doc.text(line, companyX, infoY); infoY += 3.6; });
+
+      doc.setFont("helvetica", "bold");
+      doc.text("Registration No.:- ", companyX, infoY);
+      doc.setFont("helvetica", "normal");
+      doc.text(addr?.company_registration_no || "", companyX + 28, infoY);
+      infoY += 3.6;
+      doc.setFont("helvetica", "bold");
+      doc.text("VAT No.:- ", companyX, infoY);
+      doc.setFont("helvetica", "normal");
+      doc.text(addr?.tax_vat_no || "", companyX + 14, infoY);
+      infoY += 3.6;
+      doc.setFont("helvetica", "bold");
+      doc.text("Importers code:- ", companyX, infoY);
+      doc.setFont("helvetica", "normal");
+      doc.text(addr?.postal_code || "", companyX + 24, infoY);
+
+      cursorY = margin + 28;
+
+      // ── 2. "FREIGHT INVOICE" / "FREIGHT ESTIMATE" title bar ─────────────────
+      const titleText = isInvoice ? "FREIGHT INVOICE" : "FREIGHT ESTIMATE";
+      doc.setDrawColor(27, 34, 69);
+      doc.setLineWidth(0.5);
+      doc.rect(margin, cursorY, contentWidth, 7);
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(10);
+      doc.setTextColor(20, 20, 20);
+      doc.text(titleText, pageWidth / 2, cursorY + 4.8, { align: "center" });
+      cursorY += 7;
+
+      // ── 3. TWO-COLUMN INFO BOX ───────────────────────────────────────────────
+      const rowH = 4.5;
+      const barH = 5.5;
+      const pad = 3;
+      const lPad = 3;
+      const lW = contentWidth / 2 - lPad * 2;
+      const rW = contentWidth / 2 - lPad * 2;
+      const drawRow = (doc, x, rowTop, width, label, value) => {
+        const baseline = rowTop + rowH * 0.68;
+        drawLabelValueRow(doc, x, baseline, width, label, value);
+      };
+
+      const boxTop = cursorY;
+
+      // ── LEFT COLUMN: client / ISO commodity / rate of exchange ─────────────
+      let ly = boxTop + pad;
+
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(9);
+      doc.setTextColor(20, 20, 20);
+      doc.text(String(getdata?.client_name || ""), margin + lPad, ly + 2.5);
+      ly += 5;
+
+      doc.setFont("helvetica", "normal");
+      doc.setFontSize(8.5);
+      doc.text(String(getdata?.address_1 || ""), margin + lPad, ly + 2.5, { maxWidth: lW });
+      ly += 5;
+
+      drawSectionBar(doc, margin, ly, contentWidth / 2, barH, "Shipment Details ISO Commodity");
+      ly += barH;
+
+      const leftFields = [
+        ["No. of Packages", getdata?.no_of_packages || ""],
+        ["Package Type", getdata?.package_type || ""],
+        ["Weight", getdata?.weight || ""],
+        ["M3", getdata?.m3 || ""],
+        ["Volumetric (kgs)", getdata?.volumetric_weight || ""],
+        ["Chargeable", freight.chargable_rate || ""],
+        ["Commodity", getdata?.commodity || ""],
+        ["Hazardous", getdata?.hazardous || ""],
+        ["Incoterm", getdata?.incoterm || ""],
+        ["Freight", getdata?.freight || ""],
+      ];
+      leftFields.forEach(([label, value]) => {
+        drawRow(doc, margin + lPad, ly, lW, label, value);
+        ly += rowH;
+      });
+
+      drawSectionBar(doc, margin, ly, contentWidth / 2, barH, "Rate of Exchange");
+      ly += barH;
+
+      drawRow(doc, margin + lPad, ly, lW, "Final Base Currency", freight.final_base_currency || "");
+      ly += rowH;
+      ly += pad;
+
+      // ── RIGHT COLUMN: invoice info / shipment details ────────────────────────
+      let ry = boxTop + pad - 0.7;
+      const rightColX = colSplitX + lPad;
+
+      const invoiceFields = [
+        ["Invoice For", freight.invoice_for_country || ""],
+        ["Invoice No.", freight.customer_invoice_no || ""],
+        ["Reference", freight.reference_no || ""],
+        ["Quote Date", shipmentDate("quote_invoice_date", "date")],
+      ];
+      invoiceFields.forEach(([label, value]) => {
+        drawRow(doc, rightColX, ry, rW, label, value);
+        ry += rowH;
+      });
+
+      drawSectionBar(doc, colSplitX, ry, contentWidth / 2, barH, "Shipment Details");
+      ry += barH + 2;
+
+      const shipmentFields = [
+        ["Country of Origin", getdata?.country_of_origin || ""],
+        ["Place of Receipt", getdata?.place_of_receipt || ""],
+        ["Port of Loading", getdata?.port_of_loading || ""],
+        ["Port of Discharge", getdata?.port_of_discharge || ""],
+        ["Place of Delivery", getdata?.place_of_delivery || ""],
+        ["Freight Collect Accepted", getdata?.freight_collect_accepted || ""],
+        ["Date", shipmentDate("created_at")],
+      ];
+      shipmentFields.forEach(([label, value]) => {
+        drawRow(doc, rightColX, ry, rW, label, value);
+        ry += rowH;
+      });
+      ry += pad;
+
+      // ── BORDERS drawn after content so heights are exact ─────────────────────
+      const leftBoxH = ly - boxTop;
+      const rightBoxH = ry - boxTop;
+      const outerBoxH = Math.max(leftBoxH, rightBoxH);
+
+      doc.setDrawColor(27, 34, 69);
+      doc.setLineWidth(0.5);
+      doc.rect(margin, boxTop, contentWidth, outerBoxH);
+      doc.line(colSplitX, boxTop, colSplitX, boxTop + outerBoxH);
+      if (leftBoxH < outerBoxH)
+        doc.line(margin, boxTop + leftBoxH, colSplitX, boxTop + leftBoxH);
+      if (rightBoxH < outerBoxH)
+        doc.line(colSplitX, boxTop + rightBoxH, margin + contentWidth, boxTop + rightBoxH);
+
+      cursorY = boxTop + outerBoxH + 4;
+
+      // ── 4. "SHIPMENT ESTIMATE" label ────────────────────────────────────────
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(9.5);
+      doc.setTextColor(20, 20, 20);
+      doc.text("SHIPMENT ESTIMATE", margin, cursorY);
+      cursorY += 3;
+
+      // ── 5. CHARGES TABLE (autoTable) ──────────────────────────────────────────
+
+      const getPercentageOnly = (value) => {
+        if (!value) return "";
+        if (!isNaN(value) && !isNaN(parseFloat(value)))
+          return parseFloat(value).toFixed(2);
+        const match = String(value).match(/(\d+(?:\.\d+)?)/);
+        return match ? parseFloat(match[1]).toFixed(2) : "";
+      };
+
+      const formatValuePDF = (val) => {
+        const num = parseFloat(val);
+        if (isNaN(num) || num === 0) return "-";
+        return num.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+      };
+
+      const sectionStyle = { fillColor: [240, 242, 245], fontStyle: "bold", halign: "left", textColor: [20, 20, 20] };
+      const totalStyle = { fillColor: [250, 250, 250], fontStyle: "bold", textColor: [20, 20, 20] };
+      const styledCell = (content, styles) => ({ content: content ?? "", styles });
+
+      const buildSectionRows = (title, rowsData, totals) => {
+        if (!rowsData || rowsData.length === 0) return [];
+        const rows = [];
+
+        // Section header row
+        rows.push([{ content: title, colSpan: 17, styles: sectionStyle }]);
+
+        rowsData.forEach(({ row, calc }) => {
+          const vatPctStr = getPercentageOnly(row.vatTyp) ? `${getPercentageOnly(row.vatTyp)}%` : "";
+          const vatDisplay = (row.vatTyp === "Manual VAT" || row.vatTyp === "Manual VAT (Capital Goods)")
+            ? String(row.vat ?? "")
+            : formatMoney(calc.vat);
+
+          rows.push([
+            row.description || "",
+            row.qty !== "" ? String(row.qty) : "",
+            row.currency && row.currency !== "Select" ? row.currency : "",
+            row.cost !== "" ? String(row.cost) : "",
+            row.unitType && row.unitType !== "Select" ? row.unitType : "",
+            formatMoney(calc.unit),
+            formatMoney(calc.tCost),
+            row.gp_percent !== "" ? String(row.gp_percent) : "",
+            formatMoney(calc.salesPrice),
+            row.roe !== "" ? String(row.roe) : "",
+            isNaN(calc.finalAmt) ? "-" : calc.finalAmt.toFixed(2),
+            vatPctStr,
+            row.discPercent ? String(row.discPercent) : "",
+            formatValuePDF(calc.disc),
+            formatValuePDF(calc.exclusive),
+            vatDisplay,
+            formatMoney(calc.inclusive),
+          ]);
+
+          // Comment row beneath the item row (only when a comment exists)
+          if (row.comment && String(row.comment).trim() !== "") {
+            rows.push([
+              {
+                content: `Comment: ${row.comment}`,
+                colSpan: 17,
+                styles: {
+                  fontStyle: "italic",
+                  textColor: [90, 90, 90],
+                  cellWidth: "auto",
+                  overflow: "linebreak",
+                  halign: "left",
+                },
+              },
+            ]);
+          }
+        });
+
+        // Section total row
+        rows.push([
+          { content: `Total - ${title}`, colSpan: 6, styles: { ...totalStyle, halign: "left" } },
+          styledCell(formatMoney(totals.tCost), { ...totalStyle, halign: "right" }),
+          styledCell("", totalStyle),
+          styledCell("", totalStyle),
+          styledCell(formatMoney(totals.finalAmt), { ...totalStyle, halign: "right" }),
+          styledCell("", totalStyle),
+          styledCell("", totalStyle),
+          styledCell("", totalStyle),
+          styledCell("", totalStyle),
+          styledCell(formatValuePDF(totals.disc), { ...totalStyle, halign: "right" }),
+          styledCell(formatValuePDF(totals.exclusive), { ...totalStyle, halign: "right" }),
+          styledCell(formatValuePDF(totals.vat), { ...totalStyle, halign: "right" }),
+        ]);
+
+        return rows;
+      };
+
+      const sumField = (rowsData, key) => rowsData.reduce((s, i) => s + i.calc[key], 0);
+
+      const tableBody = [
+        ...buildSectionRows("Origin Charges", originRowsData, { tCost: totalChageswithOutExchange, finalAmt: totalChangeRoeOrigin, disc: sumField(originRowsData, "disc"), exclusive: sumField(originRowsData, "exclusive"), vat: sumField(originRowsData, "vat") }),
+        ...buildSectionRows("Freight Charges", freightRowsData, { tCost: totalChageswithOutExchangeinsurance, finalAmt: totalChangeRoeOriginaftercalcuinsurance, disc: sumField(freightRowsData, "disc"), exclusive: sumField(freightRowsData, "exclusive"), vat: sumField(freightRowsData, "vat") }),
+        ...buildSectionRows("Transit Charges", transitRowsData, { tCost: totalChageswithOuTransit, finalAmt: transitRoe, disc: sumField(transitRowsData, "disc"), exclusive: sumField(transitRowsData, "exclusive"), vat: sumField(transitRowsData, "vat") }),
+        ...buildSectionRows("Destination Charges", destinationRowsData, { tCost: totalChaDestinationTransit, finalAmt: totalChaDestinationTransitRoe, disc: sumField(destinationRowsData, "disc"), exclusive: sumField(destinationRowsData, "exclusive"), vat: sumField(destinationRowsData, "vat") }),
+        ...buildSectionRows("Admin Charges", adminRowsData, { tCost: totaAdminransit, finalAmt: totalAdminnsitRoe, disc: sumField(adminRowsData, "disc"), exclusive: sumField(adminRowsData, "exclusive"), vat: sumField(adminRowsData, "vat") }),
+        ...buildSectionRows("Customs Charges", customsRowsData, { tCost: customsTotalTCost, finalAmt: customsTotalFinalAmt, disc: sumField(customsRowsData, "disc"), exclusive: sumField(customsRowsData, "exclusive"), vat: sumField(customsRowsData, "vat") }),
+
+        // Grand total
+        [
+          { content: "GRAND TOTAL", colSpan: 10, styles: { fillColor: [226, 232, 240], fontStyle: "bold", halign: "left", textColor: [20, 20, 20] } },
+          { content: formatMoney(sumofRoe), styles: { fillColor: [226, 232, 240], fontStyle: "bold", halign: "right", textColor: [20, 20, 20] } },
+          { content: "", styles: { fillColor: [226, 232, 240] } },
+          { content: "", styles: { fillColor: [226, 232, 240] } },
+          { content: formatValuePDF([...originRowsData, ...freightRowsData, ...transitRowsData, ...destinationRowsData, ...adminRowsData, ...customsRowsData].reduce((s, i) => s + i.calc.disc, 0)), styles: { fillColor: [226, 232, 240], fontStyle: "bold", halign: "right" } },
+          { content: formatValuePDF([...originRowsData, ...freightRowsData, ...transitRowsData, ...destinationRowsData, ...adminRowsData, ...customsRowsData].reduce((s, i) => s + i.calc.exclusive, 0)), styles: { fillColor: [226, 232, 240], fontStyle: "bold", halign: "right" } },
+          { content: formatValuePDF([...originRowsData, ...freightRowsData, ...transitRowsData, ...destinationRowsData, ...adminRowsData, ...customsRowsData].reduce((s, i) => s + i.calc.vat, 0)), styles: { fillColor: [226, 232, 240], fontStyle: "bold", halign: "right" } },
+        ],
+      ];
+
+      autoTable(doc, {
+        startY: cursorY,
+        margin: { left: margin, right: margin, top: margin, bottom: 14 },
+        head: [[
+          "Description", "QTY", "Currency", "Cost", "Unit Type", "Unit",
+          "T/ Cost", "GP%", "Sales/ P", "ROE", "Final Amount",
+          "VAT Type", "Disc %", "Discount", "Exclusive", "VAT", "VAT Incl",
+        ]],
+        body: tableBody,
+        theme: "grid",
+        styles: {
+          fontSize: 7.5,
+          cellPadding: 1.6,
+          valign: "middle",
+          lineColor: [28, 28, 28],
+          lineWidth: 0.1,
+          textColor: [20, 20, 20],
+        },
+        headStyles: {
+          fillColor: [27, 34, 69],
+          textColor: [255, 255, 255],
+          fontStyle: "bold",
+          halign: "left",
+          lineColor: [255, 255, 255],
+        },
+        rowPageBreak: "avoid",
+        showHead: "everyPage",
+        didDrawPage: (data) => {
+          doc.setFont("helvetica", "normal");
+          doc.setFontSize(8);
+          doc.setTextColor(120, 120, 120);
+          doc.text(
+            `Page ${doc.internal.getNumberOfPages()}`,
+            pageWidth - margin,
+            pageHeight - 6,
+            { align: "right" }
+          );
+        },
+      });
+
+      doc.save(isInvoice ? "FreightInvoice.pdf" : "FreightQuoteEstimate.pdf");
     } catch (error) {
       console.error("PDF generation failed:", error);
       toast.error("Failed to generate PDF");

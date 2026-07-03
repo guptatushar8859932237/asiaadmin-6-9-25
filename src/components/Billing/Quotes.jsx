@@ -154,6 +154,7 @@ const Quotes = () => {
                                 <th>Freight Number</th>
                                 <th>Customer Invoice Number</th>
                                 <th>Inv Date</th>
+                                <th>Country</th>
                                 <th>Currency</th>
                                 <th>Total</th>
                                 <th>Amount Due</th>
@@ -175,6 +176,7 @@ const Quotes = () => {
                                                     ? new Date(item.inv_date).toLocaleDateString("en-GB")
                                                     : "-"}
                                             </td>
+                                            <td>{item.invoice_for_country || "-"}</td>
                                             <td>{item.final_base_currency || "-"}</td>
                                             <td>{item.sumof_vatincl !== undefined ? item.sumof_vatincl : "0.00"}</td>
                                             <td>{item.sumof_vatincl !== undefined ? item.sumof_vatincl : "0.00"}</td>

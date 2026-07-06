@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import Select from "react-select";
 import { Modal, Button, Form } from "react-bootstrap";
+
 const Addfright = () => {
   const [lcientlist, setLcientlist] = useState([]);
   const [staffdata, setStaffdata] = useState([]);
@@ -115,6 +116,9 @@ const Addfright = () => {
     console.log(useridsales.id);
     console.log(selectedOption);
     let error = {};
+    if (!value.date) {
+      error.date = "Freight date is required"
+    }
     if (!value.type) {
       error.type = "Freight type is required";
     }
@@ -535,6 +539,7 @@ const Addfright = () => {
                             onChange={handlechange}
                             name="date"
                           />
+                          <p className="text-danger mb-0">{error.date}</p>
                         </div>
                         <div className="col-6">
                           <label>Client</label>

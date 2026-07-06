@@ -309,9 +309,9 @@ export default function BillingTable() {
   return (
     <>
       {loader ? (
-        <div class="loader-container">
-          <div class="loader"></div>
-          <p class="loader-text">Updating... Invoice may take some time</p>
+        <div className="loader-container">
+          <div className="loader"></div>
+          <p className="loader-text">Updating... Invoice may take some time</p>
         </div>
       ) : (
         <div className="wpWrapper">

@@ -48,6 +48,52 @@ const VAT_OPTIONS = [
   { value: "Manual VAT (Capital Goods)", label: "Manual VAT (Capital Goods)" }
 ];
 
+// ── Terms & Conditions content ──────────────────────────────────────────────
+// Kept as plain data (not JSX) on purpose: today it's a hard-coded default,
+// but the shape below (intro string + numbered {label, text} items) is exactly
+// what an admin-configurable / API-driven terms list would look like too.
+// To make this dynamic later: fetch this same shape from the backend and feed
+// it into the `termsAndConditions` state below (see the TODO near its useState)
+// — no changes needed to the rendering or PDF logic.
+const DEFAULT_TERMS_AND_CONDITIONS = {
+  intro:
+    "All business is undertaken subject to our General Trading Conditions, a copy of which is available on request. (E&OE) Errors and Omissions Excepted.",
+  items: [
+    {
+      label: "Insurance",
+      text: "All goods are shipped at the customer's risk. If insurance is required, it must be arranged and paid for by the customer.",
+    },
+    {
+      label: "Weight and Dimensions",
+      text: "Changes in the actual weight, dimensions of the goods from the initial quote may affect the final pricing at billing. The customer will be notified of any price adjustments.",
+    },
+    {
+      label: "Misdeclaration of Goods",
+      text: "Any misdeclaration of goods will result in additional charges and potential legal consequences. Misdeclaration may include cargo description, costs, hazardous e.t.c.",
+    },
+    {
+      label: "Customs Duties & VAT",
+      text: "The customer is responsible for all customs duties and VAT applicable to their shipment.",
+    },
+    {
+      label: "Customs Stops & Inspections",
+      text: "Any costs incurred due to customs stops and inspections will be billed to the customer.",
+    },
+    {
+      label: "Late Collection & Storage Fees",
+      text: "Goods not collected within the agreed timeframe will incur storage fees. These fees are payable by the customer.",
+    },
+    {
+      label: "Late Payment of Invoices",
+      text: "Late payment of invoices will attract interest charges as per the company's policy.",
+    },
+    {
+      label: "Abandoned Cargo",
+      text: "Cargo not collected within 28 days will be regarded abandoned, the customer will be liable for any disposal costs and associated fees.",
+    },
+  ],
+};
+
 export default function ViewQuotesInvoice({ hiddenPrintItem, onPrintComplete }) {
   const location = useLocation();
   const navigate = useNavigate();
@@ -66,6 +112,12 @@ export default function ViewQuotesInvoice({ hiddenPrintItem, onPrintComplete }) 
   });
 
   const [getdata, setGetdata] = useState({});
+
+  // TODO (future): replace this default with data fetched from the backend
+  // (e.g. an admin-managed "terms & conditions" endpoint) inside fetchDropdowns
+  // or its own effect — just call setTermsAndConditions with the same
+  // { intro, items: [{ label, text }] } shape and everything below keeps working.
+  const [termsAndConditions, setTermsAndConditions] = useState(DEFAULT_TERMS_AND_CONDITIONS);
 
   // Dropdown Options state
   const [originDropdown, setOriginDropdown] = useState([]);
@@ -607,18 +659,144 @@ export default function ViewQuotesInvoice({ hiddenPrintItem, onPrintComplete }) 
         },
         rowPageBreak: "avoid",
         showHead: "everyPage",
-        didDrawPage: (data) => {
-          doc.setFont("helvetica", "normal");
-          doc.setFontSize(8);
-          doc.setTextColor(120, 120, 120);
-          doc.text(
-            `Page ${doc.internal.getNumberOfPages()}`,
-            pageWidth - margin,
-            pageHeight - 6,
-            { align: "right" }
-          );
-        },
       });
+
+      // ── 6. TERMS & CONDITIONS + BANKING DETAILS (dynamic, page-break aware) ──
+      // Visual design follows the bordered header-bar + content-box pattern used
+      // elsewhere in this document (e.g. "SHIPMENT ESTIMATE"). The box's height is
+      // measured from its actual content, and the whole box — like Banking
+      // Details below it — moves to a fresh page as a unit whenever it doesn't
+      // fit in the remaining space, so longer/variable content (e.g. once this
+      // is fetched dynamically) never gets cut off or overlaps the footer.
+      const bottomLimit = pageHeight - 15;
+      const boxWidth = pageWidth - margin * 2;
+      const innerWidth = boxWidth - 6; // 3mm padding each side
+      const lineHeight = 3.6;
+
+      const ensureSpace = (y, neededHeight) => {
+        if (y + neededHeight > bottomLimit) {
+          doc.addPage();
+          return margin;
+        }
+        return y;
+      };
+
+      // Lays out "<boldLead> <text>" as one paragraph: the bold lead starts the
+      // first line, the rest of the text wraps normally beneath it.
+      const layoutBoldLeadParagraph = (boldLead, text, maxWidth) => {
+        doc.setFont("helvetica", "bold");
+        doc.setFontSize(7.5);
+        const leadWidth = doc.getTextWidth(`${boldLead} `);
+        doc.setFont("helvetica", "normal");
+        const words = String(text ?? "").split(" ");
+        let firstLine = "";
+        let i = 0;
+        const firstLineMaxWidth = maxWidth - leadWidth;
+        while (i < words.length) {
+          const candidate = firstLine ? `${firstLine} ${words[i]}` : words[i];
+          if (!firstLine || doc.getTextWidth(candidate) <= firstLineMaxWidth) {
+            firstLine = candidate;
+            i++;
+          } else break;
+        }
+        const restLines = i < words.length ? doc.splitTextToSize(words.slice(i).join(" "), maxWidth) : [];
+        return { leadWidth, firstLine, restLines, height: (1 + restLines.length) * lineHeight };
+      };
+
+      // ── Measure content first so the box can be drawn at its exact height ──
+      doc.setFont("helvetica", "normal");
+      doc.setFontSize(7.5);
+      const introWrapped = doc.splitTextToSize(termsAndConditions.intro, innerWidth);
+      const introHeight = introWrapped.length * lineHeight;
+
+      const itemLayouts = termsAndConditions.items.map((item, index) => ({
+        boldLead: `${index + 1}. ${item.label}:`,
+        layout: layoutBoldLeadParagraph(`${index + 1}. ${item.label}:`, item.text, innerWidth),
+      }));
+      const itemsHeight = itemLayouts.reduce((sum, { layout }) => sum + layout.height + 1.5, 0);
+
+      const headerH = 7;
+      const topPad = 4;
+      const bottomPad = 3;
+      const contentHeight = topPad + introHeight + 2 + itemsHeight + bottomPad;
+      const boxHeight = headerH + contentHeight;
+
+      let termsY = doc.lastAutoTable?.finalY ? doc.lastAutoTable.finalY + 8 : cursorY + 20;
+      termsY = ensureSpace(termsY, boxHeight);
+
+      // ── Header bar (bordered, matches the on-screen "TERMS & CONDITIONS" label) ──
+      doc.setDrawColor(0, 0, 0);
+      doc.setLineWidth(0.3);
+      doc.rect(margin, termsY, boxWidth, headerH);
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(9);
+      doc.setTextColor(20, 20, 20);
+      doc.text("TERMS & CONDITIONS", margin + 3, termsY + headerH / 2 + 1.3);
+
+      // ── Content box ──
+      doc.rect(margin, termsY + headerH, boxWidth, contentHeight);
+
+      let ty = termsY + headerH + topPad;
+      doc.setFont("helvetica", "normal");
+      doc.setFontSize(7.5);
+      doc.setTextColor(60, 60, 60);
+      introWrapped.forEach((line) => {
+        doc.text(line, margin + 3, ty);
+        ty += lineHeight;
+      });
+      ty += 2;
+
+      itemLayouts.forEach(({ boldLead, layout }) => {
+        doc.setFont("helvetica", "bold");
+        doc.setFontSize(7.5);
+        doc.setTextColor(20, 20, 20);
+        doc.text(`${boldLead} `, margin + 3, ty);
+        doc.setFont("helvetica", "normal");
+        doc.setTextColor(60, 60, 60);
+        doc.text(layout.firstLine, margin + 3 + layout.leadWidth, ty);
+        let innerTy = ty + lineHeight;
+        layout.restLines.forEach((line) => {
+          doc.text(line, margin + 3, innerTy);
+          innerTy += lineHeight;
+        });
+        ty += layout.height + 1.5;
+      });
+
+      // ── Banking Details — kept as one block; moves to a new page if it won't fit ──
+      let bankingStartY = termsY + boxHeight + 10;
+      const bankingFields = [
+        ["Account Name", ""],
+        ["Bank Name", ""],
+        ["Branch", ""],
+        ["Account Number", ""],
+        ["Swift Code", ""],
+      ];
+      const bankingBlockH = 5 + bankingFields.length * 4.2 + 2;
+
+      bankingStartY = ensureSpace(bankingStartY, bankingBlockH);
+
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(9);
+      doc.setTextColor(20, 20, 20);
+      doc.text("Banking Details", margin, bankingStartY);
+
+      doc.setFont("helvetica", "normal");
+      doc.setFontSize(7.2);
+      bankingFields.forEach(([label], index) => {
+        const fieldY = bankingStartY + 5 + index * 4.2;
+        doc.text(`${label}:`, margin + 2, fieldY);
+        doc.line(margin + 30, fieldY - 1.2, margin + 80, fieldY - 1.2);
+      });
+
+      // ── Page numbers on every page (added after pagination is finalized) ──
+      const totalPages = doc.internal.getNumberOfPages();
+      for (let i = 1; i <= totalPages; i++) {
+        doc.setPage(i);
+        doc.setFont("helvetica", "normal");
+        doc.setFontSize(8);
+        doc.setTextColor(120, 120, 120);
+        doc.text(`Page ${i} of ${totalPages}`, pageWidth - margin, pageHeight - 6, { align: "right" });
+      }
 
       doc.save(isInvoice ? "FreightInvoice.pdf" : "FreightQuoteEstimate.pdf");
     } catch (error) {
@@ -1508,6 +1686,71 @@ export default function ViewQuotesInvoice({ hiddenPrintItem, onPrintComplete }) 
                     </tr>
                   </tbody>
                 </table>
+              </div>
+
+              {/* ── Terms & Conditions ── */}
+              <table
+                style={{ width: "100%", marginTop: 20, breakInside: "avoid", pageBreakInside: "avoid" }}
+              >
+                <tbody>
+                  <tr>
+                    <td style={{ padding: 0 }}>
+                      <div
+                        style={{
+                          border: "1px solid black",
+                          width: "33%",
+                          borderBottom: "0px solid transparent",
+                          height: 22,
+                          borderTop: "unset",
+                        }}
+                      >
+                        <p
+                          style={{
+                            margin: 0,
+                            fontSize: 13,
+                            fontWeight: 700,
+                            textTransform: "uppercase",
+                            paddingLeft: 5,
+                          }}
+                        >
+                          TERMS & CONDITIONS
+                        </p>
+                      </div>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style={{ border: "1px solid black", borderTop: "unset", padding: "10px 12px", verticalAlign: "top" }}>
+                      <div style={{ fontSize: 12, color: "#333", lineHeight: 1.6 }}>
+                        <div style={{ marginBottom: 6 }}>{termsAndConditions.intro}</div>
+                        {termsAndConditions.items.map((item, index) => (
+                          <div key={index} style={{ marginBottom: 4 }}>
+                            {index + 1}. <strong>{item.label}</strong>: {item.text}
+                          </div>
+                        ))}
+                      </div>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+
+              {/* ── Banking Details — kept together; flows to the next printed page as a
+                     whole block whenever there isn't enough room left on the current one ── */}
+              <div style={{ marginTop: 16, breakInside: "avoid", pageBreakInside: "avoid" }}>
+                <div style={{ fontWeight: 700, fontSize: 13, marginBottom: 8 }}>Banking Details</div>
+                <div style={{ display: "grid", gridTemplateColumns: "repeat(2, minmax(0, 1fr))", gap: 12, maxWidth: 700 }}>
+                  {[
+                    ["Account Name", ""],
+                    ["Bank Name", ""],
+                    ["Branch", ""],
+                    ["Account Number", ""],
+                    ["Swift Code", ""],
+                  ].map(([label]) => (
+                    <div key={label}>
+                      <div style={{ fontSize: 12, marginBottom: 4 }}>{label}</div>
+                      <div style={{ borderBottom: "1px solid #ccc", height: 18 }} />
+                    </div>
+                  ))}
+                </div>
               </div>
             </div>
           </section>

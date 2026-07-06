@@ -56,7 +56,7 @@ export default function ViewNewFreightQuoteInvoice({ hiddenPrintItem, onPrintCom
     customer_invoice_no: "",
     invoice_for_country: "",
     due_date: "",
-    final_base_currency: "Select",
+    final_base_currency: "",
     chargable_rate: "",
     company_id: "",
     company_address: null,
@@ -235,7 +235,7 @@ export default function ViewNewFreightQuoteInvoice({ hiddenPrintItem, onPrintCom
     const element = pdfRef.current;
     if (!element) return;
     try {
-      await exportEstimatePdf(element, "QuoteInvoice.pdf");
+      await exportEstimatePdf(element, "CustomerInvoice.pdf");
     } catch (error) {
       console.error("PDF generation failed:", error);
       toast.error("Failed to generate PDF");

@@ -815,7 +815,7 @@ export default function AddNewFreightQuoteInvoice() {
     const element = pdfRef.current;
     if (!element) return;
     try {
-      await exportEstimatePdf(element, "QuoteInvoice.pdf");
+      await exportEstimatePdf(element, "CustomerInvoice.pdf");
     } catch (error) {
       console.error("PDF generation failed:", error);
       toast.error("Failed to generate PDF");

@@ -570,7 +570,7 @@ export default function ShippingEstimate() {
       });
 
       const payload = {
-        freight_id: parseInt(getdata.freight_id || localFreigtId),
+        freight_id: parseInt(getdata.freight_id),
         client_id: parseInt(getdata.client_id || getdata.id || getdata.client_ref),
         client_name: getdata.client_name,
         supplier_id: parseInt(freight.supplier_id) || null,

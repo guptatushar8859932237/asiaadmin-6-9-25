@@ -56,6 +56,7 @@ const getVatLabel = (val) => {
 // To make this dynamic later: fetch this same shape from the backend and feed
 // it into the `termsAndConditions` state below — no changes needed to the
 // rendering or PDF logic.
+
 const DEFAULT_TERMS_AND_CONDITIONS = {
   intro:
     "All business is undertaken subject to our General Trading Conditions, a copy of which is available on request. (E&OE) Errors and Omissions Excepted.",
@@ -735,6 +736,7 @@ export default function Downlaodestimate() {
     if (String(unitType) === "1") return 1;
     return freight?.chargable_rate ?? "";
   };
+
   // Extract ONLY the percentage number (e.g. "15.00%") → returns 15
   const getPercentageOnly = (value) => {
     if (!value) return "";
@@ -747,6 +749,7 @@ export default function Downlaodestimate() {
     const match = String(value).match(/(\d+(?:\.\d+)?)/);
     return match ? parseFloat(match[1]).toFixed(2) : "";
   };
+
   const calculateRowData = (row) => {
     const qty = parseFloat(row?.qty) || 0;
     const cost = parseFloat(row?.cost) || 0;
@@ -1429,33 +1432,33 @@ export default function Downlaodestimate() {
       });
   };
 
-  const getNewDataapi = async () => {
-    const quoteEstimateId = getQouteEstimateId2();
-    if (!quoteEstimateId) {
-      console.log("No quote_estimate_id or freight_quote_estimate_id found to fetch estimate in getNewDataapi");
-      return;
-    }
-    const data123456 = {
-      quote_estimate_id: quoteEstimateId,
-      freight_id: getFreightId(),
-    };
-    await axios
-      .post(
-        `${process.env.REACT_APP_BASE_URL}GetQuoteShipEstimateById`,
-        data123456
-      )
-      .then((response) => {
-        console.log(response.data.data);
-        const rawData = response.data.data;
-        const estimateData = Array.isArray(rawData) ? rawData[0] : rawData;
-        if (estimateData) {
-          setFreight(mapEstimateComponentsToFlatFields(estimateData) || [0]);
-        }
-      })
-      .catch((error) => {
-        console.log(error.response?.data || error.message);
-      });
-  };
+  // const getNewDataapi = async () => {
+  //   const quoteEstimateId = getQouteEstimateId2();
+  //   if (!quoteEstimateId) {
+  //     console.log("No quote_estimate_id or freight_quote_estimate_id found to fetch estimate in getNewDataapi");
+  //     return;
+  //   }
+  //   const data123456 = {
+  //     quote_estimate_id: quoteEstimateId,
+  //     freight_id: getFreightId(),
+  //   };
+  //   await axios
+  //     .post(
+  //       `${process.env.REACT_APP_BASE_URL}GetQuoteShipEstimateById`,
+  //       data123456
+  //     )
+  //     .then((response) => {
+  //       console.log(response.data.data);
+  //       const rawData = response.data.data;
+  //       const estimateData = Array.isArray(rawData) ? rawData[0] : rawData;
+  //       if (estimateData) {
+  //         setFreight(mapEstimateComponentsToFlatFields(estimateData) || [0]);
+  //       }
+  //     })
+  //     .catch((error) => {
+  //       console.log(error.response?.data || error.message);
+  //     });
+  // };
 
   const freightId = getFreightId();
   const quoteEstimateId = getQuoteEstimateId();
@@ -1484,7 +1487,7 @@ export default function Downlaodestimate() {
           getsupplier(),
           getFreightDataById(),
           getdataapi(),
-          getNewDataapi(),
+          // getNewDataapi(),
           getFreightQuoteEstimate(),
           supplier(),
           supplierSelected(),
@@ -2022,13 +2025,19 @@ export default function Downlaodestimate() {
       // ── Banking Details — kept as one block; moves to a new page if it won't fit ──
       let bankingStartY = termsY + boxHeight + 10;
       const bankingFields = [
-        ["Account Name", ""],
-        ["Bank Name", ""],
-        ["Branch", ""],
-        ["Account Number", ""],
-        ["Swift Code", ""],
+        ["Account Name", freight?.bank_details?.account_name || ""],
+        ["Bank Name", freight?.bank_details?.bank_name || ""],
+        ["Branch Code", freight?.bank_details?.branch_code || ""],
+        ["Account Number", freight?.bank_details?.account_no || ""],
+        ["Swift Code", freight?.bank_details?.swift_code || ""],
       ];
-      const bankingBlockH = 5 + bankingFields.length * 4.2 + 2;
+      
+      const noteText = freight?.bank_details?.note || "";
+      doc.setFont("helvetica", "italic");
+      doc.setFontSize(7);
+      const noteLines = noteText ? doc.splitTextToSize(noteText, 80) : [];
+      
+      const bankingBlockH = 5 + bankingFields.length * 4.2 + 2 + (noteLines.length > 0 ? (noteLines.length * 3.5 + 2) : 0);
 
       bankingStartY = ensureSpace(bankingStartY, bankingBlockH);
 
@@ -2039,11 +2048,25 @@ export default function Downlaodestimate() {
 
       doc.setFont("helvetica", "normal");
       doc.setFontSize(7.2);
-      bankingFields.forEach(([label], index) => {
+      bankingFields.forEach(([label, value], index) => {
         const fieldY = bankingStartY + 5 + index * 4.2;
         doc.text(`${label}:`, margin + 2, fieldY);
+        if (value) {
+          doc.text(String(value), margin + 32, fieldY - 1.5);
+        }
         doc.line(margin + 30, fieldY - 1.2, margin + 80, fieldY - 1.2);
       });
+
+      if (noteLines.length > 0) {
+        doc.setFont("helvetica", "italic");
+        doc.setFontSize(7);
+        doc.setTextColor(100, 100, 100);
+        let noteY = bankingStartY + 5 + bankingFields.length * 4.2 + 2;
+        noteLines.forEach((line) => {
+          doc.text(line, margin + 2, noteY);
+          noteY += 3.5;
+        });
+      }
 
       // ── Page numbers on every page (added after pagination is finalized) ──
       const totalPages = doc.internal.getNumberOfPages();
@@ -3136,18 +3159,25 @@ export default function Downlaodestimate() {
                       <div style={{ fontWeight: 700, fontSize: 13, marginBottom: 8 }}>Banking Details</div>
                       <div style={{ display: "grid", gridTemplateColumns: "repeat(2, minmax(0, 1fr))", gap: 12, maxWidth: 700 }}>
                         {[
-                          ["Account Name", ""],
-                          ["Bank Name", ""],
-                          ["Branch", ""],
-                          ["Account Number", ""],
-                          ["Swift Code", ""],
-                        ].map(([label]) => (
+                          ["Account Name", freight?.bank_details?.account_name],
+                          ["Bank Name", freight?.bank_details?.bank_name],
+                          ["Branch Code", freight?.bank_details?.branch_code],
+                          ["Account Number", freight?.bank_details?.account_no],
+                          ["Swift Code", freight?.bank_details?.swift_code],
+                        ].map(([label, value]) => (
                           <div key={label}>
                             <div style={{ fontSize: 12, marginBottom: 4 }}>{label}</div>
-                            <div style={{ borderBottom: "1px solid #ccc", height: 18 }} />
+                            <div style={{ borderBottom: "1px solid #ccc", height: 18, fontSize: 12, fontWeight: 500 }}>
+                              {value || ""}
+                            </div>
                           </div>
                         ))}
                       </div>
+                      {freight?.bank_details?.note && (
+                        <div style={{ marginTop: 12, fontSize: 12, color: "#666", whiteSpace: "pre-line", fontStyle: "italic", lineHeight: 1.5 }}>
+                          {freight?.bank_details?.note}
+                        </div>
+                      )}
                     </div>
                   </div>
 

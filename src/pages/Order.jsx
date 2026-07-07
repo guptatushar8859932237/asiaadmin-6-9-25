@@ -16,6 +16,9 @@ import RemoveRedEyeIcon from "@mui/icons-material/RemoveRedEye";
 import LocalShippingIcon from "@mui/icons-material/LocalShipping";
 import DownloadingIcon from "@mui/icons-material/Downloading";
 import WarehouseIcon from "@mui/icons-material/Warehouse";
+import CreateIcon from '@mui/icons-material/Create';
+import CreateNewFolderIcon from '@mui/icons-material/CreateNewFolder';
+import ReceiptIcon from '@mui/icons-material/Receipt';
 import RoomIcon from "@mui/icons-material/Room";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import NotInterestedIcon from "@mui/icons-material/NotInterested";
@@ -112,6 +115,7 @@ export default function Order() {
     { id: "POP (AD)", label: "POP (AD)" },
     { id: "Delivery note", label: "Delivery note" }
   ];
+
   const handleShow = () => setShow1(true);
   const handleClose = () => {
     setShow1(false);
@@ -119,18 +123,21 @@ export default function Order() {
     setSelectedFreightIdForDocs(null);
     setSelectedOrderIdForDocs(null);
   };
+
   const handleSelect = (e) => {
     const selected = e.target.value;
     if (selected && !selectedDocs.find((doc) => doc.name === selected)) {
       setSelectedDocs([...selectedDocs, { name: selected, files: [] }]);
     }
   };
+
   const handleFileChangefil = (e, docName) => {
     const files = Array.from(e.target.files);
     setSelectedDocs((prev) =>
       prev.map((doc) => (doc.name === docName ? { ...doc, files } : doc))
     );
   };
+
   const handleSave = () => {
     if (!selectedFreightIdForDocs && !selectedOrderIdForDocs) {
       toast.error("Freight ID or Order ID is missing");
@@ -328,6 +335,7 @@ export default function Order() {
     console.log(alldaatat);
     // navigate("/Admin/bookinginstruction", { state: { data: alldaatat[0] } });
   };
+
   const handledeliveryEye = (id) => {
     console.log(id);
     console.log(pagenation);
@@ -338,6 +346,7 @@ export default function Order() {
     console.log(alldaatat);
     navigate("/Admin/OrderDetails", { state: { data: alldaatat[0] } });
   };
+
   const track = async (id) => {
     try {
       const permission = await axios.post(
@@ -363,6 +372,7 @@ export default function Order() {
       }
     }
   };
+
   const assignclearing = async (item) => {
     try {
       const permission = await axios.post(
@@ -857,6 +867,7 @@ export default function Order() {
 
     }
   };
+
   const handleUpdateForSupplier = async () => {
     if (!selectedSupplier) {
       toast.error("Please select supplier!");
@@ -882,6 +893,28 @@ export default function Order() {
   const closewarehouse = () => {
     setOpenModalorder(false);
   };
+
+  const handleCreateInvoice = async (freight_quote_estimate_id) => {
+    try {
+      setLoader(true);
+      const response = await axios.post(
+        `${process.env.REACT_APP_BASE_URL}createQuoteInvoice`,
+        { freight_quote_estimate_id }
+      );
+      setLoader(false);
+      if (response.data && response.data.success) {
+        toast.success(response.data.message || "Invoice created Successfuly");
+        getorder();
+      } else {
+        toast.error(response.data.message || "Failed to create invoice");
+      }
+    } catch (error) {
+      setLoader(false);
+      console.error("Error creating invoice:", error);
+      toast.error(error.response?.data?.message || "Something went wrong while creating invoice");
+    }
+  };
+
   return (
     <>
       <Modal
@@ -1237,7 +1270,15 @@ export default function Order() {
                                                   <LocalShippingIcon /> Delivery
                                                   details
                                                 </li>
-
+                                                <li className="page_list"
+                                                  style={{
+                                                    cursor: "pointer",
+                                                    fontSize: "15px",
+                                                  }}
+                                                  onClick={() => handleCreateInvoice(item?.freight_quote_estimate_id)}>
+                                                  <ReceiptIcon />
+                                                  Create Invoice
+                                                </li>
                                               </ul>
                                             </a>
                                           </div>

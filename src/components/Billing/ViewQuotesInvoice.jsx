@@ -108,6 +108,7 @@ export default function ViewQuotesInvoice({ hiddenPrintItem, onPrintComplete }) 
     chargable_rate: "",
     company_id: "",
     company_address: null,
+    bank_details: null,
     created_at: "",
   });
 
@@ -207,6 +208,7 @@ export default function ViewQuotesInvoice({ hiddenPrintItem, onPrintComplete }) 
             chargable_rate: invoiceData.chargeable || "",
             company_id: invoiceData.company_id || "",
             company_address: invoiceData.company_address || null,
+            bank_details: invoiceData.bank_details || null,
             created_at: invoiceData.created_at || "",
           });
 
@@ -765,13 +767,19 @@ export default function ViewQuotesInvoice({ hiddenPrintItem, onPrintComplete }) 
       // ── Banking Details — kept as one block; moves to a new page if it won't fit ──
       let bankingStartY = termsY + boxHeight + 10;
       const bankingFields = [
-        ["Account Name", ""],
-        ["Bank Name", ""],
-        ["Branch", ""],
-        ["Account Number", ""],
-        ["Swift Code", ""],
+        ["Account Name", freight?.bank_details?.account_name || ""],
+        ["Bank Name", freight?.bank_details?.bank_name || ""],
+        ["Branch Code", freight?.bank_details?.branch_code || ""],
+        ["Account Number", freight?.bank_details?.account_no || ""],
+        ["Swift Code", freight?.bank_details?.swift_code || ""],
       ];
-      const bankingBlockH = 5 + bankingFields.length * 4.2 + 2;
+      
+      const noteText = freight?.bank_details?.note || "";
+      doc.setFont("helvetica", "italic");
+      doc.setFontSize(7);
+      const noteLines = noteText ? doc.splitTextToSize(noteText, 80) : [];
+      
+      const bankingBlockH = 5 + bankingFields.length * 4.2 + 2 + (noteLines.length > 0 ? (noteLines.length * 3.5 + 2) : 0);
 
       bankingStartY = ensureSpace(bankingStartY, bankingBlockH);
 
@@ -782,11 +790,25 @@ export default function ViewQuotesInvoice({ hiddenPrintItem, onPrintComplete }) 
 
       doc.setFont("helvetica", "normal");
       doc.setFontSize(7.2);
-      bankingFields.forEach(([label], index) => {
+      bankingFields.forEach(([label, value], index) => {
         const fieldY = bankingStartY + 5 + index * 4.2;
         doc.text(`${label}:`, margin + 2, fieldY);
+        if (value) {
+          doc.text(String(value), margin + 32, fieldY - 1.5);
+        }
         doc.line(margin + 30, fieldY - 1.2, margin + 80, fieldY - 1.2);
       });
+
+      if (noteLines.length > 0) {
+        doc.setFont("helvetica", "italic");
+        doc.setFontSize(7);
+        doc.setTextColor(100, 100, 100);
+        let noteY = bankingStartY + 5 + bankingFields.length * 4.2 + 2;
+        noteLines.forEach((line) => {
+          doc.text(line, margin + 2, noteY);
+          noteY += 3.5;
+        });
+      }
 
       // ── Page numbers on every page (added after pagination is finalized) ──
       const totalPages = doc.internal.getNumberOfPages();
@@ -1739,18 +1761,25 @@ export default function ViewQuotesInvoice({ hiddenPrintItem, onPrintComplete }) 
                 <div style={{ fontWeight: 700, fontSize: 13, marginBottom: 8 }}>Banking Details</div>
                 <div style={{ display: "grid", gridTemplateColumns: "repeat(2, minmax(0, 1fr))", gap: 12, maxWidth: 700 }}>
                   {[
-                    ["Account Name", ""],
-                    ["Bank Name", ""],
-                    ["Branch", ""],
-                    ["Account Number", ""],
-                    ["Swift Code", ""],
-                  ].map(([label]) => (
+                    ["Account Name", freight?.bank_details?.account_name || ""],
+                    ["Bank Name", freight?.bank_details?.bank_name || ""],
+                    ["Branch Code", freight?.bank_details?.branch_code || ""],
+                    ["Account Number", freight?.bank_details?.account_no || ""],
+                    ["Swift Code", freight?.bank_details?.swift_code || ""],
+                  ].map(([label, value]) => (
                     <div key={label}>
                       <div style={{ fontSize: 12, marginBottom: 4 }}>{label}</div>
-                      <div style={{ borderBottom: "1px solid #ccc", height: 18 }} />
+                      <div style={{ borderBottom: "1px solid #ccc", height: 18, fontSize: 12, fontWeight: 500 }}>
+                        {value || ""}
+                      </div>
                     </div>
                   ))}
                 </div>
+                {freight?.bank_details?.note && (
+                  <div style={{ marginTop: 12, fontSize: 12, color: "#666", whiteSpace: "pre-line", fontStyle: "italic", lineHeight: 1.5 }}>
+                    {freight?.bank_details?.note}
+                  </div>
+                )}
               </div>
             </div>
           </section>

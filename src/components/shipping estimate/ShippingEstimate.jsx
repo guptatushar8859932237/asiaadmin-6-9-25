@@ -150,7 +150,7 @@ export default function ShippingEstimate() {
     if (getdata122?.freight_quote_estimate_id) {
       payload.freight_quote_estimate_id = parseInt(getdata122.freight_quote_estimate_id);
     }
-    const fId = getdata122?.freight_id || localFreigtId;
+    const fId = getdata122?.freight_id;
     if (fId) {
       payload.freight_id = parseInt(fId);
     }

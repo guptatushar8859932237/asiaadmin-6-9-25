@@ -1086,6 +1086,14 @@ export default function Downlaodestimate() {
             className="supplier_form"
           />
         </td>
+        <td>
+          <input
+            style={{ marginBottom: 0, fontSize: 13, color: "black", border: "0px", verticalAlign: "middle" }}
+            disabled
+            value={formatValue(calc.inclusive)}
+            className="supplier_form"
+          />
+        </td>
       </tr>
     );
   };
@@ -1180,6 +1188,7 @@ export default function Downlaodestimate() {
   const totalOriginDiscount = originRowsData.reduce((sum, item) => sum + item.calc.disc, 0);
   const totalOriginExclusive = originRowsData.reduce((sum, item) => sum + item.calc.exclusive, 0);
   const totalOriginVat = originRowsData.reduce((sum, item) => sum + item.calc.vat, 0);
+  const totalOriginInclusive = originRowsData.reduce((sum, item) => sum + item.calc.inclusive, 0);
 
   const freightRowsData = freightRows.map(row => ({
     row,
@@ -1189,6 +1198,7 @@ export default function Downlaodestimate() {
   const totalFreightDiscount = freightRowsData.reduce((sum, item) => sum + item.calc.disc, 0);
   const totalFreightExclusive = freightRowsData.reduce((sum, item) => sum + item.calc.exclusive, 0);
   const totalFreightVat = freightRowsData.reduce((sum, item) => sum + item.calc.vat, 0);
+  const totalFreightInclusive = freightRowsData.reduce((sum, item) => sum + item.calc.inclusive, 0);
 
   const transitRowsData = transitRows.map(row => ({
     row,
@@ -1198,6 +1208,7 @@ export default function Downlaodestimate() {
   const totalTransitDiscount = transitRowsData.reduce((sum, item) => sum + item.calc.disc, 0);
   const totalTransitExclusive = transitRowsData.reduce((sum, item) => sum + item.calc.exclusive, 0);
   const totalTransitVat = transitRowsData.reduce((sum, item) => sum + item.calc.vat, 0);
+  const totalTransitInclusive = transitRowsData.reduce((sum, item) => sum + item.calc.inclusive, 0);
 
   const destinationRowsData = destinationRows.map(row => ({
     row,
@@ -1207,6 +1218,7 @@ export default function Downlaodestimate() {
   const totalDestinationDiscount = destinationRowsData.reduce((sum, item) => sum + item.calc.disc, 0);
   const totalDestinationExclusive = destinationRowsData.reduce((sum, item) => sum + item.calc.exclusive, 0);
   const totalDestinationVat = destinationRowsData.reduce((sum, item) => sum + item.calc.vat, 0);
+  const totalDestinationInclusive = destinationRowsData.reduce((sum, item) => sum + item.calc.inclusive, 0);
 
   const adminRowsData = adminRows.map(row => ({
     row,
@@ -1216,6 +1228,7 @@ export default function Downlaodestimate() {
   const totalAdminDiscount = adminRowsData.reduce((sum, item) => sum + item.calc.disc, 0);
   const totalAdminExclusive = adminRowsData.reduce((sum, item) => sum + item.calc.exclusive, 0);
   const totalAdminVat = adminRowsData.reduce((sum, item) => sum + item.calc.vat, 0);
+  const totalAdminInclusive = adminRowsData.reduce((sum, item) => sum + item.calc.inclusive, 0);
 
   const customsRowsData = customsRows.map(row => ({
     row,
@@ -1225,6 +1238,7 @@ export default function Downlaodestimate() {
   const totalCustomsDiscount = customsRowsData.reduce((sum, item) => sum + item.calc.disc, 0);
   const totalCustomsExclusive = customsRowsData.reduce((sum, item) => sum + item.calc.exclusive, 0);
   const totalCustomsVat = customsRowsData.reduce((sum, item) => sum + item.calc.vat, 0);
+  const totalCustomsInclusive = customsRowsData.reduce((sum, item) => sum + item.calc.inclusive, 0);
 
   // Grand totals
   const grandTotalFinalAmt = totalChangeRoeOrigin + totalChangeRoeFreight + totalChangeRoeTransit + totalChangeRoeDestination + totalChangeRoeAdmin + totalChangeRoeCustoms;
@@ -1622,7 +1636,7 @@ export default function Downlaodestimate() {
     const rows = [];
 
     // Section header row
-    rows.push([{ content: title, colSpan: 13, styles: sectionStyle }]);
+    rows.push([{ content: title, colSpan: 14, styles: sectionStyle }]);
 
     rowsData.forEach(({ row, calc }) => {
       const uom = row.unitType === "1" ? "L/S" : row.unitType === "2" ? "W/M" : "";
@@ -1646,6 +1660,7 @@ export default function Downlaodestimate() {
         formatValue(calc.disc),
         formatValue(calc.exclusive),
         formatValue(calc.vat),
+        formatValue(calc.inclusive),
       ]);
     });
 
@@ -1658,6 +1673,7 @@ export default function Downlaodestimate() {
       styledCell(formatValue(totals.disc), totalStyle),
       styledCell(formatValue(totals.exclusive), totalStyle),
       styledCell(formatValue(totals.vat), totalStyle),
+      styledCell(formatValue(totals.inclusive), totalStyle),
     ]);
 
     return rows;
@@ -1856,22 +1872,22 @@ export default function Downlaodestimate() {
       // ---- Charges table (autoTable) -----------------------------------
       const tableBody = [
         ...buildSectionRows("Origin Charges", originRowsData, {
-          finalAmt: totalChangeRoeOrigin, disc: totalOriginDiscount, exclusive: totalOriginExclusive, vat: totalOriginVat,
+          finalAmt: totalChangeRoeOrigin, disc: totalOriginDiscount, exclusive: totalOriginExclusive, vat: totalOriginVat, inclusive: totalOriginInclusive,
         }),
         ...buildSectionRows("Freight Charges", freightRowsData, {
-          finalAmt: totalChangeRoeFreight, disc: totalFreightDiscount, exclusive: totalFreightExclusive, vat: totalFreightVat,
+          finalAmt: totalChangeRoeFreight, disc: totalFreightDiscount, exclusive: totalFreightExclusive, vat: totalFreightVat, inclusive: totalFreightInclusive,
         }),
         ...buildSectionRows("Transit Charges", transitRowsData, {
-          finalAmt: totalChangeRoeTransit, disc: totalTransitDiscount, exclusive: totalTransitExclusive, vat: totalTransitVat,
+          finalAmt: totalChangeRoeTransit, disc: totalTransitDiscount, exclusive: totalTransitExclusive, vat: totalTransitVat, inclusive: totalTransitInclusive,
         }),
         ...buildSectionRows("Destination Charges", destinationRowsData, {
-          finalAmt: totalChangeRoeDestination, disc: totalDestinationDiscount, exclusive: totalDestinationExclusive, vat: totalDestinationVat,
+          finalAmt: totalChangeRoeDestination, disc: totalDestinationDiscount, exclusive: totalDestinationExclusive, vat: totalDestinationVat, inclusive: totalDestinationInclusive,
         }),
         ...buildSectionRows("Admin Charges", adminRowsData, {
-          finalAmt: totalChangeRoeAdmin, disc: totalAdminDiscount, exclusive: totalAdminExclusive, vat: totalAdminVat,
+          finalAmt: totalChangeRoeAdmin, disc: totalAdminDiscount, exclusive: totalAdminExclusive, vat: totalAdminVat, inclusive: totalAdminInclusive,
         }),
         ...buildSectionRows("Customs Charges", customsRowsData, {
-          finalAmt: totalChangeRoeCustoms, disc: totalCustomsDiscount, exclusive: totalCustomsExclusive, vat: totalCustomsVat,
+          finalAmt: totalChangeRoeCustoms, disc: totalCustomsDiscount, exclusive: totalCustomsExclusive, vat: totalCustomsVat, inclusive: totalCustomsInclusive,
         }),
         [
           { content: "GRAND TOTAL", colSpan: 7, styles: { fillColor: [226, 232, 240], fontStyle: "bold", halign: "left", textColor: [20, 20, 20] } },
@@ -1881,13 +1897,14 @@ export default function Downlaodestimate() {
           { content: formatValue(grandTotalDiscount), styles: { fillColor: [226, 232, 240], fontStyle: "bold" } },
           { content: formatValue(grandTotalExclusive), styles: { fillColor: [226, 232, 240], fontStyle: "bold" } },
           { content: formatValue(grandTotalVat), styles: { fillColor: [226, 232, 240], fontStyle: "bold" } },
+          { content: formatValue(totalVatInclusive), styles: { fillColor: [226, 232, 240], fontStyle: "bold" } },
         ],
       ];
 
       autoTable(doc, {
         startY: cursorY,
         margin: { left: margin, right: margin, top: margin, bottom: 14 },
-        head: [["Description", "QTY", "UOM", "Unit", "Price", "Curr", "Exch Rate", "Total", "VAT Type", "Disc %", "Discount", "Exclusive", "VAT"]],
+        head: [["Description", "QTY", "UOM", "Unit", "Price", "Curr", "Exch Rate", "Total", "VAT Type", "Disc %", "Discount", "Exclusive", "VAT", "VAT Incl"]],
         body: tableBody,
         theme: "grid",
         styles: {
@@ -1910,6 +1927,7 @@ export default function Downlaodestimate() {
           10: { halign: "right" },
           11: { halign: "right" },
           12: { halign: "right" },
+          13: { halign: "right" },
         },
         // Never slice a row across two pages - if it doesn't fit, the
         // WHOLE row (and only that row) moves to the next page. This is
@@ -2962,6 +2980,7 @@ export default function Downlaodestimate() {
                             <th>Discount</th>
                             <th>Exclusive</th>
                             <th>VAT</th>
+                            <th>VAT Incl</th>
                           </tr>
                         </thead>
 
@@ -2970,7 +2989,7 @@ export default function Downlaodestimate() {
                           {originRows.length > 0 && (
                             <>
                               <tr className="estimate-section-row" style={{ backgroundColor: "#f0f2f5" }}>
-                                <td colSpan={13}>
+                                <td colSpan={14}>
                                   <strong>Origin Charges</strong>
                                 </td>
                               </tr>
@@ -2983,6 +3002,7 @@ export default function Downlaodestimate() {
                                 <td>{formatValue(totalOriginDiscount)}</td>
                                 <td>{formatValue(totalOriginExclusive)}</td>
                                 <td>{formatValue(totalOriginVat)}</td>
+                                <td>{formatValue(totalOriginInclusive)}</td>
                               </tr>
                             </>
                           )}
@@ -2991,7 +3011,7 @@ export default function Downlaodestimate() {
                           {freightRows.length > 0 && (
                             <>
                               <tr className="estimate-section-row" style={{ backgroundColor: "#f0f2f5" }}>
-                                <td colSpan={13}>
+                                <td colSpan={14}>
                                   <strong>Freight Charges</strong>
                                 </td>
                               </tr>
@@ -3004,6 +3024,7 @@ export default function Downlaodestimate() {
                                 <td>{formatValue(totalFreightDiscount)}</td>
                                 <td>{formatValue(totalFreightExclusive)}</td>
                                 <td>{formatValue(totalFreightVat)}</td>
+                                <td>{formatValue(totalFreightInclusive)}</td>
                               </tr>
                             </>
                           )}
@@ -3012,7 +3033,7 @@ export default function Downlaodestimate() {
                           {transitRows.length > 0 && (
                             <>
                               <tr className="estimate-section-row" style={{ backgroundColor: "#f0f2f5" }}>
-                                <td colSpan={13}>
+                                <td colSpan={14}>
                                   <strong>Transit Charges</strong>
                                 </td>
                               </tr>
@@ -3025,6 +3046,7 @@ export default function Downlaodestimate() {
                                 <td>{formatValue(totalTransitDiscount)}</td>
                                 <td>{formatValue(totalTransitExclusive)}</td>
                                 <td>{formatValue(totalTransitVat)}</td>
+                                <td>{formatValue(totalTransitInclusive)}</td>
                               </tr>
                             </>
                           )}
@@ -3033,7 +3055,7 @@ export default function Downlaodestimate() {
                           {destinationRows.length > 0 && (
                             <>
                               <tr className="estimate-section-row" style={{ backgroundColor: "#f0f2f5" }}>
-                                <td colSpan={13}>
+                                <td colSpan={14}>
                                   <strong>Destination Charges</strong>
                                 </td>
                               </tr>
@@ -3046,6 +3068,7 @@ export default function Downlaodestimate() {
                                 <td>{formatValue(totalDestinationDiscount)}</td>
                                 <td>{formatValue(totalDestinationExclusive)}</td>
                                 <td>{formatValue(totalDestinationVat)}</td>
+                                <td>{formatValue(totalDestinationInclusive)}</td>
                               </tr>
                             </>
                           )}
@@ -3054,7 +3077,7 @@ export default function Downlaodestimate() {
                           {adminRows.length > 0 && (
                             <>
                               <tr className="estimate-section-row" style={{ backgroundColor: "#f0f2f5" }}>
-                                <td colSpan={13}>
+                                <td colSpan={14}>
                                   <strong>Admin Charges</strong>
                                 </td>
                               </tr>
@@ -3067,6 +3090,7 @@ export default function Downlaodestimate() {
                                 <td>{formatValue(totalAdminDiscount)}</td>
                                 <td>{formatValue(totalAdminExclusive)}</td>
                                 <td>{formatValue(totalAdminVat)}</td>
+                                <td>{formatValue(totalAdminInclusive)}</td>
                               </tr>
                             </>
                           )}
@@ -3075,7 +3099,7 @@ export default function Downlaodestimate() {
                           {customsRows.length > 0 && (
                             <>
                               <tr className="estimate-section-row" style={{ backgroundColor: "#f0f2f5" }}>
-                                <td colSpan={13}>
+                                <td colSpan={14}>
                                   <strong>Customs Charges</strong>
                                 </td>
                               </tr>
@@ -3088,6 +3112,7 @@ export default function Downlaodestimate() {
                                 <td>{formatValue(totalCustomsDiscount)}</td>
                                 <td>{formatValue(totalCustomsExclusive)}</td>
                                 <td>{formatValue(totalCustomsVat)}</td>
+                                <td>{formatValue(totalCustomsInclusive)}</td>
                               </tr>
                             </>
                           )}
@@ -3103,6 +3128,7 @@ export default function Downlaodestimate() {
                             <td>{formatValue(grandTotalDiscount)}</td>
                             <td>{formatValue(grandTotalExclusive)}</td>
                             <td>{formatValue(grandTotalVat)}</td>
+                            <td>{formatValue(totalVatInclusive)}</td>
                           </tr>
                         </tbody>
                       </table>

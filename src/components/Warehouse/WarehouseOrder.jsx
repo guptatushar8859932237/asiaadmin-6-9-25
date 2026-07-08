@@ -765,7 +765,9 @@ export default function WarehouseOrder() {
                                               className="fright_no mx-2"
                                               style={{ fontSize: "14px" }}
                                             >
-                                              {item.batch_number}
+                                              {[item.batch_number, item.freight_number, item.order_number]
+                                                            .filter(Boolean)
+                                                            .join(" / ") || "-"}
                                             </p>
                                           </div>
                                           <div className="">

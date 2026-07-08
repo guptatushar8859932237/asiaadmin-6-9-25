@@ -773,12 +773,12 @@ export default function ViewQuotesInvoice({ hiddenPrintItem, onPrintComplete }) 
         ["Account Number", freight?.bank_details?.account_no || ""],
         ["Swift Code", freight?.bank_details?.swift_code || ""],
       ];
-      
+
       const noteText = freight?.bank_details?.note || "";
       doc.setFont("helvetica", "italic");
       doc.setFontSize(7);
       const noteLines = noteText ? doc.splitTextToSize(noteText, 80) : [];
-      
+
       const bankingBlockH = 5 + bankingFields.length * 4.2 + 2 + (noteLines.length > 0 ? (noteLines.length * 3.5 + 2) : 0);
 
       bankingStartY = ensureSpace(bankingStartY, bankingBlockH);
@@ -791,12 +791,17 @@ export default function ViewQuotesInvoice({ hiddenPrintItem, onPrintComplete }) 
       doc.setFont("helvetica", "normal");
       doc.setFontSize(7.2);
       bankingFields.forEach(([label, value], index) => {
+
         const fieldY = bankingStartY + 5 + index * 4.2;
+        doc.setFont("helvetica", "bold");
+
         doc.text(`${label}:`, margin + 2, fieldY);
+        doc.setFont("helvetica", "normal");
+
         if (value) {
-          doc.text(String(value), margin + 32, fieldY - 1.5);
+          doc.text(String(value), margin + 32, fieldY);
         }
-        doc.line(margin + 30, fieldY - 1.2, margin + 80, fieldY - 1.2);
+
       });
 
       if (noteLines.length > 0) {

@@ -1904,7 +1904,7 @@ export default function Downlaodestimate() {
       autoTable(doc, {
         startY: cursorY,
         margin: { left: margin, right: margin, top: margin, bottom: 14 },
-        head: [["Description", "QTY", "UOM", "Unit", "Price", "Curr", "Exch Rate", "Total", "VAT Type", "Disc %", "Discount", "Exclusive", "VAT", "VAT Incl"]],
+        head: [["Description", "QTY", "UOM", "Unit", "Price", "Curr", "Exch Rate", "Total", "VAT Type", "Disc %", "Discount", "Exclusive", "VAT", "Total"]],
         body: tableBody,
         theme: "grid",
         styles: {
@@ -2980,7 +2980,7 @@ export default function Downlaodestimate() {
                             <th>Discount</th>
                             <th>Exclusive</th>
                             <th>VAT</th>
-                            <th>VAT Incl</th>
+                            <th>Total</th>
                           </tr>
                         </thead>
 

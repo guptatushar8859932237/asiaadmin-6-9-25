@@ -953,7 +953,7 @@ export default function SupplierWarehouse() {
                                             </div>
                                           </div>
                                           <div className="col-md-4">
-                                            <div className="d-flex align-items-center justify-content-center">
+                                            <div className="d-flex ">
                                               <p className="origin">
                                                 {item.collection_from_name}
                                               </p>
@@ -970,7 +970,9 @@ export default function SupplierWarehouse() {
                                                   )
                                                 </span> */}
                                               </p>
-                                              <p></p>
+                                            </div>
+                                            <div className="d-flex">
+                                              <p className="origin">Status: {item.warehouse_item_status}</p>
                                             </div>
                                           </div>
                                           <div className="col-md-2">
@@ -1032,7 +1034,7 @@ export default function SupplierWarehouse() {
                                             <div>
                                               <p>
                                                 Days in Warehouse:{" "}
-                                                {item.days_in_warehouse}
+                                                {item.days_in_warehouse || 0}
                                               </p>
                                             </div>
                                           </div>

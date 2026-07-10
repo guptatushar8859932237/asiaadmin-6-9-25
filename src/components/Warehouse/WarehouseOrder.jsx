@@ -766,8 +766,8 @@ export default function WarehouseOrder() {
                                               style={{ fontSize: "14px" }}
                                             >
                                               {[item.batch_number, item.freight_number, item.order_number]
-                                                            .filter(Boolean)
-                                                            .join(" / ") || "-"}
+                                                .filter(Boolean)
+                                                .join(" / ") || "-"}
                                             </p>
                                           </div>
                                           <div className="">
@@ -788,31 +788,43 @@ export default function WarehouseOrder() {
                                                 {item.product_desc}
                                               </p>
                                             </div>
-                                          </div>
-                                          <div className="col-md-5">
-                                            <div className="d-flex align-items-center justify-content-center">
+                                            <div className="">
                                               <p className="origin">
-                                                {item.collection_from_name}
-                                              </p>
-                                              <div className="arrow">
-                                                <i className="fi fi-rr-arrow-right mx-2 arr_icon"></i>
-                                              </div>
-                                              <p className="origin">
-                                                {item.delivery_to_name}
-                                                <span className="fright_type">
-                                                  (
-                                                  {item.Freight
-                                                    ? item.Freight
-                                                    : item.freight_type}
-                                                  )
-                                                </span>
+                                                Days in Warehouse: {item.days_in_warehouse || 0}
                                               </p>
                                             </div>
+                                            
                                           </div>
-                                          <div className="col-md-2">
-                                            <div className="text-center">
-                                              <p className="origin">
-                                                {item.nature_of_hazard}
+                                          <div className="col-md-4">
+                                            <div className="d-flex align-items-center">
+                                              <div className="d-flex align-items-center">
+                                                <p className="origin">
+                                                  {item.collection_from_name}
+                                                </p>
+                                                <div className="arrow">
+                                                  <i className="fi fi-rr-arrow-right mx-2 arr_icon"></i>
+                                                </div>
+                                                <p className="origin">
+                                                  {item.delivery_to_name}
+                                                  <span className="fright_type">
+                                                    (
+                                                    {item.Freight
+                                                      ? item.Freight
+                                                      : item.freight_type}
+                                                    )
+                                                  </span>
+                                                </p>
+                                              </div>
+                                            </div>
+                                            <div className="">
+                                              <p className="origin">Status: {item.warehouse_item_status}</p>
+                                            </div>
+                                          </div>
+                                          <div className="col-md-3">
+                                            <div className="">
+                                              <p className="origin">Weight:{item.weight || 0}
+                                                <p className="origin">Dimension: {item.dimension || 0}</p>
+                                                <p className="origin">Packages: {item.total_packages || 0}</p>
                                               </p>
                                             </div>
                                           </div>

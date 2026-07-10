@@ -1681,7 +1681,7 @@ export default function Downlaodestimate() {
 
   const downloadPDF1 = async () => {
     try {
-      const doc = new jsPDF({ orientation: "landscape", unit: "mm", format: "a4" });
+      const doc = new jsPDF({ orientation: "portrait", unit: "mm", format: "a4" });
       const pageWidth = doc.internal.pageSize.getWidth(); // 297mm
       const pageHeight = doc.internal.pageSize.getHeight(); // 210mm
       const margin = 10;

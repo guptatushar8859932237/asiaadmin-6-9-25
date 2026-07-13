@@ -2,7 +2,7 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import { Modal, Box } from "@mui/material";
-import { BsThreeDotsVertical } from "react-icons/bs";
+import { BsThreeDotsVertical, BsTrash, BsPlus } from "react-icons/bs";
 import Swal from "sweetalert2";
 
 const pageSize = 10;
@@ -32,18 +32,12 @@ export default function Cashbook() {
     receipt: "",
   });
 
-  const [openSplitModal, setOpenSplitModal] = useState(false);
-  const [splitForm, setSplitForm] = useState({
-    cashbook_id: "",
-    originalDate: "",
-    originalBankRef: "",
-    originalDescription: "",
-    originalReceipt: 0,
-    receipt1: 0,
-    receipt2: 0,
-    description1: "",
-    description2: "",
-  });
+  const [openViewSplitsModal, setOpenViewSplitsModal] = useState(false);
+  const [openAddSplitsModal, setOpenAddSplitsModal] = useState(false);
+  const [viewSplitsData, setViewSplitsData] = useState([]);
+  const [selectedCashbook, setSelectedCashbook] = useState(null);
+  const [splitRows, setSplitRows] = useState([]);
+  const [openSplitMenuId, setOpenSplitMenuId] = useState(null);
   const userid = JSON.parse(localStorage.getItem("data123"))?.id;
   const usertype = JSON.parse(localStorage.getItem("data123"))?.user_type;
   useEffect(() => {
@@ -288,21 +282,183 @@ export default function Cashbook() {
     }
   };
 
-  const handleSplitClick = (item) => {
-    const originalReceipt = parseFloat(item.receipt) || 0;
-    const half = (originalReceipt / 2).toFixed(2);
-    setSplitForm({
-      cashbook_id: item.id || item.cashbook_id,
-      originalDate: formatDateForInput(item.date),
-      originalBankRef: item.bank_ref || "",
-      originalDescription: item.description_on_receipt || "",
-      originalReceipt: originalReceipt,
-      receipt1: parseFloat(half),
-      receipt2: parseFloat((originalReceipt - parseFloat(half)).toFixed(2)),
-      description1: (item.description_on_receipt || "") + " - Part 1",
-      description2: (item.description_on_receipt || "") + " - Part 2",
+  // View splits
+  const handleViewSplitsClick = async (item) => {
+    setSelectedCashbook(item);
+    try {
+      setLoader(true);
+      const response = await axios.post(
+        `${process.env.REACT_APP_BASE_URL}getCashbookSplitsByCashbookId`,
+        { cashbook_id: item.id }
+      );
+      if (response.data.success) {
+        setViewSplitsData(response.data.data || []);
+        setOpenViewSplitsModal(true);
+      } else {
+        toast.error(response.data.message || "Failed to fetch split details.");
+      }
+    } catch (error) {
+      toast.error("Error fetching split details.");
+    } finally {
+      setLoader(false);
+    }
+  };
+
+  // Delete individual split
+  const handleDeleteIndividualSplit = async (splitId) => {
+    const result = await Swal.fire({
+      title: "Are you sure?",
+      text: "Do you want to delete this split?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#3085d6",
+      confirmButtonText: "Yes, delete it!",
     });
-    setOpenSplitModal(true);
+    if (result.isConfirmed) {
+      try {
+        setLoader(true);
+        const response = await axios.post(
+          `${process.env.REACT_APP_BASE_URL}deleteCashbookSplitById`,
+          { split_id: splitId }
+        );
+        if (response.data.success) {
+          toast.success("Split deleted successfully!");
+          // Re-fetch splits for the modal
+          if (selectedCashbook) {
+            const fetchRes = await axios.post(
+              `${process.env.REACT_APP_BASE_URL}getCashbookSplitsByCashbookId`,
+              { cashbook_id: selectedCashbook.id }
+            );
+            if (fetchRes.data.success) {
+              setViewSplitsData(fetchRes.data.data || []);
+            }
+          }
+          getCashbookList(currentPage);
+        } else {
+          toast.error(response.data.message || "Failed to delete split.");
+        }
+      } catch (error) {
+        toast.error("Error deleting split.");
+      } finally {
+        setLoader(false);
+      }
+    }
+  };
+
+  // Delete all splits for a cashbook
+  const handleDeleteSplitsClick = async (item) => {
+    const result = await Swal.fire({
+      title: "Are you sure?",
+      text: "Do you want to delete all splits for this Cashbook?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#3085d6",
+      confirmButtonText: "Yes, delete all!",
+    });
+    if (result.isConfirmed) {
+      try {
+        setLoader(true);
+        const response = await axios.post(
+          `${process.env.REACT_APP_BASE_URL}deleteCashbookSplitByCashbookId`,
+          { cashbook_id: item.id }
+        );
+        if (response.data.success) {
+          Swal.fire({
+            icon: "success",
+            title: "Deleted!",
+            text: response?.data?.message || "All splits deleted successfully.",
+            confirmButtonColor: "#3085d6",
+          });
+          getCashbookList(currentPage);
+        } else {
+          toast.error(response.data.message || "Failed to delete splits.");
+        }
+      } catch (error) {
+        Swal.fire({
+          icon: "error",
+          title: "Error",
+          text: error?.response?.data?.message || "Something went wrong!",
+          confirmButtonColor: "#d33",
+        });
+      } finally {
+        setLoader(false);
+      }
+    }
+  };
+
+  // Add splits click handler
+  const handleAddSplitsClick = async (item) => {
+    if (!item.customer_id || !item.order_id) {
+      toast.error("Please select Shipment Reference and Customer first.");
+      return;
+    }
+    setSelectedCashbook(item);
+
+    // Check if the current row has orders loaded in ordersPerRow
+    if (!ordersPerRow[item.id] || ordersPerRow[item.id].length === 0) {
+      try {
+        setLoader(true);
+        const response = await axios.get(
+          `${process.env.REACT_APP_BASE_URL}OrderInvoiceList?client_id=${item.customer_id}`
+        );
+        setOrdersPerRow((prev) => ({
+          ...prev,
+          [item.id]: response.data.data || [],
+        }));
+      } catch (error) {
+        toast.error("Failed to fetch orders.");
+        setLoader(false);
+        return;
+      }
+    }
+
+    try {
+      setLoader(true);
+      const response = await axios.post(
+        `${process.env.REACT_APP_BASE_URL}getCashbookSplitsByCashbookId`,
+        { cashbook_id: item.id }
+      );
+      if (response.data.success && response.data.data && response.data.data.length > 0) {
+        // Pre-populate with existing splits
+        const mappedRows = response.data.data.map((split) => ({
+          order_id: split.order_id,
+          allocated_amount: split.allocated_amount,
+        }));
+        setSplitRows(mappedRows);
+      } else {
+        // Pre-populate with one empty row
+        setSplitRows([{ order_id: "", allocated_amount: "" }]);
+      }
+      setOpenAddSplitsModal(true);
+    } catch (error) {
+      toast.error("Error preparing splits form.");
+    } finally {
+      setLoader(false);
+    }
+  };
+
+  // Handle split row change
+  const handleSplitRowChange = (index, field, value) => {
+    setSplitRows((prev) =>
+      prev.map((row, i) => (i === index ? { ...row, [field]: value } : row))
+    );
+  };
+
+  // Add split row
+  const handleAddSplitRow = () => {
+    const availableOrders = ordersPerRow[selectedCashbook?.id] || [];
+    if (splitRows.length >= availableOrders.length) {
+      toast.warning("Cannot add more splits than available Shipment References.");
+      return;
+    }
+    setSplitRows((prev) => [...prev, { order_id: "", allocated_amount: "" }]);
+  };
+
+  // Remove split row
+  const handleRemoveSplitRow = (index) => {
+    setSplitRows((prev) => prev.filter((_, i) => i !== index));
   };
 
   const handleAddEditSubmit = async (e) => {
@@ -338,66 +494,64 @@ export default function Cashbook() {
         toast.error(response.data.message || "Failed to save cashbook.");
       }
     } catch (error) {
-      toast.error("Error saving cashbook.");
+      toast.error(error?.response?.data.message || "Error saving cashbook.");
     } finally {
       setLoader(false);
     }
   };
 
-  const handleSplitSubmit = async (e) => {
+  // Submit splits
+  const handleSaveSplitsSubmit = async (e) => {
     e.preventDefault();
-    const r1 = parseFloat(splitForm.receipt1);
-    const r2 = parseFloat(splitForm.receipt2);
-    if (isNaN(r1) || isNaN(r2) || r1 <= 0 || r2 <= 0) {
-      toast.error("Receipt values must be positive numbers.");
+    if (!selectedCashbook) return;
+
+    if (splitRows.length === 0) {
+      toast.error("Please add at least one split entry.");
       return;
     }
-    const sum = parseFloat((r1 + r2).toFixed(2));
-    if (Math.abs(sum - splitForm.originalReceipt) > 0.01) {
-      toast.error(`The sum of split receipts (${sum}) must equal the original receipt (${splitForm.originalReceipt}).`);
-      return;
+
+    const orderIds = new Set();
+    for (let i = 0; i < splitRows.length; i++) {
+      const row = splitRows[i];
+      if (!row.order_id) {
+        toast.error(`Please select a Shipment Reference for Row ${i + 1}.`);
+        return;
+      }
+      const amount = parseFloat(row.allocated_amount);
+      if (isNaN(amount) || amount <= 0) {
+        toast.error(`Please enter a valid positive amount for Row ${i + 1}.`);
+        return;
+      }
+      if (orderIds.has(row.order_id)) {
+        toast.error("Duplicate Shipment References are not allowed.");
+        return;
+      }
+      orderIds.add(row.order_id);
     }
+
+    const payload = {
+      cashbook_id: selectedCashbook.id,
+      splits: splitRows.map((row) => ({
+        order_id: parseInt(row.order_id, 10),
+        allocated_amount: parseFloat(row.allocated_amount),
+      })),
+    };
 
     try {
       setLoader(true);
-      // 1. Update the original record
-      const updatePayload = {
-        cashbook_id: splitForm.cashbook_id,
-        date: splitForm.originalDate,
-        bank_ref: splitForm.originalBankRef,
-        description_on_receipt: splitForm.description1,
-        receipt: r1,
-      };
-      const updateRes = await axios.post(
-        `${process.env.REACT_APP_BASE_URL}addUpdateCashbook`,
-        updatePayload
+      const response = await axios.post(
+        `${process.env.REACT_APP_BASE_URL}addUpdateCashbookSplit`,
+        payload
       );
-      if (!updateRes.data.success) {
-        toast.error("Failed to update original part of split.");
-        setLoader(false);
-        return;
-      }
-
-      // 2. Create the new record
-      const addPayload = {
-        date: splitForm.originalDate,
-        bank_ref: splitForm.originalBankRef,
-        description_on_receipt: splitForm.description2,
-        receipt: r2,
-      };
-      const addRes = await axios.post(
-        `${process.env.REACT_APP_BASE_URL}addUpdateCashbook`,
-        addPayload
-      );
-      if (addRes.data.success) {
-        toast.success("Cashbook split successfully!");
-        setOpenSplitModal(false);
+      if (response.data.success) {
+        toast.success("Splits saved successfully!");
+        setOpenAddSplitsModal(false);
         getCashbookList(currentPage);
       } else {
-        toast.error("Original updated, but failed to create the split new record.");
+        toast.error(response.data.message || "Failed to save splits.");
       }
     } catch (error) {
-      toast.error("Error performing split operations.");
+      toast.error("Error saving splits.");
     } finally {
       setLoader(false);
     }
@@ -522,46 +676,98 @@ export default function Cashbook() {
                           </td>
                           <td>
                             <div className="dropdown">
-                              <div type="button" data-bs-toggle="dropdown">
+                              <div type="button" data-bs-toggle="dropdown" onClick={() => setOpenSplitMenuId(null)}>
                                 <BsThreeDotsVertical />
                               </div>
                               <ul className="dropdown-menu">
-                                <li>
-                                  <button
-                                    type="button"
-                                    className="dropdown-item"
-                                    onClick={() => handleSplitClick(item)}
-                                  >
-                                    Split
-                                  </button>
-                                </li>
-                                <li>
-                                  <button
-                                    type="button"
-                                    className="dropdown-item"
-                                    onClick={() => handleEditClick(item)}
-                                  >
-                                    Edit
-                                  </button>
-                                </li>
-                                <li>
-                                  <button
-                                    type="button"
-                                    className="dropdown-item"
-                                    onClick={() => handleCopyClick(item)}
-                                  >
-                                    Copy
-                                  </button>
-                                </li>
-                                <li>
-                                  <button
-                                    type="button"
-                                    className="dropdown-item text-danger"
-                                    onClick={() => handleDeleteClick(item.id)}
-                                  >
-                                    Delete
-                                  </button>
-                                </li>
+                                {openSplitMenuId === item.id ? (
+                                  <>
+                                    <li>
+                                      <button
+                                        type="button"
+                                        className="dropdown-item fw-bold text-secondary"
+                                        onClick={(e) => {
+                                          e.stopPropagation();
+                                          setOpenSplitMenuId(null);
+                                        }}
+                                      >
+                                        &larr; Back
+                                      </button>
+                                    </li>
+                                    <li>
+                                      <hr className="dropdown-divider" />
+                                    </li>
+                                    <li>
+                                      <button
+                                        type="button"
+                                        className="dropdown-item"
+                                        onClick={() => handleViewSplitsClick(item)}
+                                      >
+                                        View
+                                      </button>
+                                    </li>
+                                    <li>
+                                      <button
+                                        type="button"
+                                        className="dropdown-item text-danger"
+                                        onClick={() => handleDeleteSplitsClick(item)}
+                                      >
+                                        Delete
+                                      </button>
+                                    </li>
+                                    <li>
+                                      <button
+                                        type="button"
+                                        className="dropdown-item"
+                                        onClick={() => handleAddSplitsClick(item)}
+                                      >
+                                        Add
+                                      </button>
+                                    </li>
+                                  </>
+                                ) : (
+                                  <>
+                                    <li>
+                                      <button
+                                        type="button"
+                                        className="dropdown-item"
+                                        onClick={(e) => {
+                                          e.stopPropagation();
+                                          setOpenSplitMenuId(item.id);
+                                        }}
+                                      >
+                                        Split
+                                      </button>
+                                    </li>
+                                    <li>
+                                      <button
+                                        type="button"
+                                        className="dropdown-item"
+                                        onClick={() => handleEditClick(item)}
+                                      >
+                                        Edit
+                                      </button>
+                                    </li>
+                                    <li>
+                                      <button
+                                        type="button"
+                                        className="dropdown-item"
+                                        onClick={() => handleCopyClick(item)}
+                                      >
+                                        Copy
+                                      </button>
+                                    </li>
+                                    <li>
+                                      <button
+                                        type="button"
+                                        className="dropdown-item text-danger"
+                                        onClick={() => handleDeleteClick(item.id)}
+                                      >
+                                        Delete
+                                      </button>
+                                    </li>
+                                  </>
+                                )}
                               </ul>
                             </div>
                           </td>
@@ -718,105 +924,235 @@ export default function Cashbook() {
               </Box>
             </Modal>
 
-            {/* Split Cashbook Modal */}
-            <Modal open={openSplitModal} onClose={() => setOpenSplitModal(false)}>
+            {/* View Splits Modal */}
+            <Modal open={openViewSplitsModal} onClose={() => setOpenViewSplitsModal(false)}>
               <Box
                 sx={{
                   position: "absolute",
                   top: "50%",
                   left: "50%",
                   transform: "translate(-50%, -50%)",
-                  width: "600px",
+                  width: "700px",
                   maxHeight: "90vh",
                   overflowY: "auto",
                   bgcolor: "background.paper",
                   boxShadow: 24,
                   p: 4,
-                  borderRadius: "8px",
+                  borderRadius: "12px",
                 }}
               >
-                <div className="d-flex justify-content-between mb-4 border-bottom pb-2">
-                  <h4 className="m-0">Split Cashbook</h4>
+                <div className="d-flex justify-content-between mb-3 border-bottom pb-2">
+                  <h4 className="m-0 text-primary font-weight-bold">View Splits</h4>
                   <button
-                    onClick={() => setOpenSplitModal(false)}
+                    onClick={() => setOpenViewSplitsModal(false)}
                     className="btn-close"
                     style={{ border: "none", background: "none", fontSize: "1.5rem", cursor: "pointer" }}
                   >
                     &times;
                   </button>
                 </div>
-                <div className="alert alert-info py-2 mb-3">
-                  <strong>Original Receipt:</strong> {splitForm.originalReceipt} | <strong>Bank Ref:</strong> {splitForm.originalBankRef}
+
+                {selectedCashbook && (
+                  <div className="alert alert-light border d-flex justify-content-between flex-wrap gap-2 mb-4 p-3 rounded">
+                    <div><strong>Date:</strong> {new Date(selectedCashbook.date).toLocaleDateString("en-GB")}</div>
+                    <div><strong>Bank Ref:</strong> {selectedCashbook.bank_ref || "-"}</div>
+                    <div><strong>Total Receipt:</strong> {selectedCashbook.receipt}</div>
+                  </div>
+                )}
+
+                <div className="table-responsive">
+                  <table className="table table-hover table-striped">
+                    <thead className="table-dark">
+                      <tr>
+                        <th>Split ID</th>
+                        <th>Order Number</th>
+                        <th>Allocated Amount</th>
+                        <th>Created At</th>
+                        <th className="text-center">Action</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {viewSplitsData.length > 0 ? (
+                        viewSplitsData.map((split) => {
+                          const orders = ordersPerRow[selectedCashbook?.id] || [];
+                          const order = orders.find(o => o.order_ID === split.order_id);
+                          const orderDisplay = order ? order.order_number : (split.order_number || split.order_id);
+                          return (
+                            <tr key={split.split_id}>
+                              <td>{split.split_id}</td>
+                              <td>{orderDisplay}</td>
+                              <td>{split.allocated_amount}</td>
+                              <td>{new Date(split.created_at).toLocaleString()}</td>
+                              <td className="text-center">
+                                <button
+                                  type="button"
+                                  className="btn btn-outline-danger btn-sm p-1 d-inline-flex align-items-center"
+                                  onClick={() => handleDeleteIndividualSplit(split.split_id)}
+                                  title="Delete Split"
+                                >
+                                  <BsTrash style={{ fontSize: "1.1rem" }} />
+                                </button>
+                              </td>
+                            </tr>
+                          );
+                        })
+                      ) : (
+                        <tr>
+                          <td colSpan="5" className="text-center text-muted py-3">
+                            No split records found for this cashbook.
+                          </td>
+                        </tr>
+                      )}
+                    </tbody>
+                  </table>
                 </div>
-                <form onSubmit={handleSplitSubmit}>
-                  <div className="row">
-                    <div className="col-md-6 border-end">
-                      <h5>Part 1 (Original Row)</h5>
-                      <div className="mb-3">
-                        <label className="form-label font-weight-bold">Part 1 Receipt <span className="text-danger">*</span></label>
-                        <input
-                          type="number"
-                          step="0.01"
-                          className="form-control"
-                          value={splitForm.receipt1}
-                          onChange={(e) => {
-                            const val = parseFloat(e.target.value) || 0;
-                            const remaining = parseFloat((splitForm.originalReceipt - val).toFixed(2));
-                            setSplitForm({
-                              ...splitForm,
-                              receipt1: e.target.value,
-                              receipt2: remaining >= 0 ? remaining : 0,
-                            });
-                          }}
-                          required
-                        />
-                      </div>
-                      <div className="mb-3">
-                        <label className="form-label font-weight-bold">Part 1 Description</label>
-                        <input
-                          type="text"
-                          className="form-control"
-                          value={splitForm.description1}
-                          onChange={(e) => setSplitForm({ ...splitForm, description1: e.target.value })}
-                        />
-                      </div>
+
+                <div className="d-flex justify-content-end mt-4 pt-2 border-top">
+                  <button
+                    type="button"
+                    onClick={() => setOpenViewSplitsModal(false)}
+                    className="btn btn-secondary px-4"
+                  >
+                    Close
+                  </button>
+                </div>
+              </Box>
+            </Modal>
+
+            {/* Add / Update Splits Modal */}
+            <Modal open={openAddSplitsModal} onClose={() => setOpenAddSplitsModal(false)}>
+              <Box
+                sx={{
+                  position: "absolute",
+                  top: "50%",
+                  left: "50%",
+                  transform: "translate(-50%, -50%)",
+                  width: "650px",
+                  maxHeight: "90vh",
+                  overflowY: "auto",
+                  bgcolor: "background.paper",
+                  boxShadow: 24,
+                  p: 4,
+                  borderRadius: "12px",
+                }}
+              >
+                <div className="d-flex justify-content-between mb-3 border-bottom pb-2">
+                  <h4 className="m-0 text-primary font-weight-bold">Manage Splits</h4>
+                  <button
+                    onClick={() => setOpenAddSplitsModal(false)}
+                    className="btn-close"
+                    style={{ border: "none", background: "none", fontSize: "1.5rem", cursor: "pointer" }}
+                  >
+                    &times;
+                  </button>
+                </div>
+
+                {selectedCashbook && (
+                  <div className="alert alert-light border d-flex justify-content-between flex-wrap gap-2 mb-4 p-3 rounded">
+                    <div><strong>Date:</strong> {new Date(selectedCashbook.date).toLocaleDateString("en-GB")}</div>
+                    <div><strong>Bank Ref:</strong> {selectedCashbook.bank_ref || "-"}</div>
+                    <div><strong>Receipt Amount:</strong> {selectedCashbook.receipt}</div>
+                  </div>
+                )}
+
+                <form onSubmit={handleSaveSplitsSubmit}>
+                  <div className="mb-3">
+                    <div className="d-flex justify-content-between align-items-center mb-2">
+                      <h5 className="m-0 font-weight-bold text-secondary">Split Allocations</h5>
+                      <button
+                        type="button"
+                        onClick={handleAddSplitRow}
+                        className="btn btn-sm btn-outline-primary d-inline-flex align-items-center gap-1"
+                        disabled={splitRows.length >= (ordersPerRow[selectedCashbook?.id]?.length || 0)}
+                      >
+                        <BsPlus style={{ fontSize: "1.2rem" }} /> Add Split Row
+                      </button>
                     </div>
 
-                    <div className="col-md-6">
-                      <h5>Part 2 (New Row)</h5>
-                      <div className="mb-3">
-                        <label className="form-label font-weight-bold">Part 2 Receipt</label>
-                        <input
-                          type="number"
-                          step="0.01"
-                          className="form-control"
-                          value={splitForm.receipt2}
-                          readOnly
-                        />
-                        <small className="text-muted">Calculated automatically</small>
-                      </div>
-                      <div className="mb-3">
-                        <label className="form-label font-weight-bold">Part 2 Description</label>
-                        <input
-                          type="text"
-                          className="form-control"
-                          value={splitForm.description2}
-                          onChange={(e) => setSplitForm({ ...splitForm, description2: e.target.value })}
-                        />
-                      </div>
+                    <div className="border rounded p-3 bg-light mb-3" style={{ maxHeight: "40vh", overflowY: "auto" }}>
+                      {splitRows.map((row, index) => {
+                        const availableOrders = ordersPerRow[selectedCashbook?.id] || [];
+                        return (
+                          <div key={index} className="row g-2 mb-3 align-items-center border-bottom pb-2">
+                            <div className="col-md-6">
+                              <label className="form-label small text-muted mb-1">Shipment Reference (Order)</label>
+                              <select
+                                className="form-select form-select-sm"
+                                value={row.order_id}
+                                onChange={(e) => handleSplitRowChange(index, "order_id", e.target.value)}
+                                required
+                              >
+                                <option value="">Select Order...</option>
+                                {availableOrders.map((order) => (
+                                  <option key={order.order_ID} value={order.order_ID}>
+                                    {order.order_number || `Order ID ${order.order_ID}`}
+                                  </option>
+                                ))}
+                              </select>
+                            </div>
+                            <div className="col-md-4">
+                              <label className="form-label small text-muted mb-1">Allocated Amount</label>
+                              <input
+                                type="number"
+                                step="0.01"
+                                className="form-control form-control-sm"
+                                placeholder="0.00"
+                                value={row.allocated_amount}
+                                onChange={(e) => handleSplitRowChange(index, "allocated_amount", e.target.value)}
+                                required
+                              />
+                            </div>
+                            <div className="col-md-2 text-end pt-3">
+                              <button
+                                type="button"
+                                className="btn btn-sm btn-outline-danger"
+                                onClick={() => handleRemoveSplitRow(index)}
+                                disabled={splitRows.length === 1}
+                              >
+                                <BsTrash />
+                              </button>
+                            </div>
+                          </div>
+                        );
+                      })}
                     </div>
                   </div>
+
+                  {selectedCashbook && (
+                    <div className="card p-3 mb-4 bg-light border">
+                      <div className="d-flex justify-content-between mb-1">
+                        <span>Total Receipt Amount:</span>
+                        <strong>{selectedCashbook.receipt}</strong>
+                      </div>
+                      <div className="d-flex justify-content-between mb-1">
+                        <span>Total Allocated:</span>
+                        <strong className="text-primary">
+                          {splitRows.reduce((sum, r) => sum + (parseFloat(r.allocated_amount) || 0), 0).toFixed(2)}
+                        </strong>
+                      </div>
+                      <div className="d-flex justify-content-between border-top pt-1">
+                        <span>Remaining Unallocated:</span>
+                        <strong className={
+                          (parseFloat(selectedCashbook.receipt) - splitRows.reduce((sum, r) => sum + (parseFloat(r.allocated_amount) || 0), 0)) < 0
+                            ? "text-danger"
+                            : "text-success"
+                        }>
+                          {(parseFloat(selectedCashbook.receipt) - splitRows.reduce((sum, r) => sum + (parseFloat(r.allocated_amount) || 0), 0)).toFixed(2)}
+                        </strong>
+                      </div>
+                    </div>
+                  )}
 
                   <div className="d-flex justify-content-end mt-4 pt-2 border-top">
                     <button
                       type="button"
-                      onClick={() => setOpenSplitModal(false)}
+                      onClick={() => setOpenAddSplitsModal(false)}
                       className="btn btn-secondary me-2 mx-1"
                     >
                       Cancel
                     </button>
-                    <button type="submit" className="btn btn-primary">
-                      Split Entry
+                    <button type="submit" className="btn btn-primary px-4">
+                      Save Splits
                     </button>
                   </div>
                 </form>

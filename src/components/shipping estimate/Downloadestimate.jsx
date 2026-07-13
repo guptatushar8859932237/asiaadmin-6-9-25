@@ -13,21 +13,44 @@ import { useRef } from "react";
 
 const VAT_OPTIONS = [
   { value: "", label: "No Vat" },
-  { value: "Standard Rate(15.00%)", label: "Standard Rate(15.00%)" },
-  { value: "Standard Rate (Capital Goods) (15.00%)", label: "Standard Rate (Capital Goods) (15.00%)" },
-  { value: "Zero Rate", label: "Zero Rate" },
-  { value: "Zero Rate Exports(0.00%)", label: "Zero Rate Exports(0.00%)" },
-  { value: "Exempt and Non-Suppliers(0.00%)", label: "Exempt and Non-Suppliers(0.00%)" },
-  { value: "Export of Second Hands Goods(15.00%)", label: "Export of Second Hands Goods(15.00%)" },
-  { value: "Change in Use(15.00%)", label: "Change in Use(15.00%)" },
-  { value: "Customs VAT(100.00%)", label: "Customs VAT(100.00%)" },
-  { value: "Goods and Services Imported(100.00%)", label: "Goods and Services Imported(100.00%)" },
-  { value: "Capital Goods and Imported(100.00%)", label: "Capital Goods and Imported(100.00%)" },
-  { value: "VAT Adjustment (100.00%)", label: "VAT Adjustment (100.00%)" },
-  { value: "Domestic Reverse Charge (15.00%)", label: "Domestic Reverse Charge (15.00%)" },
+  { value: "Standard Rate(15.00%)", label: "Standard Rate (15.00 %)" },
+  { value: "Standard Rate (Capital Goods) (15.00%)", label: "Standard Rate (Capital Goods) (15.00 %)" },
+  { value: "Zero Rate", label: "Zero Rate (0.00 %)" },
+  { value: "Zero Rate Exports(0.00%)", label: "Zero Rate Exports (0.00 %)" },
+  { value: "Exempt and Non-Suppliers(0.00%)", label: "Exempt and Non-Suppliers (0.00 %)" },
+  { value: "Export of Second Hands Goods(15.00%)", label: "Export of Second Hands Goods (15.00 %)" },
+  { value: "Change in Use(15.00%)", label: "Change in Use (15.00 %)" },
+  { value: "Customs VAT(100.00%)", label: "Customs VAT (100.00 %)" },
+  { value: "Goods and Services Imported(100.00%)", label: "Goods and Services Imported (100.00 %)" },
+  { value: "Capital Goods and Imported(100.00%)", label: "Capital Goods and Imported (100.00 %)" },
+  { value: "VAT Adjustment (100.00%)", label: "VAT Adjustment (100.00 %)" },
+  { value: "Domestic Reverse Charge (15.00%)", label: "Domestic Reverse Charge (15.00 %)" },
   { value: "Manual VAT", label: "Manual VAT" },
   { value: "Manual VAT (Capital Goods)", label: "Manual VAT (Capital Goods)" }
 ];
+
+const cleanParseFloat = (val) => {
+  if (val === null || val === undefined || val === "") return 0;
+  const cleaned = String(val).replace(/,/g, '').replace(/%/g, '').trim();
+  const parsed = parseFloat(cleaned);
+  return isNaN(parsed) ? 0 : parsed;
+};
+
+const formatValue = (val, dec = 2, isPercent = false) => {
+  if (val === null || val === undefined || val === "") {
+    return isPercent ? "0.00 %" : "0.00";
+  }
+  const cleanVal = String(val).replace(/,/g, '').replace(/%/g, '').trim();
+  const num = parseFloat(cleanVal);
+  if (isNaN(num)) {
+    return val;
+  }
+  const formatted = num.toLocaleString("en-US", {
+    minimumFractionDigits: dec,
+    maximumFractionDigits: dec
+  });
+  return isPercent ? `${formatted} %` : formatted;
+};
 
 const getVatPercent = (vatTyp) => {
   if (!vatTyp) return 0;
@@ -682,11 +705,7 @@ const mapEstimateComponentsToFlatFields = (freight) => {
   return f;
 };
 
-const formatValue = (val) => {
-  const num = parseFloat(val);
-  if (isNaN(num) || num === 0) return "-";
-  return num.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-};
+
 
 export default function Downlaodestimate() {
   const [update, setUpdate] = useState([0]);
@@ -727,22 +746,23 @@ export default function Downlaodestimate() {
   const resolveRowUnit = (unitType) => {
     if (!unitType || unitType === "Select") return 0;
     if (String(unitType) === "1") return 1;
-    const rate = parseFloat(freight?.chargable_rate);
-    return Number.isNaN(rate) ? 0 : rate;
+    const rate = cleanParseFloat(freight?.chargable_rate);
+    return rate;
   };
 
   const displayRowUnit = (unitType) => {
     if (!unitType || unitType === "Select") return "";
-    if (String(unitType) === "1") return 1;
-    return freight?.chargable_rate ?? "";
+    if (String(unitType) === "1") return "1.00";
+    return formatValue(freight?.chargable_rate);
   };
 
   // Extract ONLY the percentage number (e.g. "15.00%") → returns 15
   const getPercentageOnly = (value) => {
     if (!value) return "";
 
-    if (!isNaN(value) && !isNaN(parseFloat(value))) {
-      return parseFloat(value).toFixed(2);
+    const cleanVal = String(value).replace(/,/g, '').replace(/%/g, '').trim();
+    if (!isNaN(cleanVal) && !isNaN(parseFloat(cleanVal))) {
+      return parseFloat(cleanVal).toFixed(2);
     }
 
     // Extract number from "Standard Rate(15.00%)", "15%", etc.
@@ -751,23 +771,23 @@ export default function Downlaodestimate() {
   };
 
   const calculateRowData = (row) => {
-    const qty = parseFloat(row?.qty) || 0;
-    const cost = parseFloat(row?.cost) || 0;
+    const qty = cleanParseFloat(row?.qty);
+    const cost = cleanParseFloat(row?.cost);
     const unit = resolveRowUnit(row?.unitType);
     const tCost = (row?.unitType && row?.unitType !== "Select") ? (cost * unit * qty) : 0;
 
-    const gpPercent = parseFloat(row?.gp_percent) || 0;
+    const gpPercent = cleanParseFloat(row?.gp_percent);
     let salesPrice = tCost;
     if (gpPercent > 0 && gpPercent < 100) {
       salesPrice = tCost / (1 - gpPercent / 100);
     }
 
-    const roe = parseFloat(row?.roe) || 0;
+    const roe = cleanParseFloat(row?.roe);
     const finalAmt = salesPrice * roe;
 
     // === UPDATED: Extract only percentage number from text ===
-    const discPercent = getPercentageOnly(row?.discPercent) || 0;
-    const vatPercent = getPercentageOnly(row?.vatTyp) || 0;
+    const discPercent = cleanParseFloat(getPercentageOnly(row?.discPercent));
+    const vatPercent = cleanParseFloat(getPercentageOnly(row?.vatTyp));
 
     const disc = (finalAmt * discPercent) / 100;
     const exclusive = finalAmt - disc;
@@ -776,7 +796,7 @@ export default function Downlaodestimate() {
 
     // Keep manual VAT logic
     if (row?.vatTyp === "Manual VAT" || row?.vatTyp === "Manual VAT (Capital Goods)") {
-      vat = parseFloat(row?.vat) || 0;
+      vat = cleanParseFloat(row?.vat);
     }
 
     const inclusive = exclusive + vat;
@@ -796,6 +816,30 @@ export default function Downlaodestimate() {
   const updateRowField = (setter, id, field, value) => {
     setter((prev) =>
       prev.map((row) => (row.id === id ? { ...row, [field]: value } : row))
+    );
+  };
+
+  const handleBlur = (setter, id, field, value, dec = 2, isPercent = false) => {
+    setter((prev) =>
+      prev.map((row) =>
+        row.id === id ? { ...row, [field]: formatValue(value, dec, isPercent) } : row
+      )
+    );
+  };
+
+  const handleFocus = (setter, id, field, value) => {
+    setter((prev) =>
+      prev.map((row) =>
+        row.id === id
+          ? {
+              ...row,
+              [field]: String(value || "")
+                .replace(/,/g, "")
+                .replace(/%/g, "")
+                .trim(),
+            }
+          : row
+      )
     );
   };
 
@@ -1006,6 +1050,8 @@ export default function Downlaodestimate() {
             className="supplier_form"
             onKeyPress={handlepresss}
             onChange={(e) => updateRowField(setter, row.id, "cost", e.target.value)}
+            onBlur={(e) => handleBlur(setter, row.id, "cost", e.target.value, 2)}
+            onFocus={(e) => handleFocus(setter, row.id, "cost", row.cost || "")}
             value={row.cost || ""}
             placeholder="0.00"
           />
@@ -1029,6 +1075,8 @@ export default function Downlaodestimate() {
             style={{ marginBottom: 0, fontSize: 13, color: "black", border: "0px", verticalAlign: "middle" }}
             name="roe"
             onChange={(e) => updateRowField(setter, row.id, "roe", e.target.value)}
+            onBlur={(e) => handleBlur(setter, row.id, "roe", e.target.value, 4)}
+            onFocus={(e) => handleFocus(setter, row.id, "roe", row.roe || "")}
             value={row.roe || ""}
             className="supplier_form"
           />
@@ -1037,7 +1085,7 @@ export default function Downlaodestimate() {
           <input
             style={{ marginBottom: 0, fontSize: 13, color: "black", border: "0px", verticalAlign: "middle" }}
             disabled
-            value={isNaN(calc.finalAmt) ? "0.00" : calc.finalAmt.toFixed(2)}
+            value={formatValue(calc.finalAmt, 2)}
             className="supplier_form"
           />
         </td>
@@ -1058,6 +1106,8 @@ export default function Downlaodestimate() {
             style={{ marginBottom: 0, fontSize: 13, color: "black", width: "50px", border: "0px", verticalAlign: "middle" }}
             type="text"
             onChange={(e) => updateRowField(setter, row.id, "discPercent", e.target.value)}
+            onBlur={(e) => handleBlur(setter, row.id, "discPercent", e.target.value, 2, true)}
+            onFocus={(e) => handleFocus(setter, row.id, "discPercent", row.discPercent || "")}
             value={row.discPercent || ""}
             placeholder="0.00%"
           />
@@ -1645,7 +1695,6 @@ export default function Downlaodestimate() {
       const vatDisplay = getPercentageOnly(row.vatTyp)
         ? `${getPercentageOnly(row.vatTyp)}%`
         : "";
-
       rows.push([
         row.description || "",
         row.qty || "",
@@ -1681,7 +1730,7 @@ export default function Downlaodestimate() {
 
   const downloadPDF1 = async () => {
     try {
-      const doc = new jsPDF({ orientation: "landscape", unit: "mm", format: "a4" });
+      const doc = new jsPDF({ orientation: "portrait", unit: "mm", format: "a4" });
       const pageWidth = doc.internal.pageSize.getWidth(); // 297mm
       const pageHeight = doc.internal.pageSize.getHeight(); // 210mm
       const margin = 10;
@@ -1904,7 +1953,7 @@ export default function Downlaodestimate() {
       autoTable(doc, {
         startY: cursorY,
         margin: { left: margin, right: margin, top: margin, bottom: 14 },
-        head: [["Description", "QTY", "UOM", "Unit", "Price", "Curr", "Exch Rate", "Total", "VAT Type", "Disc %", "Discount", "Exclusive", "VAT", "Total"]],
+        head: [["Description", "QTY", "UOM", "Unit", "Price", "Curr", "Exch Rate", "Total", "Vat %", "Disc %", "Discount", "Exclusive", "VAT", "Total"]],
         body: tableBody,
         theme: "grid",
         styles: {
@@ -2977,7 +3026,7 @@ export default function Downlaodestimate() {
                             <th>Curr</th>
                             <th>Exch rate</th>
                             <th>Total</th>
-                            <th>VAT Type</th>
+                            <th>Vat %</th>
                             <th>Disc %</th>
                             <th>Discount</th>
                             <th>Exclusive</th>

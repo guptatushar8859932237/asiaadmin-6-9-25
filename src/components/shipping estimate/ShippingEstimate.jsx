@@ -34,21 +34,44 @@ const getVatLabel = (val) => {
 
 const VAT_OPTIONS = [
   { value: "", label: "No Vat" },
-  { value: "Standard Rate(15.00%)", label: "Standard Rate(15.00%)" },
-  { value: "Standard Rate (Capital Goods) (15.00%)", label: "Standard Rate (Capital Goods) (15.00%)" },
-  { value: "Zero Rate", label: "Zero Rate" },
-  { value: "Zero Rate Exports(0.00%)", label: "Zero Rate Exports(0.00%)" },
-  { value: "Exempt and Non-Suppliers(0.00%)", label: "Exempt and Non-Suppliers(0.00%)" },
-  { value: "Export of Second Hands Goods(15.00%)", label: "Export of Second Hands Goods(15.00%)" },
-  { value: "Change in Use(15.00%)", label: "Change in Use(15.00%)" },
-  { value: "Customs VAT(100.00%)", label: "Customs VAT(100.00%)" },
-  { value: "Goods and Services Imported(100.00%)", label: "Goods and Services Imported(100.00%)" },
-  { value: "Capital Goods and Imported(100.00%)", label: "Capital Goods and Imported(100.00%)" },
-  { value: "VAT Adjustment (100.00%)", label: "VAT Adjustment (100.00%)" },
-  { value: "Domestic Reverse Charge (15.00%)", label: "Domestic Reverse Charge (15.00%)" },
+  { value: "Standard Rate(15.00%)", label: "Standard Rate (15.00 %)" },
+  { value: "Standard Rate (Capital Goods) (15.00%)", label: "Standard Rate (Capital Goods) (15.00 %)" },
+  { value: "Zero Rate", label: "Zero Rate (0.00 %)" },
+  { value: "Zero Rate Exports(0.00%)", label: "Zero Rate Exports (0.00 %)" },
+  { value: "Exempt and Non-Suppliers(0.00%)", label: "Exempt and Non-Suppliers (0.00 %)" },
+  { value: "Export of Second Hands Goods(15.00%)", label: "Export of Second Hands Goods (15.00 %)" },
+  { value: "Change in Use(15.00%)", label: "Change in Use (15.00 %)" },
+  { value: "Customs VAT(100.00%)", label: "Customs VAT (100.00 %)" },
+  { value: "Goods and Services Imported(100.00%)", label: "Goods and Services Imported (100.00 %)" },
+  { value: "Capital Goods and Imported(100.00%)", label: "Capital Goods and Imported (100.00 %)" },
+  { value: "VAT Adjustment (100.00%)", label: "VAT Adjustment (100.00 %)" },
+  { value: "Domestic Reverse Charge (15.00%)", label: "Domestic Reverse Charge (15.00 %)" },
   { value: "Manual VAT", label: "Manual VAT" },
   { value: "Manual VAT (Capital Goods)", label: "Manual VAT (Capital Goods)" }
 ];
+
+const cleanParseFloat = (val) => {
+  if (val === null || val === undefined || val === "") return 0;
+  const cleaned = String(val).replace(/,/g, '').replace(/%/g, '').trim();
+  const parsed = parseFloat(cleaned);
+  return isNaN(parsed) ? 0 : parsed;
+};
+
+const formatNumber = (value, dec = 2, isPercent = false) => {
+  if (value === null || value === undefined || value === "") {
+    return isPercent ? "0.00 %" : "0.00";
+  }
+  const cleanVal = String(value).replace(/,/g, '').replace(/%/g, '').trim();
+  const num = parseFloat(cleanVal);
+  if (isNaN(num)) {
+    return value;
+  }
+  const formatted = num.toLocaleString("en-US", {
+    minimumFractionDigits: dec,
+    maximumFractionDigits: dec
+  });
+  return isPercent ? `${formatted} %` : formatted;
+};
 
 export default function ShippingEstimate() {
   const [update, setUpdate] = useState([0]);
@@ -319,37 +342,37 @@ export default function ShippingEstimate() {
   const resolveRowUnit = (unitType) => {
     if (!unitType || unitType === "Select") return 0;
     if (String(unitType) === "1") return 1;
-    const rate = parseFloat(freight?.chargable_rate);
-    return Number.isNaN(rate) ? 0 : rate;
+    const rate = cleanParseFloat(freight?.chargable_rate);
+    return rate;
   };
 
   const displayRowUnit = (unitType) => {
     if (!unitType || unitType === "Select") return "";
-    if (String(unitType) === "1") return 1;
-    return freight?.chargable_rate ?? "";
+    if (String(unitType) === "1") return "1.00";
+    return formatNumber(freight?.chargable_rate, 2);
   };
 
   const calculateRowData = (row) => {
-    const qty = parseFloat(row?.qty) || 0;
-    const cost = parseFloat(row?.cost) || 0;
+    const qty = cleanParseFloat(row?.qty);
+    const cost = cleanParseFloat(row?.cost);
     const unit = resolveRowUnit(row?.unitType);
     const tCost = (row?.unitType && row?.unitType !== "Select") ? (cost * unit * qty) : 0;
-    const gpPercent = parseFloat(row?.gp_percent) || 0;
+    const gpPercent = cleanParseFloat(row?.gp_percent);
     let salesPrice = tCost;
     if (gpPercent > 0 && gpPercent < 100) {
       salesPrice = tCost / (1 - gpPercent / 100);
     }
-    const roe = parseFloat(row?.roe) || 0;
+    const roe = cleanParseFloat(row?.roe);
     const finalAmt = salesPrice * roe;
 
-    const discPercent = parseFloat(row?.discPercent) || 0;
+    const discPercent = cleanParseFloat(row?.discPercent);
     const vatPercent = getVatPercent(row?.vatTyp);
 
     const disc = (finalAmt * discPercent) / 100;
     const exclusive = finalAmt - disc;
     let vat = (exclusive * vatPercent) / 100;
     if (row?.vatTyp === "Manual VAT" || row?.vatTyp === "Manual VAT (Capital Goods)") {
-      vat = parseFloat(row?.vat) || 0;
+      vat = cleanParseFloat(row?.vat);
     }
     const inclusive = exclusive + vat;
 
@@ -368,6 +391,30 @@ export default function ShippingEstimate() {
   const updateRowField = (setter, id, field, value) => {
     setter((prev) =>
       prev.map((row) => (row.id === id ? { ...row, [field]: value } : row))
+    );
+  };
+
+  const handleBlur = (setter, id, field, value, dec = 2, isPercent = false) => {
+    setter((prev) =>
+      prev.map((row) =>
+        row.id === id ? { ...row, [field]: formatNumber(value, dec, isPercent) } : row
+      )
+    );
+  };
+
+  const handleFocus = (setter, id, field, value) => {
+    setter((prev) =>
+      prev.map((row) =>
+        row.id === id
+          ? {
+              ...row,
+              [field]: String(value || "")
+                .replace(/,/g, "")
+                .replace(/%/g, "")
+                .trim(),
+            }
+          : row
+      )
     );
   };
 
@@ -392,7 +439,291 @@ export default function ShippingEstimate() {
     };
   };
 
-  const formatMoney = (value) => safeNumber(value).toFixed(2);
+  const formatMoney = (value) => formatNumber(value, 2);
+
+  const renderRow = (row, calc, setter, dropdown, allRows) => {
+    return (
+      <tr key={row.id}>
+        <td>
+          <select
+            className="supplier_form"
+            value={row.admin_frieght_component_id || (row.description === "Note" ? "Note" : "")}
+            onChange={(e) =>
+              handleDropdownChange(setter, dropdown, row.id, e.target.value)
+            }
+          >
+            <option value="">Select</option>
+            <option value="Note">Note</option>
+            {dropdown.map((item) => {
+              const isAlreadySelected = allRows.some(
+                (r) => r.admin_frieght_component_id === item.admin_frieght_component_id && r.id !== row.id
+              );
+              return (
+                <option
+                  key={item.admin_frieght_component_id}
+                  value={item.admin_frieght_component_id}
+                  disabled={isAlreadySelected}
+                >
+                  {item.code ? `${item.code} - ${item.description}` : item.description}
+                </option>
+              );
+            })}
+          </select>
+        </td>
+        <td>
+          <input
+            style={{
+              marginBottom: 0,
+              fontSize: 13,
+              color: "black",
+              fontWeight: 400,
+              border: "0px",
+              verticalAlign: "middle",
+            }}
+            type="text"
+            className="supplier_form"
+            onChange={(e) => updateRowField(setter, row.id, "qty", e.target.value)}
+            value={row.qty || ""}
+            placeholder="0.00"
+          />
+        </td>
+        <td>
+          <select
+            className="select_supplier"
+            style={{
+              margin: 0,
+              fontSize: 13,
+              fontWeight: 700,
+              paddingLeft: 5,
+              border: 0,
+            }}
+            onChange={(e) => updateRowField(setter, row.id, "currency", e.target.value)}
+            value={row.currency || "Select"}
+          >
+            <option value="Select">Select</option>
+            <option value="RAND">RAND</option>
+            <option value="USD">USD</option>
+            <option value="INR">INR</option>
+            <option value="EURO">EURO</option>
+          </select>
+        </td>
+        <td>
+          <input
+            style={{
+              marginBottom: 0,
+              fontSize: 13,
+              color: "black",
+              fontWeight: 400,
+              border: "0px",
+              verticalAlign: "middle",
+            }}
+            type="text"
+            className="supplier_form"
+            onKeyPress={handlepresss}
+            onChange={(e) => updateRowField(setter, row.id, "cost", e.target.value)}
+            onBlur={(e) => handleBlur(setter, row.id, "cost", e.target.value, 2)}
+            onFocus={(e) => handleFocus(setter, row.id, "cost", row.cost || "")}
+            value={row.cost || ""}
+            placeholder="0.00"
+          />
+        </td>
+        <td>
+          <select
+            className="select_supplier"
+            style={{
+              margin: 0,
+              fontSize: 13,
+              fontWeight: 700,
+              paddingLeft: 5,
+              border: 0,
+            }}
+            onChange={(e) => updateRowField(setter, row.id, "unitType", e.target.value)}
+            value={row.unitType || "Select"}
+          >
+            <option value="Select">Select</option>
+            <option value="1">L/S</option>
+            <option value="2">W/M</option>
+          </select>
+        </td>
+        <td>
+          <input
+            style={{
+              marginBottom: 0,
+              fontSize: 13,
+              color: "black",
+              fontWeight: 400,
+              border: "0px",
+              verticalAlign: "middle",
+            }}
+            type="text"
+            className="supplier_form"
+            disabled
+            value={displayRowUnit(row.unitType)}
+            placeholder="0.00"
+          />
+        </td>
+        <td>
+          <input
+            style={{
+              marginBottom: 0,
+              fontSize: 13,
+              color: "black",
+              fontWeight: 400,
+              border: "0px",
+              verticalAlign: "middle",
+            }}
+            disabled
+            type="text"
+            className="supplier_form"
+            value={formatNumber(calc.tCost, 2)}
+            placeholder="0.00"
+          />
+        </td>
+        <td>
+          <input
+            style={{
+              marginBottom: 0,
+              fontSize: 13,
+              color: "black",
+              fontWeight: 400,
+              border: "0px",
+              verticalAlign: "middle",
+            }}
+            type="text"
+            className="supplier_form"
+            onChange={(e) => updateRowField(setter, row.id, "gp_percent", e.target.value)}
+            value={row.gp_percent || ""}
+            placeholder="0.00"
+          />
+        </td>
+        <td>
+          <input
+            style={{
+              marginBottom: 0,
+              fontSize: 13,
+              color: "black",
+              fontWeight: 400,
+              border: "0px",
+              verticalAlign: "middle",
+            }}
+            disabled
+            type="text"
+            className="supplier_form"
+            value={formatNumber(calc.salesPrice, 2)}
+            placeholder="0.00"
+          />
+        </td>
+        <td>
+          <input
+            style={{
+              marginBottom: 0,
+              fontSize: 13,
+              color: "black",
+              border: "0px",
+              verticalAlign: "middle",
+            }}
+            onChange={(e) => updateRowField(setter, row.id, "roe", e.target.value)}
+            onBlur={(e) => handleBlur(setter, row.id, "roe", e.target.value, 4)}
+            onFocus={(e) => handleFocus(setter, row.id, "roe", row.roe || "")}
+            value={row.roe || ""}
+            className="supplier_form"
+            placeholder="1.00"
+          />
+        </td>
+        <td>
+          <input
+            style={{
+              marginBottom: 0,
+              fontSize: 13,
+              color: "black",
+              border: "0px",
+              verticalAlign: "middle",
+            }}
+            disabled
+            value={formatNumber(calc.finalAmt, 2)}
+            placeholder="0.00"
+            className="supplier_form"
+          />
+        </td>
+        <td>
+          <select
+            onChange={(e) => updateRowField(setter, row.id, "vatTyp", e.target.value)}
+            value={row.vatTyp || ""}
+          >
+            {VAT_OPTIONS.map((opt, i) => (
+              <option key={i} value={opt.value}>{opt.label}</option>
+            ))}
+          </select>
+        </td>
+        <td>
+          <input
+            type="text"
+            placeholder="0.00"
+            onChange={(e) => updateRowField(setter, row.id, "discPercent", e.target.value)}
+            onBlur={(e) => handleBlur(setter, row.id, "discPercent", e.target.value, 2, true)}
+            onFocus={(e) => handleFocus(setter, row.id, "discPercent", row.discPercent || "")}
+            className="supplier_form"
+            value={row.discPercent || ""}
+          />
+        </td>
+        <td>
+          <input
+            type="text"
+            placeholder="0.00"
+            disabled
+            value={formatNumber(calc.disc, 2)}
+            className="supplier_form"
+          />
+        </td>
+        <td>
+          <input
+            type="text"
+            placeholder="0.00"
+            disabled
+            value={formatNumber(calc.exclusive, 2)}
+            className="supplier_form"
+          />
+        </td>
+        <td>
+          <input
+            type="text"
+            placeholder="0.00"
+            disabled={!(row.vatTyp === "Manual VAT" || row.vatTyp === "Manual VAT (Capital Goods)")}
+            value={(row.vatTyp === "Manual VAT" || row.vatTyp === "Manual VAT (Capital Goods)") ? (row.vat ?? "") : formatNumber(calc.vat, 2)}
+            onChange={(e) => updateRowField(setter, row.id, "vat", e.target.value)}
+            onBlur={(e) => handleBlur(setter, row.id, "vat", e.target.value, 2)}
+            onFocus={(e) => handleFocus(setter, row.id, "vat", row.vat || "")}
+            className="supplier_form"
+          />
+        </td>
+        <td>
+          <input
+            type="text"
+            placeholder="0.00"
+            disabled
+            value={formatNumber(calc.inclusive, 2)}
+            className="supplier_form"
+          />
+        </td>
+        <td>
+          <input
+            type="text"
+            placeholder="Comment"
+            onChange={(e) => updateRowField(setter, row.id, "comment", e.target.value)}
+            value={row.comment || ""}
+            className="supplier_form"
+          />
+        </td>
+        <td>
+          <i
+            className="fa fa-trash text-danger"
+            style={{ cursor: "pointer" }}
+            onClick={() => deleteRow(setter, row.id)}
+          />
+        </td>
+      </tr>
+    );
+  };
 
   const originRowsData = originRows.map(row => ({
     row,
@@ -519,22 +850,22 @@ export default function ShippingEstimate() {
         ...(row.db_id && { id: row.db_id }),
         admin_frieght_component_id: row.admin_frieght_component_id || null,
         description: row.description || "",
-        qty: parseFloat(row.qty) || 0,
+        qty: cleanParseFloat(row.qty),
         currency: row.currency || "",
-        cost: parseFloat(row.cost) || 0,
+        cost: cleanParseFloat(row.cost),
         unit_type: row.unitType === "1" ? "L/S" : (row.unitType === "2" ? "W/M" : ""),
-        unit: parseFloat(calc.unit) || 0,
-        total_cost: parseFloat(calc.tCost) || 0,
-        gp_percent: parseFloat(row.gp_percent) || 0,
-        sales_price: parseFloat(calc.salesPrice) || 0,
-        roe: parseFloat(row.roe) || 0,
-        final_amount: parseFloat(calc.finalAmt) || 0,
+        unit: cleanParseFloat(calc.unit),
+        total_cost: cleanParseFloat(calc.tCost),
+        gp_percent: cleanParseFloat(row.gp_percent),
+        sales_price: cleanParseFloat(calc.salesPrice),
+        roe: cleanParseFloat(row.roe),
+        final_amount: cleanParseFloat(calc.finalAmt),
         vat_type: row.vatTyp || "",
-        disc_percent: parseFloat(row.discPercent) || 0,
-        discount: parseFloat(calc.disc) || 0,
-        exclusive: parseFloat(calc.exclusive) || 0,
-        vat: parseFloat(calc.vat) || 0,
-        vat_incl: parseFloat(calc.inclusive) || 0,
+        disc_percent: cleanParseFloat(row.discPercent),
+        discount: cleanParseFloat(calc.disc),
+        exclusive: cleanParseFloat(calc.exclusive),
+        vat: cleanParseFloat(calc.vat),
+        vat_incl: cleanParseFloat(calc.inclusive),
         comment: row.comment || ""
       });
 
@@ -800,22 +1131,22 @@ export default function ShippingEstimate() {
       ...(row.db_id && { id: row.db_id }),
       admin_frieght_component_id: row.admin_frieght_component_id || null,
       description: row.description || "",
-      qty: parseFloat(row.qty) || 0,
+      qty: cleanParseFloat(row.qty),
       currency: row.currency || "",
-      cost: parseFloat(row.cost) || 0,
+      cost: cleanParseFloat(row.cost),
       unit_type: row.unitType === "1" ? "L/S" : (row.unitType === "2" ? "W/M" : ""),
-      unit: parseFloat(calc.unit) || 0,
-      total_cost: parseFloat(calc.tCost) || 0,
-      gp_percent: parseFloat(row.gp_percent) || 0,
-      sales_price: parseFloat(calc.salesPrice) || 0,
-      roe: parseFloat(row.roe) || 0,
-      final_amount: parseFloat(calc.finalAmt) || 0,
+      unit: cleanParseFloat(calc.unit),
+      total_cost: cleanParseFloat(calc.tCost),
+      gp_percent: cleanParseFloat(row.gp_percent),
+      sales_price: cleanParseFloat(calc.salesPrice),
+      roe: cleanParseFloat(row.roe),
+      final_amount: cleanParseFloat(calc.finalAmt),
       vat_type: row.vatTyp || "",
-      disc_percent: parseFloat(row.discPercent) || 0,
-      discount: parseFloat(calc.disc) || 0,
-      exclusive: parseFloat(calc.exclusive) || 0,
-      vat: parseFloat(calc.vat) || 0,
-      vat_incl: parseFloat(calc.inclusive) || 0,
+      disc_percent: cleanParseFloat(row.discPercent),
+      discount: cleanParseFloat(calc.disc),
+      exclusive: cleanParseFloat(calc.exclusive),
+      vat: cleanParseFloat(calc.vat),
+      vat_incl: cleanParseFloat(calc.inclusive),
       comment: row.comment || ""
     });
 
@@ -2074,12 +2405,12 @@ export default function ShippingEstimate() {
                             <th>Sales/ P</th>
                             <th>ROE</th>
                             <th>Final Amount</th>
-                            <th>VAT Type </th>
+                            <th>Vat %</th>
                             <th>Disc % </th>
                             <th>Discount </th>
                             <th>Exclusive </th>
                             <th>VAT </th>
-                            <th>VAT Incl </th>
+                            <th>Total </th>
                             <th colSpan={2}>Comment </th>
                           </tr>
                         </thead>
@@ -2091,279 +2422,7 @@ export default function ShippingEstimate() {
                               <strong>Origin Charges <i class="fa fa-plus appendIcon" style={{ cursor: "pointer" }} onClick={() => appendRow(setOriginRows)}></i></strong>
                             </td>
                           </tr>
-                          {originRowsData.map(({ row, calc }) => (
-                            <tr key={row.id}>
-                              <td>
-                                <select
-                                  className="supplier_form"
-                                  value={row.admin_frieght_component_id || (row.description === "Note" ? "Note" : "")}
-                                  onChange={(e) =>
-                                    handleDropdownChange(setOriginRows, originDropdown, row.id, e.target.value)
-                                  }
-                                >
-                                  <option value="">Select</option>
-                                  <option value="Note">Note</option>
-                                  {originDropdown.map((item) => {
-                                    const isAlreadySelected = originRows.some(
-                                      (r) => r.admin_frieght_component_id === item.admin_frieght_component_id && r.id !== row.id
-                                    );
-                                    return (
-                                      <option
-                                        key={item.admin_frieght_component_id}
-                                        value={item.admin_frieght_component_id}
-                                        disabled={isAlreadySelected}
-                                      >
-                                        {item.code ? `${item.code} - ${item.description}` : item.description}
-                                      </option>
-                                    );
-                                  })}
-                                </select>
-                              </td>
-                              <td>
-                                <input
-                                  style={{
-                                    marginBottom: 0,
-                                    fontSize: 13,
-                                    color: "black",
-                                    fontWeight: 400,
-                                    border: "0px",
-                                    verticalAlign: "middle",
-                                  }}
-                                  type="text"
-                                  className="supplier_form"
-                                  onChange={(e) => updateRowField(setOriginRows, row.id, "qty", e.target.value)}
-                                  value={row.qty || ""}
-                                  placeholder="0.00"
-                                />
-                              </td>
-                              <td>
-                                <select
-                                  className="select_supplier"
-                                  style={{
-                                    margin: 0,
-                                    fontSize: 13,
-                                    fontWeight: 700,
-                                    paddingLeft: 5,
-                                    border: 0,
-                                  }}
-                                  onChange={(e) => updateRowField(setOriginRows, row.id, "currency", e.target.value)}
-                                  value={row.currency || "Select"}
-                                >
-                                  <option value="Select">Select</option>
-                                  <option value="RAND">RAND</option>
-                                  <option value="USD">USD</option>
-                                  <option value="INR">INR</option>
-                                  <option value="EURO">EURO</option>
-                                </select>
-                              </td>
-                              <td>
-                                <input
-                                  style={{
-                                    marginBottom: 0,
-                                    fontSize: 13,
-                                    color: "black",
-                                    fontWeight: 400,
-                                    border: "0px",
-                                    verticalAlign: "middle",
-                                  }}
-                                  type="text"
-                                  className="supplier_form"
-                                  onKeyPress={handlepresss}
-                                  onChange={(e) => updateRowField(setOriginRows, row.id, "cost", e.target.value)}
-                                  value={row.cost || ""}
-                                  placeholder="0.00"
-                                />
-                              </td>
-                              <td>
-                                <select
-                                  className="select_supplier"
-                                  style={{
-                                    margin: 0,
-                                    fontSize: 13,
-                                    fontWeight: 700,
-                                    paddingLeft: 5,
-                                    border: 0,
-                                  }}
-                                  onChange={(e) => updateRowField(setOriginRows, row.id, "unitType", e.target.value)}
-                                  value={row.unitType || "Select"}
-                                >
-                                  <option value="Select">Select</option>
-                                  <option value="1">L/S</option>
-                                  <option value="2">W/M</option>
-                                </select>
-                              </td>
-                              <td>
-                                <input
-                                  style={{
-                                    marginBottom: 0,
-                                    fontSize: 13,
-                                    color: "black",
-                                    fontWeight: 400,
-                                    border: "0px",
-                                    verticalAlign: "middle",
-                                  }}
-                                  type="text"
-                                  className="supplier_form"
-                                  disabled
-                                  value={displayRowUnit(row.unitType)}
-                                  placeholder="0.00"
-                                />
-                              </td>
-                              <td>
-                                <input
-                                  style={{
-                                    marginBottom: 0,
-                                    fontSize: 13,
-                                    color: "black",
-                                    fontWeight: 400,
-                                    border: "0px",
-                                    verticalAlign: "middle",
-                                  }}
-                                  disabled
-                                  type="text"
-                                  className="supplier_form"
-                                  value={calc.tCost ? calc.tCost.toFixed(2) : "0.00"}
-                                  placeholder="0.00"
-                                />
-                              </td>
-                              <td>
-                                <input
-                                  style={{
-                                    marginBottom: 0,
-                                    fontSize: 13,
-                                    color: "black",
-                                    fontWeight: 400,
-                                    border: "0px",
-                                    verticalAlign: "middle",
-                                  }}
-                                  type="text"
-                                  className="supplier_form"
-                                  onChange={(e) => updateRowField(setOriginRows, row.id, "gp_percent", e.target.value)}
-                                  value={row.gp_percent || ""}
-                                  placeholder="0.00"
-                                />
-                              </td>
-                              <td>
-                                <input
-                                  style={{
-                                    marginBottom: 0,
-                                    fontSize: 13,
-                                    color: "black",
-                                    fontWeight: 400,
-                                    border: "0px",
-                                    verticalAlign: "middle",
-                                  }}
-                                  disabled
-                                  type="text"
-                                  className="supplier_form"
-                                  value={calc.salesPrice ? calc.salesPrice.toFixed(2) : "0.00"}
-                                  placeholder="0.00"
-                                />
-                              </td>
-                              <td>
-                                <input
-                                  style={{
-                                    marginBottom: 0,
-                                    fontSize: 13,
-                                    color: "black",
-                                    border: "0px",
-                                    verticalAlign: "middle",
-                                  }}
-                                  onChange={(e) => updateRowField(setOriginRows, row.id, "roe", e.target.value)}
-                                  value={row.roe || ""}
-                                  className="supplier_form"
-                                  placeholder="1.00"
-                                />
-                              </td>
-                              <td>
-                                <input
-                                  style={{
-                                    marginBottom: 0,
-                                    fontSize: 13,
-                                    color: "black",
-                                    border: "0px",
-                                    verticalAlign: "middle",
-                                  }}
-                                  disabled
-                                  value={calc.finalAmt ? calc.finalAmt.toFixed(2) : "0.00"}
-                                  placeholder="0.00"
-                                  className="supplier_form"
-                                />
-                              </td>
-                              <td>
-                                <select
-                                  onChange={(e) => updateRowField(setOriginRows, row.id, "vatTyp", e.target.value)}
-                                  value={row.vatTyp || ""}
-                                >
-                                  {VAT_OPTIONS.map((opt, i) => (
-                                    <option key={i} value={opt.value}>{opt.label}</option>
-                                  ))}
-                                </select>
-                              </td>
-                              <td>
-                                <input
-                                  type="text"
-                                  placeholder="0.00"
-                                  onChange={(e) => updateRowField(setOriginRows, row.id, "discPercent", e.target.value)}
-                                  className="supplier_form"
-                                  value={row.discPercent || ""}
-                                />
-                              </td>
-                              <td>
-                                <input
-                                  type="text"
-                                  placeholder="0.00"
-                                  disabled
-                                  value={calc.disc ? calc.disc.toFixed(2) : "0.00"}
-                                  className="supplier_form"
-                                />
-                              </td>
-                              <td>
-                                <input
-                                  type="text"
-                                  placeholder="0.00"
-                                  disabled
-                                  value={calc.exclusive ? calc.exclusive.toFixed(2) : "0.00"}
-                                  className="supplier_form"
-                                />
-                              </td>
-                              <td>
-                                <input
-                                  type="text"
-                                  placeholder="0.00"
-                                  disabled={!(row.vatTyp === "Manual VAT" || row.vatTyp === "Manual VAT (Capital Goods)")}
-                                  value={(row.vatTyp === "Manual VAT" || row.vatTyp === "Manual VAT (Capital Goods)") ? (row.vat ?? "") : (calc.vat ? calc.vat.toFixed(2) : "0.00")}
-                                  onChange={(e) => updateRowField(setOriginRows, row.id, "vat", e.target.value)}
-                                  className="supplier_form"
-                                />
-                              </td>
-                              <td>
-                                <input
-                                  type="text"
-                                  placeholder="0.00"
-                                  disabled
-                                  value={calc.inclusive ? calc.inclusive.toFixed(2) : "0.00"}
-                                  className="supplier_form"
-                                />
-                              </td>
-                              <td>
-                                <input
-                                  type="text"
-                                  placeholder="Comment"
-                                  onChange={(e) => updateRowField(setOriginRows, row.id, "comment", e.target.value)}
-                                  value={row.comment || ""}
-                                  className="supplier_form"
-                                />
-                              </td>
-                              <td>
-                                <i
-                                  className="fa fa-trash text-danger"
-                                  style={{ cursor: "pointer" }}
-                                  onClick={() => deleteRow(setOriginRows, row.id)}
-                                />
-                              </td>
-                            </tr>
-                          ))}
+                          {originRowsData.map(({ row, calc }) => renderRow(row, calc, setOriginRows, originDropdown, originRows))}
 
                           <tr>
                             <td colSpan={6}>
@@ -2371,9 +2430,9 @@ export default function ShippingEstimate() {
                             </td>
                             <td colSpan={4}>
                               {" "}
-                              {totalChageswithOutExchange.toFixed(2)}{" "}
+                              {formatNumber(totalChageswithOutExchange, 2)}{" "}
                             </td>
-                            <td> {totalChangeRoeOrigin.toFixed(2)} </td>
+                            <td> {formatNumber(totalChangeRoeOrigin, 2)} </td>
                             <td></td>
                             <td></td>
                             <td></td>
@@ -2389,279 +2448,7 @@ export default function ShippingEstimate() {
                               <strong>Freight Charges  <i class="fa fa-plus appendIcon" style={{ cursor: "pointer" }} onClick={() => appendRow(setFreightRows)}></i></strong>
                             </td>
                           </tr>
-                          {freightRowsData.map(({ row, calc }) => (
-                            <tr key={row.id}>
-                              <td>
-                                <select
-                                  className="supplier_form"
-                                  value={row.admin_frieght_component_id || (row.description === "Note" ? "Note" : "")}
-                                  onChange={(e) =>
-                                    handleDropdownChange(setFreightRows, freightDropdown, row.id, e.target.value)
-                                  }
-                                >
-                                  <option value="">Select</option>
-                                  <option value="Note">Note</option>
-                                  {freightDropdown.map((item) => {
-                                    const isAlreadySelected = freightRows.some(
-                                      (r) => r.admin_frieght_component_id === item.admin_frieght_component_id && r.id !== row.id
-                                    );
-                                    return (
-                                      <option
-                                        key={item.admin_frieght_component_id}
-                                        value={item.admin_frieght_component_id}
-                                        disabled={isAlreadySelected}
-                                      >
-                                        {item.code ? `${item.code} - ${item.description}` : item.description}
-                                      </option>
-                                    );
-                                  })}
-                                </select>
-                              </td>
-                              <td>
-                                <input
-                                  style={{
-                                    marginBottom: 0,
-                                    fontSize: 13,
-                                    color: "black",
-                                    fontWeight: 400,
-                                    border: "0px",
-                                    verticalAlign: "middle",
-                                  }}
-                                  type="text"
-                                  className="supplier_form"
-                                  onChange={(e) => updateRowField(setFreightRows, row.id, "qty", e.target.value)}
-                                  value={row.qty || ""}
-                                  placeholder="0.00"
-                                />
-                              </td>
-                              <td>
-                                <select
-                                  className="select_supplier"
-                                  style={{
-                                    margin: 0,
-                                    fontSize: 13,
-                                    fontWeight: 700,
-                                    paddingLeft: 5,
-                                    border: 0,
-                                  }}
-                                  onChange={(e) => updateRowField(setFreightRows, row.id, "currency", e.target.value)}
-                                  value={row.currency || "Select"}
-                                >
-                                  <option value="Select">Select</option>
-                                  <option value="RAND">RAND</option>
-                                  <option value="USD">USD</option>
-                                  <option value="INR">INR</option>
-                                  <option value="EURO">EURO</option>
-                                </select>
-                              </td>
-                              <td>
-                                <input
-                                  style={{
-                                    marginBottom: 0,
-                                    fontSize: 13,
-                                    color: "black",
-                                    fontWeight: 400,
-                                    border: "0px",
-                                    verticalAlign: "middle",
-                                  }}
-                                  type="text"
-                                  className="supplier_form"
-                                  onKeyPress={handlepresss}
-                                  onChange={(e) => updateRowField(setFreightRows, row.id, "cost", e.target.value)}
-                                  value={row.cost || ""}
-                                  placeholder="0.00"
-                                />
-                              </td>
-                              <td>
-                                <select
-                                  className="select_supplier"
-                                  style={{
-                                    margin: 0,
-                                    fontSize: 13,
-                                    fontWeight: 700,
-                                    paddingLeft: 5,
-                                    border: 0,
-                                  }}
-                                  onChange={(e) => updateRowField(setFreightRows, row.id, "unitType", e.target.value)}
-                                  value={row.unitType || "Select"}
-                                >
-                                  <option value="Select">Select</option>
-                                  <option value="1">L/S</option>
-                                  <option value="2">W/M</option>
-                                </select>
-                              </td>
-                              <td>
-                                <input
-                                  style={{
-                                    marginBottom: 0,
-                                    fontSize: 13,
-                                    color: "black",
-                                    fontWeight: 400,
-                                    border: "0px",
-                                    verticalAlign: "middle",
-                                  }}
-                                  type="text"
-                                  className="supplier_form"
-                                  disabled
-                                  value={displayRowUnit(row.unitType)}
-                                  placeholder="0.00"
-                                />
-                              </td>
-                              <td>
-                                <input
-                                  style={{
-                                    marginBottom: 0,
-                                    fontSize: 13,
-                                    color: "black",
-                                    fontWeight: 400,
-                                    border: "0px",
-                                    verticalAlign: "middle",
-                                  }}
-                                  disabled
-                                  type="text"
-                                  className="supplier_form"
-                                  value={calc.tCost ? calc.tCost.toFixed(2) : "0.00"}
-                                  placeholder="0.00"
-                                />
-                              </td>
-                              <td>
-                                <input
-                                  style={{
-                                    marginBottom: 0,
-                                    fontSize: 13,
-                                    color: "black",
-                                    fontWeight: 400,
-                                    border: "0px",
-                                    verticalAlign: "middle",
-                                  }}
-                                  type="text"
-                                  className="supplier_form"
-                                  onChange={(e) => updateRowField(setFreightRows, row.id, "gp_percent", e.target.value)}
-                                  value={row.gp_percent || ""}
-                                  placeholder="0.00"
-                                />
-                              </td>
-                              <td>
-                                <input
-                                  style={{
-                                    marginBottom: 0,
-                                    fontSize: 13,
-                                    color: "black",
-                                    fontWeight: 400,
-                                    border: "0px",
-                                    verticalAlign: "middle",
-                                  }}
-                                  disabled
-                                  type="text"
-                                  className="supplier_form"
-                                  value={calc.salesPrice ? calc.salesPrice.toFixed(2) : "0.00"}
-                                  placeholder="0.00"
-                                />
-                              </td>
-                              <td>
-                                <input
-                                  style={{
-                                    marginBottom: 0,
-                                    fontSize: 13,
-                                    color: "black",
-                                    border: "0px",
-                                    verticalAlign: "middle",
-                                  }}
-                                  onChange={(e) => updateRowField(setFreightRows, row.id, "roe", e.target.value)}
-                                  value={row.roe || ""}
-                                  className="supplier_form"
-                                  placeholder="1.00"
-                                />
-                              </td>
-                              <td>
-                                <input
-                                  style={{
-                                    marginBottom: 0,
-                                    fontSize: 13,
-                                    color: "black",
-                                    border: "0px",
-                                    verticalAlign: "middle",
-                                  }}
-                                  disabled
-                                  value={calc.finalAmt ? calc.finalAmt.toFixed(2) : "0.00"}
-                                  placeholder="0.00"
-                                  className="supplier_form"
-                                />
-                              </td>
-                              <td>
-                                <select
-                                  onChange={(e) => updateRowField(setFreightRows, row.id, "vatTyp", e.target.value)}
-                                  value={row.vatTyp || ""}
-                                >
-                                  {VAT_OPTIONS.map((opt, i) => (
-                                    <option key={i} value={opt.value}>{opt.label}</option>
-                                  ))}
-                                </select>
-                              </td>
-                              <td>
-                                <input
-                                  type="text"
-                                  placeholder="0.00"
-                                  onChange={(e) => updateRowField(setFreightRows, row.id, "discPercent", e.target.value)}
-                                  className="supplier_form"
-                                  value={row.discPercent || ""}
-                                />
-                              </td>
-                              <td>
-                                <input
-                                  type="text"
-                                  placeholder="0.00"
-                                  disabled
-                                  value={calc.disc ? calc.disc.toFixed(2) : "0.00"}
-                                  className="supplier_form"
-                                />
-                              </td>
-                              <td>
-                                <input
-                                  type="text"
-                                  placeholder="0.00"
-                                  disabled
-                                  value={calc.exclusive ? calc.exclusive.toFixed(2) : "0.00"}
-                                  className="supplier_form"
-                                />
-                              </td>
-                              <td>
-                                <input
-                                  type="text"
-                                  placeholder="0.00"
-                                  disabled={!(row.vatTyp === "Manual VAT" || row.vatTyp === "Manual VAT (Capital Goods)")}
-                                  value={(row.vatTyp === "Manual VAT" || row.vatTyp === "Manual VAT (Capital Goods)") ? (row.vat ?? "") : (calc.vat ? calc.vat.toFixed(2) : "0.00")}
-                                  onChange={(e) => updateRowField(setFreightRows, row.id, "vat", e.target.value)}
-                                  className="supplier_form"
-                                />
-                              </td>
-                              <td>
-                                <input
-                                  type="text"
-                                  placeholder="0.00"
-                                  disabled
-                                  value={calc.inclusive ? calc.inclusive.toFixed(2) : "0.00"}
-                                  className="supplier_form"
-                                />
-                              </td>
-                              <td>
-                                <input
-                                  type="text"
-                                  placeholder="Comment"
-                                  onChange={(e) => updateRowField(setFreightRows, row.id, "comment", e.target.value)}
-                                  value={row.comment || ""}
-                                  className="supplier_form"
-                                />
-                              </td>
-                              <td>
-                                <i
-                                  className="fa fa-trash text-danger"
-                                  style={{ cursor: "pointer" }}
-                                  onClick={() => deleteRow(setFreightRows, row.id)}
-                                />
-                              </td>
-                            </tr>
-                          ))}
+                          {freightRowsData.map(({ row, calc }) => renderRow(row, calc, setFreightRows, freightDropdown, freightRows))}
 
                           <tr>
                             <td colSpan={6}>
@@ -2669,15 +2456,11 @@ export default function ShippingEstimate() {
                             </td>
                             <td colSpan={4}>
                               {" "}
-                              {totalChageswithOutExchangeinsurance.toFixed(
-                                2,
-                              )}{" "}
+                              {formatNumber(totalChageswithOutExchangeinsurance, 2)}{" "}
                             </td>
                             <td>
                               {" "}
-                              {totalChangeRoeOriginaftercalcuinsurance.toFixed(
-                                2,
-                              )}{" "}
+                              {formatNumber(totalChangeRoeOriginaftercalcuinsurance, 2)}{" "}
                             </td>
                             <td></td>
                             <td></td>
@@ -2697,280 +2480,7 @@ export default function ShippingEstimate() {
                                 onClick={() => appendRow(setTransitRows)}></i>
                             </td>
                           </tr>
-                          {transitRowsData.map(({ row, calc }) => (
-                            <tr key={row.id}>
-                              <td>
-                                <select
-                                  className="supplier_form"
-                                  value={row.admin_frieght_component_id || (row.description === "Note" ? "Note" : "")}
-                                  onChange={(e) =>
-                                    handleDropdownChange(setTransitRows, transitDropdown, row.id, e.target.value)
-                                  }
-                                >
-                                  <option value="">Select</option>
-                                  <option value="Note">Note</option>
-                                  {transitDropdown.map((item) => {
-                                    const isAlreadySelected = transitRows.some(
-                                      (r) => r.admin_frieght_component_id === item.admin_frieght_component_id && r.id !== row.id
-                                    );
-                                    return (
-                                      <option
-                                        key={item.admin_frieght_component_id}
-                                        value={item.admin_frieght_component_id}
-                                        disabled={isAlreadySelected}
-                                      >
-                                        {item.code ? `${item.code} - ${item.description}` : item.description}
-                                      </option>
-                                    );
-                                  })}
-                                </select>
-                              </td>
-                              <td>
-                                <input
-                                  style={{
-                                    marginBottom: 0,
-                                    fontSize: 13,
-                                    color: "black",
-                                    fontWeight: 400,
-                                    border: "0px",
-                                    verticalAlign: "middle",
-                                  }}
-                                  type="text"
-                                  className="supplier_form"
-                                  onChange={(e) => updateRowField(setTransitRows, row.id, "qty", e.target.value)}
-                                  value={row.qty || ""}
-                                  placeholder="0.00"
-                                />
-                              </td>
-                              <td>
-                                <select
-                                  className="select_supplier"
-                                  style={{
-                                    margin: 0,
-                                    fontSize: 13,
-                                    fontWeight: 700,
-                                    paddingLeft: 5,
-                                    border: 0,
-                                  }}
-                                  onChange={(e) => updateRowField(setTransitRows, row.id, "currency", e.target.value)}
-                                  value={row.currency || "Select"}
-                                >
-                                  <option value="Select">Select</option>
-                                  <option value="RAND">RAND</option>
-                                  <option value="USD">USD</option>
-                                  <option value="INR">INR</option>
-                                  <option value="EURO">EURO</option>
-                                </select>
-                              </td>
-                              <td>
-                                <input
-                                  style={{
-                                    marginBottom: 0,
-                                    fontSize: 13,
-                                    color: "black",
-                                    fontWeight: 400,
-                                    border: "0px",
-                                    verticalAlign: "middle",
-                                  }}
-                                  type="text"
-                                  className="supplier_form"
-                                  onKeyPress={handlepresss}
-                                  onChange={(e) => updateRowField(setTransitRows, row.id, "cost", e.target.value)}
-                                  value={row.cost || ""}
-                                  placeholder="0.00"
-                                />
-                              </td>
-                              <td>
-                                <select
-                                  className="select_supplier"
-                                  style={{
-                                    margin: 0,
-                                    fontSize: 13,
-                                    fontWeight: 700,
-                                    paddingLeft: 5,
-                                    border: 0,
-                                  }}
-                                  onChange={(e) => updateRowField(setTransitRows, row.id, "unitType", e.target.value)}
-                                  value={row.unitType || "Select"}
-                                >
-                                  <option value="Select">Select</option>
-                                  <option value="1">L/S</option>
-                                  <option value="2">W/M</option>
-                                </select>
-                              </td>
-                              <td>
-                                <input
-                                  style={{
-                                    marginBottom: 0,
-                                    fontSize: 13,
-                                    color: "black",
-                                    fontWeight: 400,
-                                    border: "0px",
-                                    verticalAlign: "middle",
-                                  }}
-                                  type="text"
-                                  className="supplier_form"
-                                  disabled
-                                  value={displayRowUnit(row.unitType)}
-                                  placeholder="0.00"
-                                />
-                              </td>
-                              <td>
-                                <input
-                                  style={{
-                                    marginBottom: 0,
-                                    fontSize: 13,
-                                    color: "black",
-                                    fontWeight: 400,
-                                    border: "0px",
-                                    verticalAlign: "middle",
-                                  }}
-                                  disabled
-                                  type="text"
-                                  className="supplier_form"
-                                  value={calc.tCost ? calc.tCost.toFixed(2) : "0.00"}
-                                  placeholder="0.00"
-                                />
-                              </td>
-                              <td>
-                                <input
-                                  style={{
-                                    marginBottom: 0,
-                                    fontSize: 13,
-                                    color: "black",
-                                    fontWeight: 400,
-                                    border: "0px",
-                                    verticalAlign: "middle",
-                                  }}
-                                  type="text"
-                                  className="supplier_form"
-                                  onChange={(e) => updateRowField(setTransitRows, row.id, "gp_percent", e.target.value)}
-                                  value={row.gp_percent || ""}
-                                  placeholder="0.00"
-                                />
-                              </td>
-                              <td>
-                                <input
-                                  style={{
-                                    marginBottom: 0,
-                                    fontSize: 13,
-                                    color: "black",
-                                    fontWeight: 400,
-                                    border: "0px",
-                                    verticalAlign: "middle",
-                                  }}
-                                  disabled
-                                  type="text"
-                                  className="supplier_form"
-                                  value={calc.salesPrice ? calc.salesPrice.toFixed(2) : "0.00"}
-                                  placeholder="0.00"
-                                />
-                              </td>
-                              <td>
-                                <input
-                                  style={{
-                                    marginBottom: 0,
-                                    fontSize: 13,
-                                    color: "black",
-                                    border: "0px",
-                                    verticalAlign: "middle",
-                                  }}
-                                  onChange={(e) => updateRowField(setTransitRows, row.id, "roe", e.target.value)}
-                                  value={row.roe || ""}
-                                  className="supplier_form"
-                                  placeholder="1.00"
-                                />
-                              </td>
-                              <td>
-                                <input
-                                  style={{
-                                    marginBottom: 0,
-                                    fontSize: 13,
-                                    color: "black",
-                                    border: "0px",
-                                    verticalAlign: "middle",
-                                  }}
-                                  disabled
-                                  value={calc.finalAmt ? calc.finalAmt.toFixed(2) : "0.00"}
-                                  placeholder="0.00"
-                                  className="supplier_form"
-                                />
-                              </td>
-                              <td>
-                                <select
-                                  onChange={(e) => updateRowField(setTransitRows, row.id, "vatTyp", e.target.value)}
-                                  value={row.vatTyp || ""}
-                                >
-                                  {VAT_OPTIONS.map((opt, i) => (
-                                    <option key={i} value={opt.value}>{opt.label}</option>
-                                  ))}
-                                </select>
-                              </td>
-                              <td>
-                                <input
-                                  type="text"
-                                  placeholder="0.00"
-                                  onChange={(e) => updateRowField(setTransitRows, row.id, "discPercent", e.target.value)}
-                                  className="supplier_form"
-                                  value={row.discPercent || ""}
-                                />
-                              </td>
-                              <td>
-                                <input
-                                  type="text"
-                                  placeholder="0.00"
-                                  disabled
-                                  value={calc.disc ? calc.disc.toFixed(2) : "0.00"}
-                                  className="supplier_form"
-                                />
-                              </td>
-                              <td>
-                                <input
-                                  type="text"
-                                  placeholder="0.00"
-                                  disabled
-                                  value={calc.exclusive ? calc.exclusive.toFixed(2) : "0.00"}
-                                  className="supplier_form"
-                                />
-                              </td>
-                              <td>
-                                <input
-                                  type="text"
-                                  placeholder="0.00"
-                                  disabled={!(row.vatTyp === "Manual VAT" || row.vatTyp === "Manual VAT (Capital Goods)")}
-                                  value={(row.vatTyp === "Manual VAT" || row.vatTyp === "Manual VAT (Capital Goods)") ? (row.vat ?? "") : (calc.vat ? calc.vat.toFixed(2) : "0.00")}
-                                  onChange={(e) => updateRowField(setTransitRows, row.id, "vat", e.target.value)}
-                                  className="supplier_form"
-                                />
-                              </td>
-                              <td>
-                                <input
-                                  type="text"
-                                  placeholder="0.00"
-                                  disabled
-                                  value={calc.inclusive ? calc.inclusive.toFixed(2) : "0.00"}
-                                  className="supplier_form"
-                                />
-                              </td>
-                              <td>
-                                <input
-                                  type="text"
-                                  placeholder="Comment"
-                                  onChange={(e) => updateRowField(setTransitRows, row.id, "comment", e.target.value)}
-                                  value={row.comment || ""}
-                                  className="supplier_form"
-                                />
-                              </td>
-                              <td>
-                                <i
-                                  className="fa fa-trash text-danger"
-                                  style={{ cursor: "pointer" }}
-                                  onClick={() => deleteRow(setTransitRows, row.id)}
-                                />
-                              </td>
-                            </tr>
-                          ))}
-
+                          {transitRowsData.map(({ row, calc }) => renderRow(row, calc, setTransitRows, transitDropdown, transitRows))}
 
                           <tr>
                             <td colSpan={6}>
@@ -2978,9 +2488,9 @@ export default function ShippingEstimate() {
                             </td>
                             <td colSpan={4}>
                               {" "}
-                              {totalChageswithOuTransit.toFixed(2)}{" "}
+                              {formatNumber(totalChageswithOuTransit, 2)}{" "}
                             </td>
-                            <td> {transitRoe.toFixed(2)} </td>
+                            <td> {formatNumber(transitRoe, 2)} </td>
                             <td></td>
                             <td></td>
                             <td></td>
@@ -2998,279 +2508,7 @@ export default function ShippingEstimate() {
                               </strong>
                             </td>
                           </tr>
-                          {destinationRowsData.map(({ row, calc }) => (
-                            <tr key={row.id}>
-                              <td>
-                                <select
-                                  className="supplier_form"
-                                  value={row.admin_frieght_component_id || (row.description === "Note" ? "Note" : "")}
-                                  onChange={(e) =>
-                                    handleDropdownChange(setDestinationRows, destinationDropdown, row.id, e.target.value)
-                                  }
-                                >
-                                  <option value="">Select</option>
-                                  <option value="Note">Note</option>
-                                  {destinationDropdown.map((item) => {
-                                    const isAlreadySelected = destinationRows.some(
-                                      (r) => r.admin_frieght_component_id === item.admin_frieght_component_id && r.id !== row.id
-                                    );
-                                    return (
-                                      <option
-                                        key={item.admin_frieght_component_id}
-                                        value={item.admin_frieght_component_id}
-                                        disabled={isAlreadySelected}
-                                      >
-                                        {item.code ? `${item.code} - ${item.description}` : item.description}
-                                      </option>
-                                    );
-                                  })}
-                                </select>
-                              </td>
-                              <td>
-                                <input
-                                  style={{
-                                    marginBottom: 0,
-                                    fontSize: 13,
-                                    color: "black",
-                                    fontWeight: 400,
-                                    border: "0px",
-                                    verticalAlign: "middle",
-                                  }}
-                                  type="text"
-                                  className="supplier_form"
-                                  onChange={(e) => updateRowField(setDestinationRows, row.id, "qty", e.target.value)}
-                                  value={row.qty || ""}
-                                  placeholder="0.00"
-                                />
-                              </td>
-                              <td>
-                                <select
-                                  className="select_supplier"
-                                  style={{
-                                    margin: 0,
-                                    fontSize: 13,
-                                    fontWeight: 700,
-                                    paddingLeft: 5,
-                                    border: 0,
-                                  }}
-                                  onChange={(e) => updateRowField(setDestinationRows, row.id, "currency", e.target.value)}
-                                  value={row.currency || "Select"}
-                                >
-                                  <option value="Select">Select</option>
-                                  <option value="RAND">RAND</option>
-                                  <option value="USD">USD</option>
-                                  <option value="INR">INR</option>
-                                  <option value="EURO">EURO</option>
-                                </select>
-                              </td>
-                              <td>
-                                <input
-                                  style={{
-                                    marginBottom: 0,
-                                    fontSize: 13,
-                                    color: "black",
-                                    fontWeight: 400,
-                                    border: "0px",
-                                    verticalAlign: "middle",
-                                  }}
-                                  type="text"
-                                  className="supplier_form"
-                                  onKeyPress={handlepresss}
-                                  onChange={(e) => updateRowField(setDestinationRows, row.id, "cost", e.target.value)}
-                                  value={row.cost || ""}
-                                  placeholder="0.00"
-                                />
-                              </td>
-                              <td>
-                                <select
-                                  className="select_supplier"
-                                  style={{
-                                    margin: 0,
-                                    fontSize: 13,
-                                    fontWeight: 700,
-                                    paddingLeft: 5,
-                                    border: 0,
-                                  }}
-                                  onChange={(e) => updateRowField(setDestinationRows, row.id, "unitType", e.target.value)}
-                                  value={row.unitType || "Select"}
-                                >
-                                  <option value="Select">Select</option>
-                                  <option value="1">L/S</option>
-                                  <option value="2">W/M</option>
-                                </select>
-                              </td>
-                              <td>
-                                <input
-                                  style={{
-                                    marginBottom: 0,
-                                    fontSize: 13,
-                                    color: "black",
-                                    fontWeight: 400,
-                                    border: "0px",
-                                    verticalAlign: "middle",
-                                  }}
-                                  type="text"
-                                  className="supplier_form"
-                                  disabled
-                                  value={displayRowUnit(row.unitType)}
-                                  placeholder="0.00"
-                                />
-                              </td>
-                              <td>
-                                <input
-                                  style={{
-                                    marginBottom: 0,
-                                    fontSize: 13,
-                                    color: "black",
-                                    fontWeight: 400,
-                                    border: "0px",
-                                    verticalAlign: "middle",
-                                  }}
-                                  disabled
-                                  type="text"
-                                  className="supplier_form"
-                                  value={calc.tCost ? calc.tCost.toFixed(2) : "0.00"}
-                                  placeholder="0.00"
-                                />
-                              </td>
-                              <td>
-                                <input
-                                  style={{
-                                    marginBottom: 0,
-                                    fontSize: 13,
-                                    color: "black",
-                                    fontWeight: 400,
-                                    border: "0px",
-                                    verticalAlign: "middle",
-                                  }}
-                                  type="text"
-                                  className="supplier_form"
-                                  onChange={(e) => updateRowField(setDestinationRows, row.id, "gp_percent", e.target.value)}
-                                  value={row.gp_percent || ""}
-                                  placeholder="0.00"
-                                />
-                              </td>
-                              <td>
-                                <input
-                                  style={{
-                                    marginBottom: 0,
-                                    fontSize: 13,
-                                    color: "black",
-                                    fontWeight: 400,
-                                    border: "0px",
-                                    verticalAlign: "middle",
-                                  }}
-                                  disabled
-                                  type="text"
-                                  className="supplier_form"
-                                  value={calc.salesPrice ? calc.salesPrice.toFixed(2) : "0.00"}
-                                  placeholder="0.00"
-                                />
-                              </td>
-                              <td>
-                                <input
-                                  style={{
-                                    marginBottom: 0,
-                                    fontSize: 13,
-                                    color: "black",
-                                    border: "0px",
-                                    verticalAlign: "middle",
-                                  }}
-                                  onChange={(e) => updateRowField(setDestinationRows, row.id, "roe", e.target.value)}
-                                  value={row.roe || ""}
-                                  className="supplier_form"
-                                  placeholder="1.00"
-                                />
-                              </td>
-                              <td>
-                                <input
-                                  style={{
-                                    marginBottom: 0,
-                                    fontSize: 13,
-                                    color: "black",
-                                    border: "0px",
-                                    verticalAlign: "middle",
-                                  }}
-                                  disabled
-                                  value={calc.finalAmt ? calc.finalAmt.toFixed(2) : "0.00"}
-                                  placeholder="0.00"
-                                  className="supplier_form"
-                                />
-                              </td>
-                              <td>
-                                <select
-                                  onChange={(e) => updateRowField(setDestinationRows, row.id, "vatTyp", e.target.value)}
-                                  value={row.vatTyp || ""}
-                                >
-                                  {VAT_OPTIONS.map((opt, i) => (
-                                    <option key={i} value={opt.value}>{opt.label}</option>
-                                  ))}
-                                </select>
-                              </td>
-                              <td>
-                                <input
-                                  type="text"
-                                  placeholder="0.00"
-                                  onChange={(e) => updateRowField(setDestinationRows, row.id, "discPercent", e.target.value)}
-                                  className="supplier_form"
-                                  value={row.discPercent || ""}
-                                />
-                              </td>
-                              <td>
-                                <input
-                                  type="text"
-                                  placeholder="0.00"
-                                  disabled
-                                  value={calc.disc ? calc.disc.toFixed(2) : "0.00"}
-                                  className="supplier_form"
-                                />
-                              </td>
-                              <td>
-                                <input
-                                  type="text"
-                                  placeholder="0.00"
-                                  disabled
-                                  value={calc.exclusive ? calc.exclusive.toFixed(2) : "0.00"}
-                                  className="supplier_form"
-                                />
-                              </td>
-                              <td>
-                                <input
-                                  type="text"
-                                  placeholder="0.00"
-                                  disabled={!(row.vatTyp === "Manual VAT" || row.vatTyp === "Manual VAT (Capital Goods)")}
-                                  value={(row.vatTyp === "Manual VAT" || row.vatTyp === "Manual VAT (Capital Goods)") ? (row.vat ?? "") : (calc.vat ? calc.vat.toFixed(2) : "0.00")}
-                                  onChange={(e) => updateRowField(setDestinationRows, row.id, "vat", e.target.value)}
-                                  className="supplier_form"
-                                />
-                              </td>
-                              <td>
-                                <input
-                                  type="text"
-                                  placeholder="0.00"
-                                  disabled
-                                  value={calc.inclusive ? calc.inclusive.toFixed(2) : "0.00"}
-                                  className="supplier_form"
-                                />
-                              </td>
-                              <td>
-                                <input
-                                  type="text"
-                                  placeholder="Comment"
-                                  onChange={(e) => updateRowField(setDestinationRows, row.id, "comment", e.target.value)}
-                                  value={row.comment || ""}
-                                  className="supplier_form"
-                                />
-                              </td>
-                              <td>
-                                <i
-                                  className="fa fa-trash text-danger"
-                                  style={{ cursor: "pointer" }}
-                                  onClick={() => deleteRow(setDestinationRows, row.id)}
-                                />
-                              </td>
-                            </tr>
-                          ))}
+                          {destinationRowsData.map(({ row, calc }) => renderRow(row, calc, setDestinationRows, destinationDropdown, destinationRows))}
 
                           <tr>
                             <td colSpan={6}>
@@ -3278,9 +2516,9 @@ export default function ShippingEstimate() {
                             </td>
                             <td colSpan={4}>
                               {" "}
-                              {totalChaDestinationTransit.toFixed(2)}{" "}
+                              {formatNumber(totalChaDestinationTransit, 2)}{" "}
                             </td>
-                            <td> {totalChaDestinationTransitRoe.toFixed(2)} </td>
+                            <td> {formatNumber(totalChaDestinationTransitRoe, 2)} </td>
                             <td></td>
                             <td></td>
                             <td></td>
@@ -3296,285 +2534,14 @@ export default function ShippingEstimate() {
                                 onClick={() => appendRow(setAdminRows)}></i></strong>
                             </td>
                           </tr>
-                          {adminRowsData.map(({ row, calc }) => (
-                            <tr key={row.id}>
-                              <td>
-                                <select
-                                  className="supplier_form"
-                                  value={row.admin_frieght_component_id || (row.description === "Note" ? "Note" : "")}
-                                  onChange={(e) =>
-                                    handleDropdownChange(setAdminRows, adminDropdown, row.id, e.target.value)
-                                  }
-                                >
-                                  <option value="">Select</option>
-                                  <option value="Note">Note</option>
-                                  {adminDropdown.map((item) => {
-                                    const isAlreadySelected = adminRows.some(
-                                      (r) => r.admin_frieght_component_id === item.admin_frieght_component_id && r.id !== row.id
-                                    );
-                                    return (
-                                      <option
-                                        key={item.admin_frieght_component_id}
-                                        value={item.admin_frieght_component_id}
-                                        disabled={isAlreadySelected}
-                                      >
-                                        {item.code ? `${item.code} - ${item.description}` : item.description}
-                                      </option>
-                                    );
-                                  })}
-                                </select>
-                              </td>
-                              <td>
-                                <input
-                                  style={{
-                                    marginBottom: 0,
-                                    fontSize: 13,
-                                    color: "black",
-                                    fontWeight: 400,
-                                    border: "0px",
-                                    verticalAlign: "middle",
-                                  }}
-                                  type="text"
-                                  className="supplier_form"
-                                  onChange={(e) => updateRowField(setAdminRows, row.id, "qty", e.target.value)}
-                                  value={row.qty || ""}
-                                  placeholder="0.00"
-                                />
-                              </td>
-                              <td>
-                                <select
-                                  className="select_supplier"
-                                  style={{
-                                    margin: 0,
-                                    fontSize: 13,
-                                    fontWeight: 700,
-                                    paddingLeft: 5,
-                                    border: 0,
-                                  }}
-                                  onChange={(e) => updateRowField(setAdminRows, row.id, "currency", e.target.value)}
-                                  value={row.currency || "Select"}
-                                >
-                                  <option value="Select">Select</option>
-                                  <option value="RAND">RAND</option>
-                                  <option value="USD">USD</option>
-                                  <option value="INR">INR</option>
-                                  <option value="EURO">EURO</option>
-                                </select>
-                              </td>
-                              <td>
-                                <input
-                                  style={{
-                                    marginBottom: 0,
-                                    fontSize: 13,
-                                    color: "black",
-                                    fontWeight: 400,
-                                    border: "0px",
-                                    verticalAlign: "middle",
-                                  }}
-                                  type="text"
-                                  className="supplier_form"
-                                  onKeyPress={handlepresss}
-                                  onChange={(e) => updateRowField(setAdminRows, row.id, "cost", e.target.value)}
-                                  value={row.cost || ""}
-                                  placeholder="0.00"
-                                />
-                              </td>
-                              <td>
-                                <select
-                                  className="select_supplier"
-                                  style={{
-                                    margin: 0,
-                                    fontSize: 13,
-                                    fontWeight: 700,
-                                    paddingLeft: 5,
-                                    border: 0,
-                                  }}
-                                  onChange={(e) => updateRowField(setAdminRows, row.id, "unitType", e.target.value)}
-                                  value={row.unitType || "Select"}
-                                >
-                                  <option value="Select">Select</option>
-                                  <option value="1">L/S</option>
-                                  <option value="2">W/M</option>
-                                </select>
-                              </td>
-                              <td>
-                                <input
-                                  style={{
-                                    marginBottom: 0,
-                                    fontSize: 13,
-                                    color: "black",
-                                    fontWeight: 400,
-                                    border: "0px",
-                                    verticalAlign: "middle",
-                                  }}
-                                  type="text"
-                                  className="supplier_form"
-                                  disabled
-                                  value={displayRowUnit(row.unitType)}
-                                  placeholder="0.00"
-                                />
-                              </td>
-                              <td>
-                                <input
-                                  style={{
-                                    marginBottom: 0,
-                                    fontSize: 13,
-                                    color: "black",
-                                    fontWeight: 400,
-                                    border: "0px",
-                                    verticalAlign: "middle",
-                                  }}
-                                  disabled
-                                  type="text"
-                                  className="supplier_form"
-                                  value={calc.tCost ? calc.tCost.toFixed(2) : "0.00"}
-                                  placeholder="0.00"
-                                />
-                              </td>
-                              <td>
-                                <input
-                                  style={{
-                                    marginBottom: 0,
-                                    fontSize: 13,
-                                    color: "black",
-                                    fontWeight: 400,
-                                    border: "0px",
-                                    verticalAlign: "middle",
-                                  }}
-                                  type="text"
-                                  className="supplier_form"
-                                  onChange={(e) => updateRowField(setAdminRows, row.id, "gp_percent", e.target.value)}
-                                  value={row.gp_percent || ""}
-                                  placeholder="0.00"
-                                />
-                              </td>
-                              <td>
-                                <input
-                                  style={{
-                                    marginBottom: 0,
-                                    fontSize: 13,
-                                    color: "black",
-                                    fontWeight: 400,
-                                    border: "0px",
-                                    verticalAlign: "middle",
-                                  }}
-                                  disabled
-                                  type="text"
-                                  className="supplier_form"
-                                  value={calc.salesPrice ? calc.salesPrice.toFixed(2) : "0.00"}
-                                  placeholder="0.00"
-                                />
-                              </td>
-                              <td>
-                                <input
-                                  style={{
-                                    marginBottom: 0,
-                                    fontSize: 13,
-                                    color: "black",
-                                    border: "0px",
-                                    verticalAlign: "middle",
-                                  }}
-                                  onChange={(e) => updateRowField(setAdminRows, row.id, "roe", e.target.value)}
-                                  value={row.roe || ""}
-                                  className="supplier_form"
-                                  placeholder="1.00"
-                                />
-                              </td>
-                              <td>
-                                <input
-                                  style={{
-                                    marginBottom: 0,
-                                    fontSize: 13,
-                                    color: "black",
-                                    border: "0px",
-                                    verticalAlign: "middle",
-                                  }}
-                                  disabled
-                                  value={calc.finalAmt ? calc.finalAmt.toFixed(2) : "0.00"}
-                                  placeholder="0.00"
-                                  className="supplier_form"
-                                />
-                              </td>
-                              <td>
-                                <select
-                                  onChange={(e) => updateRowField(setAdminRows, row.id, "vatTyp", e.target.value)}
-                                  value={row.vatTyp || ""}
-                                >
-                                  {VAT_OPTIONS.map((opt, i) => (
-                                    <option key={i} value={opt.value}>{opt.label}</option>
-                                  ))}
-                                </select>
-                              </td>
-                              <td>
-                                <input
-                                  type="text"
-                                  placeholder="0.00"
-                                  onChange={(e) => updateRowField(setAdminRows, row.id, "discPercent", e.target.value)}
-                                  className="supplier_form"
-                                  value={row.discPercent || ""}
-                                />
-                              </td>
-                              <td>
-                                <input
-                                  type="text"
-                                  placeholder="0.00"
-                                  disabled
-                                  value={calc.disc ? calc.disc.toFixed(2) : "0.00"}
-                                  className="supplier_form"
-                                />
-                              </td>
-                              <td>
-                                <input
-                                  type="text"
-                                  placeholder="0.00"
-                                  disabled
-                                  value={calc.exclusive ? calc.exclusive.toFixed(2) : "0.00"}
-                                  className="supplier_form"
-                                />
-                              </td>
-                              <td>
-                                <input
-                                  type="text"
-                                  placeholder="0.00"
-                                  disabled={!(row.vatTyp === "Manual VAT" || row.vatTyp === "Manual VAT (Capital Goods)")}
-                                  value={(row.vatTyp === "Manual VAT" || row.vatTyp === "Manual VAT (Capital Goods)") ? (row.vat ?? "") : (calc.vat ? calc.vat.toFixed(2) : "0.00")}
-                                  onChange={(e) => updateRowField(setAdminRows, row.id, "vat", e.target.value)}
-                                  className="supplier_form"
-                                />
-                              </td>
-                              <td>
-                                <input
-                                  type="text"
-                                  placeholder="0.00"
-                                  disabled
-                                  value={calc.inclusive ? calc.inclusive.toFixed(2) : "0.00"}
-                                  className="supplier_form"
-                                />
-                              </td>
-                              <td>
-                                <input
-                                  type="text"
-                                  placeholder="Comment"
-                                  onChange={(e) => updateRowField(setAdminRows, row.id, "comment", e.target.value)}
-                                  value={row.comment || ""}
-                                  className="supplier_form"
-                                />
-                              </td>
-                              <td>
-                                <i
-                                  className="fa fa-trash text-danger"
-                                  style={{ cursor: "pointer" }}
-                                  onClick={() => deleteRow(setAdminRows, row.id)}
-                                />
-                              </td>
-                            </tr>
-                          ))}
+                          {adminRowsData.map(({ row, calc }) => renderRow(row, calc, setAdminRows, adminDropdown, adminRows))}
+
                           <tr>
                             <td colSpan={6}>
                               <strong> Total - Admin Charges</strong>
                             </td>
-                            <td colSpan={4}> {totaAdminransit.toFixed(2)} </td>
-                            <td> {totalAdminnsitRoe.toFixed(2)} </td>
+                            <td colSpan={4}> {formatNumber(totaAdminransit, 2)} </td>
+                            <td> {formatNumber(totalAdminnsitRoe, 2)} </td>
                             <td></td>
                             <td></td>
                             <td></td>
@@ -3590,286 +2557,14 @@ export default function ShippingEstimate() {
                                 onClick={() => appendRow(setCustomsRows)}></i></strong>
                             </td>
                           </tr>
-                          {customsRowsData.map(({ row, calc }) => (
-                            <tr key={row.id}>
-                              <td>
-                                <select
-                                  className="supplier_form"
-                                  value={row.admin_frieght_component_id || (row.description === "Note" ? "Note" : "")}
-                                  onChange={(e) =>
-                                    handleDropdownChange(setCustomsRows, customsDropdown, row.id, e.target.value)
-                                  }
-                                >
-                                  <option value="">Select</option>
-                                  <option value="Note">Note</option>
-                                  {customsDropdown.map((item) => {
-                                    const isAlreadySelected = customsRows.some(
-                                      (r) => r.admin_frieght_component_id === item.admin_frieght_component_id && r.id !== row.id
-                                    );
-                                    return (
-                                      <option
-                                        key={item.admin_frieght_component_id}
-                                        value={item.admin_frieght_component_id}
-                                        disabled={isAlreadySelected}
-                                      >
-                                        {item.code ? `${item.code} - ${item.description}` : item.description}
-                                      </option>
-                                    );
-                                  })}
-                                </select>
-                              </td>
-                              <td>
-                                <input
-                                  style={{
-                                    marginBottom: 0,
-                                    fontSize: 13,
-                                    color: "black",
-                                    fontWeight: 400,
-                                    border: "0px",
-                                    verticalAlign: "middle",
-                                  }}
-                                  type="text"
-                                  className="supplier_form"
-                                  onChange={(e) => updateRowField(setCustomsRows, row.id, "qty", e.target.value)}
-                                  value={row.qty || ""}
-                                  placeholder="0.00"
-                                />
-                              </td>
-                              <td>
-                                <select
-                                  className="select_supplier"
-                                  style={{
-                                    margin: 0,
-                                    fontSize: 13,
-                                    fontWeight: 700,
-                                    paddingLeft: 5,
-                                    border: 0,
-                                  }}
-                                  onChange={(e) => updateRowField(setCustomsRows, row.id, "currency", e.target.value)}
-                                  value={row.currency || "Select"}
-                                >
-                                  <option value="Select">Select</option>
-                                  <option value="RAND">RAND</option>
-                                  <option value="USD">USD</option>
-                                  <option value="INR">INR</option>
-                                  <option value="EURO">EURO</option>
-                                </select>
-                              </td>
-                              <td>
-                                <input
-                                  style={{
-                                    marginBottom: 0,
-                                    fontSize: 13,
-                                    color: "black",
-                                    fontWeight: 400,
-                                    border: "0px",
-                                    verticalAlign: "middle",
-                                  }}
-                                  type="text"
-                                  className="supplier_form"
-                                  onKeyPress={handlepresss}
-                                  onChange={(e) => updateRowField(setCustomsRows, row.id, "cost", e.target.value)}
-                                  value={row.cost || ""}
-                                  placeholder="0.00"
-                                />
-                              </td>
-                              <td>
-                                <select
-                                  className="select_supplier"
-                                  style={{
-                                    margin: 0,
-                                    fontSize: 13,
-                                    fontWeight: 700,
-                                    paddingLeft: 5,
-                                    border: 0,
-                                  }}
-                                  onChange={(e) => updateRowField(setCustomsRows, row.id, "unitType", e.target.value)}
-                                  value={row.unitType || "Select"}
-                                >
-                                  <option value="Select">Select</option>
-                                  <option value="1">L/S</option>
-                                  <option value="2">W/M</option>
-                                </select>
-                              </td>
-                              <td>
-                                <input
-                                  style={{
-                                    marginBottom: 0,
-                                    fontSize: 13,
-                                    color: "black",
-                                    fontWeight: 400,
-                                    border: "0px",
-                                    verticalAlign: "middle",
-                                  }}
-                                  type="text"
-                                  className="supplier_form"
-                                  disabled
-                                  value={displayRowUnit(row.unitType)}
-                                  placeholder="0.00"
-                                />
-                              </td>
-                              <td>
-                                <input
-                                  style={{
-                                    marginBottom: 0,
-                                    fontSize: 13,
-                                    color: "black",
-                                    fontWeight: 400,
-                                    border: "0px",
-                                    verticalAlign: "middle",
-                                  }}
-                                  disabled
-                                  type="text"
-                                  className="supplier_form"
-                                  value={calc.tCost ? calc.tCost.toFixed(2) : "0.00"}
-                                  placeholder="0.00"
-                                />
-                              </td>
-                              <td>
-                                <input
-                                  style={{
-                                    marginBottom: 0,
-                                    fontSize: 13,
-                                    color: "black",
-                                    fontWeight: 400,
-                                    border: "0px",
-                                    verticalAlign: "middle",
-                                  }}
-                                  type="text"
-                                  className="supplier_form"
-                                  onChange={(e) => updateRowField(setCustomsRows, row.id, "gp_percent", e.target.value)}
-                                  value={row.gp_percent || ""}
-                                  placeholder="0.00"
-                                />
-                              </td>
-                              <td>
-                                <input
-                                  style={{
-                                    marginBottom: 0,
-                                    fontSize: 13,
-                                    color: "black",
-                                    fontWeight: 400,
-                                    border: "0px",
-                                    verticalAlign: "middle",
-                                  }}
-                                  disabled
-                                  type="text"
-                                  className="supplier_form"
-                                  value={calc.salesPrice ? calc.salesPrice.toFixed(2) : "0.00"}
-                                  placeholder="0.00"
-                                />
-                              </td>
-                              <td>
-                                <input
-                                  style={{
-                                    marginBottom: 0,
-                                    fontSize: 13,
-                                    color: "black",
-                                    border: "0px",
-                                    verticalAlign: "middle",
-                                  }}
-                                  onChange={(e) => updateRowField(setCustomsRows, row.id, "roe", e.target.value)}
-                                  value={row.roe || ""}
-                                  className="supplier_form"
-                                  placeholder="1.00"
-                                />
-                              </td>
-                              <td>
-                                <input
-                                  style={{
-                                    marginBottom: 0,
-                                    fontSize: 13,
-                                    color: "black",
-                                    border: "0px",
-                                    verticalAlign: "middle",
-                                  }}
-                                  disabled
-                                  value={calc.finalAmt ? calc.finalAmt.toFixed(2) : "0.00"}
-                                  placeholder="0.00"
-                                  className="supplier_form"
-                                />
-                              </td>
-                              <td>
-                                <select
-                                  onChange={(e) => updateRowField(setCustomsRows, row.id, "vatTyp", e.target.value)}
-                                  value={row.vatTyp || ""}
-                                >
-                                  {VAT_OPTIONS.map((opt, i) => (
-                                    <option key={i} value={opt.value}>{opt.label}</option>
-                                  ))}
-                                </select>
-                              </td>
-                              <td>
-                                <input
-                                  type="text"
-                                  placeholder="0.00"
-                                  onChange={(e) => updateRowField(setCustomsRows, row.id, "discPercent", e.target.value)}
-                                  className="supplier_form"
-                                  value={row.discPercent || ""}
-                                />
-                              </td>
-                              <td>
-                                <input
-                                  type="text"
-                                  placeholder="0.00"
-                                  disabled
-                                  value={calc.disc ? calc.disc.toFixed(2) : "0.00"}
-                                  className="supplier_form"
-                                />
-                              </td>
-                              <td>
-                                <input
-                                  type="text"
-                                  placeholder="0.00"
-                                  disabled
-                                  value={calc.exclusive ? calc.exclusive.toFixed(2) : "0.00"}
-                                  className="supplier_form"
-                                />
-                              </td>
-                              <td>
-                                <input
-                                  type="text"
-                                  placeholder="0.00"
-                                  disabled={!(row.vatTyp === "Manual VAT" || row.vatTyp === "Manual VAT (Capital Goods)")}
-                                  value={(row.vatTyp === "Manual VAT" || row.vatTyp === "Manual VAT (Capital Goods)") ? (row.vat ?? "") : (calc.vat ? calc.vat.toFixed(2) : "0.00")}
-                                  onChange={(e) => updateRowField(setCustomsRows, row.id, "vat", e.target.value)}
-                                  className="supplier_form"
-                                />
-                              </td>
-                              <td>
-                                <input
-                                  type="text"
-                                  placeholder="0.00"
-                                  disabled
-                                  value={calc.inclusive ? calc.inclusive.toFixed(2) : "0.00"}
-                                  className="supplier_form"
-                                />
-                              </td>
-                              <td>
-                                <input
-                                  type="text"
-                                  placeholder="Comment"
-                                  onChange={(e) => updateRowField(setCustomsRows, row.id, "comment", e.target.value)}
-                                  value={row.comment || ""}
-                                  className="supplier_form"
-                                />
-                              </td>
-                              <td>
-                                <i
-                                  className="fa fa-trash text-danger"
-                                  style={{ cursor: "pointer" }}
-                                  onClick={() => deleteRow(setCustomsRows, row.id)}
-                                />
-                              </td>
-                            </tr>
-                          ))}
+                          {customsRowsData.map(({ row, calc }) => renderRow(row, calc, setCustomsRows, customsDropdown, customsRows))}
 
                           <tr>
                             <td colSpan={6}>
                               <strong> Total - Customs Charges</strong>
                             </td>
-                            <td colSpan={4}> {customsTotalTCost.toFixed(2)} </td>
-                            <td> {customsTotalFinalAmt.toFixed(2)} </td>
+                            <td colSpan={4}> {formatNumber(customsTotalTCost, 2)} </td>
+                            <td> {formatNumber(customsTotalFinalAmt, 2)} </td>
                             <td></td>
                             <td></td>
                             <td></td>
@@ -3884,14 +2579,14 @@ export default function ShippingEstimate() {
                             <td colSpan={6}>
                               <strong> Total - Charge</strong>
                             </td>
-                            <td colSpan={4}> {sumofall.toFixed(2)} </td>
-                            <td> {sumofRoe.toFixed(2)} </td>
+                            <td colSpan={4}> {formatNumber(sumofall, 2)} </td>
+                            <td> {formatNumber(sumofRoe, 2)} </td>
                             <td></td>
                             <td></td>
                             <td></td>
                             <td></td>
                             <td></td>
-                            <td> {totalVatInclusive.toFixed(2)} </td>
+                            <td> {formatNumber(totalVatInclusive, 2)} </td>
                             <td></td>
                             <td></td>
                           </tr>

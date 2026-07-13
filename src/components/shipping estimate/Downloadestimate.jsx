@@ -832,12 +832,12 @@ export default function Downlaodestimate() {
       prev.map((row) =>
         row.id === id
           ? {
-              ...row,
-              [field]: String(value || "")
-                .replace(/,/g, "")
-                .replace(/%/g, "")
-                .trim(),
-            }
+            ...row,
+            [field]: String(value || "")
+              .replace(/,/g, "")
+              .replace(/%/g, "")
+              .trim(),
+          }
           : row
       )
     );
@@ -1749,7 +1749,7 @@ export default function Downlaodestimate() {
         }
       }
 
-      const companyX = margin + 150;
+      const companyX = margin + 120;
       doc.setFont("helvetica", "bold");
       doc.setFontSize(14);
       doc.setTextColor(20, 20, 20);
@@ -1766,9 +1766,17 @@ export default function Downlaodestimate() {
         "Unit 4, Gleneagles Office Park, 39 Koorsboom Ave, Glen Marais",
       ];
       let infoY = cursorY + 11;
+      const maxWidth = 70; // Adjust as needed
       companyLines.forEach((line) => {
-        doc.text(line, companyX, infoY);
-        infoY += 3.6;
+        doc.text(line, companyX, infoY, {
+          maxWidth: maxWidth,
+        });
+
+        // Calculate how many lines the text wrapped into
+        const lineCount = doc.splitTextToSize(line, maxWidth).length;
+
+        // Move Y position based on wrapped lines
+        infoY += lineCount * 3.6;
       });
       drawLabelValueRow(doc, companyX, infoY, 0, "Registration No.:- ", "");
       doc.setFont("helvetica", "normal");
@@ -1784,7 +1792,7 @@ export default function Downlaodestimate() {
       doc.setFont("helvetica", "normal");
       doc.text(String(getdata?.importers_code || "1619"), companyX + 24, infoY);
 
-      cursorY = margin + 28;
+      cursorY = margin + 32;
 
       // ---- "FREIGHT ESTIMATE" title bar -------------------------------
       doc.setDrawColor(27, 34, 69);
@@ -1801,6 +1809,7 @@ export default function Downlaodestimate() {
       // barH:    height of navy section header bar
       // pad:     inner top/bottom padding
       // lPad:    inner left/right padding
+
       const rowH = 4.5;   // row height — text baseline = rowTop + rowH*0.65
       const barH = 5.5;
       const pad = 3;

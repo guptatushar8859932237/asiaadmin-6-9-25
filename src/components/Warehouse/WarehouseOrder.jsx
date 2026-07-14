@@ -719,14 +719,15 @@ export default function WarehouseOrder() {
                     ></input>
                   </div>
                   <div className="ms-1">
-                    <Button
+                    <button
+                      className="blueBtn"
                       variant="contained"
                       onClick={() => {
                         handleOpenModal2();
                       }}
                     >
                       Filter
-                    </Button>
+                    </button>
                   </div>
                 </div>
               </div>
@@ -752,25 +753,39 @@ export default function WarehouseOrder() {
                                 <>
                                   <tr key={item.id}>
                                     <td className="list_bd">
-                                      <div className="container-fluid">
-                                        <div className="d-flex justify-content-between align-items-center">
-                                          <div className="d-flex align-items-center">
+                                      <div>
+                                        <div className="row align-items-center">
+                                          <div className="col-md-2">
                                             <p
                                               className="client_nm"
-                                              style={{ fontSize: "18px" }}
+                                              style={{ fontSize: "16px" }}
                                             >
                                               {item.client_name}
                                             </p>
-                                            <p
-                                              className="fright_no mx-2"
-                                              style={{ fontSize: "14px" }}
-                                            >
-                                              {[item.batch_number, item.freight_number, item.order_number]
-                                                .filter(Boolean)
-                                                .join(" / ") || "-"}
+                                          </div>
+                                          <div className="col-md-2">
+                                            <div>
+                                              <p>
+                                                {[
+                                                  item.batch_number,
+                                                  item.freight_number,
+                                                  item.order_number,
+                                                ]
+                                                  .filter(Boolean)
+                                                  .join(" / ") || "-"}
+                                              </p>
+                                            </div>
+                                          </div>
+                                          <div className="col-md-4"></div>
+                                          <div className="col-md-2">
+                                            <p>
+                                              <span className="bold600">
+                                                Weight:
+                                              </span>{" "}
+                                              {item.weight || 0}
                                             </p>
                                           </div>
-                                          <div className="">
+                                          <div className="col-md-2 text-end">
                                             <p className="port_date">
                                               {new Date(
                                                 item.date,
@@ -778,55 +793,46 @@ export default function WarehouseOrder() {
                                             </p>
                                           </div>
                                         </div>
+                                        {/* second row */}
                                         <div className="row align-items-center">
-                                          <div className="col-md-3">
+                                          <div className="col-md-4">
                                             <div className="">
-                                              <p
-                                                className="origin"
-                                                style={{ fontSize: "14px" }}
-                                              >
+                                              <p className="origin">
                                                 {item.product_desc}
                                               </p>
                                             </div>
-                                            <div className="">
-                                              <p className="origin">
-                                                Days in Warehouse: {item.days_in_warehouse || 0}
-                                              </p>
-                                            </div>
-
                                           </div>
                                           <div className="col-md-4">
-                                            <div className="d-flex align-items-center">
-                                              <div className="d-flex align-items-center">
-                                                <p className="origin">
-                                                  {item.collection_from_name}
-                                                </p>
-                                                <div className="arrow">
-                                                  <i className="fi fi-rr-arrow-right mx-2 arr_icon"></i>
-                                                </div>
-                                                <p className="origin">
-                                                  {item.delivery_to_name}
-                                                  <span className="fright_type">
-                                                    (
-                                                    {item.Freight
-                                                      ? item.Freight
-                                                      : item.freight_type}
-                                                    )
-                                                  </span>
-                                                </p>
+                                            <div className="d-flex">
+                                              <p className="origin">
+                                                {item.collection_from_name}
+                                              </p>
+                                              <div className="arrow">
+                                                <i className="fi fi-rr-arrow-right mx-2 arr_icon"></i>
                                               </div>
-                                            </div>
-                                            <div className="">
-                                              <p className="origin">Status: {item.warehouse_item_status}</p>
-                                            </div>
-                                          </div>
-                                          <div className="col-md-3">
-                                            <div className="">
-                                              <p className="origin">Weight:{item.weight || 0}
-                                                <p className="origin">Dimension: {item.dimension || 0}</p>
-                                                <p className="origin">Packages: {item.total_packages || 0}</p>
+                                              <p className="origin">
+                                                {item.delivery_to_name}
+                                                <span className="fright_type">
+                                                  (
+                                                  {item.Freight
+                                                    ? item.Freight
+                                                    : item.freight_type}
+                                                  )
+                                                </span>
                                               </p>
                                             </div>
+                                            <div className="d-flex">
+                                              <p className="origin">
+                                                Status:{" "}
+                                                {item.warehouse_item_status}
+                                              </p>
+                                            </div>
+                                          </div>
+                                          <div className="col-md-2">
+                                            <p>
+                                              <span>Dimension: </span>
+                                              {item.dimension || 0}
+                                            </p>
                                           </div>
                                           <div className="col-md-2">
                                             <div className="text-end">
@@ -871,8 +877,9 @@ export default function WarehouseOrder() {
                                             </div>
                                           </div>
                                         </div>
-                                        <div className="row">
-                                          <div className="col-md-6">
+                                        {/* third row */}
+                                        <div className="row align-items-center">
+                                          <div className="col-md-2">
                                             <div className="d-flex align-items-center">
                                               <p
                                                 type="radio"
@@ -901,7 +908,22 @@ export default function WarehouseOrder() {
                                               )}
                                             </div>
                                           </div>
-                                          <div className="col-md-6 text-end">
+                                          <div className="col-md-2">
+                                            <div>
+                                              <p>
+                                                Days in Warehouse:{" "}
+                                                {item.days_in_warehouse || 0}
+                                              </p>
+                                            </div>
+                                          </div>
+                                          <div className="col-md-4"></div>
+                                          <div className="col-md-2">
+                                            <p>
+                                              <span>Packages:</span>{" "}
+                                              {item.total_packages || 0}
+                                            </p>
+                                          </div>
+                                          <div className="col-md-2 text-end">
                                             <i
                                               class="fa fa-tasks me-2 mt-2"
                                               onClick={() =>

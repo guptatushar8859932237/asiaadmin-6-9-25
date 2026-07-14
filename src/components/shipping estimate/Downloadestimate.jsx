@@ -1777,20 +1777,23 @@ export default function Downlaodestimate() {
         infoY += lineCount * 3.6;
       });
       drawLabelValueRow(doc, companyX, infoY, 0, "Registration No.:- ", "");
+      doc.setFont("helvetica", "bold");
+      doc.text("Registration No.:- ", companyX, infoY);
       doc.setFont("helvetica", "normal");
-      doc.text("2017/667803/07", companyX + 28, infoY);
+
+      doc.text(String(freight?.company_address?.company_registration_no || ""), companyX + 25, infoY);
       infoY += 3.6;
       doc.setFont("helvetica", "bold");
       doc.text("VAT No.:- ", companyX, infoY);
       doc.setFont("helvetica", "normal");
-      doc.text("4740280377", companyX + 14, infoY);
+      doc.text(String(freight?.company_address?.tax_vat_no || ""), companyX + 14, infoY);
       infoY += 3.6;
       doc.setFont("helvetica", "bold");
       doc.text("Importers code:- ", companyX, infoY);
       doc.setFont("helvetica", "normal");
-      doc.text(String(getdata?.importers_code || "1619"), companyX + 24, infoY);
+      doc.text(String(freight?.company_address?.postal_code || ""), companyX + 24, infoY);
 
-      cursorY = margin + 32;
+      cursorY = margin + 30.5;
 
       // ---- "FREIGHT ESTIMATE" title bar -------------------------------
       doc.setDrawColor(27, 34, 69);

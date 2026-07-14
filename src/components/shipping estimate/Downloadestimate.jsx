@@ -1731,7 +1731,7 @@ export default function Downlaodestimate() {
       const doc = new jsPDF({ orientation: "portrait", unit: "mm", format: "a4" });
       const pageWidth = doc.internal.pageSize.getWidth(); // 297mm
       const pageHeight = doc.internal.pageSize.getHeight(); // 210mm
-      const margin = 10;
+      const margin = 7;
       const contentWidth = pageWidth - margin * 2;
       const colSplitX = margin + contentWidth / 2;
 
@@ -1835,12 +1835,22 @@ export default function Downlaodestimate() {
       doc.setFontSize(9);
       doc.setTextColor(20, 20, 20);
       doc.text(String(getdata?.client_name || ""), margin + lPad, ly + 2.5);
-      ly += 5;
+      ly += 5; // line spacing matches address below
 
       doc.setFont("helvetica", "normal");
       doc.setFontSize(8.5);
-      doc.text(String(getdata?.address_1 || ""), margin + lPad, ly + 2.5, { maxWidth: lW });
-      ly += 5;
+      // Wrap the address ourselves (instead of relying on jsPDF's built-in
+      // maxWidth wrapping) so we know exactly how many lines it produced —
+      // that lets us push everything below (section bars, rows, borders)
+      // down automatically instead of assuming a fixed single-line height.
+      const addressLineHeight = 4; // matches the company-block line spacing above
+      const addressLines = doc.splitTextToSize(String(getdata?.address_1 || ""), lW);
+      addressLines.forEach((line, idx) => {
+        doc.text(line, margin + lPad, ly + 2.5 + idx * addressLineHeight);
+      });
+      // Single line keeps the original 6mm gap; each extra wrapped line adds
+      // one more line-height on top of that.
+      ly += addressLines.length * addressLineHeight + 1;
 
       // Section bar — ly = top of bar
       drawSectionBar(doc, margin, ly, contentWidth / 2, barH, "Shipment Details ISO Commodity");
@@ -1886,7 +1896,7 @@ export default function Downlaodestimate() {
       });
 
       // Shipment Details bar immediately after invoice rows
-      drawSectionBar(doc, colSplitX, ry, contentWidth / 2, barH, "Shipment Details");
+      drawSectionBar(doc, colSplitX, ry + 2, contentWidth / 2, barH, "Shipment Details");
       ry += barH + 2;
 
       const shipmentFields = [

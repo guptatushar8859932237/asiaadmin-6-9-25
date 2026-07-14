@@ -793,7 +793,7 @@ export default function WarehouseOrder() {
                                                 Days in Warehouse: {item.days_in_warehouse || 0}
                                               </p>
                                             </div>
-                                            
+
                                           </div>
                                           <div className="col-md-4">
                                             <div className="d-flex align-items-center">

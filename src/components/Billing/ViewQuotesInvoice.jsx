@@ -10,6 +10,29 @@ import autoTable from "jspdf-autotable";
 import { exportEstimatePdf } from "../../utils/pdfExportUtils";
 import { FaDownload } from "react-icons/fa";
 
+const cleanParseFloat = (val) => {
+  if (val === null || val === undefined || val === "") return 0;
+  const cleaned = String(val).replace(/,/g, '').replace(/%/g, '').trim();
+  const parsed = parseFloat(cleaned);
+  return isNaN(parsed) ? 0 : parsed;
+};
+
+const formatValue = (val, dec = 2, isPercent = false) => {
+  if (val === null || val === undefined || val === "") {
+    return isPercent ? "0.00 %" : "0.00";
+  }
+  const cleanVal = String(val).replace(/,/g, '').replace(/%/g, '').trim();
+  const num = parseFloat(cleanVal);
+  if (isNaN(num)) {
+    return val;
+  }
+  const formatted = num.toLocaleString("en-US", {
+    minimumFractionDigits: dec,
+    maximumFractionDigits: dec
+  });
+  return isPercent ? `${formatted} %` : formatted;
+};
+
 const getVatPercent = (vatTyp) => {
   if (!vatTyp) return 0;
   if (!isNaN(vatTyp) && !isNaN(parseFloat(vatTyp))) {
@@ -227,14 +250,14 @@ export default function ViewQuotesInvoice({ hiddenPrintItem, onPrintComplete }) 
               description: c.description || c.component_description || "",
               qty: c.qty !== null && c.qty !== undefined ? c.qty : "",
               currency: c.currency || "Select",
-              cost: c.cost !== null && c.cost !== undefined ? c.cost : "",
+              cost: c.cost !== null && c.cost !== undefined ? formatValue(c.cost, 2) : "",
               unitType: c.unit_type || "Select",
               gp_percent: c.gp_percent !== null && c.gp_percent !== undefined ? c.gp_percent : "",
-              sales_price: c.sales_price !== null && c.sales_price !== undefined ? c.sales_price : "",
-              roe: c.roe !== null && c.roe !== undefined ? c.roe : "",
+              sales_price: c.sales_price !== null && c.sales_price !== undefined ? formatValue(c.sales_price, 2) : "",
+              roe: c.roe !== null && c.roe !== undefined ? formatValue(c.roe, 4) : "",
               vatTyp: c.vat_type !== null && c.vat_type !== undefined ? getVatLabel(c.vat_type) : "",
-              vat: c.vat !== null && c.vat !== undefined ? c.vat : "",
-              discPercent: c.disc_percent !== null && c.disc_percent !== undefined ? c.disc_percent : "",
+              vat: c.vat !== null && c.vat !== undefined ? formatValue(c.vat, 2) : "",
+              discPercent: c.disc_percent !== null && c.disc_percent !== undefined ? formatValue(c.disc_percent, 2, true) : "",
               comment: c.comment || "",
               name: c.name || c.section_name || ""
             }));
@@ -550,29 +573,29 @@ export default function ViewQuotesInvoice({ hiddenPrintItem, onPrintComplete }) 
         rows.push([{ content: title, colSpan: 17, styles: sectionStyle }]);
 
         rowsData.forEach(({ row, calc }) => {
-          const vatPctStr = getPercentageOnly(row.vatTyp) ? `${getPercentageOnly(row.vatTyp)}%` : "";
+          const vatPctStr = formatValue(getVatPercent(row.vatTyp), 2, true);
           const vatDisplay = (row.vatTyp === "Manual VAT" || row.vatTyp === "Manual VAT (Capital Goods)")
-            ? String(row.vat ?? "")
-            : formatMoney(calc.vat);
+            ? formatValue(row.vat, 2)
+            : formatValue(calc.vat, 2);
 
           rows.push([
             row.description || "",
             row.qty !== "" ? String(row.qty) : "",
             row.currency && row.currency !== "Select" ? row.currency : "",
-            row.cost !== "" ? String(row.cost) : "",
+            formatValue(row.cost, 2),
             row.unitType && row.unitType !== "Select" ? row.unitType : "",
-            formatMoney(calc.unit),
-            formatMoney(calc.tCost),
+            formatValue(calc.unit, 2),
+            formatValue(calc.tCost, 2),
             row.gp_percent !== "" ? String(row.gp_percent) : "",
-            formatMoney(calc.salesPrice),
-            row.roe !== "" ? String(row.roe) : "",
-            isNaN(calc.finalAmt) ? "-" : calc.finalAmt.toFixed(2),
+            formatValue(calc.salesPrice, 2),
+            formatValue(row.roe, 4),
+            formatValue(calc.finalAmt, 2),
             vatPctStr,
-            row.discPercent ? String(row.discPercent) : "",
-            formatValuePDF(calc.disc),
-            formatValuePDF(calc.exclusive),
+            formatValue(row.discPercent, 2, true),
+            formatValue(calc.disc, 2),
+            formatValue(calc.exclusive, 2),
             vatDisplay,
-            formatMoney(calc.inclusive),
+            formatValue(calc.inclusive, 2),
           ]);
 
           // Comment row beneath the item row (only when a comment exists)
@@ -596,17 +619,17 @@ export default function ViewQuotesInvoice({ hiddenPrintItem, onPrintComplete }) 
         // Section total row
         rows.push([
           { content: `Total - ${title}`, colSpan: 6, styles: { ...totalStyle, halign: "left" } },
-          styledCell(formatMoney(totals.tCost), { ...totalStyle, halign: "right" }),
+          styledCell(formatValue(totals.tCost, 2), { ...totalStyle, halign: "right" }),
           styledCell("", totalStyle),
           styledCell("", totalStyle),
-          styledCell(formatMoney(totals.finalAmt), { ...totalStyle, halign: "right" }),
+          styledCell(formatValue(totals.finalAmt, 2), { ...totalStyle, halign: "right" }),
           styledCell("", totalStyle),
           styledCell("", totalStyle),
           styledCell("", totalStyle),
           styledCell("", totalStyle),
-          styledCell(formatValuePDF(totals.disc), { ...totalStyle, halign: "right" }),
-          styledCell(formatValuePDF(totals.exclusive), { ...totalStyle, halign: "right" }),
-          styledCell(formatValuePDF(totals.vat), { ...totalStyle, halign: "right" }),
+          styledCell(formatValue(totals.disc, 2), { ...totalStyle, halign: "right" }),
+          styledCell(formatValue(totals.exclusive, 2), { ...totalStyle, halign: "right" }),
+          styledCell(formatValue(totals.vat, 2), { ...totalStyle, halign: "right" }),
         ]);
 
         return rows;
@@ -625,12 +648,13 @@ export default function ViewQuotesInvoice({ hiddenPrintItem, onPrintComplete }) 
         // Grand total
         [
           { content: "GRAND TOTAL", colSpan: 10, styles: { fillColor: [226, 232, 240], fontStyle: "bold", halign: "left", textColor: [20, 20, 20] } },
-          { content: formatMoney(sumofRoe), styles: { fillColor: [226, 232, 240], fontStyle: "bold", halign: "right", textColor: [20, 20, 20] } },
+          { content: formatValue(sumofRoe, 2), styles: { fillColor: [226, 232, 240], fontStyle: "bold", halign: "right", textColor: [20, 20, 20] } },
           { content: "", styles: { fillColor: [226, 232, 240] } },
           { content: "", styles: { fillColor: [226, 232, 240] } },
-          { content: formatValuePDF([...originRowsData, ...freightRowsData, ...transitRowsData, ...destinationRowsData, ...adminRowsData, ...customsRowsData].reduce((s, i) => s + i.calc.disc, 0)), styles: { fillColor: [226, 232, 240], fontStyle: "bold", halign: "right" } },
-          { content: formatValuePDF([...originRowsData, ...freightRowsData, ...transitRowsData, ...destinationRowsData, ...adminRowsData, ...customsRowsData].reduce((s, i) => s + i.calc.exclusive, 0)), styles: { fillColor: [226, 232, 240], fontStyle: "bold", halign: "right" } },
-          { content: formatValuePDF([...originRowsData, ...freightRowsData, ...transitRowsData, ...destinationRowsData, ...adminRowsData, ...customsRowsData].reduce((s, i) => s + i.calc.vat, 0)), styles: { fillColor: [226, 232, 240], fontStyle: "bold", halign: "right" } },
+          { content: formatValue([...originRowsData, ...freightRowsData, ...transitRowsData, ...destinationRowsData, ...adminRowsData, ...customsRowsData].reduce((s, i) => s + i.calc.disc, 0), 2), styles: { fillColor: [226, 232, 240], fontStyle: "bold", halign: "right" } },
+          { content: formatValue([...originRowsData, ...freightRowsData, ...transitRowsData, ...destinationRowsData, ...adminRowsData, ...customsRowsData].reduce((s, i) => s + i.calc.exclusive, 0), 2), styles: { fillColor: [226, 232, 240], fontStyle: "bold", halign: "right" } },
+          { content: formatValue([...originRowsData, ...freightRowsData, ...transitRowsData, ...destinationRowsData, ...adminRowsData, ...customsRowsData].reduce((s, i) => s + i.calc.vat, 0), 2), styles: { fillColor: [226, 232, 240], fontStyle: "bold", halign: "right" } },
+          { content: formatValue(totalVatInclusive, 2), styles: { fillColor: [226, 232, 240], fontStyle: "bold", halign: "right", textColor: [20, 20, 20] } },
         ],
       ];
 
@@ -639,8 +663,8 @@ export default function ViewQuotesInvoice({ hiddenPrintItem, onPrintComplete }) 
         margin: { left: margin, right: margin, top: margin, bottom: 14 },
         head: [[
           "Description", "QTY", "Currency", "Cost", "Unit Type", "Unit",
-          "T/ Cost", "GP%", "Sales/ P", "ROE", "Final Amount",
-          "VAT Type", "Disc %", "Discount", "Exclusive", "VAT", "VAT Incl",
+          "T/ Cost", "GP%", "Sales/ P", "ROE", "Total",
+          "Vat %", "Disc %", "Discount", "Exclusive", "VAT", "Total",
         ]],
         body: tableBody,
         theme: "grid",
@@ -871,36 +895,36 @@ export default function ViewQuotesInvoice({ hiddenPrintItem, onPrintComplete }) 
   const resolveRowUnit = (unitType) => {
     if (!unitType || unitType === "Select") return 0;
     if (unitType === "L/S") return 1;
-    if (unitType === "PCS") return parseFloat(getdata?.no_of_packages) || 1;
-    if (unitType === "CBM") return parseFloat(getdata?.m3) || 1;
+    if (unitType === "PCS") return cleanParseFloat(getdata?.no_of_packages) || 1;
+    if (unitType === "CBM") return cleanParseFloat(getdata?.m3) || 1;
     if (unitType === "W/M") {
-      const rate = parseFloat(freight.chargable_rate);
-      return Number.isNaN(rate) ? 0 : rate;
+      const rate = cleanParseFloat(freight.chargable_rate);
+      return rate;
     }
     return 1;
   };
 
   const calculateRowData = (row) => {
-    const qty = parseFloat(row.qty) || 0;
-    const cost = parseFloat(row.cost) || 0;
+    const qty = cleanParseFloat(row.qty) || 0;
+    const cost = cleanParseFloat(row.cost) || 0;
     const unit = resolveRowUnit(row.unitType);
     const tCost = (row.unitType && row.unitType !== "Select") ? cost * unit * qty : 0;
-    const gpPercent = parseFloat(row.gp_percent) || 0;
+    const gpPercent = cleanParseFloat(row.gp_percent) || 0;
     let salesPrice = tCost;
     if (gpPercent > 0 && gpPercent < 100) {
       salesPrice = tCost / (1 - gpPercent / 100);
     }
-    const roe = parseFloat(row.roe) || 0;
+    const roe = cleanParseFloat(row.roe) || 0;
     const finalAmt = salesPrice * roe;
 
-    const discPercent = parseFloat(row.discPercent) || 0;
+    const discPercent = cleanParseFloat(row.discPercent) || 0;
     const vatPercent = getVatPercent(row.vatTyp);
 
     const disc = (finalAmt * discPercent) / 100;
     const exclusive = finalAmt - disc;
     let vat = (exclusive * vatPercent) / 100;
     if (row.vatTyp === "Manual VAT" || row.vatTyp === "Manual VAT (Capital Goods)") {
-      vat = parseFloat(row.vat) || 0;
+      vat = cleanParseFloat(row.vat) || 0;
     }
     const inclusive = exclusive + vat;
 
@@ -1060,7 +1084,7 @@ export default function ViewQuotesInvoice({ hiddenPrintItem, onPrintComplete }) 
                 type="text"
                 className="supplier_form"
                 disabled
-                value={row.cost || ""}
+                value={formatValue(row.cost, 2)}
                 placeholder="0.00"
               />
             </td>
@@ -1095,7 +1119,7 @@ export default function ViewQuotesInvoice({ hiddenPrintItem, onPrintComplete }) 
                 type="text"
                 className="supplier_form"
                 disabled
-                value={formatMoney(calc.unit)}
+                value={formatValue(calc.unit, 2)}
                 placeholder="0.00"
               />
             </td>
@@ -1112,7 +1136,7 @@ export default function ViewQuotesInvoice({ hiddenPrintItem, onPrintComplete }) 
                 disabled
                 type="text"
                 className="supplier_form"
-                value={formatMoney(calc.tCost)}
+                value={formatValue(calc.tCost)}
                 placeholder="0.00"
               />
             </td>
@@ -1146,7 +1170,7 @@ export default function ViewQuotesInvoice({ hiddenPrintItem, onPrintComplete }) 
                 disabled
                 type="text"
                 className="supplier_form"
-                value={formatMoney(calc.salesPrice)}
+                value={formatValue(calc.salesPrice)}
                 placeholder="0.00"
               />
             </td>
@@ -1160,7 +1184,7 @@ export default function ViewQuotesInvoice({ hiddenPrintItem, onPrintComplete }) 
                   verticalAlign: "middle",
                 }}
                 disabled
-                value={row.roe || ""}
+                value={formatValue(row.roe, 4)}
                 className="supplier_form"
                 placeholder="1.00"
               />
@@ -1175,7 +1199,7 @@ export default function ViewQuotesInvoice({ hiddenPrintItem, onPrintComplete }) 
                   verticalAlign: "middle",
                 }}
                 disabled
-                value={formatMoney(calc.finalAmt)}
+                value={formatValue(calc.finalAmt, 2)}
                 placeholder="0.00"
                 className="supplier_form"
               />
@@ -1195,10 +1219,10 @@ export default function ViewQuotesInvoice({ hiddenPrintItem, onPrintComplete }) 
             <td>
               <input
                 type="text"
-                placeholder="0.00"
+                placeholder="0.00%"
                 disabled
                 className="supplier_form"
-                value={row.discPercent || ""}
+                value={formatValue(row.discPercent, 2, true)}
               />
             </td>
             <td>
@@ -1206,7 +1230,7 @@ export default function ViewQuotesInvoice({ hiddenPrintItem, onPrintComplete }) 
                 type="text"
                 placeholder="0.00"
                 disabled
-                value={formatMoney(calc.disc)}
+                value={formatValue(calc.disc)}
                 className="supplier_form"
               />
             </td>
@@ -1215,7 +1239,7 @@ export default function ViewQuotesInvoice({ hiddenPrintItem, onPrintComplete }) 
                 type="text"
                 placeholder="0.00"
                 disabled
-                value={formatMoney(calc.exclusive)}
+                value={formatValue(calc.exclusive)}
                 className="supplier_form"
               />
             </td>
@@ -1226,8 +1250,8 @@ export default function ViewQuotesInvoice({ hiddenPrintItem, onPrintComplete }) 
                 disabled
                 value={
                   row.vatTyp === "Manual VAT" || row.vatTyp === "Manual VAT (Capital Goods)"
-                    ? row.vat ?? ""
-                    : formatMoney(calc.vat)
+                    ? formatValue(row.vat, 2)
+                    : formatValue(calc.vat)
                 }
                 className="supplier_form"
               />
@@ -1237,7 +1261,7 @@ export default function ViewQuotesInvoice({ hiddenPrintItem, onPrintComplete }) 
                 type="text"
                 placeholder="0.00"
                 disabled
-                value={formatMoney(calc.inclusive)}
+                value={formatValue(calc.inclusive)}
                 className="supplier_form"
               />
             </td>
@@ -1256,8 +1280,8 @@ export default function ViewQuotesInvoice({ hiddenPrintItem, onPrintComplete }) 
           <td colSpan={6}>
             <strong>Total - {sectionTitle}</strong>
           </td>
-          <td colSpan={4}> {formatMoney(totalTCost)} </td>
-          <td> {formatMoney(totalFinalAmt)} </td>
+          <td colSpan={4}> {formatValue(totalTCost)} </td>
+          <td> {formatValue(totalFinalAmt, 2)} </td>
           <td colSpan={8}></td>
         </tr>
       </>
@@ -1678,13 +1702,13 @@ export default function ViewQuotesInvoice({ hiddenPrintItem, onPrintComplete }) 
                       <th>GP%</th>
                       <th>Sales/ P</th>
                       <th>ROE</th>
-                      <th>Final Amount</th>
-                      <th>VAT Type</th>
+                      <th>Total</th>
+                      <th>Vat %</th>
                       <th>Disc %</th>
                       <th>Discount</th>
                       <th>Exclusive</th>
                       <th>VAT</th>
-                      <th>VAT Incl</th>
+                      <th>Total</th>
                       <th colSpan={2}>Comment</th>
                     </tr>
                   </thead>
@@ -1700,14 +1724,14 @@ export default function ViewQuotesInvoice({ hiddenPrintItem, onPrintComplete }) 
                       <td colSpan={6}>
                         <strong>Total - Charge</strong>
                       </td>
-                      <td colSpan={4}> {formatMoney(sumofall)} </td>
-                      <td> {formatMoney(sumofRoe)} </td>
+                      <td colSpan={4}> {formatValue(sumofall)} </td>
+                      <td> {formatValue(sumofRoe, 2)} </td>
                       <td></td>
                       <td></td>
                       <td></td>
                       <td></td>
                       <td></td>
-                      <td> {formatMoney(totalVatInclusive)} </td>
+                      <td> {formatValue(totalVatInclusive)} </td>
                       <td></td>
                       <td></td>
                     </tr>

@@ -894,6 +894,8 @@ export default function Addsupplierinvoice() {
                 className="supplier_form"
                 onKeyPress={handlepresss}
                 onChange={(e) => updateRowField(setter, row.id, "cost", e.target.value)}
+                onBlur={(e) => handleBlur(setter, row.id, "cost", e.target.value, 2)}
+                onFocus={(e) => handleFocus(setter, row.id, "cost", row.cost || "")}
                 value={row.cost || ""}
                 placeholder="0.00"
               />
@@ -929,7 +931,7 @@ export default function Addsupplierinvoice() {
                 type="text"
                 className="supplier_form"
                 disabled
-                value={row.unitType === "1" ? "1" : (freight.chargable_rate || "")}
+                value={row.unitType === "1" ? "1.00" : formatValue(freight.chargable_rate, 2)}
                 placeholder="0.00"
               />
             </td>
@@ -946,7 +948,7 @@ export default function Addsupplierinvoice() {
                 disabled
                 type="text"
                 className="supplier_form"
-                value={formatMoney(calc.tCost)}
+                value={formatValue(calc.tCost)}
                 placeholder="0.00"
               />
             </td>
@@ -980,7 +982,7 @@ export default function Addsupplierinvoice() {
                 disabled
                 type="text"
                 className="supplier_form"
-                value={formatMoney(calc.salesPrice)}
+                value={formatValue(calc.salesPrice)}
                 placeholder="0.00"
               />
             </td>
@@ -994,6 +996,8 @@ export default function Addsupplierinvoice() {
                   verticalAlign: "middle",
                 }}
                 onChange={(e) => updateRowField(setter, row.id, "roe", e.target.value)}
+                onBlur={(e) => handleBlur(setter, row.id, "roe", e.target.value, 4)}
+                onFocus={(e) => handleFocus(setter, row.id, "roe", row.roe || "")}
                 value={row.roe || ""}
                 className="supplier_form"
                 placeholder="1.00"
@@ -1009,7 +1013,7 @@ export default function Addsupplierinvoice() {
                   verticalAlign: "middle",
                 }}
                 disabled
-                value={formatMoney(calc.finalAmt)}
+                value={formatValue(calc.finalAmt, 2)}
                 placeholder="0.00"
                 className="supplier_form"
               />
@@ -1029,8 +1033,10 @@ export default function Addsupplierinvoice() {
             <td>
               <input
                 type="text"
-                placeholder="0.00"
+                placeholder="0.00%"
                 onChange={(e) => updateRowField(setter, row.id, "discPercent", e.target.value)}
+                onBlur={(e) => handleBlur(setter, row.id, "discPercent", e.target.value, 2, true)}
+                onFocus={(e) => handleFocus(setter, row.id, "discPercent", row.discPercent || "")}
                 className="supplier_form"
                 value={row.discPercent || ""}
               />
@@ -1040,7 +1046,7 @@ export default function Addsupplierinvoice() {
                 type="text"
                 placeholder="0.00"
                 disabled
-                value={formatMoney(calc.disc)}
+                value={formatValue(calc.disc)}
                 className="supplier_form"
               />
             </td>
@@ -1049,7 +1055,7 @@ export default function Addsupplierinvoice() {
                 type="text"
                 placeholder="0.00"
                 disabled
-                value={formatMoney(calc.exclusive)}
+                value={formatValue(calc.exclusive)}
                 className="supplier_form"
               />
             </td>
@@ -1061,9 +1067,11 @@ export default function Addsupplierinvoice() {
                 value={
                   row.vatTyp === "Manual VAT" || row.vatTyp === "Manual VAT (Capital Goods)"
                     ? row.vat ?? ""
-                    : formatMoney(calc.vat)
+                    : formatValue(calc.vat)
                 }
                 onChange={(e) => updateRowField(setter, row.id, "vat", e.target.value)}
+                onBlur={(e) => handleBlur(setter, row.id, "vat", e.target.value, 2)}
+                onFocus={(e) => handleFocus(setter, row.id, "vat", row.vat || "")}
                 className="supplier_form"
               />
             </td>
@@ -1072,7 +1080,7 @@ export default function Addsupplierinvoice() {
                 type="text"
                 placeholder="0.00"
                 disabled
-                value={formatMoney(calc.inclusive)}
+                value={formatValue(calc.inclusive)}
                 className="supplier_form"
               />
             </td>
@@ -1098,8 +1106,8 @@ export default function Addsupplierinvoice() {
           <td colSpan={6}>
             <strong>Total - {sectionTitle}</strong>
           </td>
-          <td colSpan={4}> {formatMoney(totalTCost)} </td>
-          <td> {formatMoney(totalFinalAmt)} </td>
+          <td colSpan={4}> {formatValue(totalTCost)} </td>
+          <td> {formatValue(totalFinalAmt, 2)} </td>
           <td colSpan={8}></td>
         </tr>
       </>
@@ -1992,14 +2000,14 @@ export default function Addsupplierinvoice() {
                       <th>GP%</th>
                       <th>Sales/ P</th>
                       <th>ROE</th>
-                      <th>Final Amount</th>
-                      <th>VAT Type </th>
-                      <th>Disc % </th>
-                      <th>Discount </th>
-                      <th>Exclusive </th>
-                      <th>VAT </th>
-                      <th>VAT Incl </th>
-                      <th colSpan={2}>Comment </th>
+                      <th>Total</th>
+                      <th>Vat %</th>
+                      <th>Disc %</th>
+                      <th>Discount</th>
+                      <th>Exclusive</th>
+                      <th>VAT</th>
+                      <th>Total</th>
+                      <th colSpan={2}>Comment</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -2013,14 +2021,14 @@ export default function Addsupplierinvoice() {
                       <td colSpan={6}>
                         <strong> Total - Charge</strong>
                       </td>
-                      <td colSpan={4}> {formatMoney(sumofall)} </td>
-                      <td> {formatMoney(sumofRoe)} </td>
+                      <td colSpan={4}> {formatValue(sumofall)} </td>
+                      <td> {formatValue(sumofRoe, 2)} </td>
                       <td></td>
                       <td></td>
                       <td></td>
                       <td></td>
                       <td></td>
-                      <td> {formatMoney(totalVatInclusive)} </td>
+                      <td> {formatValue(totalVatInclusive)} </td>
                       <td></td>
                       <td></td>
                     </tr>

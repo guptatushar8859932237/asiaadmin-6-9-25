@@ -8,6 +8,29 @@ import logo from "../../Assests/logo.png";
 import { exportEstimatePdf } from "../../utils/pdfExportUtils";
 import { FaDownload } from "react-icons/fa";
 
+const cleanParseFloat = (val) => {
+  if (val === null || val === undefined || val === "") return 0;
+  const cleaned = String(val).replace(/,/g, '').replace(/%/g, '').trim();
+  const parsed = parseFloat(cleaned);
+  return isNaN(parsed) ? 0 : parsed;
+};
+
+const formatValue = (val, dec = 2, isPercent = false) => {
+  if (val === null || val === undefined || val === "") {
+    return isPercent ? "0.00 %" : "0.00";
+  }
+  const cleanVal = String(val).replace(/,/g, '').replace(/%/g, '').trim();
+  const num = parseFloat(cleanVal);
+  if (isNaN(num)) {
+    return val;
+  }
+  const formatted = num.toLocaleString("en-US", {
+    minimumFractionDigits: dec,
+    maximumFractionDigits: dec
+  });
+  return isPercent ? `${formatted} %` : formatted;
+};
+
 const getVatPercent = (vatTyp) => {
   if (!vatTyp) return 0;
   if (!isNaN(vatTyp) && !isNaN(parseFloat(vatTyp))) {
@@ -281,36 +304,36 @@ export default function ViewNewFreightQuoteInvoice({ hiddenPrintItem, onPrintCom
   const resolveRowUnit = (unitType) => {
     if (!unitType || unitType === "Select") return 0;
     if (unitType === "L/S") return 1;
-    if (unitType === "PCS") return parseFloat(getdata?.no_of_packages) || 1;
-    if (unitType === "CBM") return parseFloat(getdata?.m3) || 1;
+    if (unitType === "PCS") return cleanParseFloat(getdata?.no_of_packages) || 1;
+    if (unitType === "CBM") return cleanParseFloat(getdata?.m3) || 1;
     if (unitType === "W/M") {
-      const rate = parseFloat(freight.chargable_rate);
-      return Number.isNaN(rate) ? 0 : rate;
+      const rate = cleanParseFloat(freight.chargable_rate);
+      return rate;
     }
     return 1;
   };
 
   const calculateRowData = (row) => {
-    const qty = parseFloat(row.qty) || 0;
-    const cost = parseFloat(row.cost) || 0;
+    const qty = cleanParseFloat(row.qty) || 0;
+    const cost = cleanParseFloat(row.cost) || 0;
     const unit = resolveRowUnit(row.unitType);
     const tCost = (row.unitType && row.unitType !== "Select") ? cost * unit * qty : 0;
-    const gpPercent = parseFloat(row.gp_percent) || 0;
+    const gpPercent = cleanParseFloat(row.gp_percent) || 0;
     let salesPrice = tCost;
     if (gpPercent > 0 && gpPercent < 100) {
       salesPrice = tCost / (1 - gpPercent / 100);
     }
-    const roe = parseFloat(row.roe) || 0;
+    const roe = cleanParseFloat(row.roe) || 0;
     const finalAmt = salesPrice * roe;
 
-    const discPercent = parseFloat(row.discPercent) || 0;
+    const discPercent = cleanParseFloat(row.discPercent) || 0;
     const vatPercent = getVatPercent(row.vatTyp);
 
     const disc = (finalAmt * discPercent) / 100;
     const exclusive = finalAmt - disc;
     let vat = (exclusive * vatPercent) / 100;
     if (row.vatTyp === "Manual VAT" || row.vatTyp === "Manual VAT (Capital Goods)") {
-      vat = parseFloat(row.vat) || 0;
+      vat = cleanParseFloat(row.vat) || 0;
     }
     const inclusive = exclusive + vat;
 
@@ -470,7 +493,7 @@ export default function ViewNewFreightQuoteInvoice({ hiddenPrintItem, onPrintCom
                 type="text"
                 className="supplier_form"
                 disabled
-                value={row.cost || ""}
+                value={formatValue(row.cost, 2)}
                 placeholder="0.00"
               />
             </td>
@@ -505,7 +528,7 @@ export default function ViewNewFreightQuoteInvoice({ hiddenPrintItem, onPrintCom
                 type="text"
                 className="supplier_form"
                 disabled
-                value={formatMoney(calc.unit)}
+                value={formatValue(calc.unit, 2)}
                 placeholder="0.00"
               />
             </td>
@@ -522,7 +545,7 @@ export default function ViewNewFreightQuoteInvoice({ hiddenPrintItem, onPrintCom
                 disabled
                 type="text"
                 className="supplier_form"
-                value={formatMoney(calc.tCost)}
+                value={formatValue(calc.tCost)}
                 placeholder="0.00"
               />
             </td>
@@ -556,7 +579,7 @@ export default function ViewNewFreightQuoteInvoice({ hiddenPrintItem, onPrintCom
                 disabled
                 type="text"
                 className="supplier_form"
-                value={formatMoney(calc.salesPrice)}
+                value={formatValue(calc.salesPrice)}
                 placeholder="0.00"
               />
             </td>
@@ -570,7 +593,7 @@ export default function ViewNewFreightQuoteInvoice({ hiddenPrintItem, onPrintCom
                   verticalAlign: "middle",
                 }}
                 disabled
-                value={row.roe || ""}
+                value={formatValue(row.roe, 4)}
                 className="supplier_form"
                 placeholder="1.00"
               />
@@ -585,7 +608,7 @@ export default function ViewNewFreightQuoteInvoice({ hiddenPrintItem, onPrintCom
                   verticalAlign: "middle",
                 }}
                 disabled
-                value={formatMoney(calc.finalAmt)}
+                value={formatValue(calc.finalAmt, 2)}
                 placeholder="0.00"
                 className="supplier_form"
               />
@@ -605,10 +628,10 @@ export default function ViewNewFreightQuoteInvoice({ hiddenPrintItem, onPrintCom
             <td>
               <input
                 type="text"
-                placeholder="0.00"
+                placeholder="0.00%"
                 disabled
                 className="supplier_form"
-                value={row.discPercent || ""}
+                value={formatValue(row.discPercent, 2, true)}
               />
             </td>
             <td>
@@ -616,7 +639,7 @@ export default function ViewNewFreightQuoteInvoice({ hiddenPrintItem, onPrintCom
                 type="text"
                 placeholder="0.00"
                 disabled
-                value={formatMoney(calc.disc)}
+                value={formatValue(calc.disc)}
                 className="supplier_form"
               />
             </td>
@@ -625,7 +648,7 @@ export default function ViewNewFreightQuoteInvoice({ hiddenPrintItem, onPrintCom
                 type="text"
                 placeholder="0.00"
                 disabled
-                value={formatMoney(calc.exclusive)}
+                value={formatValue(calc.exclusive)}
                 className="supplier_form"
               />
             </td>
@@ -636,8 +659,8 @@ export default function ViewNewFreightQuoteInvoice({ hiddenPrintItem, onPrintCom
                 disabled
                 value={
                   row.vatTyp === "Manual VAT" || row.vatTyp === "Manual VAT (Capital Goods)"
-                    ? row.vat ?? ""
-                    : formatMoney(calc.vat)
+                    ? formatValue(row.vat, 2)
+                    : formatValue(calc.vat)
                 }
                 className="supplier_form"
               />
@@ -647,7 +670,7 @@ export default function ViewNewFreightQuoteInvoice({ hiddenPrintItem, onPrintCom
                 type="text"
                 placeholder="0.00"
                 disabled
-                value={formatMoney(calc.inclusive)}
+                value={formatValue(calc.inclusive)}
                 className="supplier_form"
               />
             </td>
@@ -666,8 +689,8 @@ export default function ViewNewFreightQuoteInvoice({ hiddenPrintItem, onPrintCom
           <td colSpan={6}>
             <strong>Total - {sectionTitle}</strong>
           </td>
-          <td colSpan={4}> {formatMoney(totalTCost)} </td>
-          <td> {formatMoney(totalFinalAmt)} </td>
+          <td colSpan={4}> {formatValue(totalTCost)} </td>
+          <td> {formatValue(totalFinalAmt, 2)} </td>
           <td colSpan={8}></td>
         </tr>
       </>
@@ -1088,13 +1111,13 @@ export default function ViewNewFreightQuoteInvoice({ hiddenPrintItem, onPrintCom
                       <th>GP%</th>
                       <th>Sales/ P</th>
                       <th>ROE</th>
-                      <th>Final Amount</th>
-                      <th>VAT Type</th>
+                      <th>Total</th>
+                      <th>Vat %</th>
                       <th>Disc %</th>
                       <th>Discount</th>
                       <th>Exclusive</th>
                       <th>VAT</th>
-                      <th>VAT Incl</th>
+                      <th>Total</th>
                       <th colSpan={2}>Comment</th>
                     </tr>
                   </thead>
@@ -1110,14 +1133,14 @@ export default function ViewNewFreightQuoteInvoice({ hiddenPrintItem, onPrintCom
                       <td colSpan={6}>
                         <strong>Total - Charge</strong>
                       </td>
-                      <td colSpan={4}> {formatMoney(sumofall)} </td>
-                      <td> {formatMoney(sumofRoe)} </td>
+                      <td colSpan={4}> {formatValue(sumofall)} </td>
+                      <td> {formatValue(sumofRoe, 2)} </td>
                       <td></td>
                       <td></td>
                       <td></td>
                       <td></td>
                       <td></td>
-                      <td> {formatMoney(totalVatInclusive)} </td>
+                      <td> {formatValue(totalVatInclusive)} </td>
                       <td></td>
                       <td></td>
                     </tr>

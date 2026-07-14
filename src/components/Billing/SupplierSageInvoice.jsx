@@ -8,6 +8,22 @@ import Swal from "sweetalert2";
 import { toast, ToastContainer } from "react-toastify";
 import Viewsupplierinvoice from "./Viewsupplierinvoice";
 
+const formatValue = (val, dec = 2, isPercent = false) => {
+  if (val === null || val === undefined || val === "") {
+    return isPercent ? "0.00 %" : "0.00";
+  }
+  const cleanVal = String(val).replace(/,/g, '').replace(/%/g, '').trim();
+  const num = parseFloat(cleanVal);
+  if (isNaN(num)) {
+    return val;
+  }
+  const formatted = num.toLocaleString("en-US", {
+    minimumFractionDigits: dec,
+    maximumFractionDigits: dec
+  });
+  return isPercent ? `${formatted} %` : formatted;
+};
+
 export default function SupplierSageInvoice() {
   const [data, setData] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
@@ -182,9 +198,9 @@ export default function SupplierSageInvoice() {
                       </td>
                       <td>{item.final_base_currency || "-"}</td>
                       <td>
-                        {item.invoice_total}
+                        {formatValue(item.invoice_total, 2)}
                       </td>
-                      <td>{item.invoice_total}</td>
+                      <td>{formatValue(item.invoice_total, 2)}</td>
                       <td>{item.status}</td>
                       <td>
                         <div className="dropdown">

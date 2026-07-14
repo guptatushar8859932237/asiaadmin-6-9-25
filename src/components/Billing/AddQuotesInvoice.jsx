@@ -8,6 +8,53 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import logo from "../../Assests/logo.png";
 import { exportEstimatePdf } from "../../utils/pdfExportUtils";
 
+const cleanParseFloat = (val) => {
+  if (val === null || val === undefined || val === "") return 0;
+  const cleaned = String(val).replace(/,/g, '').replace(/%/g, '').trim();
+  const parsed = parseFloat(cleaned);
+  return isNaN(parsed) ? 0 : parsed;
+};
+
+const formatValue = (val, dec = 2, isPercent = false) => {
+  if (val === null || val === undefined || val === "") {
+    return isPercent ? "0.00 %" : "0.00";
+  }
+  const cleanVal = String(val).replace(/,/g, '').replace(/%/g, '').trim();
+  const num = parseFloat(cleanVal);
+  if (isNaN(num)) {
+    return val;
+  }
+  const formatted = num.toLocaleString("en-US", {
+    minimumFractionDigits: dec,
+    maximumFractionDigits: dec
+  });
+  return isPercent ? `${formatted} %` : formatted;
+};
+
+const handleBlur = (setter, id, field, value, dec = 2, isPercent = false) => {
+  setter((prev) =>
+    prev.map((row) =>
+      row.id === id ? { ...row, [field]: formatValue(value, dec, isPercent) } : row
+    )
+  );
+};
+
+const handleFocus = (setter, id, field, value) => {
+  setter((prev) =>
+    prev.map((row) =>
+      row.id === id
+        ? {
+          ...row,
+          [field]: String(value || "")
+            .replace(/,/g, "")
+            .replace(/%/g, "")
+            .trim(),
+        }
+        : row
+    )
+  );
+};
+
 const getVatPercent = (vatTyp) => {
   if (!vatTyp) return 0;
   if (!isNaN(vatTyp) && !isNaN(parseFloat(vatTyp))) {
@@ -229,14 +276,14 @@ export default function AddQuotesInvoice() {
               description: c.description || c.component_description || "",
               qty: c.qty !== null && c.qty !== undefined ? c.qty : "",
               currency: c.currency || "Select",
-              cost: c.cost !== null && c.cost !== undefined ? c.cost : "",
+              cost: c.cost !== null && c.cost !== undefined ? formatValue(c.cost, 2) : "",
               unitType: c.unit_type || "Select",
               gp_percent: c.gp_percent !== null && c.gp_percent !== undefined ? c.gp_percent : "",
-              sales_price: c.sales_price !== null && c.sales_price !== undefined ? c.sales_price : "",
-              roe: c.roe !== null && c.roe !== undefined ? c.roe : "",
+              sales_price: c.sales_price !== null && c.sales_price !== undefined ? formatValue(c.sales_price, 2) : "",
+              roe: c.roe !== null && c.roe !== undefined ? formatValue(c.roe, 4) : "",
               vatTyp: c.vat_type !== null && c.vat_type !== undefined ? getVatLabel(c.vat_type) : "",
-              vat: c.vat !== null && c.vat !== undefined ? c.vat : "",
-              discPercent: c.disc_percent !== null && c.disc_percent !== undefined ? c.disc_percent : "",
+              vat: c.vat !== null && c.vat !== undefined ? formatValue(c.vat, 2) : "",
+              discPercent: c.disc_percent !== null && c.disc_percent !== undefined ? formatValue(c.disc_percent, 2, true) : "",
               comment: c.comment || "",
               name: c.name || c.section_name || ""
             }));
@@ -307,21 +354,21 @@ export default function AddQuotesInvoice() {
 
           const items = invoiceData.components || [];
           if (items.length > 0) {
-            const mappedComponents = items.map((c) => ({
+             const mappedComponents = items.map((c) => ({
               id: c.id || Date.now() + Math.random(),
               db_id: c.id,
               admin_frieght_component_id: c.admin_frieght_component_id || "",
               description: c.description || c.component_description || "",
               qty: c.qty !== null && c.qty !== undefined ? c.qty : "",
               currency: c.currency || "Select",
-              cost: c.cost !== null && c.cost !== undefined ? c.cost : "",
+              cost: c.cost !== null && c.cost !== undefined ? formatValue(c.cost, 2) : "",
               unitType: c.unit_type || "Select",
               gp_percent: c.gp_percent !== null && c.gp_percent !== undefined ? c.gp_percent : "",
-              sales_price: c.sales_price !== null && c.sales_price !== undefined ? c.sales_price : "",
-              roe: c.roe !== null && c.roe !== undefined ? c.roe : "",
+              sales_price: c.sales_price !== null && c.sales_price !== undefined ? formatValue(c.sales_price, 2) : "",
+              roe: c.roe !== null && c.roe !== undefined ? formatValue(c.roe, 4) : "",
               vatTyp: c.vat_type !== null && c.vat_type !== undefined ? getVatLabel(c.vat_type) : "",
-              vat: c.vat !== null && c.vat !== undefined ? c.vat : "",
-              discPercent: c.disc_percent !== null && c.disc_percent !== undefined ? c.disc_percent : "",
+              vat: c.vat !== null && c.vat !== undefined ? formatValue(c.vat, 2) : "",
+              discPercent: c.disc_percent !== null && c.disc_percent !== undefined ? formatValue(c.disc_percent, 2, true) : "",
               comment: c.comment || "",
               name: c.name || c.section_name || ""
             }));
@@ -440,36 +487,36 @@ export default function AddQuotesInvoice() {
   const resolveRowUnit = (unitType) => {
     if (!unitType || unitType === "Select") return 0;
     if (unitType === "L/S") return 1;
-    if (unitType === "PCS") return parseFloat(getdata?.no_of_packages) || 1;
-    if (unitType === "CBM") return parseFloat(getdata?.m3) || 1;
+    if (unitType === "PCS") return cleanParseFloat(getdata?.no_of_packages) || 1;
+    if (unitType === "CBM") return cleanParseFloat(getdata?.m3) || 1;
     if (unitType === "W/M") {
-      const rate = parseFloat(freight.chargable_rate);
-      return Number.isNaN(rate) ? 0 : rate;
+      const rate = cleanParseFloat(freight.chargable_rate);
+      return rate;
     }
     return 1;
   };
 
   const calculateRowData = (row) => {
-    const qty = parseFloat(row.qty) || 0;
-    const cost = parseFloat(row.cost) || 0;
+    const qty = cleanParseFloat(row.qty) || 0;
+    const cost = cleanParseFloat(row.cost) || 0;
     const unit = resolveRowUnit(row.unitType);
     const tCost = (row.unitType && row.unitType !== "Select") ? cost * unit * qty : 0;
-    const gpPercent = parseFloat(row.gp_percent) || 0;
+    const gpPercent = cleanParseFloat(row.gp_percent) || 0;
     let salesPrice = tCost;
     if (gpPercent > 0 && gpPercent < 100) {
       salesPrice = tCost / (1 - gpPercent / 100);
     }
-    const roe = parseFloat(row.roe) || 0;
+    const roe = cleanParseFloat(row.roe) || 0;
     const finalAmt = salesPrice * roe;
 
-    const discPercent = parseFloat(row.discPercent) || 0;
+    const discPercent = cleanParseFloat(row.discPercent) || 0;
     const vatPercent = getVatPercent(row.vatTyp);
 
     const disc = (finalAmt * discPercent) / 100;
     const exclusive = finalAmt - disc;
     let vat = (exclusive * vatPercent) / 100;
     if (row.vatTyp === "Manual VAT" || row.vatTyp === "Manual VAT (Capital Goods)") {
-      vat = parseFloat(row.vat) || 0;
+      vat = cleanParseFloat(row.vat) || 0;
     }
     const inclusive = exclusive + vat;
 
@@ -670,22 +717,22 @@ export default function AddQuotesInvoice() {
       const mapRowToComponent = (row, calc, name) => ({
         admin_frieght_component_id: row.admin_frieght_component_id || null,
         description: row.description || "",
-        qty: parseFloat(row.qty) || 0,
+        qty: cleanParseFloat(row.qty) || 0,
         currency: row.currency || "",
-        cost: parseFloat(row.cost) || 0,
+        cost: cleanParseFloat(row.cost) || 0,
         unit_type: row.unitType || "",
-        unit: parseFloat(calc.unit) || 0,
-        total_cost: parseFloat(calc.tCost) || 0,
-        gp_percent: parseFloat(row.gp_percent) || 0,
-        sales_price: parseFloat(calc.salesPrice) || 0,
-        roe: parseFloat(row.roe) || 0,
-        final_amount: parseFloat(calc.finalAmt) || 0,
+        unit: calc.unit || 0,
+        total_cost: calc.tCost || 0,
+        gp_percent: cleanParseFloat(row.gp_percent) || 0,
+        sales_price: calc.salesPrice || 0,
+        roe: cleanParseFloat(row.roe) || 0,
+        final_amount: calc.finalAmt || 0,
         vat_type: row.vatTyp || "",
-        disc_percent: parseFloat(row.discPercent) || 0,
-        discount: parseFloat(calc.disc) || 0,
-        exclusive: parseFloat(calc.exclusive) || 0,
-        vat: parseFloat(calc.vat) || 0,
-        vat_incl: parseFloat(calc.inclusive) || 0,
+        disc_percent: cleanParseFloat(row.discPercent) || 0,
+        discount: calc.disc || 0,
+        exclusive: calc.exclusive || 0,
+        vat: calc.vat || 0,
+        vat_incl: calc.inclusive || 0,
         comment: row.comment || "",
         name: name
       });
@@ -731,10 +778,10 @@ export default function AddQuotesInvoice() {
         customer_invoice_no: freight.customer_invoice_no || "",
         // date: freight.due_date ? new Date(freight.due_date).toISOString().split("T")[0] : null,
         final_base_currency: freight.final_base_currency || "Select",
-        sumof_totalcost: parseFloat(sumofall) || 0,
-        sumof_finalamount: parseFloat(sumofRoe) || 0,
-        sumof_vatincl: parseFloat(totalVatInclusive) || 0,
-        chargeable: parseFloat(freight.chargable_rate) || 0,
+        sumof_totalcost: sumofall || 0,
+        sumof_finalamount: sumofRoe || 0,
+        sumof_vatincl: totalVatInclusive || 0,
+        chargeable: cleanParseFloat(freight.chargable_rate) || 0,
         quote_type: "ADMIN",
         components: allComponents,
       };
@@ -907,6 +954,8 @@ export default function AddQuotesInvoice() {
                 className="supplier_form"
                 onKeyPress={handlepresss}
                 onChange={(e) => updateRowField(setter, row.id, "cost", e.target.value)}
+                onBlur={(e) => handleBlur(setter, row.id, "cost", e.target.value, 2)}
+                onFocus={(e) => handleFocus(setter, row.id, "cost", row.cost || "")}
                 value={row.cost || ""}
                 placeholder="0.00"
               />
@@ -944,7 +993,7 @@ export default function AddQuotesInvoice() {
                 type="text"
                 className="supplier_form"
                 disabled
-                value={formatMoney(calc.unit)}
+                value={formatValue(calc.unit, 2)}
                 placeholder="0.00"
               />
             </td>
@@ -961,7 +1010,7 @@ export default function AddQuotesInvoice() {
                 disabled
                 type="text"
                 className="supplier_form"
-                value={formatMoney(calc.tCost)}
+                value={formatValue(calc.tCost)}
                 placeholder="0.00"
               />
             </td>
@@ -995,7 +1044,7 @@ export default function AddQuotesInvoice() {
                 disabled
                 type="text"
                 className="supplier_form"
-                value={formatMoney(calc.salesPrice)}
+                value={formatValue(calc.salesPrice)}
                 placeholder="0.00"
               />
             </td>
@@ -1009,6 +1058,8 @@ export default function AddQuotesInvoice() {
                   verticalAlign: "middle",
                 }}
                 onChange={(e) => updateRowField(setter, row.id, "roe", e.target.value)}
+                onBlur={(e) => handleBlur(setter, row.id, "roe", e.target.value, 4)}
+                onFocus={(e) => handleFocus(setter, row.id, "roe", row.roe || "")}
                 value={row.roe || ""}
                 className="supplier_form"
                 placeholder="1.00"
@@ -1024,7 +1075,7 @@ export default function AddQuotesInvoice() {
                   verticalAlign: "middle",
                 }}
                 disabled
-                value={formatMoney(calc.finalAmt)}
+                value={formatValue(calc.finalAmt, 2)}
                 placeholder="0.00"
                 className="supplier_form"
               />
@@ -1044,8 +1095,10 @@ export default function AddQuotesInvoice() {
             <td>
               <input
                 type="text"
-                placeholder="0.00"
+                placeholder="0.00%"
                 onChange={(e) => updateRowField(setter, row.id, "discPercent", e.target.value)}
+                onBlur={(e) => handleBlur(setter, row.id, "discPercent", e.target.value, 2, true)}
+                onFocus={(e) => handleFocus(setter, row.id, "discPercent", row.discPercent || "")}
                 className="supplier_form"
                 value={row.discPercent || ""}
               />
@@ -1055,7 +1108,7 @@ export default function AddQuotesInvoice() {
                 type="text"
                 placeholder="0.00"
                 disabled
-                value={formatMoney(calc.disc)}
+                value={formatValue(calc.disc)}
                 className="supplier_form"
               />
             </td>
@@ -1064,7 +1117,7 @@ export default function AddQuotesInvoice() {
                 type="text"
                 placeholder="0.00"
                 disabled
-                value={formatMoney(calc.exclusive)}
+                value={formatValue(calc.exclusive)}
                 className="supplier_form"
               />
             </td>
@@ -1076,9 +1129,11 @@ export default function AddQuotesInvoice() {
                 value={
                   row.vatTyp === "Manual VAT" || row.vatTyp === "Manual VAT (Capital Goods)"
                     ? row.vat ?? ""
-                    : formatMoney(calc.vat)
+                    : formatValue(calc.vat)
                 }
                 onChange={(e) => updateRowField(setter, row.id, "vat", e.target.value)}
+                onBlur={(e) => handleBlur(setter, row.id, "vat", e.target.value, 2)}
+                onFocus={(e) => handleFocus(setter, row.id, "vat", row.vat || "")}
                 className="supplier_form"
               />
             </td>
@@ -1087,7 +1142,7 @@ export default function AddQuotesInvoice() {
                 type="text"
                 placeholder="0.00"
                 disabled
-                value={formatMoney(calc.inclusive)}
+                value={formatValue(calc.inclusive)}
                 className="supplier_form"
               />
             </td>
@@ -1113,8 +1168,8 @@ export default function AddQuotesInvoice() {
           <td colSpan={6}>
             <strong>Total - {sectionTitle}</strong>
           </td>
-          <td colSpan={4}> {formatMoney(totalTCost)} </td>
-          <td> {formatMoney(totalFinalAmt)} </td>
+          <td colSpan={4}> {formatValue(totalTCost)} </td>
+          <td> {formatValue(totalFinalAmt, 2)} </td>
           <td colSpan={8}></td>
         </tr>
       </>
@@ -1636,13 +1691,13 @@ export default function AddQuotesInvoice() {
                       <th>GP%</th>
                       <th>Sales/ P</th>
                       <th>ROE</th>
-                      <th>Final Amount</th>
-                      <th>VAT Type</th>
+                      <th>Total</th>
+                      <th>Vat %</th>
                       <th>Disc %</th>
                       <th>Discount</th>
                       <th>Exclusive</th>
                       <th>VAT</th>
-                      <th>VAT Incl</th>
+                      <th>Total</th>
                       <th colSpan={2}>Comment</th>
                     </tr>
                   </thead>
@@ -1658,14 +1713,14 @@ export default function AddQuotesInvoice() {
                       <td colSpan={6}>
                         <strong>Total - Charge</strong>
                       </td>
-                      <td colSpan={4}> {formatMoney(sumofall)} </td>
-                      <td> {formatMoney(sumofRoe)} </td>
+                      <td colSpan={4}> {formatValue(sumofall)} </td>
+                      <td> {formatValue(sumofRoe, 2)} </td>
                       <td></td>
                       <td></td>
                       <td></td>
                       <td></td>
                       <td></td>
-                      <td> {formatMoney(totalVatInclusive)} </td>
+                      <td> {formatValue(totalVatInclusive)} </td>
                       <td></td>
                       <td></td>
                     </tr>

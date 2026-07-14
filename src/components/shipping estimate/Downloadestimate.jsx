@@ -864,14 +864,14 @@ export default function Downlaodestimate() {
         description: c.description || c.component_description || "",
         qty: c.qty !== null && c.qty !== undefined ? c.qty : "",
         currency: c.currency || "Select",
-        cost: c.cost !== null && c.cost !== undefined ? c.cost : "",
+        cost: c.cost !== null && c.cost !== undefined ? formatValue(c.cost, 2) : "",
         unitType: c.unit_type === "L/S" ? "1" : (c.unit_type === "W/M" ? "2" : "Select"),
         gp_percent: c.gp_percent !== null && c.gp_percent !== undefined ? c.gp_percent : "",
-        sales_price: c.sales_price !== null && c.sales_price !== undefined ? c.sales_price : "",
-        roe: c.roe !== null && c.roe !== undefined ? c.roe : "",
+        sales_price: c.sales_price !== null && c.sales_price !== undefined ? formatValue(c.sales_price, 2) : "",
+        roe: c.roe !== null && c.roe !== undefined ? formatValue(c.roe, 4) : "",
         vatTyp: c.vat_type !== null && c.vat_type !== undefined ? getVatLabel(c.vat_type) : "",
-        vat: c.vat !== null && c.vat !== undefined ? c.vat : "",
-        discPercent: c.disc_percent !== null && c.disc_percent !== undefined ? c.disc_percent : "",
+        vat: c.vat !== null && c.vat !== undefined ? formatValue(c.vat, 2) : "",
+        discPercent: c.disc_percent !== null && c.disc_percent !== undefined ? formatValue(c.disc_percent, 2, true) : "",
         comment: c.comment || ""
       }));
 
@@ -914,13 +914,13 @@ export default function Downlaodestimate() {
           description: f.origin_pick_up_description || "Origin Pick Up",
           qty: f.freight_charge_currencyQTY || "",
           currency: f.pickup_freight_currency || "Select",
-          cost: f.origin_pick_up_cost || "",
+          cost: (f.origin_pick_up_cost ?? "") !== "" ? formatValue(f.origin_pick_up_cost, 2) : "",
           unitType: f.origin_pick_up_unitType || "Select",
           gp_percent: "",
           sales_price: "",
-          roe: f.roe_origin_currencyorigin || "",
+          roe: (f.roe_origin_currencyorigin ?? "") !== "" ? formatValue(f.roe_origin_currencyorigin, 4) : "",
           vatTyp: getVatLabel(f.org_pickUp_vatTyp || ""),
-          discPercent: f["org_pickUp_disc%"] || "",
+          discPercent: (f["org_pickUp_disc%"] ?? "") !== "" ? formatValue(f["org_pickUp_disc%"], 2, true) : "",
           comment: f.origin_pick_up_comment || "",
         }
       ]);
@@ -930,13 +930,13 @@ export default function Downlaodestimate() {
           description: f.freight_charge_description || "Freight Charges",
           qty: f.freight_charge_currency_unitTypeQTY || "",
           currency: f.freight_charge_currency || "Select",
-          cost: f.freight_charge_currency_cost || "",
+          cost: (f.freight_charge_currency_cost ?? "") !== "" ? formatValue(f.freight_charge_currency_cost, 2) : "",
           unitType: f.freight_charge_currency_unitType || "Select",
           gp_percent: "",
           sales_price: "",
-          roe: f.roe_freight_currency || "",
+          roe: (f.roe_freight_currency ?? "") !== "" ? formatValue(f.roe_freight_currency, 4) : "",
           vatTyp: getVatLabel(f.ocenfreight_charge_vatTyp || ""),
-          discPercent: f["ocenfreight_charge_disc%"] || "",
+          discPercent: (f["ocenfreight_charge_disc%"] ?? "") !== "" ? formatValue(f["ocenfreight_charge_disc%"], 2, true) : "",
           comment: f.freight_charge_comment || "",
         }
       ]);
@@ -946,13 +946,13 @@ export default function Downlaodestimate() {
           description: f.Transit_currency_description || "Transit Charges",
           qty: f.Transit_currency_unitTpeQTY || "",
           currency: f.Transit_currency || "Select",
-          cost: f.Transit_currency_Cost || "",
+          cost: (f.Transit_currency_Cost ?? "") !== "" ? formatValue(f.Transit_currency_Cost, 2) : "",
           unitType: f.Transit_currency_unitTpe || "Select",
           gp_percent: "",
           sales_price: "",
-          roe: f.Transit_currency_roe || "",
+          roe: (f.Transit_currency_roe ?? "") !== "" ? formatValue(f.Transit_currency_roe, 4) : "",
           vatTyp: getVatLabel(f.trans_clear_fees_vatTyp || ""),
-          discPercent: f["trans_clear_fees_disc%"] || "",
+          discPercent: (f["trans_clear_fees_disc%"] ?? "") !== "" ? formatValue(f["trans_clear_fees_disc%"], 2, true) : "",
           comment: f.Transit_currency_comment || "",
         }
       ]);
@@ -962,13 +962,13 @@ export default function Downlaodestimate() {
           description: f.Destination_freight_currency_description || "Destination Charges",
           qty: f.Destination_freight_currency_unitTypeQTY || "",
           currency: f.Destination_freight_currency || "Select",
-          cost: f.Destination_freight_currency_cost || "",
+          cost: (f.Destination_freight_currency_cost ?? "") !== "" ? formatValue(f.Destination_freight_currency_cost, 2) : "",
           unitType: f.Destination_freight_currency_unitType || "Select",
           gp_percent: "",
           sales_price: "",
-          roe: f.Destination_freight_currency_Roe || "",
+          roe: (f.Destination_freight_currency_Roe ?? "") !== "" ? formatValue(f.Destination_freight_currency_Roe, 4) : "",
           vatTyp: getVatLabel(f.dest_clearing_fees_vatTyp || ""),
-          discPercent: f["dest_clearing_fees_disc%"] || "",
+          discPercent: (f["dest_clearing_fees_disc%"] ?? "") !== "" ? formatValue(f["dest_clearing_fees_disc%"], 2, true) : "",
           comment: f.Destination_freight_currency_comment || "",
         }
       ]);
@@ -978,13 +978,13 @@ export default function Downlaodestimate() {
           description: f.Destination_AdminAgrncy_description || "Admin Charges",
           qty: f.Destination_AdminAgrncy_currency_unitQTY || "",
           currency: f.admin_currency_charge || "Select",
-          cost: f.Destination_AdminAgrncy_currency_cost || "",
+          cost: (f.Destination_AdminAgrncy_currency_cost ?? "") !== "" ? formatValue(f.Destination_AdminAgrncy_currency_cost, 2) : "",
           unitType: f.Destination_AdminAgrncy_currency_unitType || "Select",
           gp_percent: "",
           sales_price: "",
-          roe: f.Destination_AdminAgrncy_currency_roe || "",
+          roe: (f.Destination_AdminAgrncy_currency_roe ?? "") !== "" ? formatValue(f.Destination_AdminAgrncy_currency_roe, 4) : "",
           vatTyp: getVatLabel(f.admin_agencyFee_vatTyp || ""),
-          discPercent: f["admin_agencyFee_disc%"] || "",
+          discPercent: (f["admin_agencyFee_disc%"] ?? "") !== "" ? formatValue(f["admin_agencyFee_disc%"], 2, true) : "",
           comment: f.Destination_AdminAgrncy_comment || "",
         }
       ]);
@@ -994,13 +994,13 @@ export default function Downlaodestimate() {
           description: f.cust_duty_description || "Customs Charges",
           qty: f.cust_duty_qty || "",
           currency: f.cust_duty_curr || "Select",
-          cost: f.cust_duty_cost || "",
+          cost: (f.cust_duty_cost ?? "") !== "" ? formatValue(f.cust_duty_cost, 2) : "",
           unitType: f.cust_duty_unitTyp || "Select",
           gp_percent: "",
           sales_price: "",
-          roe: f.cust_duty_roe || "",
+          roe: (f.cust_duty_roe ?? "") !== "" ? formatValue(f.cust_duty_roe, 4) : "",
           vatTyp: getVatLabel(f.cust_duty_vatTyp || ""),
-          discPercent: f["cust_duty_disc%"] || "",
+          discPercent: (f["cust_duty_disc%"] ?? "") !== "" ? formatValue(f["cust_duty_disc%"], 2, true) : "",
           comment: f.cust_duty_comment || "",
         }
       ]);
@@ -1315,22 +1315,22 @@ export default function Downlaodestimate() {
         ...(row.db_id && { id: row.db_id }),
         admin_frieght_component_id: row.admin_frieght_component_id || null,
         description: row.description || "",
-        qty: parseFloat(row.qty) || 0,
+        qty: cleanParseFloat(row.qty) || 0,
         currency: row.currency || "",
-        cost: parseFloat(row.cost) || 0,
+        cost: cleanParseFloat(row.cost) || 0,
         unit_type: row.unitType === "1" ? "L/S" : (row.unitType === "2" ? "W/M" : ""),
-        unit: parseFloat(calc.unit) || 0,
-        total_cost: parseFloat(calc.tCost) || 0,
-        gp_percent: parseFloat(row.gp_percent) || 0,
-        sales_price: parseFloat(calc.salesPrice) || 0,
-        roe: parseFloat(row.roe) || 0,
-        final_amount: parseFloat(calc.finalAmt) || 0,
+        unit: calc.unit || 0,
+        total_cost: calc.tCost || 0,
+        gp_percent: cleanParseFloat(row.gp_percent) || 0,
+        sales_price: calc.salesPrice || 0,
+        roe: cleanParseFloat(row.roe) || 0,
+        final_amount: calc.finalAmt || 0,
         vat_type: row.vatTyp || "",
-        disc_percent: parseFloat(row.discPercent) || 0,
-        discount: parseFloat(calc.disc) || 0,
-        exclusive: parseFloat(calc.exclusive) || 0,
-        vat: parseFloat(calc.vat) || 0,
-        vat_incl: parseFloat(calc.inclusive) || 0,
+        disc_percent: cleanParseFloat(row.discPercent) || 0,
+        discount: calc.disc || 0,
+        exclusive: calc.exclusive || 0,
+        vat: calc.vat || 0,
+        vat_incl: calc.inclusive || 0,
         comment: row.comment || "",
         name: sectionName
       });
@@ -1376,10 +1376,10 @@ export default function Downlaodestimate() {
         quote_type: "ADMIN",
         date: getdata.date ? new Date(getdata.date).toISOString().split('T')[0] : getTodayDate(),
         final_base_currency: freight.final_base_currency || "Select",
-        sumof_totalcost: parseFloat(sumofall) || 0,
-        sumof_finalamount: parseFloat(sumofRoe) || 0,
-        sumof_vatincl: parseFloat(totalVatInclusive) || 0,
-        chargeable: parseFloat(freight.chargable_rate) || 0,
+        sumof_totalcost: sumofall || 0,
+        sumof_finalamount: sumofRoe || 0,
+        sumof_vatincl: totalVatInclusive || 0,
+        chargeable: cleanParseFloat(freight.chargable_rate) || 0,
         components: allComponents,
       };
 
@@ -1691,21 +1691,19 @@ export default function Downlaodestimate() {
     rowsData.forEach(({ row, calc }) => {
       const uom = row.unitType === "1" ? "L/S" : row.unitType === "2" ? "W/M" : "";
 
-      // ✅ Show only percentage in VAT Type column
-      const vatDisplay = getPercentageOnly(row.vatTyp)
-        ? `${getPercentageOnly(row.vatTyp)}%`
-        : "";
+      // ✅ Show percentage with 2 decimals in VAT Type column
+      const vatDisplay = formatValue(getVatPercent(row.vatTyp), 2, true);
       rows.push([
         row.description || "",
         row.qty || "",
         uom,
         displayRowUnit(row.unitType) ?? "",
-        row.cost || "",
+        formatValue(row.cost, 2),
         row.currency && row.currency !== "Select" ? row.currency : "",
-        row.roe || "",
-        isNaN(calc.finalAmt) ? "-" : calc.finalAmt.toFixed(2),
-        vatDisplay,                    // ← Only percentage now
-        row.discPercent ? String(row.discPercent) : "",
+        formatValue(row.roe, 4),
+        formatValue(calc.finalAmt, 2),
+        vatDisplay,
+        formatValue(row.discPercent, 2, true),
         formatValue(calc.disc),
         formatValue(calc.exclusive),
         formatValue(calc.vat),
